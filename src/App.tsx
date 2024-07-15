@@ -1,13 +1,12 @@
-import './App.css'
+import "./index.css";
 
-function App() {
-  
+
+
+const  App = () => {
 
   return (
     <>
-      <div className='bg-black'>
-        Hello
-      </div>
+      <div className = 'bg-red-500' > hello world</div>
        
     </>
   )
