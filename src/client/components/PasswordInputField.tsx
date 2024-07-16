@@ -4,11 +4,11 @@ import { useState } from "react";
 export const PasswordInputField = () => {
   const [showPassword, setShowPassword] = useState(false);
 
-  const style = "absolute right-3 top-2  text-red-400 px-1 py-1 w-8 h-8 cursor-pointer rounded-full hover:bg-gray-800";
+  const style = "absolute right-3 top-2  text-red-400 px-1 py-1 w-8 h-8 cursor-pointer rounded-full hover:bg-gray-600";
 
   return (
     <>
-      <div className="bg-black relative rounded-lg">
+      <div className=" relative rounded-lg">
         <input
           type={showPassword ? "text" : "password"}
           placeholder="Passowrd"
