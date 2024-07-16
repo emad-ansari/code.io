@@ -6,9 +6,6 @@ import { EmailAuthenticaiton } from "./client/pages/EmailAuthenticaiton";
 import { ProblemsetPage } from "./client/pages/ProblemsetPage";
 import "./index.css";
 
-
-
-
 const  App = () => {
 
   return (
