@@ -7,5 +7,19 @@ export default {
   theme: {
     extend: {},
   },
-  plugins: [],
+  plugins: [
+    function ({ addBase }) {
+      addBase({
+        '.no-spin': {
+          // Hide spin buttons for Chrome, Safari, Edge, Opera
+          '&::-webkit-outer-spin-button, &::-webkit-inner-spin-button': {
+            '-webkit-appearance': 'none',
+            margin: '0',
+          },
+          // Hide spin buttons for Firefox
+          '-moz-appearance': 'textfield',
+        },
+      });
+    },
+  ],
 }
