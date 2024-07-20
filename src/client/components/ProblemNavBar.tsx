@@ -10,15 +10,15 @@ export const ProblemNavBar = () => {
                 <img  src= {brandSvg} alt = 'Logo' className = 'w-56 h-16' />
             </div>
             <div className = 'flex flex-1 flex-row items-center justify-center gap-10 text-white'>
-                <div className = 'text-lg m-6 group relative w-max'>
+                <div className = 'text-sm m-6 group relative w-max'>
                     <Link to={'/problemset'}>Problems</Link>   
                     <NavLinkStyle />
                 </div>
-                <div className = 'text-lg m-6 group relative w-max'>
+                <div className = 'text-sm m-6 group relative w-max'>
                     <Link to={'/contests'}>Contests</Link>   
                     <NavLinkStyle />
                 </div>
-                <div className = 'text-lg m-6 group relative w-max'>
+                <div className = 'text-sm m-6 group relative w-max'>
                     <Link to={'/standings'}>Standings</Link>   
                     <NavLinkStyle />
                 </div>
