@@ -2,7 +2,7 @@ import { ProblemNavBar } from "../components/ProblemNavBar"
 import { Button } from "../components/Button"
 import { MdKeyboardArrowDown } from "react-icons/md";
 import { IoSearchOutline } from "react-icons/io5";
-import {ProblemList} from '../components/PorblemList'
+import {ProblemList} from '../components/ProblemList'
 
 export const ProblemsetPage = () => {
     return (
