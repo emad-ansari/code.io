@@ -1,7 +1,6 @@
-export const testcases = [
+export const testcase = [
     {
         id: 1,
         
     }
-
 ]
