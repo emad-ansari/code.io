@@ -1,4 +1,3 @@
-import { ProblemNavBar } from "../components/ProblemNavBar"
 import { Button } from "../components/Button"
 import { MdKeyboardArrowDown } from "react-icons/md";
 import { IoSearchOutline } from "react-icons/io5";
@@ -6,8 +5,7 @@ import {ProblemList} from '../components/ProblemList'
 
 export const ProblemsetPage = () => {
     return (
-        <main className="bg-[#00242C] fixed top-0 bottom-0 left-0 right-0 overflow-hidden  ">
-            <ProblemNavBar /> 
+        
             <div className=" flex flex-col gap-8 h-screen overflow-scroll items-center">
                 <div className = 'flex flex-col gap-8 pt-10 w-[900px]'>
                     <nav className="flex flex-row gap-10 w-full ">
@@ -32,12 +30,10 @@ export const ProblemsetPage = () => {
                     <div className="flex flex-col gap-2">
                         <ProblemList /> 
                     </div>
-                   
 
-                </div>
-                
+                </div>                
             </div>
-        </main>
+
 
     )
 }

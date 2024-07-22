@@ -7,6 +7,7 @@ import { ProblemsetPage } from "./client/pages/ProblemsetPage";
 import { ContestPage } from "./client/pages/ContestPage";
 import { StandingPage } from "./client/pages/StandingPage";
 import { Editor } from "./client/pages/Editor";
+import { ProblemLayout } from "./client/components/ProblemsLayout";
 import "./index.css"; 
 
 const  App = () => {
@@ -19,8 +20,11 @@ const  App = () => {
           <Route path = "/login" element = {<LoginPage />}/> 
           <Route path = '/signup' element = {<SignupPage/>}/>
           <Route path = '/verify-email' element = {<EmailAuthenticaiton/>} />
-          <Route path = '/problemset' element= {<ProblemsetPage />} />
-          <Route path = '/problems/:problem-name' element= {<Editor />} />
+          <Route path = '/problemset' element= {<ProblemLayout />} >
+            <Route index element = {<ProblemsetPage/> }  />
+            <Route path = ':problem-name' element= {<Editor />} />
+          </Route>
+          
           <Route path = '/contests' element= {<ContestPage />} />
           <Route path = '/standings' element= {<StandingPage/>} />
         </Routes>
