@@ -5,7 +5,12 @@ export default {
     "./src/**/*.{js,ts,jsx,tsx}",
   ],
   theme: {
-    extend: {},
+    extend: {
+      fontFamily: {
+        fugaz: [ "Fugaz One", "sans-serif"],
+        dmMono: ["DM Mono", "monospace"]
+      }
+    },
   },
   plugins: [
     function ({ addBase }) {

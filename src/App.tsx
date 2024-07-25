@@ -8,6 +8,7 @@ import { ContestPage } from "./client/pages/ContestPage";
 import { StandingPage } from "./client/pages/StandingPage";
 import { Editor } from "./client/pages/Editor";
 import { ProblemLayout } from "./client/components/ProblemsLayout";
+import { AboutUs } from './client/pages/AboutUsPage'
 import "./index.css"; 
 
 const  App = () => {
@@ -20,6 +21,7 @@ const  App = () => {
           <Route path = "/login" element = {<LoginPage />}/> 
           <Route path = '/signup' element = {<SignupPage/>}/>
           <Route path = '/verify-email' element = {<EmailAuthenticaiton/>} />
+          <Route path = '/about-us' element = {<AboutUs />} /> 
           <Route path = '/problemset' element= {<ProblemLayout />} >
             <Route index element = {<ProblemsetPage/> }  />
             <Route path = ':problem-name' element= {<Editor />} />
