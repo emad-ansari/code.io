@@ -9,10 +9,11 @@ import { useSelector } from "react-redux";
 import { setOpenDropDownMenu } from "../features/problemSlice";
 import { DropDownType } from "../types";
 
+
 export const ProblemsetPage = () => {
   const dispatch = useAppDispatch();
   const { openDropDownMenu } = useSelector((state: RootState) => state.problem);
-  console.log(openDropDownMenu);
+  
 
   const handleDropDown = (menu: string) => {
     if (menu === "difficulty") {
@@ -20,7 +21,9 @@ export const ProblemsetPage = () => {
         ...openDropDownMenu,
         isDifficultyMenuOpen: !openDropDownMenu.isDifficultyMenuOpen,
       };
+      
       dispatch(setOpenDropDownMenu(updatedValue));
+
     }
     if (menu == "status") {
       const updatedValue: DropDownType = {
@@ -32,7 +35,16 @@ export const ProblemsetPage = () => {
   };
 
   return (
-    <div className=" flex flex-col gap-8 h-screen overflow-scroll items-center">
+    <div className=" flex flex-col gap-8 h-screen overflow-scroll items-center" 
+        onClick={() => {
+            if (openDropDownMenu.isDifficultyMenuOpen) {
+                handleDropDown("difficulty");
+            }
+            else if(openDropDownMenu.isStatusMenuOpen){
+                handleDropDown("status")
+            }
+        }}
+    >
       <div className="flex flex-col gap-8 pt-10 w-[900px]">
         <nav className="flex flex-row gap-10 w-full ">
           <Button
@@ -40,17 +52,17 @@ export const ProblemsetPage = () => {
             onClick={() => handleDropDown("difficulty")}
           >
             <span>Difficulty</span>
-            <MdKeyboardArrowDown className="text-2xl pt-1" />
+            <MdKeyboardArrowDown className={`text-2xl pt-1 ${openDropDownMenu.isDifficultyMenuOpen ?" transform duration-200  rotate-180 pt-1" : "transform duration-200  -rotate-0 pt-1" }`} />
             {openDropDownMenu.isDifficultyMenuOpen && (
               <DifficultyDropDownMenu />
-            )}
+            )} 
           </Button>
           <Button
             classname="relative flex flex-row itmes-center bg-[#2B2A2B] gap-2 text-white hover:bg-[#403c3c]"
             onClick={() => handleDropDown("status")}
           >
             <span>Status</span>
-            <MdKeyboardArrowDown className="text-2xl pt-1" />
+            <MdKeyboardArrowDown className={`text-2xl pt-1 ${openDropDownMenu.isStatusMenuOpen ? " transform duration-200  rotate-180 pt-1" : "transform duration-200  -rotate-0 pt-1" }`} />
             {openDropDownMenu.isStatusMenuOpen && <StatusDropDownMenu />}
           </Button>
           <div className="relative flex flex-1 text-white shadow-inner ">

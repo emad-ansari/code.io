@@ -2,11 +2,13 @@ import { createSlice, PayloadAction } from "@reduxjs/toolkit";
 import { ProblemState, DropDownType } from "../types";
 
 
+
 export const problemSliceInitialState : ProblemState  = {
     openDropDownMenu:  {
         isDifficultyMenuOpen: false,
         isStatusMenuOpen: false,
     },
+
     error: null
 }
 
