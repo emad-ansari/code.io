@@ -4,19 +4,9 @@ import { IoSearchOutline } from "react-icons/io5";
 import {ProblemList} from '../components/ProblemList'
 import { DifficultyDropDownMenu } from "../components/DifficultyDroptDownMenu";
 import { StatusDropDownMenu } from "../components/StatusDropDownMenu";
-import { useState} from 'react';
-interface DropDownType {
-    isStatusMenuOpen: boolean;
-    isDifficultyMenuOpen: boolean;
-}
 
 export const ProblemsetPage = () => {
-    
-    const[openDropDownMenu, setOpenDropDownMenu] = useState<DropDownType>({
-        isStatusMenuOpen: false,
-        isDifficultyMenuOpen: false
-    });
-    
+
 
     return (
         
