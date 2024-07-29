@@ -1,5 +1,6 @@
 export interface ProblemState {
 	openDropDownMenu: DropDownType;
+	selectedLanguage: string;
 	error: any
 }
 export interface DropDownType {
