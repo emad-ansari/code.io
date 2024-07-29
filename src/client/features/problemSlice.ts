@@ -7,7 +7,8 @@ export const problemSliceInitialState: ProblemState = {
     isStatusMenuOpen: false,
     isLanguageMenuOpen: false,
   },
-  selectedLanguage: "Java",
+  code: "",
+  selectedLanguage: "Javascript",
   error: null,
 };
 
@@ -47,8 +48,11 @@ export const problemSlice = createSlice({
     setSelectedLanguage: (state, action: PayloadAction<string>) => {
       state.selectedLanguage = action.payload;
     },
+    setEditorValue: (state, action: PayloadAction<string>) => {
+      state.code = action.payload;
+    }
   },
 });
 
 export default problemSlice.reducer;
-export const { setOpenDropDownMenu, setSelectedLanguage } = problemSlice.actions;
+export const { setOpenDropDownMenu, setSelectedLanguage, setEditorValue } = problemSlice.actions;
