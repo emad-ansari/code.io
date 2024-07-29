@@ -1,7 +1,8 @@
 import { Problem } from "../components/Problem";
 import { problems } from "../pages/problems";
+import { memo } from 'react';
 
-export const ProblemList = () => {
+export const ProblemList = memo(() => {
   return (
     <>
       {problems.map((problem) => {
@@ -16,4 +17,4 @@ export const ProblemList = () => {
       })}
     </>
   );
-};
+});

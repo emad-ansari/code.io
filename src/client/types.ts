@@ -5,6 +5,7 @@ export interface ProblemState {
 export interface DropDownType {
 	isStatusMenuOpen: boolean;
 	isDifficultyMenuOpen: boolean;
+	isLanguageMenuOpen: boolean
 }
 
 

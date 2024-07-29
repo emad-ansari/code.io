@@ -19,7 +19,7 @@ export const problems = [
     },
     {
         id: 4,
-        title: "1.Two sum",
+        title: "Given an array, find the minimum of it",
         level: 'Medium',
         status: ''
     },
