@@ -5,7 +5,7 @@ import { CodeEditor } from "./CodeEditor";
 
 export const EditorSection = () => {
   return (
-    <section className="flex flex-1  bg-[#48445c] rounded-lg flex-col gap-1">
+    <section className="flex flex-1  bg-[#48445c] rounded-lg flex-col ">
       <div className="flex items-center px-2 py-1 bg-slate-300 rounded-tl-md rounded-tr-md justify-between  gap-5">
         <ModeSelectButton />
         <div className="flex flex-row gap-4 items-center">
@@ -19,7 +19,7 @@ export const EditorSection = () => {
           </Button>
         </div>
       </div>
-      <div className = 'bg-green-400'>
+      <div className = 'bg-[#48445c]'>
         <CodeEditor />         
       </div>
     </section>

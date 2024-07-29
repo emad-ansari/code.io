@@ -2,7 +2,7 @@ import { useSelector } from "react-redux";
 import { RootState, useAppDispatch } from "../app/store";
 import { setSelectedLanguage } from "../features/problemSlice";
 
-const LANGUAGES = ["Java", "C++", "Javascript", "Go", 'Rust'];
+const LANGUAGES = ["java", "cpp", "javascript", "go", 'rust'];
 
 export const LanguageDropDownMenu = () => {
   const { openDropDownMenu } = useSelector((state: RootState) => state.problem);

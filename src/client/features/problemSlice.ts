@@ -7,7 +7,9 @@ export const problemSliceInitialState: ProblemState = {
     isStatusMenuOpen: false,
     isLanguageMenuOpen: false,
   },
-  code: "",
+  code: `function twoSum () {
+
+  }  `,
   selectedLanguage: "Javascript",
   error: null,
 };
@@ -45,10 +47,10 @@ export const problemSlice = createSlice({
       }
     },
 
-    setSelectedLanguage: (state, action: PayloadAction<string>) => {
+    setSelectedLanguage: (state, action: PayloadAction<string >) => {
       state.selectedLanguage = action.payload;
     },
-    setCode: (state, action: PayloadAction<string>) => {
+    setCode: (state, action: PayloadAction<string | undefined>) => {
       state.code = action.payload;
     }
   },

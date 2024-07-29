@@ -12,19 +12,21 @@ export const CodeEditor = () => {
   );
   
 
-  console.log("eidtor value: ", code );
+  console.log("selected language: ", selectedLanguage);
   return (
     <Editor
       height="82vh"
-      defaultLanguage="javascript"
+      defaultLanguage="java"
       defaultValue="// some comment"
-      theme="vs-dark"   
-      language=""
+      theme="vs-dark"
+      language={selectedLanguage}
+      value = {code}
       onMount={() => {}}
       options={{
         fontSize: 14,
         scrollBeyondLastLine: false,
       }}
+      onChange={(value) => {dispatch(setCode(value))}}
     />
   );
 };

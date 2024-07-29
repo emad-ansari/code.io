@@ -1,7 +1,7 @@
 export interface ProblemState {
 	openDropDownMenu: DropDownType;
 	selectedLanguage: string;
-	code: string;
+	code: string | undefined;
 	error: any
 }
 export interface DropDownType {
