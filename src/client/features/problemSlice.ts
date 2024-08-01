@@ -1,18 +1,40 @@
-import { createSlice, PayloadAction } from "@reduxjs/toolkit";
-import { ProblemState, DropDownType } from "../types";
+import { createSlice, PayloadAction, createAsyncThunk } from "@reduxjs/toolkit";
+import { ProblemState, DropDownType, MAX_PROBLEM_LIMIT } from "../types";
+import { problems } from "../pages/problems";
 
 export const problemSliceInitialState: ProblemState = {
+  problems: [],
   openDropDownMenu: {
     isDifficultyMenuOpen: false,
     isStatusMenuOpen: false,
     isLanguageMenuOpen: false,
   },
-  code: `function twoSum () {
-
-  }  `,
-  selectedLanguage: "Javascript",
+  code: ``,
+  selectedLanguage: "javascript",
+  pagination: {
+    currentPagination: 1,
+    paginationCount: 1
+  },
   error: null,
 };
+
+
+// export const getProblemList = createAsyncThunk('/problem/getProblemList', async(_, ThunkAPI) => {
+//   try{
+//     // at the end you will get some problem list over here 
+//     // so first of all calculate the number of pagination count based on number of problem list by dividing the problems list with MAX_PROBLEM_LIMIT
+//     const paginationCount = problems.length / MAX_PROBLEM_LIMIT;
+//     ThunkAPI.dispatch(setPaginationCount(paginationCount))
+//     // filter the MAX_PROBLEM  from problem list and setProblems(filterProblem);
+
+//     // and you will do setProblems(problemList);
+
+//   }
+//   catch(error: any){
+
+//   }
+// })
+
 
 export const problemSlice = createSlice({
   name: "problem",
@@ -47,14 +69,22 @@ export const problemSlice = createSlice({
       }
     },
 
-    setSelectedLanguage: (state, action: PayloadAction<string >) => {
+    setSelectedLanguage: (state, action: PayloadAction<string>) => {
       state.selectedLanguage = action.payload;
     },
     setCode: (state, action: PayloadAction<string | undefined>) => {
       state.code = action.payload;
-    }
+    },
+    setPaginationCount: (state, action: PayloadAction<{currentPagination: number, paginationCount: number}>) => {
+      state.pagination = action.payload;
+    },
   },
 });
 
 export default problemSlice.reducer;
-export const { setOpenDropDownMenu, setSelectedLanguage, setCode } = problemSlice.actions;
+export const {
+  setOpenDropDownMenu,
+  setSelectedLanguage,
+  setCode,
+  setPaginationCount
+} = problemSlice.actions;

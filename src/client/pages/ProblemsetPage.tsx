@@ -1,14 +1,29 @@
 import { ProblemList } from "../components/ProblemList";
 import { FilterSection } from "../components/FilterSection";
 import Pagination from "@mui/material/Pagination";
-// import { useSelector } from "react-redux";
-// import { setOpenDropDownMenu } from "../features/problemSlice";
-// import { RootState, useAppDispatch} from '../app/store';
+import { useSelector } from "react-redux";
+import { RootState, useAppDispatch } from "../app/store";
+import { problems } from "./problems";
+import { MAX_PROBLEM_LIMIT } from "../types";
+import { useMemo } from "react";
+import { setPaginationCount } from "../features/problemSlice";
 
 export const ProblemsetPage = () => {
-  // const dispatch = useAppDispatch();
-  // const { openDropDownMenu } = useSelector((state: RootState) => state.problem);
-  // [Todo]- clicking on outside should close the drop down menu wihtout any bug.
+  const dispatch = useAppDispatch();
+  const { pagination } = useSelector((state: RootState) => state.problem);
+  // claculate the number of pagination
+  useMemo(() => {
+    const numberOfPagination = problems.length / MAX_PROBLEM_LIMIT;
+    dispatch(setPaginationCount({
+      ...pagination, 
+      paginationCount: numberOfPagination,
+    }))
+    // filter the problem over here
+    
+  }, [problems])
+
+
+
   return (
     <div
       className=" flex flex-col gap-8 h-screen overflow-scroll items-center  pb-20"
@@ -39,7 +54,7 @@ export const ProblemsetPage = () => {
         </div>
       </div>
       <Pagination
-        count={5}
+        count={pagination.paginationCount} 
         variant = 'outlined'
         sx={{
           "& .MuiPaginationItem-root": {
@@ -56,6 +71,10 @@ export const ProblemsetPage = () => {
               },
             },
           },
+        }}
+        onChange={(event, value) => {
+          console.log('event: ', event);
+          console.log('value:', value);
         }}
       />
     </div>
