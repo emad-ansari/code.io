@@ -1,7 +1,11 @@
 import { createSlice, PayloadAction, createAsyncThunk } from "@reduxjs/toolkit";
-import { ProblemState, DropDownType, MAX_PROBLEM_LIMIT } from "../types";
+import {
+  ProblemState,
+  DropDownType,
+  MAX_PROBLEM_LIMIT,
+  Problem,
+} from "../types";
 import { problems } from "../pages/problems";
-
 
 export const problemSliceInitialState: ProblemState = {
   problems: [],
@@ -42,21 +46,22 @@ export const problemSlice = createSlice({
   reducers: {
     setOpenDropDownMenu: (state, action: PayloadAction<{ menu: string }>) => {
       const { menu } = action.payload;
+      const { isDifficultyMenuOpen, isStatusMenuOpen } = state.openDropDownMenu;
+
       if (menu === "difficulty") {
         const updatedValue: DropDownType = {
           ...state.openDropDownMenu,
+          isStatusMenuOpen: isStatusMenuOpen && !isStatusMenuOpen,
           isDifficultyMenuOpen: !state.openDropDownMenu.isDifficultyMenuOpen,
         };
-        console.log("updated value: ", updatedValue);
         state.openDropDownMenu = updatedValue;
-        // dispatch(setOpenDropDownMenu(updatedValue));
       }
       if (menu == "status") {
         const updatedValue: DropDownType = {
           ...state.openDropDownMenu,
+          isDifficultyMenuOpen: isDifficultyMenuOpen && !isDifficultyMenuOpen,
           isStatusMenuOpen: !state.openDropDownMenu.isStatusMenuOpen,
         };
-        // dispatch(setOpenDropDownMenu(updatedValue));
         state.openDropDownMenu = updatedValue;
       }
       if (menu == "languages") {
@@ -64,7 +69,6 @@ export const problemSlice = createSlice({
           ...state.openDropDownMenu,
           isLanguageMenuOpen: !state.openDropDownMenu.isLanguageMenuOpen,
         };
-        // dispatch(setOpenDropDownMenu(updatedValue));
         state.openDropDownMenu = updatedValue;
       }
     },
@@ -86,12 +90,36 @@ export const problemSlice = createSlice({
     },
     setProblemSet: (state, action: PayloadAction<number>) => {
       const nextPagination = action.payload;
-      const startIndex = (nextPagination - 1) * MAX_PROBLEM_LIMIT ;
+      const startIndex = (nextPagination - 1) * MAX_PROBLEM_LIMIT;
       // [Todo-Future]- change the below problem.slice with state.problem.slice
-      const endIndex = Math.min(nextPagination * MAX_PROBLEM_LIMIT, problems.length );
+      const endIndex = Math.min(
+        nextPagination * MAX_PROBLEM_LIMIT,
+        problems.length
+      );
       // [Todo-Future]- change the below problem.slice with state.problem.slice
       const newProblemSet = problems.slice(startIndex, endIndex);
       state.problemSet = newProblemSet;
+    },
+    filterProblems: (
+      state,
+      action: PayloadAction<{ filterType: string; filterQuery: string }>
+    ) => {
+      const { filterType, filterQuery } = action.payload;
+      let filteredProblems: Problem[] = [];
+
+      if (filterType === "difficulty") {
+        filteredProblems = problems.filter(
+          (problem) => problem.difficultyLevel === filterQuery
+        );
+      }
+
+      if (filterType === "status") {
+        filteredProblems = problems.filter(
+          (problem) => problem.problemStatus === filterQuery
+        );
+      }
+
+      state.problemSet = filteredProblems;
     },
   },
 });
@@ -103,4 +131,5 @@ export const {
   setCode,
   setPaginationCount,
   setProblemSet,
+  filterProblems,
 } = problemSlice.actions;

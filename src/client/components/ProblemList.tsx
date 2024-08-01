@@ -17,7 +17,7 @@ export const ProblemList = memo(() => {
             key={problem.problemId}
             title={problem.problemTitle}
             status={problem.problemStatus}
-            level={problem.problemLevel}
+            level={problem.difficultyLevel}
           />
         );
       })}

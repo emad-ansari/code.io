@@ -23,7 +23,7 @@ export interface Problem {
 	problemId: number;
 	problemTitle: string;
 	problemDescription: string;
-	problemLevel: string;
+	difficultyLevel: string;
 	problemStatus: string;
 }
 

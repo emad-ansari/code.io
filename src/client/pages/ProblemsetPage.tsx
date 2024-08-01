@@ -6,11 +6,11 @@ import { RootState, useAppDispatch } from "../app/store";
 import { problems } from "./problems";
 import { MAX_PROBLEM_LIMIT } from "../types";
 import { useMemo } from "react";
-import { setPaginationCount, setProblemSet } from "../features/problemSlice";
+import { setPaginationCount, setProblemSet, setOpenDropDownMenu } from "../features/problemSlice";
 
 export const ProblemsetPage = () => {
   const dispatch = useAppDispatch();
-  const { pagination } = useSelector((state: RootState) => state.problem);
+  const { pagination, openDropDownMenu } = useSelector((state: RootState) => state.problem);
   // claculate the number of pagination
   useMemo(() => {
     const numberOfPagination = Math.ceil(problems.length / MAX_PROBLEM_LIMIT);
@@ -28,14 +28,14 @@ export const ProblemsetPage = () => {
   return (
     <div
       className=" flex flex-col gap-8 h-screen overflow-scroll items-center  pb-20"
-      // onClick={() => {
-      //     if (openDropDownMenu.isDifficultyMenuOpen) {
-      //       dispatch(setOpenDropDownMenu({menu: "difficulty"}));
-      //     }
-      //     else if(openDropDownMenu.isStatusMenuOpen){
-      //       dispatch(setOpenDropDownMenu({menu: "status"}));
-      //     }
-      // }}
+      onClick={() => {
+          if (openDropDownMenu.isDifficultyMenuOpen) {
+            dispatch(setOpenDropDownMenu({menu: "difficulty"}));
+          }
+          else if(openDropDownMenu.isStatusMenuOpen){
+            dispatch(setOpenDropDownMenu({menu: "status"}));
+          }
+      }}
     >
       <div className="flex flex-col gap-8 pt-10 w-[900px]">
         <FilterSection />
