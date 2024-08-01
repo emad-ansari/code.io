@@ -6,23 +6,24 @@ import { RootState, useAppDispatch } from "../app/store";
 import { problems } from "./problems";
 import { MAX_PROBLEM_LIMIT } from "../types";
 import { useMemo } from "react";
-import { setPaginationCount } from "../features/problemSlice";
+import { setPaginationCount, setProblemSet } from "../features/problemSlice";
 
 export const ProblemsetPage = () => {
   const dispatch = useAppDispatch();
   const { pagination } = useSelector((state: RootState) => state.problem);
   // claculate the number of pagination
   useMemo(() => {
-    const numberOfPagination = problems.length / MAX_PROBLEM_LIMIT;
-    dispatch(setPaginationCount({
-      ...pagination, 
-      paginationCount: numberOfPagination,
-    }))
+    const numberOfPagination = Math.ceil(problems.length / MAX_PROBLEM_LIMIT);
+    dispatch(
+      setPaginationCount({
+        ...pagination,
+        paginationCount: numberOfPagination,
+      })
+    );
+
     // filter the problem over here
-    
-  }, [problems])
-
-
+    dispatch(setProblemSet(1));
+  }, [problems]);
 
   return (
     <div
@@ -54,8 +55,8 @@ export const ProblemsetPage = () => {
         </div>
       </div>
       <Pagination
-        count={pagination.paginationCount} 
-        variant = 'outlined'
+        count={pagination.paginationCount}
+        variant="outlined"
         sx={{
           "& .MuiPaginationItem-root": {
             backgroundColor: "#2B2A2B",
@@ -72,9 +73,8 @@ export const ProblemsetPage = () => {
             },
           },
         }}
-        onChange={(event, value) => {
-          console.log('event: ', event);
-          console.log('value:', value);
+        onChange={(_, value) => {
+          dispatch(setProblemSet(value));
         }}
       />
     </div>

@@ -1,93 +1,108 @@
 export const problems = [
     {
-        id: 1,
-        title: "1.Two sum",
-        level: 'Medium',
-        status: 'daily'
+        problemId: 1,
+        problemTitle: "1.Two sum",
+        problemDescription: "",
+        problemLevel: 'Medium',
+        problemStatus: 'daily'
     },
     {
-        id: 2,
-        title: "1.Two sum",
-        level: 'Hard',
-        status: 'completed'
+        problemId: 2,
+        problemTitle: "1.Two sum",
+        problemDescription: "",
+        problemLevel: 'Hard',
+        problemStatus: 'completed'
     },
     {
-        id: 3,
-        title: "1.Two sum",
-        level: 'Easy',
-        status: 'completed'
+        problemId: 3,
+        problemTitle: "1.Two sum",
+        problemDescription: "",
+        problemLevel: 'Easy',
+        problemStatus: 'completed'
     },
     {
-        id: 4,
-        title: "Given an array, find the minimum of it",
-        level: 'Medium',
-        status: ''
+        problemId: 4,
+        problemTitle: "Given an array, find the minimum of it",
+        problemDescription: "",
+        problemLevel: 'Medium',
+        problemStatus: ''
     },
     {
-        id: 5,
-        title: "1.Two sum",
-        level: 'Hard',
-        status: 'visited'
+        problemId: 5,
+        problemTitle: "1.Two sum",
+        problemDescription: "",
+        problemLevel: 'Hard',
+        problemStatus: 'visited'
     },
     {
-        id: 6,
-        title: "1.Two sum",
-        level: 'Easy',
-        status: ''
+        problemId: 6,
+        problemTitle: "1.Two sum",
+        problemDescription: "",
+        problemLevel: 'Easy',
+        problemStatus: ''
     },
     {
-        id: 7,
-        title: "1.Two sum",
-        level: 'Medium',
-        status: 'completed'
+        problemId: 7,
+        problemTitle: "1.Two sum",
+        problemDescription: "",
+        problemLevel: 'Medium',
+        problemStatus: 'completed'
     },
     {
-        id: 8,
-        title: "1.Two sum",
-        level: 'Hard',
-        status: 'visited'
+        problemId: 8,
+        problemTitle: "1.Two sum",
+        problemDescription: "",
+        problemLevel: 'Hard',
+        problemStatus: 'visited'
     },
     {
-        id: 9,
-        title: "1.Two sum",
-        level: 'Easy',
-        status: 'completed'
+        problemId: 9,
+        problemTitle: "1.Two sum",
+        problemDescription: "",
+        problemLevel: 'Easy',
+        problemStatus: 'completed'
     },
     {
-        id: 10,
-        title: "1.Two sum",
-        level: 'Medium',
-        status: 'visited'
+        problemId: 10,
+        problemTitle: "1.Two sum",
+        problemDescription: "",
+        problemLevel: 'Medium',
+        problemStatus: 'visited'
     },
     {
-        id: 11,
-        title: "1.Two sum",
-        level: 'Medium',
-        status: ''
+        problemId: 11,
+        problemTitle: "1.Two sum",
+        problemDescription: "",
+        problemLevel: 'Medium',
+        problemStatus: ''
     },
     {
-        id: 12,
-        title: "1.Two sum",
-        level: 'Hard',
-        status: ''
+        problemId: 12,
+        problemTitle: "1.Two sum",
+        problemDescription: "",
+        problemLevel: 'Hard',
+        problemStatus: ''
     },
     {
-        id: 13,
-        title: "1.Two sum",
-        level: 'Easy',
-        status: 'completed'
+        problemId: 13,
+        problemTitle: "1.Two sum",
+        problemDescription: "",
+        problemLevel: 'Easy',
+        problemStatus: 'completed'
     },
     {
-        id: 14,
-        title: "1.Two sum",
-        level: 'Medium',
-        status: 'visited'
+        problemId: 14,
+        problemTitle: "1.Two sum",
+        problemDescription: "",
+        problemLevel: 'Medium',
+        problemStatus: 'visited'
     },
     {
-        id: 15,
-        title: "1.Two sum",
-        level: 'Hard',
-        status: ''
+        problemId: 15,
+        problemTitle: "1.Two sum",
+        problemDescription: "",
+        problemLevel: 'Hard',
+        problemStatus: ''
     },
 
 ]

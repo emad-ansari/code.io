@@ -6,15 +6,12 @@ import { memo } from 'react';
 
 
 export const ProblemList = memo(() => {
-  // Todo - only render the MAX_PROBLEM_LIMIT
-  // calculate the number of pagination count and setPagination count
-  const { problems } = useSelector((state: RootState) => state.problem);
 
-  // 
-
+  const { problemSet } = useSelector((state: RootState) => state.problem);
+  console.log(problemSet);
   return (
     <>
-      {problems.map((problem) => {
+      {problemSet.map((problem) => {
         return (
           <Problem
             key={problem.problemId}
