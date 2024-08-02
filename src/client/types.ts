@@ -3,7 +3,6 @@ export let MAX_PROBLEM_LIMIT = 10;
 export interface ProblemState {
 	problems: Array<Problem>;
 	problemSet: Array<Problem>;
-	openDropDownMenu: DropDownType;
 	selectedLanguage: string;
 	code: string | undefined;
 	pagination : {
@@ -27,4 +26,8 @@ export interface Problem {
 	problemStatus: string;
 }
 
+
+export interface ProblemFilter {
+	openDropDownMenu: DropDownType;
+}
 

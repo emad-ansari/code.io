@@ -1,8 +1,9 @@
 import { StatusFilterButton } from "./StatusFilterButton";
 import { DifficultyFitlerButton } from "./DifficultyFilterButton";
 import { IoSearchOutline } from "react-icons/io5";
+import { memo } from 'react';
 
-export const FilterSection = () => {
+export const FilterSection = memo(() => {
   return (
     <nav className="flex flex-row gap-10 w-full ">
       <DifficultyFitlerButton />
@@ -17,4 +18,5 @@ export const FilterSection = () => {
       </div>
     </nav>
   );
-};
+}); 
+

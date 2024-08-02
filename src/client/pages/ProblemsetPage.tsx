@@ -1,6 +1,6 @@
 import { ProblemList } from "../components/ProblemList";
 import { FilterSection } from "../components/FilterSection";
-import Pagination from "@mui/material/Pagination";
+import { CustomPagination } from "../components/CustomPagination";
 import { useSelector } from "react-redux";
 import { RootState, useAppDispatch } from "../app/store";
 import { problems } from "./problems";
@@ -9,14 +9,16 @@ import { useMemo } from "react";
 import {
 	setPaginationCount,
 	setProblemSet,
-	setOpenDropDownMenu,
 } from "../features/problemSlice";
+import { setOpenDropDownMenu } from "../features/problemFilterSlice";
+
 
 export const ProblemsetPage = () => {
 	const dispatch = useAppDispatch();
-	const { pagination, openDropDownMenu } = useSelector(
+	const { pagination } = useSelector(
 		(state: RootState) => state.problem
 	);
+	const { openDropDownMenu} = useSelector((state: RootState) => state.filter);
 	// claculate the number of pagination
 	useMemo(() => {
 		const numberOfPagination = Math.ceil(
@@ -33,24 +35,31 @@ export const ProblemsetPage = () => {
 		dispatch(setProblemSet(1));
 	}, [problems]);
 
+	const handleDropDown = (e: React.SyntheticEvent<EventTarget>) => {
+		// Todo - this event shouldn't be fire when clicking on button
+		// how can i make sure that clicking on button doesn't fire the event of page
+		if (e.target !== e.currentTarget) return;	
+		
+		console.log("page fire...");
+		if (openDropDownMenu.isDifficultyMenuOpen) {
+			dispatch(
+				setOpenDropDownMenu({
+					menu: "difficulty",
+				})
+			);
+		} else if (openDropDownMenu.isStatusMenuOpen) {
+			dispatch(
+				setOpenDropDownMenu({
+					menu: "status",
+				})
+			);
+		}
+	};
+
 	return (
 		<div
 			className=" flex flex-col gap-8 h-screen overflow-scroll items-center  pb-20"
-			onClick={() => {
-				if (openDropDownMenu.isDifficultyMenuOpen) {
-					dispatch(
-						setOpenDropDownMenu({
-							menu: "difficulty",
-						})
-					);
-				} else if (openDropDownMenu.isStatusMenuOpen) {
-					dispatch(
-						setOpenDropDownMenu({
-							menu: "status",
-						})
-					);
-				}
-			}}
+			onClick={(e: React.SyntheticEvent<EventTarget>) => handleDropDown(e)}
 		>
 			<div className="flex flex-col gap-8 pt-10 w-[900px]">
 				<FilterSection />
@@ -65,33 +74,9 @@ export const ProblemsetPage = () => {
 						Difficulty
 					</span>
 				</div>
-				<div className="flex flex-col gap-2">
-					<ProblemList />
-				</div>
+				<ProblemList />
 			</div>
-			<Pagination
-				count={pagination.paginationCount}
-				variant="outlined"
-				sx={{
-					"& .MuiPaginationItem-root": {
-						backgroundColor: "#2B2A2B",
-						color: "#fff", // Change the text color if needed
-						"&:hover": {
-							backgroundColor: "#0c8a45", // Change the background color on hover
-						},
-						"&.Mui-selected": {
-							backgroundColor: "#0FA958", // Change the background color of the selected item
-							color: "#fff",
-							"&:hover": {
-								backgroundColor: "#0c8a45", // Change the background color on hover for the selected item
-							},
-						},
-					},
-				}}
-				onChange={(_, value) => {
-					dispatch(setProblemSet(value));
-				}}
-			/>
+			<CustomPagination /> 
 		</div>
 	);
 };

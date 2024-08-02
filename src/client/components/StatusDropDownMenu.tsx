@@ -7,7 +7,7 @@ import { filterProblems } from "../features/problemSlice";
 
 export const StatusDropDownMenu = () => {
   const dispatch = useAppDispatch();
-  const { openDropDownMenu } = useSelector((state: RootState) => state.problem);
+  const { openDropDownMenu } = useSelector((state: RootState) => state.filter);
 
   return (
     <div

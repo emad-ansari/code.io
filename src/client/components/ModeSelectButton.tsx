@@ -2,13 +2,14 @@ import { MdKeyboardArrowDown} from "react-icons/md";
 import { LanguageDropDownMenu } from "./LanguageDropDownMenu";
 import { RootState, useAppDispatch } from "../app/store";
 import { useSelector } from "react-redux";
-import { setOpenDropDownMenu } from "../features/problemSlice";
+import { setOpenDropDownMenu } from "../features/problemFilterSlice";
 import { Button } from "./Button";
 import { memo } from 'react'
 
 
 export const ModeSelectButton = memo(() => {
-    const { openDropDownMenu , selectedLanguage} = useSelector((state: RootState) => state.problem);
+    const { selectedLanguage} = useSelector((state: RootState) => state.problem);
+    const { openDropDownMenu} = useSelector((state: RootState) => state.filter);
     const dispatch = useAppDispatch();
   
   return (

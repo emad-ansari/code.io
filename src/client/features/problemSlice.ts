@@ -1,7 +1,6 @@
 import { createSlice, PayloadAction, createAsyncThunk } from "@reduxjs/toolkit";
 import {
   ProblemState,
-  DropDownType,
   MAX_PROBLEM_LIMIT,
   Problem,
 } from "../types";
@@ -10,11 +9,6 @@ import { problems } from "../pages/problems";
 export const problemSliceInitialState: ProblemState = {
   problems: [],
   problemSet: [],
-  openDropDownMenu: {
-    isDifficultyMenuOpen: false,
-    isStatusMenuOpen: false,
-    isLanguageMenuOpen: false,
-  },
   code: ``,
   selectedLanguage: "javascript",
   pagination: {
@@ -44,34 +38,7 @@ export const problemSlice = createSlice({
   name: "problem",
   initialState: problemSliceInitialState,
   reducers: {
-    setOpenDropDownMenu: (state, action: PayloadAction<{ menu: string }>) => {
-      const { menu } = action.payload;
-      const { isDifficultyMenuOpen, isStatusMenuOpen } = state.openDropDownMenu;
-
-      if (menu === "difficulty") {
-        const updatedValue: DropDownType = {
-          ...state.openDropDownMenu,
-          isStatusMenuOpen: isStatusMenuOpen && !isStatusMenuOpen,
-          isDifficultyMenuOpen: !state.openDropDownMenu.isDifficultyMenuOpen,
-        };
-        state.openDropDownMenu = updatedValue;
-      }
-      if (menu == "status") {
-        const updatedValue: DropDownType = {
-          ...state.openDropDownMenu,
-          isDifficultyMenuOpen: isDifficultyMenuOpen && !isDifficultyMenuOpen,
-          isStatusMenuOpen: !state.openDropDownMenu.isStatusMenuOpen,
-        };
-        state.openDropDownMenu = updatedValue;
-      }
-      if (menu == "languages") {
-        const updatedValue: DropDownType = {
-          ...state.openDropDownMenu,
-          isLanguageMenuOpen: !state.openDropDownMenu.isLanguageMenuOpen,
-        };
-        state.openDropDownMenu = updatedValue;
-      }
-    },
+    
 
     setSelectedLanguage: (state, action: PayloadAction<string>) => {
       state.selectedLanguage = action.payload;
@@ -126,7 +93,6 @@ export const problemSlice = createSlice({
 
 export default problemSlice.reducer;
 export const {
-  setOpenDropDownMenu,
   setSelectedLanguage,
   setCode,
   setPaginationCount,

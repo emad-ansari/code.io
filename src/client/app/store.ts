@@ -1,10 +1,12 @@
 import { configureStore } from "@reduxjs/toolkit";
 import problemReducer from "../features/problemSlice";
+import problemFilterReducer from '../features/problemFilterSlice';
 import { useDispatch } from 'react-redux'
 
 export const store = configureStore({
     reducer: {
-        problem: problemReducer
+        problem: problemReducer,
+        filter: problemFilterReducer
     }
 });
 
