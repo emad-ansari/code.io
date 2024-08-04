@@ -5,8 +5,7 @@ import { memo } from "react";
 
 export const ProblemList = memo(() => {
 	const { problemSet } = useSelector((state: RootState) => state.problem);
-	console.log('Problem component re-render');
-
+	
 	return (
 		
     <div className="flex flex-col gap-2">

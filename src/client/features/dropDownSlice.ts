@@ -9,8 +9,8 @@ export const problemFilterInitialState: ProblemFilter = {
 	},
 };
 
-export const problemFilterSlice = createSlice({
-	name: "filter",
+export const dropDownSlice = createSlice({
+	name: "dropdown",
 	initialState: problemFilterInitialState,
 	reducers: {
 		setOpenDropDownMenu: (
@@ -49,5 +49,5 @@ export const problemFilterSlice = createSlice({
 	},
 });
 
-export default problemFilterSlice.reducer;
-export const { setOpenDropDownMenu } = problemFilterSlice.actions;
+export default dropDownSlice.reducer;
+export const { setOpenDropDownMenu } = dropDownSlice.actions;

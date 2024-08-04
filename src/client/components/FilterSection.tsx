@@ -4,6 +4,7 @@ import { IoSearchOutline } from "react-icons/io5";
 import { memo } from 'react';
 
 export const FilterSection = memo(() => {
+  
   return (
     <nav className="flex flex-row gap-10 w-full ">
       <DifficultyFitlerButton />

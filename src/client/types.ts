@@ -31,3 +31,6 @@ export interface ProblemFilter {
 	openDropDownMenu: DropDownType;
 }
 
+export interface FilterState {
+	filteredProblems: Problem[];
+}

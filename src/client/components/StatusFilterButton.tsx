@@ -3,20 +3,20 @@ import { StatusDropDownMenu } from "../components/StatusDropDownMenu";
 import { MdKeyboardArrowDown } from "react-icons/md";
 import { useSelector } from "react-redux";
 import { RootState, useAppDispatch } from "../app/store";
-import { setOpenDropDownMenu } from "../features/problemFilterSlice";
+import { setOpenDropDownMenu } from "../features/dropDownSlice";
 import { memo } from "react";
 
 export const StatusFilterButton = memo(() => {
 	const dispatch = useAppDispatch();
 	const { openDropDownMenu } = useSelector(
-		(state: RootState) => state.filter
+		(state: RootState) => state.dropdown
 	);
 
 	return (
 		<Button
 			classname="relative flex flex-row itmes-center bg-[#2B2A2B] gap-2 text-white hover:bg-[#403c3c] z-50"
-			onClick={(e: React.SyntheticEvent<EventTarget> ) => {
-        e.stopPropagation();
+			onClick={(e: React.SyntheticEvent<EventTarget>) => {
+				e.stopPropagation();
 				dispatch(setOpenDropDownMenu({ menu: "status" }));
 			}}
 		>

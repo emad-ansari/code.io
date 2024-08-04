@@ -6,19 +6,15 @@ import { RootState, useAppDispatch } from "../app/store";
 import { problems } from "./problems";
 import { MAX_PROBLEM_LIMIT } from "../types";
 import { useMemo, memo } from "react";
-import {
-	setPaginationCount,
-	setProblemSet,
-} from "../features/problemSlice";
-import { setOpenDropDownMenu } from "../features/problemFilterSlice";
-
+import { setPaginationCount, setProblemSet } from "../features/problemSlice";
+import { setOpenDropDownMenu } from "../features/dropDownSlice";
 
 export const ProblemsetPage = () => {
 	const dispatch = useAppDispatch();
-	const { pagination } = useSelector(
-		(state: RootState) => state.problem
+	const { pagination } = useSelector((state: RootState) => state.problem);
+	const { openDropDownMenu } = useSelector(
+		(state: RootState) => state.dropdown
 	);
-	const { openDropDownMenu} = useSelector((state: RootState) => state.filter);
 	// claculate the number of pagination
 	useMemo(() => {
 		const numberOfPagination = Math.ceil(
@@ -38,7 +34,7 @@ export const ProblemsetPage = () => {
 	const handleDropDown = (e: React.SyntheticEvent<EventTarget>) => {
 		// Todo - this event shouldn't be fire when clicking on button
 		// how can i make sure that clicking on button doesn't fire the event of page
-		if (e.target !== e.currentTarget) return;	
+		if (e.target !== e.currentTarget) return;
 
 		if (openDropDownMenu.isDifficultyMenuOpen) {
 			dispatch(
@@ -58,7 +54,9 @@ export const ProblemsetPage = () => {
 	return (
 		<div
 			className=" flex flex-col gap-8 h-screen overflow-scroll items-center  pb-20"
-			onClick={(e: React.SyntheticEvent<EventTarget>) => handleDropDown(e)}
+			onClick={(e: React.SyntheticEvent<EventTarget>) =>
+				handleDropDown(e)
+			}
 		>
 			<div className="flex flex-col gap-8 pt-10 w-[900px]">
 				<FilterSection />
@@ -75,40 +73,38 @@ export const ProblemsetPage = () => {
 				</div>
 				<ProblemList />
 			</div>
-			<CustomPagination /> 
+			<CustomPagination />
 		</div>
 	);
 };
 
-
-
 const CustomPagination = memo(() => {
-    const dispatch = useAppDispatch();
-    const { pagination } = useSelector((state: RootState) => state.problem);
+	const dispatch = useAppDispatch();
+	const { pagination } = useSelector((state: RootState) => state.problem);
 
-    return (
-        <Pagination
-            count={pagination.paginationCount}
-            variant="outlined"
-            sx={{
-                "& .MuiPaginationItem-root": {
-                    backgroundColor: "#2B2A2B",
-                    color: "#fff", // Change the text color if needed
-                    "&:hover": {
-                        backgroundColor: "#0c8a45", // Change the background color on hover
-                    },
-                    "&.Mui-selected": {
-                        backgroundColor: "#0FA958", // Change the background color of the selected item
-                        color: "#fff",
-                        "&:hover": {
-                            backgroundColor: "#0c8a45", // Change the background color on hover for the selected item
-                        },
-                    },
-                },
-            }}
-            onChange={(_, value) => {
-                dispatch(setProblemSet(value));
-            }}
-        />
-    )
+	return (
+		<Pagination
+			count={pagination.paginationCount}
+			variant="outlined"
+			sx={{
+				"& .MuiPaginationItem-root": {
+					backgroundColor: "#2B2A2B",
+					color: "#fff", // Change the text color if needed
+					"&:hover": {
+						backgroundColor: "#0c8a45", // Change the background color on hover
+					},
+					"&.Mui-selected": {
+						backgroundColor: "#0FA958", // Change the background color of the selected item
+						color: "#fff",
+						"&:hover": {
+							backgroundColor: "#0c8a45", // Change the background color on hover for the selected item
+						},
+					},
+				},
+			}}
+			onChange={(_, value) => {
+				dispatch(setProblemSet(value));
+			}}
+		/>
+	);
 });

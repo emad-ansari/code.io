@@ -3,13 +3,13 @@ import { DifficultyDropDownMenu } from "../components/DifficultyDroptDownMenu";
 import { MdKeyboardArrowDown } from "react-icons/md";
 import { useSelector } from "react-redux";
 import { RootState, useAppDispatch } from "../app/store";
-import { setOpenDropDownMenu } from "../features/problemFilterSlice";
+import { setOpenDropDownMenu } from "../features/dropDownSlice";
 import { memo } from "react";
 
 export const DifficultyFitlerButton = memo(() => {
 	const dispatch = useAppDispatch();
 	const { openDropDownMenu } = useSelector(
-		(state: RootState) => state.filter
+		(state: RootState) => state.dropdown
 	);
 
 	return (

@@ -3,14 +3,14 @@ export const problems = [
         problemId: 1,
         problemTitle: "1.Two sum",
         problemDescription: "",
-        difficultyLevel: 'Medium',
+        difficultyLevel: 'Easy',
         problemStatus: 'daily'
     },
     {
         problemId: 2,
         problemTitle: "1.Two sum",
         problemDescription: "",
-        difficultyLevel: 'Hard',
+        difficultyLevel: 'Easy',
         problemStatus: 'completed'
     },
     {
@@ -24,14 +24,14 @@ export const problems = [
         problemId: 4,
         problemTitle: "Given an array, find the minimum of it",
         problemDescription: "",
-        difficultyLevel: 'Medium',
+        difficultyLevel: 'Easy',
         problemStatus: ''
     },
     {
         problemId: 5,
         problemTitle: "1.Two sum",
         problemDescription: "",
-        difficultyLevel: 'Hard',
+        difficultyLevel: 'Easy',
         problemStatus: 'visited'
     },
     {
@@ -45,14 +45,14 @@ export const problems = [
         problemId: 7,
         problemTitle: "1.Two sum",
         problemDescription: "",
-        difficultyLevel: 'Medium',
+        difficultyLevel: 'Easy',
         problemStatus: 'completed'
     },
     {
         problemId: 8,
         problemTitle: "1.Two sum",
         problemDescription: "",
-        difficultyLevel: 'Hard',
+        difficultyLevel: 'Easy',
         problemStatus: 'visited'
     },
     {
@@ -73,14 +73,14 @@ export const problems = [
         problemId: 11,
         problemTitle: "1.Two sum",
         problemDescription: "",
-        difficultyLevel: 'Medium',
+        difficultyLevel: 'Easy',
         problemStatus: ''
     },
     {
         problemId: 12,
         problemTitle: "1.Two sum",
         problemDescription: "",
-        difficultyLevel: 'Hard',
+        difficultyLevel: 'Easy',
         problemStatus: ''
     },
     {

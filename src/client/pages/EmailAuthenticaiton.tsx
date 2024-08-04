@@ -12,11 +12,11 @@ export const EmailAuthenticaiton = () => {
   };
 
   return (
-    <div className="bg-[#141515] flex fixed top-0 bottom-0 left-0 right-0">
-      <div className="flex flex-col relative w-[500px] h-[400px] top-[164px] left-[486px] bg-[#00242c] rounded-[29px] items-center pt-10">
+    <div className="bg-[#030303] flex fixed top-0 bottom-0 left-0 right-0">
+      <div className="flex flex-col relative w-[500px] h-[400px] top-[164px] left-[486px] bg-[#0D1621] rounded-[29px] items-center pt-10">
         <div className="flex flex-col items-center gap-8">
-          <div className="h-[38px]  [font-family:'Inria_Sans-Bold',Helvetica] font-bold text-[#81e291] text-[25px] text-center tracking-[3.20px] leading-[normal] whitespace-nowrap">
-            Email Authentication
+          <div className="h-[38px]  [font-family:'Inria_Sans-Bold',Helvetica] font-bold text-white text-[25px] text-center tracking-[3.20px] leading-[normal] whitespace-nowrap">
+            Email Verification
           </div>
           <div className=" [font-family:'Inter-Regular',Helvetica] font-normal text-white text-xl tracking-[2.40px] leading-[normal]">
             Enter OTP code
@@ -37,7 +37,7 @@ export const EmailAuthenticaiton = () => {
               />
             ))}
           </div>
-          <Button classname="bg-[#81e291] rounded-[10px] text-black [font-family:'Inter-Regular',Helvetica] h-14 w-72 hover:bg-[#9beca8]">
+          <Button classname="bg-white rounded-[10px] text-black [font-family:'Inter-Regular',Helvetica] h-14 w-72 hover:bg-[#9CA3AF]">
             Verify OTP
           </Button>
           <a className=" [font-family:'Inter-Regular',Helvetica] font-normal text-white  hover:text-red-400 text-[15px] text-center tracking-[1.50px] leading-[normal] whitespace-nowrap cursor-pointer">

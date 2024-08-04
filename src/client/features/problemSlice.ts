@@ -50,37 +50,18 @@ export const problemSlice = createSlice({
 			state.pagination = action.payload;
 		},
 		setProblemSet: (state, action: PayloadAction<number>) => {
-			const nextPagination = action.payload;
-			const startIndex = (nextPagination - 1) * MAX_PROBLEM_LIMIT;
+			const  nextPaginationNumber = action.payload;
+			const startIndex = (nextPaginationNumber - 1) * MAX_PROBLEM_LIMIT;
 			// [Todo-Future]- change the below problem.slice with state.problem.slice
 			const endIndex = Math.min(
-				nextPagination * MAX_PROBLEM_LIMIT,
+				nextPaginationNumber * MAX_PROBLEM_LIMIT,
 				problems.length
 			);
 			// [Todo-Future]- change the below problem.slice with state.problem.slice
 			const newProblemSet = problems.slice(startIndex, endIndex);
 			state.problemSet = newProblemSet;
 		},
-		filterProblems: (
-			state,
-			action: PayloadAction<{ filterType: string; filterQuery: string }>
-		) => {
-			const { filterType, filterQuery } = action.payload;
-			let filteredProblems: Problem[] = [];
-
-			if (filterType === "difficulty") {
-				filteredProblems = problems.filter(
-					(problem) => problem.difficultyLevel === filterQuery
-				);
-			}
-
-			if (filterType === "status") {
-				filteredProblems = problems.filter(
-					(problem) => problem.problemStatus === filterQuery
-				);
-			}
-			state.problemSet = filteredProblems;
-		},
+		
 	},
 });
 
@@ -90,5 +71,4 @@ export const {
 	setCode,
 	setPaginationCount,
 	setProblemSet,
-	filterProblems,
 } = problemSlice.actions;

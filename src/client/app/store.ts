@@ -1,18 +1,15 @@
 import { configureStore } from "@reduxjs/toolkit";
 import problemReducer from "../features/problemSlice";
-import problemFilterReducer from '../features/problemFilterSlice';
-import { useDispatch } from 'react-redux'
+import dropDownReducer from "../features/dropDownSlice";
+import { useDispatch } from "react-redux";
 
 export const store = configureStore({
-    reducer: {
-        problem: problemReducer,
-        filter: problemFilterReducer
-    }
+	reducer: {
+		problem: problemReducer,
+		dropdown: dropDownReducer,
+	},
 });
 
 export type RootState = ReturnType<typeof store.getState>;
 export type AppDispatch = typeof store.dispatch;
-export const useAppDispatch  = () => useDispatch<AppDispatch>();
-
-
-
+export const useAppDispatch = () => useDispatch<AppDispatch>();
