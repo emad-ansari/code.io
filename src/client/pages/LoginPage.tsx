@@ -21,7 +21,7 @@ export const LoginPage = () => {
                 <div className = 'flex flex-col gap-5 pt-5  w-[350px]'>
                     <EmailInputField /> 
                     <PasswordInputField/>
-                    <Button  classname='w-full bg-gray-400 text-sm font-medium' >Log In</Button> 
+                    <Button  classname='w-full bg-cyan text-sm font-medium hover:bg-[#a5f3fc]' >Log In</Button> 
                     <div className='flex flex-row gap-4 items-center justify-between'>
                         <hr className='w-40 h-[1px]  bg-gray-200 border-0 dark:bg-gray-500' />
                         <span className = 'text-white text-sm'>OR</span>

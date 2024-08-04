@@ -15,7 +15,7 @@ export const EmailAuthenticaiton = () => {
     <div className="bg-[#030303] flex fixed top-0 bottom-0 left-0 right-0">
       <div className="flex flex-col relative w-[500px] h-[400px] top-[164px] left-[486px] bg-[#0D1621] rounded-[29px] items-center pt-10">
         <div className="flex flex-col items-center gap-8">
-          <div className="h-[38px]  [font-family:'Inria_Sans-Bold',Helvetica] font-bold text-white text-[25px] text-center tracking-[3.20px] leading-[normal] whitespace-nowrap">
+          <div className="h-[38px]  [font-family:'Inria_Sans-Bold',Helvetica] font-bold text-[#ecfeff] text-[25px] text-center tracking-[3.20px] leading-[normal] whitespace-nowrap">
             Email Verification
           </div>
           <div className=" [font-family:'Inter-Regular',Helvetica] font-normal text-white text-xl tracking-[2.40px] leading-[normal]">
@@ -33,11 +33,11 @@ export const EmailAuthenticaiton = () => {
                   inputRefs.current[index] = el
                 }} 
                 onChange={(e) => handleInput(e, index)}
-                className="w-[54px] h-14  bg-[#d9d9d9] rounded-[10px] text-center font-bold no-spin"    
+                className="w-[54px] h-14  bg-cyan rounded-[10px] text-center font-bold no-spin"    
               />
             ))}
           </div>
-        <Button classname="bg-[#d1d5db] rounded-[10px] text-black [font-family:'Inter-Regular',Helvetica] h-14 w-72 hover:bg-[#9CA3AF]">
+        <Button classname="bg-cyan rounded-[10px] text-black [font-family:'Inter-Regular',Helvetica] h-14 w-72 hover:bg-[#ecfeff]">
             Verify OTP
           </Button>
           <a className=" [font-family:'Inter-Regular',Helvetica] font-normal text-white  hover:text-red-400 text-[15px] text-center tracking-[1.50px] leading-[normal] whitespace-nowrap cursor-pointer">

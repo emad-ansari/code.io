@@ -9,7 +9,11 @@ export default {
       fontFamily: {
         fugaz: [ "Fugaz One", "sans-serif"],
         dmMono: ["DM Mono", "monospace"]
-      }
+      },
+      colors: {
+        cyan: '#cffafe'
+      },
+      
     },
   },
   plugins: [
