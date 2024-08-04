@@ -37,7 +37,7 @@ export const EmailAuthenticaiton = () => {
               />
             ))}
           </div>
-          <Button classname="bg-white rounded-[10px] text-black [font-family:'Inter-Regular',Helvetica] h-14 w-72 hover:bg-[#9CA3AF]">
+        <Button classname="bg-[#d1d5db] rounded-[10px] text-black [font-family:'Inter-Regular',Helvetica] h-14 w-72 hover:bg-[#9CA3AF]">
             Verify OTP
           </Button>
           <a className=" [font-family:'Inter-Regular',Helvetica] font-normal text-white  hover:text-red-400 text-[15px] text-center tracking-[1.50px] leading-[normal] whitespace-nowrap cursor-pointer">
