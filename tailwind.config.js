@@ -14,7 +14,8 @@ export default {
         cyan: '#cffafe',
         PRIMARY: '#030303',
         white: '#fbfbfb',
-        
+        darkGray: '#0D1621',
+        hover: '#334155',
       },
       
     },

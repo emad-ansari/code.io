@@ -88,13 +88,13 @@ const CustomPagination = memo(() => {
 			variant="outlined"
 			sx={{
 				"& .MuiPaginationItem-root": {
-					backgroundColor: "#2B2A2B",
+					backgroundColor: "#0D1621",
 					color: "#fff", // Change the text color if needed
 					"&:hover": {
-						backgroundColor: "#0c8a45", // Change the background color on hover
+						backgroundColor: "#334155", // Change the background color on hover
 					},
 					"&.Mui-selected": {
-						backgroundColor: "#0FA958", // Change the background color of the selected item
+						backgroundColor: "#334155", // Change the background color of the selected item
 						color: "#fff",
 						"&:hover": {
 							backgroundColor: "#0c8a45", // Change the background color on hover for the selected item

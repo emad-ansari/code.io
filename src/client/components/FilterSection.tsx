@@ -12,7 +12,7 @@ export const FilterSection = memo(() => {
       <div className="relative flex flex-1 text-white shadow-inner ">
         <input
           type="text"
-          className="bg-[#2B2A2B] rounded-md outline-none px-10 text-sm w-full placeholder-[#484848] focus:bg-[#403c3c] "
+          className="bg-darkGray rounded-md outline-none px-10 text-sm w-full placeholder-[#484848] focus:ring ring-slate-800 "
           placeholder="Search Questions..."
         />
         <IoSearchOutline className="absolute top-1/3 left-3" />

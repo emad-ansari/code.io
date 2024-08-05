@@ -14,7 +14,7 @@ export const DifficultyFitlerButton = memo(() => {
 
 	return (
 		<Button
-			classname=" relative flex flex-row itmes-center bg-[#2B2A2B] gap-2 text-white shadow-inner hover:bg-[#403c3c] z-50"
+			classname="bg-darkGray relative flex flex-row itmes-center  gap-2 text-white shadow-inner hover:bg-hover z-50 rounded-md"
 			onClick={() => {
 				dispatch(setOpenDropDownMenu({ menu: "difficulty" }));
 			}}

@@ -14,7 +14,7 @@ export const StatusFilterButton = memo(() => {
 
 	return (
 		<Button
-			classname="relative flex flex-row itmes-center bg-[#2B2A2B] gap-2 text-white hover:bg-[#403c3c] z-50"
+			classname="relative flex flex-row itmes-center bg-darkGray gap-2 text-white hover:bg-hover z-50 rounded-md"
 			onClick={(e: React.SyntheticEvent<EventTarget>) => {
 				e.stopPropagation();
 				dispatch(setOpenDropDownMenu({ menu: "status" }));

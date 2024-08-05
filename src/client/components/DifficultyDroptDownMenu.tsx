@@ -8,14 +8,14 @@ export const DifficultyDropDownMenu = () => {
 
   return (
     <div
-      className={`flex flex-col bg-[#2B2A2B] absolute bottom-0 left-0 right-0 top-[110%] h-[125px] items-center rounded-lg py-2 z-10 shadow-md text-sm ${
+      className={`flex flex-col bg-darkGray absolute bottom-0 left-0 right-0 top-[110%] h-[125px] items-center rounded-lg py-2 z-10 shadow-md text-sm ${
         openDropDownMenu.isDifficultyMenuOpen
           ? "transform translate-y-0 "
           : "translate-y-[-50%]  hidden"
       } ease-in-out duration-300`}
     >
       <span
-        className="text-[#0FA958]   font-normal hover:bg-[#403c3c] flex items-center px-2 py-2 w-[90%] rounded-md"
+        className="text-[#0FA958]   font-normal hover:bg-hover flex items-center px-2 py-2 w-[90%] rounded-md"
         // onClick={() =>
         //   dispatch(
         //     filterProblems({ filterType: "difficulty", filterQuery: "Easy" })
@@ -25,7 +25,7 @@ export const DifficultyDropDownMenu = () => {
         Easy
       </span>
       <span
-        className="text-[#dadd32]  font-normal hover:bg-[#403c3c] flex  items-center px-2 py-2 w-[90%] rounded-md "
+        className="text-[#dadd32]  font-normal hover:bg-hover flex  items-center px-2 py-2 w-[90%] rounded-md "
         // onClick={() =>
         //   dispatch(
         //     filterProblems({ filterType: "difficulty", filterQuery: "Medium" })
@@ -35,7 +35,7 @@ export const DifficultyDropDownMenu = () => {
         Medium
       </span>
       <span
-        className="text-[#D91111]  font-normal hover:bg-[#403c3c] flex  items-center px-2 py-2 w-[90%] rounded-md "
+        className="text-[#D91111]  font-normal hover:bg-hover flex  items-center px-2 py-2 w-[90%] rounded-md "
         // onClick={() => {
         //   dispatch(
         //     filterProblems({ filterType: "difficulty", filterQuery: "Hard" })
