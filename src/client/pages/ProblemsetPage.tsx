@@ -3,33 +3,15 @@ import { FilterSection } from "../components/FilterSection";
 import Pagination from "@mui/material/Pagination";
 import { useSelector } from "react-redux";
 import { RootState, useAppDispatch } from "../app/store";
-import { problems } from "./problems";
-import { MAX_PROBLEM_LIMIT } from "../types";
-import { useMemo, memo } from "react";
-import { setPaginationCount, setProblemSet } from "../features/problemSlice";
+import {  memo } from "react";
 import { setOpenDropDownMenu } from "../features/dropDownSlice";
 
 export const ProblemsetPage = () => {
 	const dispatch = useAppDispatch();
-	const { pagination } = useSelector((state: RootState) => state.problem);
+
 	const { openDropDownMenu } = useSelector(
 		(state: RootState) => state.dropdown
 	);
-	// claculate the number of pagination
-	useMemo(() => {
-		const numberOfPagination = Math.ceil(
-			problems.length / MAX_PROBLEM_LIMIT
-		);
-		dispatch(
-			setPaginationCount({
-				...pagination,
-				paginationCount: numberOfPagination,
-			})
-		);
-
-		// filter the problem over here
-		dispatch(setProblemSet(1));
-	}, [problems]);
 
 	const handleDropDown = (e: React.SyntheticEvent<EventTarget>) => {
 		// Todo - this event shouldn't be fire when clicking on button
@@ -102,9 +84,9 @@ const CustomPagination = memo(() => {
 					},
 				},
 			}}
-			onChange={(_, value) => {
-				dispatch(setProblemSet(value));
-			}}
+			// onChange={(_, value) => {
+			// 	dispatch(setProblemSet(value));
+			// }}
 		/>
 	);
 });

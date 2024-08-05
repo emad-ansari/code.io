@@ -1,5 +1,5 @@
 export const problems = [
-    {
+{
         problemId: 1,
         problemTitle: "1.Two sum",
         problemDescription: "",

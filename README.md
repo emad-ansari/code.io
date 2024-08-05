@@ -29,6 +29,7 @@ export default {
 - Optionally add `plugin:@typescript-eslint/stylistic-type-checked`
 - Install [eslint-plugin-react](https://github.com/jsx-eslint/eslint-plugin-react) and add `plugin:react/recommended` & `plugin:react/jsx-runtime` to the `extends` list
 
-- Now work on filter section
-- Clicking on outside of button should close the dropdown menu wihtout any bug
-- optimize the application and prevent unnecessary re-rendering
+- get (api/totalPages) total number of problem to calculate the total pagination number
+- get (api/?page=${pageNumber}) get the number of problems equals to pageSize
+- 
+- 

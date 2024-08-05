@@ -1,12 +1,15 @@
 import { createSlice, PayloadAction, createAsyncThunk } from "@reduxjs/toolkit";
-import { ProblemState, MAX_PROBLEM_LIMIT, Problem } from "../types";
-import { problems } from "../pages/problems";
+import { ProblemState, Problem, ThunkApiConfig } from "../types";
+import { RootState } from "../app/store";
+
+
+
 
 export const problemSliceInitialState: ProblemState = {
 	problems: [],
-	problemSet: [],
 	code: ``,
 	selectedLanguage: "javascript",
+	pageSize: 10,
 	pagination: {
 		currentPagination: 1,
 		paginationCount: 1,
@@ -14,21 +17,16 @@ export const problemSliceInitialState: ProblemState = {
 	error: null,
 };
 
-// export const getProblemList = createAsyncThunk('/problem/getProblemList', async(_, ThunkAPI) => {
-//   try{
-//     // at the end you will get some problem list over here
-//     // so first of all calculate the number of pagination count based on number of problem list by dividing the problems list with MAX_PROBLEM_LIMIT
-//     const paginationCount = problems.length / MAX_PROBLEM_LIMIT;
-//     ThunkAPI.dispatch(setPaginationCount(paginationCount))
-//     // filter the MAX_PROBLEM  from problem list and setProblems(filterProblem);
+export const getProblems = createAsyncThunk<Problem[], { pageNumber: number }, ThunkApiConfig>('/problem/getProblems', async(pageNumber: number, ThunkAPI) => {
+	const store = ThunkAPI.getState() as RootState;
+	try {
 
-//     // and you will do setProblems(problemList);
+	}
+	catch(error: any){
+		return ThunkAPI.rejectWithValue(error.message || "failed to fetch problems");
+	}
 
-//   }
-//   catch(error: any){
-
-//   }
-// })
+})
 
 export const problemSlice = createSlice({
 	name: "problem",
@@ -42,27 +40,29 @@ export const problemSlice = createSlice({
 		},
 		setPaginationCount: (
 			state,
-			action: PayloadAction<{
+			action: PayloadAction<{	
 				currentPagination: number;
 				paginationCount: number;
 			}>
 		) => {
 			state.pagination = action.payload;
 		},
-		setProblemSet: (state, action: PayloadAction<number>) => {
-			const  nextPaginationNumber = action.payload;
-			const startIndex = (nextPaginationNumber - 1) * MAX_PROBLEM_LIMIT;
-			// [Todo-Future]- change the below problem.slice with state.problem.slice
-			const endIndex = Math.min(
-				nextPaginationNumber * MAX_PROBLEM_LIMIT,
-				problems.length
-			);
-			// [Todo-Future]- change the below problem.slice with state.problem.slice
-			const newProblemSet = problems.slice(startIndex, endIndex);
-			state.problemSet = newProblemSet;
+		setPageSize: (state, action: PayloadAction<number>) => {
+			state.pageSize = action.payload;
 		},
 		
 	},
+	extraReducers: (builder) => {
+		builder.addCase(getProblems.pending, (_state, _action) => {
+
+		}) 
+		builder.addCase(getProblems.fulfilled, (_state, _action) => {
+			
+		}) 
+		builder.addCase(getProblems.rejected, (_state, _action) => {
+			
+		}) 
+	}
 });
 
 export default problemSlice.reducer;
@@ -70,5 +70,17 @@ export const {
 	setSelectedLanguage,
 	setCode,
 	setPaginationCount,
-	setProblemSet,
+	setPageSize
 } = problemSlice.actions;
+
+
+	// const  nextPaginationNumber = action.payload;
+			// const startIndex = (nextPaginationNumber - 1) * MAX_PROBLEM_LIMIT;
+			// // [Todo-Future]- change the below problem.slice with state.problem.slice
+			// const endIndex = Math.min(
+			// 	nextPaginationNumber * MAX_PROBLEM_LIMIT,
+			// 	problems.length
+			// );
+			// // [Todo-Future]- change the below problem.slice with state.problem.slice
+			// const newProblemSet = problems.slice(startIndex, endIndex);
+			// state.problemSet = newProblemSet;

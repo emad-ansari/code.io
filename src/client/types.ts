@@ -1,10 +1,10 @@
-export let MAX_PROBLEM_LIMIT = 10;
+
 
 export interface ProblemState {
 	problems: Array<Problem>;
-	problemSet: Array<Problem>;
 	selectedLanguage: string;
 	code: string | undefined;
+	pageSize: number;
 	pagination : {
 		currentPagination: number;
 		paginationCount: number;
@@ -33,4 +33,8 @@ export interface ProblemFilter {
 
 export interface FilterState {
 	filteredProblems: Problem[];
+}
+
+export interface ThunkApiConfig {
+	rejectValue: string;
 }

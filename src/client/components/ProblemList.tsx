@@ -4,12 +4,12 @@ import { RootState } from "../app/store";
 import { memo } from "react";
 
 export const ProblemList = memo(() => {
-	const { problemSet } = useSelector((state: RootState) => state.problem);
+	const { problems } = useSelector((state: RootState) => state.problem);
 	
 	return (
 		
     <div className="flex flex-col gap-2">
-      {problemSet.map((problem) => {
+      {problems.map((problem) => {
         return (
           <Problem
             key={problem.problemId}
