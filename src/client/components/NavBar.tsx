@@ -19,25 +19,3 @@ export const NavBar = () => {
 	);
 };
 
-
-{/* <div className = 'text-md m-6 group relative w-max font-dmMono '>
-                    <NavLink to={'/'}>
-                        {
-                         ({isActive}) => (
-                            <>
-                            <span>Home</span>
-                            <NavLinkStyle  isActive = {isActive}/>        
-                            </>
-                         )
-                        }
-                    </NavLink>   
-                    <NavLinkStyle />
-                </div> */}
-				{/* <div className = 'text-sm m-6 group relative w-max font-dmMono'>
-                    <NavLink to={'/about-us'}>About us</NavLink>   
-                    <NavLinkStyle />
-                </div> */}
-				{/* <div className = 'text-sm m-6 group relative w-max font-dmMono '>
-                    <NavLink to={'/help'}>Help</NavLink>   
-                    <NavLinkStyle />
-                </div> */}

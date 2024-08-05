@@ -21,13 +21,13 @@ export const LoginPage = () => {
                 <div className = 'flex flex-col gap-5 pt-5  w-[350px]'>
                     <EmailInputField /> 
                     <PasswordInputField/>
-                    <Button  classname='w-full bg-cyan text-sm font-medium hover:bg-[#a5f3fc]' >Log In</Button> 
+                    <Button  classname='w-full bg-cyan text-sm font-medium hover:bg-[#a5f3fc] rounded-md' >Log In</Button> 
                     <div className='flex flex-row gap-4 items-center justify-between'>
                         <hr className='w-40 h-[1px]  bg-gray-200 border-0 dark:bg-gray-500' />
                         <span className = 'text-white text-sm'>OR</span>
                         <hr className='w-40 h-[1px]  bg-gray-200 border-0 dark:bg-gray-500' />
                     </div>
-                    <Button classname='w-full text-white bg-black items-center relative '>
+                    <Button classname='w-full text-white bg-black items-center relative rounded-md'>
                         <FcGoogle style={{position: 'absolute',  top: '25%', left: '22%' , fontSize: "22px" }} />        
                         <span className='text-sm font-medium'>Log In with google</span>
                     </Button>

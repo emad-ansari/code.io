@@ -53,7 +53,7 @@ export const ProblemsetPage = () => {
 
 	return (
 		<div
-			className=" flex flex-col gap-8 h-screen overflow-scroll items-center  pb-20"
+			className=" flex flex-col gap-8 h-screen overflow-scroll items-center  pb-20 bg-PRIMARY"
 			onClick={(e: React.SyntheticEvent<EventTarget>) =>
 				handleDropDown(e)
 			}
