@@ -11,7 +11,10 @@ export default {
         dmMono: ["DM Mono", "monospace"]
       },
       colors: {
-        cyan: '#cffafe'
+        cyan: '#cffafe',
+        PRIMARY: '#030303',
+        white: '#fbfbfb',
+        
       },
       
     },

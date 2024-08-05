@@ -13,7 +13,7 @@ export const EmailAuthenticaiton = () => {
 
   return (
     <div className="bg-[#030303] flex fixed top-0 bottom-0 left-0 right-0">
-      <div className="flex flex-col relative w-[500px] h-[400px] top-[164px] left-[486px] bg-[#0D1621] rounded-[29px] items-center pt-10">
+      <div className="flex flex-col relative w-[500px] h-[400px] top-[164px] left-[486px] bg-[#0D1621] rounded-[29px] items-center pt-10 shadow-md">
         <div className="flex flex-col items-center gap-8">
           <div className="h-[38px]  [font-family:'Inria_Sans-Bold',Helvetica] font-bold text-[#ecfeff] text-[25px] text-center tracking-[3.20px] leading-[normal] whitespace-nowrap">
             Email Verification
