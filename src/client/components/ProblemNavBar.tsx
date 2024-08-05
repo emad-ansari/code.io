@@ -15,21 +15,33 @@ export const ProblemNavBar = () => {
 				<div className="bg-darkGray flex items-center h-11 rounded-full  shadow-md border border-[#334155] text-sm gap-5 px-5">
 					<NavLink
 						to={"/problemset"}
-						className="text-sm font-dmMono focus:bg-[#334155] px-4 py-2 rounded-full  hover:bg-hover"
+						className={({ isActive }) =>
+							`text-sm font-dmMono  px-4 py-2 rounded-full  hover:bg-hover ${
+								isActive ? "bg-hover" : ""
+							}`
+						}
 					>
 						Problems
 					</NavLink>
 
 					<NavLink
 						to={"/contests"}
-						className="text-sm font-dmMono focus:bg-[#334155] px-4 py-2 rounded-full  hover:bg-hover"
+						className={({ isActive }) =>
+							`text-sm font-dmMono  px-4 py-2 rounded-full  hover:bg-hover ${
+								isActive ? "bg-hover" : ""
+							}`
+						}
 					>
 						Contests
 					</NavLink>
 
 					<NavLink
 						to={"/standings"}
-						className="text-sm font-dmMono focus:bg-[#334155] px-4 py-2 rounded-full  hover:bg-hover active:bg-hover"
+						className={({ isActive }) =>
+							`text-sm font-dmMono  px-4 py-2 rounded-full  hover:bg-hover ${
+								isActive ? "bg-hover" : ""
+							}`
+						}
 					>
 						Standings
 					</NavLink>
@@ -38,5 +50,3 @@ export const ProblemNavBar = () => {
 		</nav>
 	);
 };
-
-
