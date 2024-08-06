@@ -4,8 +4,6 @@ import { client } from "../api/client";
 import { RootState } from "../app/store";
 
 
-
-
 export const problemSliceInitialState: ProblemState = {
 	problems: [],
 	selectedLanguage: "javascript",
@@ -24,8 +22,9 @@ export const getProblems = createAsyncThunk('/problem/getProblems', async(pageNu
 				pageSize: pageSize
 			}
 		});
+		const { data } = res.data;
 		console.log(res.data.data);
-		return res.data.data;
+		return data;
 	}
 	catch(error: any){
 		return ThunkAPI.rejectWithValue(error.message || "failed to fetch problems");
@@ -35,6 +34,20 @@ export const getProblems = createAsyncThunk('/problem/getProblems', async(pageNu
 
 export const getTotalPageNumber = createAsyncThunk('/problem/getTotalPageNumber', async(_ , ThunkAPI) => {
 	// make  a get request to get the total number of pages
+	const store = ThunkAPI.getState() as RootState;
+	const { pageSize } = store.problem;
+	try{
+		const res = await client.get<ApiResponse<number>>('/problem/totalPages', {
+			params: {
+				pageSize: pageSize
+			}
+		})
+		const { data } =  res.data;
+		return data;
+	}
+	catch(error: any){
+		ThunkAPI.rejectWithValue(error.message || "failed to get total number of pages");
+	}
 })
 
 export const problemSlice = createSlice({
@@ -63,6 +76,18 @@ export const problemSlice = createSlice({
 		builder.addCase(getProblems.rejected, (_, action) => {
 			console.log(action.payload);
 			console.log('rejected');
+		}) 
+		builder.addCase(getTotalPageNumber.pending, (_, action) => {
+			console.log(action.payload);
+			console.log('pending....');
+		}) 
+		builder.addCase(getTotalPageNumber.fulfilled, (state, action) => {
+			console.log(action.payload);
+			console.log('fulfilled');
+		}) 
+		builder.addCase(getTotalPageNumber.rejected, (_, action) => {
+			console.log(action.payload);
+			console.log('rejected...');
 		}) 
 	}
 });
