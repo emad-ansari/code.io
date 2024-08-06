@@ -6,10 +6,12 @@ import { useNavigate } from "react-router-dom";
 interface ProblemProps  {
     title: string;
     status: string;
-    level: string
+    level: string,
+    problemNo: number
+
 }
 
-export const Problem = ({title, status, level}: ProblemProps) => {
+export const Problem = ({title, status, level, problemNo}: ProblemProps) => {
     const navigate = useNavigate();
 
     return (
@@ -21,7 +23,7 @@ export const Problem = ({title, status, level}: ProblemProps) => {
                 {status === "completed" ? <IoCheckmarkCircleOutline /> : status === "visited" ? <BiAdjust /> :status === "daily"  ? <BsCalendarCheckFill /> : "" }
             </div>
             <div className="flex flex-1 justify-start items-center text-white">
-                <span>{title}</span>
+                <span>{problemNo}{title}</span>
             </div>
             <div className = " w-[110px] text-center pt-4">
                 <span className = {`flex items-center font-medium ${ level === "Hard" ? "text-[#D91111]"  : level === "Medium" ? "text-[#f5f78e]"  : "text-[#0FA958]"} `}

@@ -1,6 +1,6 @@
 import { useSelector } from "react-redux";
 import { RootState, useAppDispatch } from "../app/store";
-import { useNavigate, useSearchParams } from "react-router-dom";
+import { useSearchParams } from "react-router-dom";
 
 export const DifficultyDropDownMenu = () => {
 	const dispatch = useAppDispatch();
@@ -9,7 +9,7 @@ export const DifficultyDropDownMenu = () => {
 	);
   const [searchParams, setSearchParams] = useSearchParams();
   const currentPageNumber = searchParams.get('page');
-	// const navigate = useNavigate();
+
 
 	return (
 		<div
