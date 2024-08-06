@@ -3,8 +3,9 @@ import { FilterSection } from "../components/FilterSection";
 import Pagination from "@mui/material/Pagination";
 import { useSelector } from "react-redux";
 import { RootState, useAppDispatch } from "../app/store";
-import {  memo } from "react";
+import {  memo, useEffect } from "react";
 import { setOpenDropDownMenu } from "../features/dropDownSlice";
+import { getTotalPageNumber, getProblems } from "../features/problemSlice";
 
 export const ProblemsetPage = () => {
 	const dispatch = useAppDispatch();
@@ -62,11 +63,15 @@ export const ProblemsetPage = () => {
 
 const CustomPagination = memo(() => {
 	const dispatch = useAppDispatch();
-	const { pagination } = useSelector((state: RootState) => state.problem);
+	const { numberOfPages } = useSelector((state: RootState) => state.problem);
+
+	useEffect(() => {
+		dispatch(getTotalPageNumber());
+	}, [])
 
 	return (
 		<Pagination
-			count={pagination.paginationCount}
+			count={numberOfPages}
 			variant="outlined"
 			sx={{
 				"& .MuiPaginationItem-root": {
@@ -79,14 +84,14 @@ const CustomPagination = memo(() => {
 						backgroundColor: "#334155", // Change the background color of the selected item
 						color: "#fff",
 						"&:hover": {
-							backgroundColor: "#0c8a45", // Change the background color on hover for the selected item
+							backgroundColor: "#334155", // Change the background color on hover for the selected item
 						},
 					},
 				},
 			}}
-			// onChange={(_, value) => {
-			// 	dispatch(setProblemSet(value));
-			// }}
+			onChange={(_, value) => {
+				dispatch(getProblems(value));
+			}}
 		/>
 	);
 });

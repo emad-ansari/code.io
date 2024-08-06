@@ -1,5 +1,6 @@
 import { createSlice, PayloadAction, createAsyncThunk } from "@reduxjs/toolkit";
-import { ProblemState, Problem, ThunkApiConfig } from "../types";
+import { ProblemState, Problem, ApiResponse } from "../types";
+import { client } from "../api/client";
 import { RootState } from "../app/store";
 
 
@@ -7,25 +8,33 @@ import { RootState } from "../app/store";
 
 export const problemSliceInitialState: ProblemState = {
 	problems: [],
-	code: ``,
 	selectedLanguage: "javascript",
 	pageSize: 10,
-	pagination: {
-		currentPagination: 1,
-		paginationCount: 1,
-	},
+	numberOfPages: 2,
 	error: null,
 };
 
-export const getProblems = createAsyncThunk<Problem[], { pageNumber: number }, ThunkApiConfig>('/problem/getProblems', async(pageNumber: number, ThunkAPI) => {
+export const getProblems = createAsyncThunk('/problem/getProblems', async(pageNumber: number, ThunkAPI) => {
 	const store = ThunkAPI.getState() as RootState;
+	const { pageSize } = store.problem;
 	try {
-
+		const res = await client.get<ApiResponse<Problem[]>>(`/problem`, {
+			params: {
+				page: pageNumber,
+				pageSize: pageSize
+			}
+		});
+		console.log(res.data.data);
+		return res.data.data;
 	}
 	catch(error: any){
 		return ThunkAPI.rejectWithValue(error.message || "failed to fetch problems");
 	}
 
+})
+
+export const getTotalPageNumber = createAsyncThunk('/problem/getTotalPageNumber', async(_ , ThunkAPI) => {
+	// make  a get request to get the total number of pages
 })
 
 export const problemSlice = createSlice({
@@ -35,32 +44,25 @@ export const problemSlice = createSlice({
 		setSelectedLanguage: (state, action: PayloadAction<string>) => {
 			state.selectedLanguage = action.payload;
 		},
-		setCode: (state, action: PayloadAction<string | undefined>) => {
-			state.code = action.payload;
-		},
-		setPaginationCount: (
-			state,
-			action: PayloadAction<{	
-				currentPagination: number;
-				paginationCount: number;
-			}>
-		) => {
-			state.pagination = action.payload;
-		},
 		setPageSize: (state, action: PayloadAction<number>) => {
 			state.pageSize = action.payload;
 		},
 		
 	},
 	extraReducers: (builder) => {
-		builder.addCase(getProblems.pending, (_state, _action) => {
+		builder.addCase(getProblems.pending, (_, action) => {
+			console.log(action.payload);
+			console.log('pending...');
 
 		}) 
-		builder.addCase(getProblems.fulfilled, (_state, _action) => {
-			
+		builder.addCase(getProblems.fulfilled, (state, action) => {
+			console.log(action.payload);
+			state.problems = action.payload;
+			console.log('fulfilled');
 		}) 
-		builder.addCase(getProblems.rejected, (_state, _action) => {
-			
+		builder.addCase(getProblems.rejected, (_, action) => {
+			console.log(action.payload);
+			console.log('rejected');
 		}) 
 	}
 });
@@ -68,8 +70,6 @@ export const problemSlice = createSlice({
 export default problemSlice.reducer;
 export const {
 	setSelectedLanguage,
-	setCode,
-	setPaginationCount,
 	setPageSize
 } = problemSlice.actions;
 

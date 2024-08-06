@@ -3,12 +3,8 @@
 export interface ProblemState {
 	problems: Array<Problem>;
 	selectedLanguage: string;
-	code: string | undefined;
 	pageSize: number;
-	pagination : {
-		currentPagination: number;
-		paginationCount: number;
-	}
+	numberOfPages: number;
 	error: any
 }
 
@@ -31,10 +27,13 @@ export interface ProblemFilter {
 	openDropDownMenu: DropDownType;
 }
 
+export interface ApiResponse<T> {
+	data: T,
+	message: string;
+}
+
 export interface FilterState {
 	filteredProblems: Problem[];
 }
 
-export interface ThunkApiConfig {
-	rejectValue: string;
-}
+
