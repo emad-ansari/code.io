@@ -14,7 +14,7 @@ export const ProblemNavBar = () => {
 			<div className="flex flex-1 flex-row items-center justify-start  text-white">
 				<div className="bg-darkGray flex items-center h-11 rounded-full  shadow-md border border-[#334155] text-sm gap-5 px-5">
 					<NavLink
-						to={"/problemset"}
+						to={"/p/problemset"}
 						className={({ isActive }) =>
 							`text-sm font-dmMono  px-4 py-2 rounded-full  hover:bg-hover ${
 								isActive ? "bg-hover" : ""
@@ -25,7 +25,7 @@ export const ProblemNavBar = () => {
 					</NavLink>
 
 					<NavLink
-						to={"/contests"}
+						to={"contests"}
 						className={({ isActive }) =>
 							`text-sm font-dmMono  px-4 py-2 rounded-full  hover:bg-hover ${
 								isActive ? "bg-hover" : ""
@@ -36,7 +36,7 @@ export const ProblemNavBar = () => {
 					</NavLink>
 
 					<NavLink
-						to={"/standings"}
+						to={"standings"}
 						className={({ isActive }) =>
 							`text-sm font-dmMono  px-4 py-2 rounded-full  hover:bg-hover ${
 								isActive ? "bg-hover" : ""

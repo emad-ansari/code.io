@@ -23,7 +23,7 @@ export const getProblems = createAsyncThunk('/problem/getProblems', async(pageNu
 			}
 		});
 		const { data } = res.data;
-		console.log(res.data.data);
+		console.log(res.data.message);
 		return data;
 	}
 	catch(error: any){
@@ -83,6 +83,9 @@ export const problemSlice = createSlice({
 		}) 
 		builder.addCase(getTotalPageNumber.fulfilled, (state, action) => {
 			console.log(action.payload);
+			if (action.payload !== undefined){
+				state.numberOfPages = action.payload;
+			}
 			console.log('fulfilled');
 		}) 
 		builder.addCase(getTotalPageNumber.rejected, (_, action) => {

@@ -20,6 +20,7 @@ export interface Problem {
 	problemDescription: string;
 	difficultyLevel: string;
 	problemStatus: string;
+	problemNo: number
 }
 
 

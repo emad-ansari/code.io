@@ -7,8 +7,10 @@ import { ProblemsetPage } from "./client/pages/ProblemsetPage";
 import { ContestPage } from "./client/pages/ContestPage";
 import { StandingPage } from "./client/pages/StandingPage";
 import { ProblemDescriptionPage } from "./client/pages/ProblemDescriptionPage";
-import { ProblemLayout } from "./client/components/ProblemsLayout";
+// import { ProblemLayout } from "./client/components/ProblemsLayout";
 import { AboutUs } from './client/pages/AboutUsPage'
+import { Layout } from "./client/components/Layout";
+
 import "./index.css"; 
 
 const  App = () => {
@@ -22,13 +24,12 @@ const  App = () => {
           <Route path = '/signup' element = {<SignupPage/>}/>
           <Route path = '/verify-email' element = {<EmailAuthenticaiton/>} />
           <Route path = '/about-us' element = {<AboutUs />} /> 
-          <Route path = '/problemset' element= {<ProblemLayout />} >
-            <Route index element = {<ProblemsetPage/> }  />
-            <Route path = ':problem-name' element= {<ProblemDescriptionPage />} />
+          <Route path = '/p' element = {<Layout /> } >
+            <Route  path = 'problemset' element = {<ProblemsetPage/> }  />
+            {/* <Route path = ':problem-name' element= {<ProblemDescriptionPage />} /> */}
+            <Route path = 'contests' element= {<ContestPage />} />
+            <Route path = 'standings' element= {<StandingPage/>} />
           </Route>
-          
-          <Route path = '/contests' element= {<ContestPage />} />
-          <Route path = '/standings' element= {<StandingPage/>} />
         </Routes>
       </BrowserRouter>
     </>
