@@ -7,6 +7,5 @@ export const Layout = () => {
             <ProblemNavBar /> 
             <Outlet /> 
         </>
-
     )
 }

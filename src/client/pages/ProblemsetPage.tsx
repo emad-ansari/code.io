@@ -6,6 +6,7 @@ import { RootState, useAppDispatch } from "../app/store";
 import {  memo, useEffect } from "react";
 import { setOpenDropDownMenu } from "../features/dropDownSlice";
 import { getTotalPageNumber, getProblems } from "../features/problemSlice";
+import { useNavigate, Outlet, useSearchParams } from "react-router-dom";
 
 export const ProblemsetPage = () => {
 	const dispatch = useAppDispatch();
@@ -54,7 +55,7 @@ export const ProblemsetPage = () => {
 						Difficulty
 					</span>
 				</div>
-				<ProblemList />
+				<Outlet />
 			</div>
 			<CustomPagination />
 		</div>
@@ -64,6 +65,7 @@ export const ProblemsetPage = () => {
 const CustomPagination = memo(() => {
 	const dispatch = useAppDispatch();
 	const { numberOfPages } = useSelector((state: RootState) => state.problem);
+	const [_, setSearchParams] = useSearchParams();
 
 	useEffect(() => {
 		dispatch(getTotalPageNumber());
@@ -90,6 +92,7 @@ const CustomPagination = memo(() => {
 				},
 			}}
 			onChange={(_, value) => {
+				setSearchParams({page: value.toString()})
 				dispatch(getProblems(value));
 			}}
 		/>

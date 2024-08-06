@@ -2,13 +2,14 @@ import { createSlice, PayloadAction, createAsyncThunk } from "@reduxjs/toolkit";
 import { ProblemState, Problem, ApiResponse } from "../types";
 import { client } from "../api/client";
 import { RootState } from "../app/store";
+import { problems } from "../pages/problems";
 
 
 export const problemSliceInitialState: ProblemState = {
-	problems: [],
+	problems: problems,
 	selectedLanguage: "javascript",
 	pageSize: 10,
-	numberOfPages: 2,
+	numberOfPages: 3,
 	error: null,
 };
 
