@@ -6,7 +6,7 @@ import { problems } from "../pages/problems";
 
 
 export const problemSliceInitialState: ProblemState = {
-	problems: problems,
+	problems: [],
 	selectedLanguage: "javascript",
 	pageSize: 10,
 	numberOfPages: 3,
@@ -16,15 +16,16 @@ export const problemSliceInitialState: ProblemState = {
 export const getProblems = createAsyncThunk('/problem/getProblems', async(pageNumber: number, ThunkAPI) => {
 	const store = ThunkAPI.getState() as RootState;
 	const { pageSize } = store.problem;
+	console.log(pageSize, pageNumber);
 	try {
-		const res = await client.get<ApiResponse<Problem[]>>(`/problem`, {
+		const res = await client.get<ApiResponse<Problem[]>>(`/problem/`, {
 			params: {
 				page: pageNumber,
 				pageSize: pageSize
 			}
 		});
-		const { data } = res.data;
-		console.log(res.data.message);
+		const data  = res.data;
+		console.log('api response: ', data  );
 		return data;
 	}
 	catch(error: any){
@@ -35,20 +36,20 @@ export const getProblems = createAsyncThunk('/problem/getProblems', async(pageNu
 
 export const getTotalPageNumber = createAsyncThunk('/problem/getTotalPageNumber', async(_ , ThunkAPI) => {
 	// make  a get request to get the total number of pages
-	const store = ThunkAPI.getState() as RootState;
-	const { pageSize } = store.problem;
-	try{
-		const res = await client.get<ApiResponse<number>>('/problem/totalPages', {
-			params: {
-				pageSize: pageSize
-			}
-		})
-		const { data } =  res.data;
-		return data;
-	}
-	catch(error: any){
-		ThunkAPI.rejectWithValue(error.message || "failed to get total number of pages");
-	}
+	// const store = ThunkAPI.getState() as RootState;
+	// const { pageSize } = store.problem;
+	// try{
+	// 	const res = await client.get<ApiResponse<number>>('/problem/totalPages', {
+	// 		params: {
+	// 			pageSize: pageSize
+	// 		}
+	// 	})
+	// 	const { data } =  res.data;
+	// 	return data;
+	// }
+	// catch(error: any){
+	// 	ThunkAPI.rejectWithValue(error.message || "failed to get total number of pages");
+	// }
 })
 
 export const problemSlice = createSlice({
@@ -62,6 +63,7 @@ export const problemSlice = createSlice({
 			state.pageSize = action.payload;
 		},
 		
+		
 	},
 	extraReducers: (builder) => {
 		builder.addCase(getProblems.pending, (_, action) => {
@@ -70,9 +72,12 @@ export const problemSlice = createSlice({
 
 		}) 
 		builder.addCase(getProblems.fulfilled, (state, action) => {
-			console.log(action.payload);
-			state.problems = action.payload;
 			console.log('fulfilled');
+			console.log('fulfilled actioon paylaod: ', action.payload);
+			const { message, data, totalPages} = action.payload;
+			state.problems = data;
+			state.numberOfPages = totalPages;
+			
 		}) 
 		builder.addCase(getProblems.rejected, (_, action) => {
 			console.log(action.payload);
@@ -101,15 +106,3 @@ export const {
 	setSelectedLanguage,
 	setPageSize
 } = problemSlice.actions;
-
-
-	// const  nextPaginationNumber = action.payload;
-			// const startIndex = (nextPaginationNumber - 1) * MAX_PROBLEM_LIMIT;
-			// // [Todo-Future]- change the below problem.slice with state.problem.slice
-			// const endIndex = Math.min(
-			// 	nextPaginationNumber * MAX_PROBLEM_LIMIT,
-			// 	problems.length
-			// );
-			// // [Todo-Future]- change the below problem.slice with state.problem.slice
-			// const newProblemSet = problems.slice(startIndex, endIndex);
-			// state.problemSet = newProblemSet;

@@ -1,4 +1,3 @@
-import { ProblemList } from "../components/ProblemList";
 import { FilterSection } from "../components/FilterSection";
 import Pagination from "@mui/material/Pagination";
 import { useSelector } from "react-redux";
@@ -6,18 +5,21 @@ import { RootState, useAppDispatch } from "../app/store";
 import {  memo, useEffect } from "react";
 import { setOpenDropDownMenu } from "../features/dropDownSlice";
 import { getTotalPageNumber, getProblems } from "../features/problemSlice";
-import { useNavigate, Outlet, useSearchParams } from "react-router-dom";
+import {  Outlet, useSearchParams } from "react-router-dom";
 
 export const ProblemsetPage = () => {
 	const dispatch = useAppDispatch();
-
+	const [ searchParams ] = useSearchParams();
+	const currentPageNumber = searchParams.get('page');
 	const { openDropDownMenu } = useSelector(
 		(state: RootState) => state.dropdown
 	);
 
+	useEffect(() => {
+		dispatch(getProblems(currentPageNumber !== null ? Number( currentPageNumber) : 1));
+	}, [dispatch, searchParams])
+
 	const handleDropDown = (e: React.SyntheticEvent<EventTarget>) => {
-		// Todo - this event shouldn't be fire when clicking on button
-		// how can i make sure that clicking on button doesn't fire the event of page
 		if (e.target !== e.currentTarget) return;
 
 		if (openDropDownMenu.isDifficultyMenuOpen) {
@@ -65,7 +67,8 @@ export const ProblemsetPage = () => {
 const CustomPagination = memo(() => {
 	const dispatch = useAppDispatch();
 	const { numberOfPages } = useSelector((state: RootState) => state.problem);
-	const [_, setSearchParams] = useSearchParams();
+	const [searchParams, setSearchParams] = useSearchParams();
+	const currentPage = searchParams.get('page')  ? Number(searchParams.get('page') ) : 1;
 
 	useEffect(() => {
 		dispatch(getTotalPageNumber());
@@ -75,6 +78,7 @@ const CustomPagination = memo(() => {
 		<Pagination
 			count={numberOfPages}
 			variant="outlined"
+			page={currentPage}
 			sx={{
 				"& .MuiPaginationItem-root": {
 					backgroundColor: "#0D1621",

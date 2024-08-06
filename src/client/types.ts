@@ -30,6 +30,7 @@ export interface ProblemFilter {
 
 export interface ApiResponse<T> {
 	data: T,
+	totalPages: number;
 	message: string;
 }
 

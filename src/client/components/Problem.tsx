@@ -22,8 +22,9 @@ export const Problem = ({title, status, level, problemNo}: ProblemProps) => {
             <div className ={ `flex w-36 items-center px-3  ${status === "visited" ?  "text-[#f5f78e]" : "text-[#0FA958]"} text-2xl`}>
                 {status === "completed" ? <IoCheckmarkCircleOutline /> : status === "visited" ? <BiAdjust /> :status === "daily"  ? <BsCalendarCheckFill /> : "" }
             </div>
-            <div className="flex flex-1 justify-start items-center text-white">
-                <span>{problemNo}{title}</span>
+            <div className="flex flex-1 justify-start items-center text-white gap-2">
+                <span>{problemNo}.</span>
+                <span>{title}</span>
             </div>
             <div className = " w-[110px] text-center pt-4">
                 <span className = {`flex items-center font-medium ${ level === "Hard" ? "text-[#D91111]"  : level === "Medium" ? "text-[#f5f78e]"  : "text-[#0FA958]"} `}
