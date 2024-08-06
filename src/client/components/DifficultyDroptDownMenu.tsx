@@ -9,7 +9,7 @@ export const DifficultyDropDownMenu = () => {
 	);
   const [searchParams, setSearchParams] = useSearchParams();
   const currentPageNumber = searchParams.get('page');
-	const navigate = useNavigate();
+	// const navigate = useNavigate();
 
 	return (
 		<div
@@ -22,7 +22,11 @@ export const DifficultyDropDownMenu = () => {
 			<span
 				className="text-[#0FA958]   font-normal hover:bg-hover flex items-center px-2 py-2 w-[90%] rounded-md"
 				onClick={() => {
-					navigate(`?page=${currentPageNumber}&difficulty=Easy`);
+					setSearchParams({
+            page: currentPageNumber !== null ? currentPageNumber : '1',
+            difficulty: 'Easy'
+
+          })
 				}}
 			>
 				Easy
@@ -30,7 +34,11 @@ export const DifficultyDropDownMenu = () => {
 			<span
 				className="text-[#dadd32]  font-normal hover:bg-hover flex  items-center px-2 py-2 w-[90%] rounded-md "
 				onClick={() => {
-					navigate(`?page=${currentPageNumber}&difficulty=Medium`);
+					setSearchParams({
+            page: currentPageNumber !== null ? currentPageNumber : '1',
+            difficulty: 'Medium'
+
+          })
 				}}
 			>
 				Medium
@@ -38,7 +46,10 @@ export const DifficultyDropDownMenu = () => {
 			<span
 				className="text-[#D91111]  font-normal hover:bg-hover flex  items-center px-2 py-2 w-[90%] rounded-md "
 				onClick={() => {
-					navigate(`?page=${currentPageNumber}&difficulty=Hard`);
+          setSearchParams({
+            page: currentPageNumber !== null ? currentPageNumber : '1',
+            difficulty: 'Hard'
+          })
 				}}
 			>
 				Hard
