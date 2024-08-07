@@ -2,10 +2,10 @@ import { FilterSection } from "../components/FilterSection";
 import Pagination from "@mui/material/Pagination";
 import { useSelector } from "react-redux";
 import { RootState, useAppDispatch } from "../app/store";
-import {  memo, useEffect } from "react";
+import { memo, useEffect } from "react";
 import { setOpenDropDownMenu } from "../features/dropDownSlice";
-import { getTotalPageNumber, getProblems } from "../features/problemSlice";
-import {  Outlet, useSearchParams } from "react-router-dom";
+import { getProblems } from "../features/problemSlice";
+import { Outlet, useSearchParams } from "react-router-dom";
 
 export const ProblemsetPage = () => {
 	const dispatch = useAppDispatch();
@@ -17,7 +17,7 @@ export const ProblemsetPage = () => {
 
 	useEffect(() => {
 		dispatch(getProblems(currentPageNumber !== null ? Number( currentPageNumber) : 1));
-	}, [dispatch, searchParams])
+	}, []);
 
 	const handleDropDown = (e: React.SyntheticEvent<EventTarget>) => {
 		if (e.target !== e.currentTarget) return;
@@ -69,10 +69,6 @@ const CustomPagination = memo(() => {
 	const { numberOfPages } = useSelector((state: RootState) => state.problem);
 	const [searchParams, setSearchParams] = useSearchParams();
 	const currentPage = searchParams.get('page')  ? Number(searchParams.get('page') ) : 1;
-
-	useEffect(() => {
-		dispatch(getTotalPageNumber());
-	}, [])
 
 	return (
 		<Pagination

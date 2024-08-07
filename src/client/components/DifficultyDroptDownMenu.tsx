@@ -1,15 +1,15 @@
 import { useSelector } from "react-redux";
 import { RootState, useAppDispatch } from "../app/store";
 import { useSearchParams } from "react-router-dom";
+import { filterProblems } from "../features/problemSlice";
 
 export const DifficultyDropDownMenu = () => {
 	const dispatch = useAppDispatch();
 	const { openDropDownMenu } = useSelector(
 		(state: RootState) => state.dropdown
 	);
-  const [searchParams, setSearchParams] = useSearchParams();
-  const currentPageNumber = searchParams.get('page');
-
+	const [searchParams, setSearchParams] = useSearchParams();
+	const currentPageNumber = searchParams.get("page");
 
 	return (
 		<div
@@ -23,10 +23,21 @@ export const DifficultyDropDownMenu = () => {
 				className="text-[#0FA958]   font-normal hover:bg-hover flex items-center px-2 py-2 w-[90%] rounded-md"
 				onClick={() => {
 					setSearchParams({
-            page: currentPageNumber !== null ? currentPageNumber : '1',
-            difficulty: 'Easy'
-
-          })
+						page:
+							currentPageNumber !== null
+								? currentPageNumber
+								: "1",
+						difficulty: "Easy",
+					});
+					dispatch(
+						filterProblems({
+							pageNumber:
+								currentPageNumber !== null
+									? Number(currentPageNumber)
+									: 1,
+							difficultyLevel: "Easy",
+						})
+					);
 				}}
 			>
 				Easy
@@ -35,21 +46,45 @@ export const DifficultyDropDownMenu = () => {
 				className="text-[#dadd32]  font-normal hover:bg-hover flex  items-center px-2 py-2 w-[90%] rounded-md "
 				onClick={() => {
 					setSearchParams({
-            page: currentPageNumber !== null ? currentPageNumber : '1',
-            difficulty: 'Medium'
-
-          })
+						page:
+							currentPageNumber !== null
+								? currentPageNumber
+								: "1",
+						difficulty: "Medium",
+					});
+					dispatch(
+						filterProblems({
+							pageNumber:
+								currentPageNumber !== null
+									? Number(currentPageNumber)
+									: 1,
+							difficultyLevel: "Medium",
+						})
+					)
 				}}
+
 			>
 				Medium
 			</span>
 			<span
 				className="text-[#D91111]  font-normal hover:bg-hover flex  items-center px-2 py-2 w-[90%] rounded-md "
 				onClick={() => {
-          setSearchParams({
-            page: currentPageNumber !== null ? currentPageNumber : '1',
-            difficulty: 'Hard'
-          })
+					setSearchParams({
+						page:
+							currentPageNumber !== null
+								? currentPageNumber
+								: "1",
+						difficulty: "Hard",
+					});
+					dispatch(
+						filterProblems({
+							pageNumber:
+								currentPageNumber !== null
+									? Number(currentPageNumber)
+									: 1,
+							difficultyLevel: "Hard",
+						})
+					)
 				}}
 			>
 				Hard
