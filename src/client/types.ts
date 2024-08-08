@@ -38,4 +38,7 @@ export interface FilterState {
 	filteredProblems: Problem[];
 }
 
-
+export interface getProblemParameter {
+	pageNumber: number;
+	difficultyLevel: string
+}

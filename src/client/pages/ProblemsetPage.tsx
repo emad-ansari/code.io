@@ -9,14 +9,26 @@ import { Outlet, useSearchParams } from "react-router-dom";
 
 export const ProblemsetPage = () => {
 	const dispatch = useAppDispatch();
-	const [ searchParams ] = useSearchParams();
-	const currentPageNumber = searchParams.get('page');
+	const [searchParams] = useSearchParams();
+	const currentPageNumber =
+		searchParams.get("page") !== null
+			? Number(searchParams.get("page"))
+			: 1;
+	const difficultyLevel =
+		searchParams.get("difficulty") !== null
+			? String(searchParams.get("difficulty"))
+			: "";
 	const { openDropDownMenu } = useSelector(
 		(state: RootState) => state.dropdown
 	);
 
 	useEffect(() => {
-		dispatch(getProblems(currentPageNumber !== null ? Number( currentPageNumber) : 1));
+		dispatch(
+			getProblems({
+				pageNumber: currentPageNumber,
+				difficultyLevel: difficultyLevel,
+			})
+		);
 	}, []);
 
 	const handleDropDown = (e: React.SyntheticEvent<EventTarget>) => {
@@ -68,8 +80,13 @@ const CustomPagination = memo(() => {
 	const dispatch = useAppDispatch();
 	const { numberOfPages } = useSelector((state: RootState) => state.problem);
 	const [searchParams, setSearchParams] = useSearchParams();
-	const currentPage = searchParams.get('page')  ? Number(searchParams.get('page') ) : 1;
-
+	const currentPage = searchParams.get("page")
+		? Number(searchParams.get("page"))
+		: 1;
+	const difficultyLevel = searchParams.get("difficulty")
+		? String(searchParams.get("difficulty"))
+		: "";
+	console.log('difficulty level: ', difficultyLevel);
 	return (
 		<Pagination
 			count={numberOfPages}
@@ -92,8 +109,14 @@ const CustomPagination = memo(() => {
 				},
 			}}
 			onChange={(_, value) => {
-				setSearchParams({page: value.toString()})
-				dispatch(getProblems(value));
+				setSearchParams({
+					page: value.toString(),
+					difficulty: difficultyLevel,
+				});
+				dispatch(getProblems({
+					pageNumber: value,
+					difficultyLevel
+				}));
 			}}
 		/>
 	);

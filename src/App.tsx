@@ -26,7 +26,7 @@ const  App = () => {
           <Route path = '/verify-email' element = {<EmailAuthenticaiton/>} />
           <Route path = '/about-us' element = {<AboutUs />} /> 
           <Route path = '/p' element = {<Layout /> } >
-            <Route  path = 'problemset/' element = {<ProblemsetPage/> }  >
+            <Route  path = 'problemset' element = {<ProblemsetPage/> }  >
               <Route index element = {<ProblemList />} />
             </Route>
             <Route path = 'problem/:problem-name' element= {<ProblemDescriptionPage />} />

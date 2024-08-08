@@ -1,7 +1,7 @@
 import { useSelector } from "react-redux";
 import { RootState, useAppDispatch } from "../app/store";
 import { useSearchParams } from "react-router-dom";
-import { filterProblems } from "../features/problemSlice";
+import { getProblems } from "../features/problemSlice";
 
 export const DifficultyDropDownMenu = () => {
 	const dispatch = useAppDispatch();
@@ -30,7 +30,7 @@ export const DifficultyDropDownMenu = () => {
 						difficulty: "Easy",
 					});
 					dispatch(
-						filterProblems({
+						getProblems({
 							pageNumber:
 								currentPageNumber !== null
 									? Number(currentPageNumber)
@@ -53,7 +53,7 @@ export const DifficultyDropDownMenu = () => {
 						difficulty: "Medium",
 					});
 					dispatch(
-						filterProblems({
+						getProblems({
 							pageNumber:
 								currentPageNumber !== null
 									? Number(currentPageNumber)
@@ -77,7 +77,7 @@ export const DifficultyDropDownMenu = () => {
 						difficulty: "Hard",
 					});
 					dispatch(
-						filterProblems({
+						getProblems({
 							pageNumber:
 								currentPageNumber !== null
 									? Number(currentPageNumber)

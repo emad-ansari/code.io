@@ -1,5 +1,5 @@
 import { createSlice, PayloadAction, createAsyncThunk } from "@reduxjs/toolkit";
-import { ProblemState, Problem, ApiResponse } from "../types";
+import { ProblemState, Problem, ApiResponse, getProblemParameter } from "../types";
 import { client } from "../api/client";
 import { RootState } from "../app/store";
 
@@ -13,7 +13,7 @@ export const problemSliceInitialState: ProblemState = {
 	error: null,
 };
 
-export const getProblems = createAsyncThunk('/problem/getProblems', async(pageNumber: number, ThunkAPI) => {
+export const getProblems = createAsyncThunk('/problem/getProblems', async({pageNumber, difficultyLevel}: getProblemParameter, ThunkAPI) => {
 	const store = ThunkAPI.getState() as RootState;
 	const { pageSize } = store.problem;
 
@@ -21,7 +21,8 @@ export const getProblems = createAsyncThunk('/problem/getProblems', async(pageNu
 		const res = await client.get<ApiResponse<Problem[]>>(`/problem`, {
 			params: {
 				page: pageNumber,
-				pageSize: pageSize
+				pageSize: pageSize,
+				difficultyLevel
 			}
 		});
 		const data  = res.data;
@@ -30,33 +31,6 @@ export const getProblems = createAsyncThunk('/problem/getProblems', async(pageNu
 	}
 	catch(error: any){
 		return ThunkAPI.rejectWithValue(error.message || "failed to fetch problems");
-	}
-
-})
-interface filterFunctionParameter {
-	pageNumber: number,
-	difficultyLevel: string;
-}
-
-export const filterProblems  = createAsyncThunk('/problem/filterProblems', async({pageNumber, difficultyLevel}: filterFunctionParameter , ThunkAPI) => {
-	const store = ThunkAPI.getState() as RootState;
-	const { pageSize } = store.problem;
-	try {
-
-		const res = await client.get<ApiResponse<Problem[]>>('/problem/filter', {
-			params: {
-				page: pageNumber,
-				pageSize,
-				difficultyLevel
-			}
-		});
-		const data = res.data;
-		console.log('api response: ', data);
-		return data;
-
-	}
-	catch(error: any){
-		return ThunkAPI.rejectWithValue(error.message || "failed to filter the problems");
 	}
 
 })
@@ -86,27 +60,14 @@ export const problemSlice = createSlice({
 			const { message, data, totalPages} = action.payload;
 			state.problems = data;
 			state.numberOfPages = totalPages;
+			console.log(state.problems);
 			
 		}) 
 		builder.addCase(getProblems.rejected, (_, action) => {
 			console.log(action.payload);
 			console.log('rejected');
 		}) 
-		builder.addCase(filterProblems.pending, (_, action) => {
-			console.log(action.payload);
-			console.log('pending....');
-		}) 
-		builder.addCase(filterProblems.fulfilled, (state, action) => {
-			console.log(action.payload);
-			const { message, data, totalPages} = action.payload;
-			state.numberOfPages = totalPages;
-			state.problems = data;
-			console.log('fulfilled');
-		}) 
-		builder.addCase(filterProblems.rejected, (_, action) => {
-			console.log(action.payload);
-			console.log('rejected...');
-		}) 
+		
 	}
 });
 
