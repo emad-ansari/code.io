@@ -11,13 +11,13 @@ export const ModeSelectButton = memo(() => {
 		(state: RootState) => state.problem
 	);
 	const { openDropDownMenu } = useSelector(
-		(state: RootState) => state.filter
+		(state: RootState) => state.dropdown
 	);
 	const dispatch = useAppDispatch();
 
 	return (
 		<Button
-			classname="relative flex flex-row items-center gap-2 bg-[#48445c] text-white z-30"
+			classname="relative flex flex-row items-center gap-2 bg-darkGray text-white z-30 rounded-md"
 			onClick={() => dispatch(setOpenDropDownMenu({ menu: "languages" }))}
 		>
 			<span>{selectedLanguage}</span>

@@ -14,7 +14,7 @@ export const CodeEditor = () => {
   console.log("selected language: ", selectedLanguage);
   return (
     <Editor
-      height="82vh"
+      height="83vh"
       defaultLanguage="java"
       defaultValue="// some comment"
       theme="vs-dark"

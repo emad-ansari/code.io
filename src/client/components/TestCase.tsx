@@ -9,9 +9,9 @@ export const TestCase = ({testCaseNumber, input, output}: TestCaseProps) => {
         <div className = 'flex flex-col  gap-3 w-full'>
             <h1 className = 'text-xl font-semibold text-white'>Test Case {testCaseNumber + 1}</h1>
             <span className="font-medium">Input</span>
-            <span className = 'rounded-md w-[80%] bg-[#28242c] text-white h-14 flex justify-start items-center px-5 font-semibold'>{input}</span>
+            <span className = 'rounded-md w-[80%] bg-[#334155] text-white h-14 flex justify-start items-center px-5 font-semibold'>{input}</span>
             <span className = 'font-medium'>Output</span>
-            <span className = 'rounded-md w-[80%] bg-[#28242c] text-white h-14 flex justify-start items-center px-5 font-semibold'>{output}</span>
+            <span className = 'rounded-md w-[80%] bg-[#334155] text-white h-14 flex justify-start items-center px-5 font-semibold'>{output}</span>
         </div>
     )
 }
