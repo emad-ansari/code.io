@@ -8,7 +8,7 @@ import { memo } from "react";
 
 export const StatusFilterButton = memo(() => {
 	const dispatch = useAppDispatch();
-	const { openDropDownMenu } = useSelector(
+	const { isStatusMenuOpen } = useSelector(
 		(state: RootState) => state.dropdown
 	);
 
@@ -23,7 +23,7 @@ export const StatusFilterButton = memo(() => {
 			<span className="z-50">Status</span>
 			<MdKeyboardArrowDown
 				className={`text-2xl pt-1 z-50 ${
-					openDropDownMenu.isStatusMenuOpen
+					isStatusMenuOpen
 						? " transform duration-200  rotate-180 pt-1"
 						: "transform duration-200  -rotate-0 pt-1"
 				}`}

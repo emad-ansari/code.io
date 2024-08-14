@@ -10,7 +10,7 @@ export const ModeSelectButton = memo(() => {
 	const { selectedLanguage } = useSelector(
 		(state: RootState) => state.problem
 	);
-	const { openDropDownMenu } = useSelector(
+	const { isLanguageMenuOpen } = useSelector(
 		(state: RootState) => state.dropdown
 	);
 	const dispatch = useAppDispatch();
@@ -23,7 +23,7 @@ export const ModeSelectButton = memo(() => {
 			<span>{selectedLanguage}</span>
 			<MdKeyboardArrowDown
 				className={`text-2xl pt-1 ${
-					openDropDownMenu.isLanguageMenuOpen
+					isLanguageMenuOpen
 						? " transform duration-200  rotate-180 pt-1"
 						: "transform duration-200  -rotate-0 pt-1"
 				}`}

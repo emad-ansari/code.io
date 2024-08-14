@@ -18,7 +18,7 @@ export const ProblemsetPage = () => {
 		searchParams.get("difficulty") !== null
 			? String(searchParams.get("difficulty"))
 			: "";
-	const { openDropDownMenu } = useSelector(
+	const { isDifficultyMenuOpen, isStatusMenuOpen } = useSelector(
 		(state: RootState) => state.dropdown
 	);
 
@@ -34,13 +34,13 @@ export const ProblemsetPage = () => {
 	const handleDropDown = (e: React.SyntheticEvent<EventTarget>) => {
 		if (e.target !== e.currentTarget) return;
 
-		if (openDropDownMenu.isDifficultyMenuOpen) {
+		if (isDifficultyMenuOpen) {
 			dispatch(
 				setOpenDropDownMenu({
 					menu: "difficulty",
 				})
 			);
-		} else if (openDropDownMenu.isStatusMenuOpen) {
+		} else if (isStatusMenuOpen) {
 			dispatch(
 				setOpenDropDownMenu({
 					menu: "status",

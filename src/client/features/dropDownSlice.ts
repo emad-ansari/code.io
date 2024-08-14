@@ -1,51 +1,53 @@
 import { createSlice, PayloadAction } from "@reduxjs/toolkit";
-import { ProblemFilter, DropDownType } from "../types";
+import { DropDownType } from "../types";
 
-export const problemFilterInitialState: ProblemFilter = {
-	openDropDownMenu: {
-		isDifficultyMenuOpen: false,
-		isStatusMenuOpen: false,
-		isLanguageMenuOpen: false,
-	},
+export const dropDownInitialState: DropDownType = {
+	isDifficultyMenuOpen: false,
+	isStatusMenuOpen: false,
+	isLanguageMenuOpen: false,
 };
 
 export const dropDownSlice = createSlice({
 	name: "dropdown",
-	initialState: problemFilterInitialState,
+	initialState: dropDownInitialState,
 	reducers: {
 		setOpenDropDownMenu: (
 			state,
 			action: PayloadAction<{ menu: string }>
 		) => {
 			const { menu } = action.payload;
-			const { isDifficultyMenuOpen, isStatusMenuOpen, isLanguageMenuOpen } =	state.openDropDownMenu;
+			const {
+				isDifficultyMenuOpen,
+				isStatusMenuOpen,
+				isLanguageMenuOpen,
+			} = state;
+			let updatedValue: DropDownType = { ...state };
+
 			if (menu === "difficulty") {
-				const updatedValue: DropDownType = {
-					...state.openDropDownMenu,
+				updatedValue = {
+					...state,
 					isStatusMenuOpen: isStatusMenuOpen && !isStatusMenuOpen,
 					isDifficultyMenuOpen: !isDifficultyMenuOpen,
 				};
-				state.openDropDownMenu = updatedValue;
 			}
 			if (menu == "status") {
-				const updatedValue: DropDownType = {
-					...state.openDropDownMenu,
+				updatedValue = {
+					...state,
 					isDifficultyMenuOpen:
 						isDifficultyMenuOpen && !isDifficultyMenuOpen,
 					isStatusMenuOpen: !isStatusMenuOpen,
 				};
-				state.openDropDownMenu = updatedValue;
+				
 			}
 			if (menu == "languages") {
-				const updatedValue: DropDownType = {
-					...state.openDropDownMenu,
+				updatedValue = {
+					...state,
 					isLanguageMenuOpen: !isLanguageMenuOpen,
 				};
-				state.openDropDownMenu = updatedValue;
+				
 			}
+			return updatedValue;
 		},
-
-		
 	},
 });
 

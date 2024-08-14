@@ -8,9 +8,8 @@ import { memo } from "react";
 
 export const DifficultyFitlerButton = memo(() => {
 	const dispatch = useAppDispatch();
-	const { openDropDownMenu } = useSelector(
-		(state: RootState) => state.dropdown
-	);
+	const { isDifficultyMenuOpen } = useSelector((state: RootState) => state.dropdown);
+	console.log('state changes: ', isDifficultyMenuOpen);
 
 	return (
 		<Button
@@ -22,7 +21,7 @@ export const DifficultyFitlerButton = memo(() => {
 			<span>Difficulty</span>
 			<MdKeyboardArrowDown
 				className={`text-2xl pt-1 ${
-					openDropDownMenu.isDifficultyMenuOpen
+					isDifficultyMenuOpen
 						? " transform duration-200  rotate-180 pt-1"
 						: "transform duration-200  -rotate-0 pt-1"
 				}`}

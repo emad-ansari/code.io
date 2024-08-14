@@ -6,13 +6,13 @@ import { RootState, useAppDispatch } from "../app/store";
 // import { filterProblems } from "../features/problemSlice";
 
 export const StatusDropDownMenu = () => {
-  const dispatch = useAppDispatch();
-  const { openDropDownMenu } = useSelector((state: RootState) => state.dropdown);
+  // const dispatch = useAppDispatch();
+  const { isStatusMenuOpen } = useSelector((state: RootState) => state.dropdown);
 
   return (
     <div
       className={` bg-darkGray flex flex-col absolute bottom-0 left-0 right-[-25px] top-[110%] h-[125px] items-center rounded-lg shadow-lg py-2 z-10 ${
-        openDropDownMenu.isStatusMenuOpen ? "" : " hidden"
+        isStatusMenuOpen ? "" : " hidden"
       } ease-in-out duration-300`}
     >
       <div

@@ -24,9 +24,6 @@ export interface Problem {
 }
 
 
-export interface ProblemFilter {
-	openDropDownMenu: DropDownType;
-}
 
 export interface ApiResponse<T> {
 	data: T,

@@ -51,21 +51,14 @@ export const problemSlice = createSlice({
 	extraReducers: (builder) => {
 		builder.addCase(getProblems.pending, (_, action) => {
 			console.log(action.payload);
-			console.log('pending...');
-
 		}) 
 		builder.addCase(getProblems.fulfilled, (state, action) => {
-			console.log('fulfilled');
-			console.log('fulfilled actioon paylaod: ', action.payload);
 			const { message, data, totalPages} = action.payload;
 			state.problems = data;
 			state.numberOfPages = totalPages;
-			console.log(state.problems);
-			
 		}) 
 		builder.addCase(getProblems.rejected, (_, action) => {
 			console.log(action.payload);
-			console.log('rejected');
 		}) 
 		
 	}
