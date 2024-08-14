@@ -27,7 +27,7 @@ export const Problem = ({title, status, level, problemNo}: ProblemProps) => {
                 <span>{title}</span>
             </div>
             <div className = " w-[110px] text-center pt-4">
-                <span className = {`flex items-center font-medium ${ level === "Hard" ? "text-[#D91111]"  : level === "Medium" ? "text-[#f5f78e]"  : "text-[#0FA958]"} `}
+                <span className = {`flex items-center font-normal ${ level === "Hard" ? "text-RED"  : level === "Medium" ? "text-YELLOW"  : "text-GREEN"} `}
                 > 
                     {
                         level === "Hard" ? "Hard" : level === "Medium" ? "Medium" : "Easy"
