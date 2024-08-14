@@ -16,6 +16,9 @@ export default {
         white: '#fbfbfb',
         darkGray: '#0D1621',
         hover: '#334155',
+        GREEN: '#0FA958',
+        YELLOW: '#dadd32',
+        RED: '#D91111'
       },
       
     },
