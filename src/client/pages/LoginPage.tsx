@@ -34,7 +34,7 @@ export const LoginPage = () => {
                     <div className = 'flex flex-row justify-between items-center'>
                         <span className='text-red-400 text-sm cursor-pointer'>Forgot password</span>
                         <span className = 'text-white text-sm'>
-                            Don't have an account? <a className = 'text-white font-semibold italic cursor-pointer hover:text-red-400'>Sign up</a>
+                            Don't have an account? <a href = '/signup' className = 'text-white font-semibold italic cursor-pointer hover:text-red-400'>Sign up</a>
                         </span>
                         
                     </div>

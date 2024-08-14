@@ -28,7 +28,7 @@ router.get("/", (req: Request, res: Response) => {
 	}
 	const endIndex = Math.min(pageNumber * pageSize, problemsSet.length); 
     const newProblemSet = problemsSet.slice(startIndex, endIndex);
-    const totalPages = Math.ceil(problemsSet.length / pageSize); //
+    const totalPages = Math.ceil(problemsSet.length / pageSize); 
 
 	return res.status(200).json({ message: "success", data: newProblemSet, totalPages});
 });

@@ -10,6 +10,7 @@ export const problemSliceInitialState: ProblemState = {
 	selectedLanguage: "javascript",
 	pageSize: 10,
 	numberOfPages: 1,
+	
 	error: null,
 };
 
@@ -32,7 +33,6 @@ export const getProblems = createAsyncThunk('/problem/getProblems', async({pageN
 	catch(error: any){
 		return ThunkAPI.rejectWithValue(error.message || "failed to fetch problems");
 	}
-
 })
 
 export const problemSlice = createSlice({

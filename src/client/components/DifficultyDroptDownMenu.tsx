@@ -1,14 +1,28 @@
+import { IoIosCheckmark } from "react-icons/io";
 import { useSelector } from "react-redux";
 import { RootState, useAppDispatch } from "../app/store";
 import { useSearchParams } from "react-router-dom";
 import { getProblems } from "../features/problemSlice";
+
 
 export const DifficultyDropDownMenu = () => {
 	const dispatch = useAppDispatch();
 	const { isDifficultyMenuOpen } = useSelector((state: RootState) => state.dropdown);
 	const [searchParams, setSearchParams] = useSearchParams();
 	const currentPageNumber = searchParams.get("page");
-	console.log('difficulty menu in dropdown comp: ', isDifficultyMenuOpen)
+	
+	const filterProblems = (difficultyLevel: string) => {
+		setSearchParams({
+			page: currentPageNumber !== null ? currentPageNumber : "1",
+			difficulty: difficultyLevel,
+		});
+		dispatch(
+			getProblems({
+				pageNumber: currentPageNumber !== null ? Number(currentPageNumber) : 1,
+				difficultyLevel,
+			})
+		);
+	}
 
 	return (
 		<div
@@ -16,71 +30,19 @@ export const DifficultyDropDownMenu = () => {
 		>
 			<span
 				className="text-[#0FA958]   font-normal hover:bg-hover flex items-center px-2 py-2 w-[90%] rounded-md"
-				onClick={() => {
-					setSearchParams({
-						page:
-							currentPageNumber !== null
-								? currentPageNumber
-								: "1",
-						difficulty: "Easy",
-					});
-					dispatch(
-						getProblems({
-							pageNumber:
-								currentPageNumber !== null
-									? Number(currentPageNumber)
-									: 1,
-							difficultyLevel: "Easy",
-						})
-					);
-				}}
+				onClick={() => filterProblems("Easy")}
 			>
 				Easy
 			</span>
 			<span
 				className="text-[#dadd32]  font-normal hover:bg-hover flex  items-center px-2 py-2 w-[90%] rounded-md "
-				onClick={() => {
-					setSearchParams({
-						page:
-							currentPageNumber !== null
-								? currentPageNumber
-								: "1",
-						difficulty: "Medium",
-					});
-					dispatch(
-						getProblems({
-							pageNumber:
-								currentPageNumber !== null
-									? Number(currentPageNumber)
-									: 1,
-							difficultyLevel: "Medium",
-						})
-					)
-				}}
-
+				onClick={() => filterProblems("Medium")}
 			>
 				Medium
 			</span>
 			<span
 				className="text-[#D91111]  font-normal hover:bg-hover flex  items-center px-2 py-2 w-[90%] rounded-md "
-				onClick={() => {
-					setSearchParams({
-						page:
-							currentPageNumber !== null
-								? currentPageNumber
-								: "1",
-						difficulty: "Hard",
-					});
-					dispatch(
-						getProblems({
-							pageNumber:
-								currentPageNumber !== null
-									? Number(currentPageNumber)
-									: 1,
-							difficultyLevel: "Hard",
-						})
-					)
-				}}
+				onClick={() => filterProblems("Hard")}
 			>
 				Hard
 			</span>

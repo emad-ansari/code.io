@@ -30,7 +30,7 @@ export const SignupPage = () => {
                 </Button>
                 <div className = 'flex flex-row justify-start items-center'>
                     <span className = 'text-white text-sm'>
-                        Already have an account? <a className = 'text-white font-semibold italic cursor-pointer hover:text-red-400'>Log In</a>
+                        Already have an account? <a href = '/login' className = 'text-white font-semibold italic cursor-pointer hover:text-red-400' >Log In</a>
                     </span>
                     
                 </div>

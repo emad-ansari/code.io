@@ -29,7 +29,5 @@ export default {
 - Optionally add `plugin:@typescript-eslint/stylistic-type-checked`
 - Install [eslint-plugin-react](https://github.com/jsx-eslint/eslint-plugin-react) and add `plugin:react/recommended` & `plugin:react/jsx-runtime` to the `extends` list
 
-- get (api/totalPages) total number of problem to calculate the total pagination number
-- get (api/?page=${pageNumber}) get the number of problems equals to pageSize
-- 
+- how to remove filter options
 - 
