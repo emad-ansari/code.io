@@ -32,7 +32,9 @@ export interface ApiResponse<T> {
 }
 
 export interface FilterState {
-	filteredProblems: Problem[];
+	easy: boolean;
+	medium: boolean;
+	hard: boolean;
 }
 
 export interface getProblemParameter {
