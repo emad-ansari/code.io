@@ -41,3 +41,9 @@ export interface getProblemParameter {
 	pageNumber: number;
 	difficultyLevel: string
 }
+export interface DropDownItemProps {
+	value: string;
+	isFilterApply: boolean;
+	filterProblems: (difficultyLevel: string) => void;
+}
+

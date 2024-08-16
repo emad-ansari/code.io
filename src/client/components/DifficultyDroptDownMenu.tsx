@@ -1,11 +1,11 @@
 import { IoIosCheckmark } from "react-icons/io";
 import { useSelector } from "react-redux";
-import { useCallback } from "react";
 import { RootState, useAppDispatch } from "../app/store";
 import { setFilterOptions } from "../features/filterSlice";
 import { useSearchParams } from "react-router-dom";
 import { getProblems } from "../features/problemSlice";
-import { IconType } from "react-icons";
+import { DropDownItemProps } from '../types'
+
 
 export const DifficultyDropDownMenu = () => {
 	const dispatch = useAppDispatch();
@@ -48,12 +48,6 @@ export const DifficultyDropDownMenu = () => {
 	);
 };
 
-interface DropDownItemProps {
-	value: string;
-	isFilterApply: boolean;
-	filterProblems: (difficultyLevel: string) => void;
-	icons?: IconType; // for future use
-}
 
 export function DropDownItem({value, filterProblems, isFilterApply}: DropDownItemProps) {
 	const dispatch = useAppDispatch();
