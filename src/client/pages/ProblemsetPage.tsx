@@ -86,7 +86,27 @@ const CustomPagination = memo(() => {
 	const difficultyLevel = searchParams.get("difficulty")
 		? String(searchParams.get("difficulty"))
 		: "";
-	console.log('difficulty level: ', difficultyLevel);
+	
+	const changeProblemSetPage = (value: number) => {
+		searchParams.set('page', value.toString());
+		setSearchParams(searchParams);
+
+		if (searchParams.get('difficulty') == null){
+			
+			dispatch(getProblems({
+				pageNumber: value,
+				difficultyLevel: ""
+			}));
+		}
+		else {
+			dispatch(getProblems({
+				pageNumber: value,
+				difficultyLevel: difficultyLevel
+			}));
+		}
+	}
+
+
 	return (
 		<Pagination
 			count={numberOfPages}
@@ -108,16 +128,7 @@ const CustomPagination = memo(() => {
 					},
 				},
 			}}
-			onChange={(_, value) => {
-				setSearchParams({
-					page: value.toString(),
-					difficulty: difficultyLevel,
-				});
-				dispatch(getProblems({
-					pageNumber: value,
-					difficultyLevel
-				}));
-			}}
+			onChange={(_, value) => changeProblemSetPage(value)}
 		/>
 	);
 });
