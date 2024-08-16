@@ -10,14 +10,7 @@ import { Outlet, useSearchParams } from "react-router-dom";
 export const ProblemsetPage = () => {
 	const dispatch = useAppDispatch();
 	const [searchParams] = useSearchParams();
-	const currentPageNumber =
-		searchParams.get("page") !== null
-			? Number(searchParams.get("page"))
-			: 1;
-	const difficultyLevel =
-		searchParams.get("difficulty") !== null
-			? String(searchParams.get("difficulty"))
-			: "";
+	
 	const { isDifficultyMenuOpen, isStatusMenuOpen } = useSelector(
 		(state: RootState) => state.dropdown
 	);
@@ -25,8 +18,8 @@ export const ProblemsetPage = () => {
 	useEffect(() => {
 		dispatch(
 			getProblems({
-				pageNumber: currentPageNumber,
-				difficultyLevel: difficultyLevel,
+				pageNumber: Number(searchParams.get('page')) || 1,
+				difficultyLevel:  searchParams.get('difficulty') || "",
 			})
 		);
 	}, []);
@@ -80,19 +73,13 @@ const CustomPagination = memo(() => {
 	const dispatch = useAppDispatch();
 	const { numberOfPages } = useSelector((state: RootState) => state.problem);
 	const [searchParams, setSearchParams] = useSearchParams();
-	const currentPage = searchParams.get("page")
-		? Number(searchParams.get("page"))
-		: 1;
-	const difficultyLevel = searchParams.get("difficulty")
-		? String(searchParams.get("difficulty"))
-		: "";
-	
+
 	const changeProblemSetPage = (value: number) => {
 		searchParams.set('page', value.toString());
 		setSearchParams(searchParams);
 
 		if (searchParams.get('difficulty') == null){
-			
+
 			dispatch(getProblems({
 				pageNumber: value,
 				difficultyLevel: ""
@@ -101,7 +88,7 @@ const CustomPagination = memo(() => {
 		else {
 			dispatch(getProblems({
 				pageNumber: value,
-				difficultyLevel: difficultyLevel
+				difficultyLevel: searchParams.get('difficulty') || ""
 			}));
 		}
 	}
@@ -111,7 +98,7 @@ const CustomPagination = memo(() => {
 		<Pagination
 			count={numberOfPages}
 			variant="outlined"
-			page={currentPage}
+			page={Number(searchParams.get("page")) || 1}
 			sx={{
 				"& .MuiPaginationItem-root": {
 					backgroundColor: "#0D1621",

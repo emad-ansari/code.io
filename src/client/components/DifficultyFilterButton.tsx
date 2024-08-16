@@ -9,7 +9,6 @@ import { memo } from "react";
 export const DifficultyFitlerButton = memo(() => {
 	const dispatch = useAppDispatch();
 	const { isDifficultyMenuOpen } = useSelector((state: RootState) => state.dropdown);
-	console.log('state changes: ', isDifficultyMenuOpen);
 
 	return (
 		<Button

@@ -1,5 +1,6 @@
 import { IoIosCheckmark } from "react-icons/io";
 import { useSelector } from "react-redux";
+import { useCallback } from "react";
 import { RootState, useAppDispatch } from "../app/store";
 import { setFilterOptions } from "../features/filterSlice";
 import { useSearchParams } from "react-router-dom";
@@ -12,26 +13,24 @@ export const DifficultyDropDownMenu = () => {
 		(state: RootState) => state.dropdown
 	);
 	const { easy, medium, hard} = useSelector((state: RootState) => state.filter);
-	const [searchParams, setSearchParams] = useSearchParams();
 
-	const currentPageNumber = searchParams.get("page");
+	const [searchParams, setSearchParams] = useSearchParams();
 	
 
 	const filterProblems = ( difficultyLevel: string) => {		
+		console.log('re-computing......')
 		if (searchParams.get('difficulty') === difficultyLevel){
-			// remove it from url
-			searchParams.delete('difficulty');
+			searchParams.delete('difficulty'); // remove it from url
 		}
 		else {
-			// add it
-			searchParams.set('difficulty', difficultyLevel);
+			searchParams.set('difficulty', difficultyLevel); // add it
 		}
 		setSearchParams(searchParams);
-		
+
 		dispatch(
 			getProblems({
-				pageNumber: currentPageNumber !== null ? Number(currentPageNumber) : 1,
-				difficultyLevel: searchParams.get('difficulty') !== null ? String(searchParams.get('difficulty')) : ""
+				pageNumber:  Number(searchParams.get('page')) ||  1,
+				difficultyLevel: searchParams.get('difficulty') || ""
 			})
 		);		
 	};
