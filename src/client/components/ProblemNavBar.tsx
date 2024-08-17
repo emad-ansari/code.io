@@ -3,7 +3,7 @@ import { NavLink } from "react-router-dom";
 
 export const ProblemNavBar = () => {
 	return (
-		<nav className="flex flex-row justify-between items-center bg-PRIMARY">
+		<nav className="flex flex-row justify-between items-center bg-PRIMARY fixed top-0 left-0 right-0">
 			<div className="flex-none items-center justify-start w-96">
 				<img
 					src={CodeInLogo}
