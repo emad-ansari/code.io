@@ -5,7 +5,7 @@ import { CodeEditor } from "./CodeEditor";
 
 export const EditorSection = () => {
   return (
-    <section className="flex flex-1  bg-darkGray  rounded-lg flex-col h-screen">
+    <section className="flex flex-1  bg-darkGray  rounded-lg flex-col  border border-[#334155]">
       <div className="flex items-center px-2 py-1 bg-[#1f2937] rounded-tl-md rounded-tr-md justify-between  gap-5">
         <ModeSelectButton />
         <div className="flex flex-row gap-4 items-center">

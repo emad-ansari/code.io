@@ -17,8 +17,19 @@
 	flex-direction: row;
 	background-color: #030303;
     margin-top: 64px;
-}
+    padding-left: 8px;
+    padding-right: 8px;
+    padding-bottom: 8px;
+    position: fixed;
+    top: 0;
+    bottom: 0;
+    left: 0;
+    right: 0
 
+}
+.gutter:hover {
+    background-color: #1c94fc;
+}
 .gutter {
 	background-color: rgb(26, 26, 26);
 	background-repeat: no-repeat;
