@@ -1,7 +1,12 @@
 import CodeInLogo from "../../assets/websiteLogo.svg";
 import { NavLink } from "react-router-dom";
+import { FaUserCircle } from "react-icons/fa";
 
-export const ProblemNavBar = () => {
+export const ProblemNavBar = ({
+	isProbleDescriptioPage,
+}: {
+	isProbleDescriptioPage: boolean;
+}) => {
 	return (
 		<nav className="flex flex-row justify-between items-center bg-PRIMARY fixed top-0 left-0 right-0">
 			<div className="flex-none items-center justify-start w-96">
@@ -12,40 +17,47 @@ export const ProblemNavBar = () => {
 				/>
 			</div>
 			<div className="flex flex-1 flex-row items-center justify-start  text-white">
-				<div className="bg-darkGray flex items-center h-11 rounded-full  shadow-md border border-[#334155] text-sm gap-5 px-5">
-					<NavLink
-						to={"/p/problemset"}
-						className={({ isActive }) =>
-							`text-sm font-dmMono  px-4 py-2 rounded-full  hover:bg-hover ${
-								isActive ? "bg-hover" : ""
-							}`
-						}
-					>
-						Problems
-					</NavLink>
+				{isProbleDescriptioPage ? (
+					<div className = 'flex flex-1 h-11  items-center justify-end pr-5'>
+						<FaUserCircle style={{fontSize: '40px', cursor: 'pointer'}} /> 
 
-					<NavLink
-						to={"contests"}
-						className={({ isActive }) =>
-							`text-sm font-dmMono  px-4 py-2 rounded-full  hover:bg-hover ${
-								isActive ? "bg-hover" : ""
-							}`
-						}
-					>
-						Contests
-					</NavLink>
+					</div>
+				) : (
+					<div className="bg-darkGray flex items-center h-11 rounded-full  shadow-md border border-[#334155] text-sm gap-5 px-5">
+						<NavLink
+							to={"/p/problemset"}
+							className={({ isActive }) =>
+								`text-sm font-dmMono  px-4 py-2 rounded-full  hover:bg-hover ${
+									isActive ? "bg-hover" : ""
+								}`
+							}
+						>
+							Problems
+						</NavLink>
 
-					<NavLink
-						to={"standings"}
-						className={({ isActive }) =>
-							`text-sm font-dmMono  px-4 py-2 rounded-full  hover:bg-hover ${
-								isActive ? "bg-hover" : ""
-							}`
-						}
-					>
-						Standings
-					</NavLink>
-				</div>
+						<NavLink
+							to={"contests"}
+							className={({ isActive }) =>
+								`text-sm font-dmMono  px-4 py-2 rounded-full  hover:bg-hover ${
+									isActive ? "bg-hover" : ""
+								}`
+							}
+						>
+							Contests
+						</NavLink>
+
+						<NavLink
+							to={"standings"}
+							className={({ isActive }) =>
+								`text-sm font-dmMono  px-4 py-2 rounded-full  hover:bg-hover ${
+									isActive ? "bg-hover" : ""
+								}`
+							}
+						>
+							Standings
+						</NavLink>
+					</div>
+				)}
 			</div>
 		</nav>
 	);

@@ -17,7 +17,7 @@ export const Problem = ({title, status, level, problemNo}: ProblemProps) => {
     return (
         <div 
             className = "flex flex-row bg-darkGray h-14 rounded-md cursor-pointer"
-            onClick={() => navigate (`../../p/problem/${title}`)} 
+            onClick={() => navigate (`../../problem/${title}`)} 
         >
             <div className ={ `flex w-36 items-center px-3  ${status === "visited" ?  "text-[#f5f78e]" : "text-[#0FA958]"} text-2xl`}>
                 {status === "completed" ? <IoCheckmarkCircleOutline /> : status === "visited" ? <BiAdjust /> :status === "daily"  ? <BsCalendarCheckFill /> : "" }

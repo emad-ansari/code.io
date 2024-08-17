@@ -4,10 +4,14 @@ import { Button } from "./Button";
 
 export const ProblemDescription = () => {
 	return (
-		<section className="rounded-lg bg-darkGray  text-white border border-[#334155] ">
-			<div className="flex items-center bg-[#1f2937] px-2 py-1 rounded-tl-md rounded-tr-md">
+		<section className="rounded-lg bg-darkGray  text-white border border-gray-500 ">
+			<div className="flex items-center bg-[#1f2937] px-2 py-1 rounded-tl-lg rounded-tr-lg gap-5 border border-gray-500">
 				<Button classname="bg-darkGray text-white rounded-md">
 					<span>Description</span>
+				</Button>
+
+				<Button classname="bg-darkGray text-white rounded-md">
+					<span>Submissons</span>
 				</Button>
 			</div>
 			<div className="px-5 pb-3 overflow-y-scroll scroll-smooth h-[93%]">
@@ -30,4 +34,3 @@ export const ProblemDescription = () => {
 		</section>
 	);
 };
-

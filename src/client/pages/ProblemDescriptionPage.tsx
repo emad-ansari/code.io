@@ -10,4 +10,4 @@ export const ProblemDescriptionPage = () => {
 		</Split>
 	);
 };
-//  className = 'flex gap-2 fixed left-0 right-0 bottom-0 top-[64px] px-3 py-3 bg-black'
+
