@@ -17,12 +17,15 @@ export const Problem = ({title, status, level, problemNo}: ProblemProps) => {
     return (
         <div 
             className = "flex flex-row bg-darkGray h-14 rounded-md cursor-pointer"
-            onClick={() => navigate (`../../problem/${title}`)} 
+            
         >
             <div className ={ `flex w-36 items-center px-3  ${status === "visited" ?  "text-[#f5f78e]" : "text-[#0FA958]"} text-2xl`}>
                 {status === "completed" ? <IoCheckmarkCircleOutline /> : status === "visited" ? <BiAdjust /> :status === "daily"  ? <BsCalendarCheckFill /> : "" }
             </div>
-            <div className="flex flex-1 justify-start items-center text-white gap-2">
+            <div
+                className="flex flex-1 justify-start items-center text-white gap-2"
+                onClick={() => navigate (`../../problem/${title}`)} 
+            >
                 <span>{problemNo}.</span>
                 <span>{title}</span>
             </div>
