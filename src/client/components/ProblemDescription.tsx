@@ -40,22 +40,22 @@ export function Submissions() {
 export function ProblemStatement() {
 	return (
 		<div className="px-5 pb-3 overflow-y-scroll scroll-smooth h-[93%]">
-		<div className="flex flex-col gap-[28px] pt-5 ">
-			how to create markdow for test cases 🤔?
+			<div className="flex flex-col gap-[28px] pt-5 ">
+				how to create markdow for test cases 🤔?
+			</div>
+			<div className="flex flex-col gap-8 ">
+				{testcase.map((testcase, index) => {
+					return (
+						<TestCase
+							key={testcase.id}
+							testCaseNumber={index}
+							input={testcase.input}
+							output={testcase.output}
+						/>
+					);
+				})}
+			</div>
 		</div>
-		<div className="flex flex-col gap-8 ">
-			{testcase.map((testcase, index) => {
-				return (
-					<TestCase
-						key={testcase.id}
-						testCaseNumber={index}
-						input={testcase.input}
-						output={testcase.output}
-					/>
-				);
-			})}
-		</div>
-	</div>
 
 	)
 }

@@ -1,10 +1,14 @@
 import { createSlice, PayloadAction } from "@reduxjs/toolkit";
 import { DropDownType } from "../types";
 
+
 export const dropDownInitialState: DropDownType = {
+	selectedLanguage: 'javascript',
+	seletedTheme: 'default',
 	isDifficultyMenuOpen: false,
 	isStatusMenuOpen: false,
 	isLanguageMenuOpen: false,
+	isThemeMenuOpen: false
 };
 
 export const dropDownSlice = createSlice({
@@ -20,6 +24,7 @@ export const dropDownSlice = createSlice({
 				isDifficultyMenuOpen,
 				isStatusMenuOpen,
 				isLanguageMenuOpen,
+				isThemeMenuOpen
 			} = state;
 			let updatedValue: DropDownType = { ...state };
 
@@ -46,10 +51,25 @@ export const dropDownSlice = createSlice({
 				};
 				
 			}
+			if (menu == "theme") {
+				updatedValue = {
+					...state,
+					isThemeMenuOpen: !isThemeMenuOpen,
+				};
+			}
 			return updatedValue;
 		},
+		setSelectedItem: (state, action: PayloadAction<{dropDownType: string, selectedItem: string}>) => {
+			const { dropDownType, selectedItem } = action.payload;
+			if (dropDownType === 'languages') {
+				state.selectedLanguage = selectedItem;
+			}
+			if (dropDownType == 'theme') {
+				state.seletedTheme = selectedItem
+			}
+		}
 	},
 });
 
 export default dropDownSlice.reducer;
-export const { setOpenDropDownMenu } = dropDownSlice.actions;
+export const { setOpenDropDownMenu, setSelectedItem } = dropDownSlice.actions;

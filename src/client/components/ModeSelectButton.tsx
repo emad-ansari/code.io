@@ -1,34 +1,58 @@
 import { MdKeyboardArrowDown } from "react-icons/md";
-import { LanguageDropDownMenu } from "./LanguageDropDownMenu";
-import { RootState, useAppDispatch } from "../app/store";
-import { useSelector } from "react-redux";
-import { setOpenDropDownMenu } from "../features/dropDownSlice";
+import { useAppDispatch } from "../app/store";
+import { setOpenDropDownMenu, setSelectedItem } from "../features/dropDownSlice";
 import { Button } from "./Button";
 import { memo } from "react";
 
-export const ModeSelectButton = memo(() => {
-	const { selectedLanguage } = useSelector(
-		(state: RootState) => state.problem
-	);
-	const { isLanguageMenuOpen } = useSelector(
-		(state: RootState) => state.dropdown
-	);
-	const dispatch = useAppDispatch();
+interface ModeSelectButtonProps {
+	menuType: string;
+	ITEMS_ARRAY: string[];
+	isMenuOpen: boolean;
+	selectedItem: string;
+}
 
-	return (
-		<Button
-			classname="relative flex flex-row items-center gap-2 bg-darkGray text-white z-30 rounded-md"
-			onClick={() => dispatch(setOpenDropDownMenu({ menu: "languages" }))}
-		>
-			<span>{selectedLanguage}</span>
-			<MdKeyboardArrowDown
-				className={`text-2xl pt-1 ${
-					isLanguageMenuOpen
-						? " transform duration-200  rotate-180 pt-1"
-						: "transform duration-200  -rotate-0 pt-1"
-				}`}
-			/>
-			<LanguageDropDownMenu />
-		</Button>
-	);
-});
+export const ModeSelectButton = memo(
+	({ menuType, ITEMS_ARRAY, isMenuOpen, selectedItem }: ModeSelectButtonProps) => {
+		
+		const dispatch = useAppDispatch();
+
+		return (
+			<Button
+				classname="relative flex flex-row items-center gap-2 hover:bg-hover text-white z-30 rounded-md"
+				onClick={() =>
+					dispatch(setOpenDropDownMenu({ menu: menuType }))
+				}
+			>
+				<span className="text-sm">{selectedItem}</span>
+				<MdKeyboardArrowDown
+					className={`text-2xl pt-1 ${
+						isMenuOpen
+							? " transform duration-200  rotate-180 pt-1"
+							: "transform duration-200  -rotate-0 pt-1"
+					}`}
+				/>
+				<div
+					className={`flex flex-col bg-darkGray absolute bottom-0 left-0 right-[-20%] top-[110%] h-[195px] items-center rounded-lg py-2 z-10 shadow-md text-sm ${
+						isMenuOpen
+							? "transform translate-y-0 opacity-100 block"
+							: "translate-y-[-50%] opacity-0 hidden"
+					} ease-in-out duration-300`}
+				>
+					{ITEMS_ARRAY.map((item, index) => {
+						return (
+							<span
+								key={index}
+								className="text-white font-normal hover:bg-hover flex  items-center px-2 py-2 w-[90%] rounded-md h-full"
+								onClick={() =>
+									dispatch(setSelectedItem({dropDownType: menuType, selectedItem: item}))
+								}
+							>
+								{item}
+							</span>
+						);
+					})}
+				</div>
+			</Button>
+		);
+	}
+);

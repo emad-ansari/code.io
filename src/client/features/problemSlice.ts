@@ -7,10 +7,8 @@ import { RootState } from "../app/store";
 
 export const problemSliceInitialState: ProblemState = {
 	problems: [],
-	selectedLanguage: "javascript",
 	pageSize: 10,
-	numberOfPages: 1,
-	
+	numberOfPages: 1,	
 	error: null,
 };
 
@@ -39,9 +37,6 @@ export const problemSlice = createSlice({
 	name: "problem",
 	initialState: problemSliceInitialState,
 	reducers: {
-		setSelectedLanguage: (state, action: PayloadAction<string>) => {
-			state.selectedLanguage = action.payload;
-		},
 		setPageSize: (state, action: PayloadAction<number>) => {
 			state.pageSize = action.payload;
 		},
@@ -66,6 +61,5 @@ export const problemSlice = createSlice({
 
 export default problemSlice.reducer;
 export const {
-	setSelectedLanguage,
 	setPageSize,
 } = problemSlice.actions;

@@ -2,16 +2,18 @@
 
 export interface ProblemState {
 	problems: Array<Problem>;
-	selectedLanguage: string;
 	pageSize: number;
 	numberOfPages: number;
 	error: any
 }
 
 export interface DropDownType {
+	selectedLanguage: string;
+	seletedTheme: string;
 	isStatusMenuOpen: boolean;
 	isDifficultyMenuOpen: boolean;
 	isLanguageMenuOpen: boolean
+	isThemeMenuOpen: boolean;
 }
 
 export interface Problem { 
