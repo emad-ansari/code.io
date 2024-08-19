@@ -6,7 +6,7 @@ import { memo } from 'react';
 export const FilterSection = memo(() => {
   
   return (
-    <nav className="flex flex-row gap-10 w-full ">
+    <nav className="flex flex-row gap-10 w-full z-0 ">
       <DifficultyFitlerButton />
       <StatusFilterButton />
       <div className="relative flex flex-1 text-white shadow-inner ">

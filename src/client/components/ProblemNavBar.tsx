@@ -10,7 +10,7 @@ export const ProblemNavBar = ({
 	isProbleDescriptioPage: boolean;
 }) => {
 	return (
-		<nav className="flex flex-row justify-between items-center bg-PRIMARY fixed top-0 left-0 right-0">
+		<nav className="flex flex-row justify-between items-center bg-PRIMARY fixed top-0 left-0 right-0 z-50">
 			<div className="flex-none items-center justify-start w-96">
 				<img
 					src={CodeInLogo}
