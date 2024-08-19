@@ -10,7 +10,8 @@ import { ProblemDescriptionPage } from "./client/pages/ProblemDescriptionPage";
 import { ProblemList } from "./client/components/ProblemList";
 import { AboutUs } from "./client/pages/AboutUsPage";
 import { Layout } from "./client/layouts/Layout";
-import { ProblemStatementPageLayOut } from "./client/layouts/ProblemStatementPageLayOut";
+import { ProblemStatement }  from "./client/components/ProblemDescription";
+import { Submissions }  from "./client/components/ProblemDescription";
 
 import "./index.css";
 
@@ -34,16 +35,15 @@ const App = () => {
 						<Route path="contests" element={<ContestPage />} />
 						<Route path="standings" element={<StandingPage />} />
 					</Route>
-					<Route
-						path="problem/:problem-name"
-						element={<ProblemStatementPageLayOut />}
-					>
-						<Route index element={<ProblemDescriptionPage />} />
+					<Route path="problem/:problem-name" element={<ProblemDescriptionPage />}>
+						<Route  index element={<ProblemStatement />} />
+						<Route  path = 'submissions' element={< Submissions />} />
 					</Route>
+					
 				</Routes>
 			</BrowserRouter>
 		</>
 	);
-};
+}
 
 export default App;
