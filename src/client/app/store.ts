@@ -2,13 +2,15 @@ import { configureStore } from "@reduxjs/toolkit";
 import problemReducer from "../features/problemSlice";
 import dropDownReducer from "../features/dropDownSlice";
 import filterReducer from '../features/filterSlice'
+import settingReducer from '../features/editorSettingSlice'
 import { useDispatch } from "react-redux";
 
 export const store = configureStore({
 	reducer: {
 		problem: problemReducer,
 		dropdown: dropDownReducer,
-		filter: filterReducer
+		filter: filterReducer,
+		setting: settingReducer
 	},
 });
 

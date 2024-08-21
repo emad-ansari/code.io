@@ -4,6 +4,7 @@ import { ModeSelectButton } from "./ModeSelectButton";
 import { CodeEditor } from "./CodeEditor";
 import { IoSettings } from "react-icons/io5";
 import { GoScreenFull } from "react-icons/go";
+import { EditorSetting } from "./EditorSetting";
 import { useSelector } from "react-redux";
 import { RootState, useAppDispatch } from "../app/store";
 import {
@@ -11,6 +12,7 @@ import {
 	toggleFullScreen,
 } from "../features/dropDownSlice";
 import Split from "react-split";
+import { setIsOpen } from "../features/editorSettingSlice";
 
 const LANGUAGES = ["java", "cpp", "javascript", "go", "rust"];
 const EDITOR_THEMES = ["default", "GitHub Dark", "OneDark Pro"];
@@ -20,6 +22,7 @@ export const EditorSection = () => {
 	const { isLanguageMenuOpen, isThemeMenuOpen } = useSelector(
 		(state: RootState) => state.dropdown
 	);
+	const { isOpen } = useSelector((state: RootState) => state.setting);
 
 	const handleOpenDropDown = () => {
 		if (isLanguageMenuOpen) {
@@ -59,6 +62,7 @@ export const EditorSection = () => {
 					this is console section
 				</div>
 			</Split>
+			{isOpen && <EditorSetting />  }
 		</section>
 	);
 };
@@ -87,7 +91,10 @@ function EditorTopBar() {
 					isMenuOpen={isThemeMenuOpen}
 					selectedItem={seletedTheme}
 				/>
-				<Button classname={" hover:bg-gray-700 rounded-full "}>
+				<Button
+					classname={" hover:bg-gray-700 rounded-full "}
+					onClick={() => dispatch(setIsOpen(true))}
+				>
 					<IoSettings className="text-white" />
 				</Button>
 				<Button
@@ -97,6 +104,7 @@ function EditorTopBar() {
 					<GoScreenFull className="text-white" />
 				</Button>
 			</div>
+			
 		</div>
 	);
 }

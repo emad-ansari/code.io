@@ -6,7 +6,11 @@ export interface ProblemState {
 	numberOfPages: number;
 	error: any
 }
-
+export interface SettingState {
+	isOpen: boolean;
+	// theme: string,
+	// fontSize: string;
+}
 export interface DropDownType {
 	selectedLanguage: string;
 	seletedTheme: string;
