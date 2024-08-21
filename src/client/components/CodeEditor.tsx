@@ -1,16 +1,12 @@
 import { Editor, Monaco } from "@monaco-editor/react";
 import { useSelector } from "react-redux";
-import { RootState, useAppDispatch } from "../app/store";
+import { RootState } from "../app/store";
 import OneDarkPro from "../theme/oneDarkPro.json";
-import { setOpenDropDownMenu } from "../features/dropDownSlice";
 
 export const CodeEditor = () => {
-	const dispatch = useAppDispatch();
-
-	const { isLanguageMenuOpen, selectedLanguage, isThemeMenuOpen, isFullScreen } = useSelector(
+	const { selectedLanguage } = useSelector(
 		(state: RootState) => state.dropdown
 	);
-
 	const handleEditorDidMount = (monaco: Monaco) => {
 		monaco.editor.defineTheme("OneDarkPro", {
 			base: "vs-dark",
@@ -18,57 +14,41 @@ export const CodeEditor = () => {
 			...OneDarkPro,
 		});
 	};
-  
-  const handleOpenDropDown = () => {
-    if (isLanguageMenuOpen) {
-      dispatch(setOpenDropDownMenu({ menu: "languages" }));
-    }
-    if (isThemeMenuOpen) {
-      dispatch(setOpenDropDownMenu({ menu: "theme" }));
-    }
-  }
 
-	
 	return (
-		<div
-			onClick={() => handleOpenDropDown()}
-		>
-			<Editor
-				height={isFullScreen ? "200px ": " 200px"}
-				defaultLanguage="javascript"
-				defaultValue="// some comment"
-				theme="OneDarkPro"
-				language={selectedLanguage}
-				value={""}
-				onMount={() => {}}
-				options={{
-					fontSize: 14,
-					scrollBeyondLastLine: false,
-					fontFamily: "Jetbrains-Mono",
-					fontLigatures: true,
-					wordWrap: "on",
-					minimap: {
-						enabled: false,
-					},
-					bracketPairColorization: {
-						enabled: true,
-					},
-					cursorBlinking: "expand",
-					formatOnPaste: true,
-					suggest: {
-						showFields: false,
-						showFunctions: false,
-					},
-				}}
-				beforeMount={handleEditorDidMount}
-				className="rounded-lg"
+		<Editor
+			height="100%"
+			defaultLanguage="javascript"
+			defaultValue="// some comment"
+			theme="OneDarkPro"
+			language={selectedLanguage}
+			value={""}
+			onMount={() => {}}
+			options={{
+				fontSize: 14,
+				scrollBeyondLastLine: false,
+				fontFamily: "Jetbrains-Mono",
+				fontLigatures: true,
+				wordWrap: "on",
+				minimap: {
+					enabled: false,
+				},
+				bracketPairColorization: {
+					enabled: true,
+				},
+				cursorBlinking: "expand",
+				formatOnPaste: true,
+				suggest: {
+					showFields: false,
+					showFunctions: false,
+				},
+			}}
+			beforeMount={handleEditorDidMount}
+			className="rounded-lg"
 
-				// onChange={(value) => {dispatch(setCode(value))}}
-			/>
-		</div>
+			// onChange={(value) => {dispatch(setCode(value))}}
+		/>
 	);
 };
 
-// fulll screen - 91.6vh
-// small screen -
 

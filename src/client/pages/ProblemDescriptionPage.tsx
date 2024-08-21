@@ -16,6 +16,7 @@ export const ProblemDescriptionPage = () => {
 				className={`flex flex-row bg-PRIMARY p-2 fixed top-0 bottom-0 left-0 right-0 ${
 					isFullScreen ? "z-50 " : "mt-[64px]"
 				}`}
+				sizes={[45, 55]}
 				gutterSize={8}
 				minSize={0}
 				gutterAlign = {'start'}
