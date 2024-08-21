@@ -8,7 +8,8 @@ export const dropDownInitialState: DropDownType = {
 	isDifficultyMenuOpen: false,
 	isStatusMenuOpen: false,
 	isLanguageMenuOpen: false,
-	isThemeMenuOpen: false
+	isThemeMenuOpen: false,
+	isFullScreen :false
 };
 
 export const dropDownSlice = createSlice({
@@ -67,9 +68,13 @@ export const dropDownSlice = createSlice({
 			if (dropDownType == 'theme') {
 				state.seletedTheme = selectedItem
 			}
+		},
+		toggleFullScreen: (state, action: PayloadAction<boolean>) => {
+			state.isFullScreen = action.payload;
 		}
+
 	},
 });
 
 export default dropDownSlice.reducer;
-export const { setOpenDropDownMenu, setSelectedItem } = dropDownSlice.actions;
+export const { setOpenDropDownMenu, setSelectedItem, toggleFullScreen } = dropDownSlice.actions;

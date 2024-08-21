@@ -7,8 +7,7 @@ import { setOpenDropDownMenu } from "../features/dropDownSlice";
 export const CodeEditor = () => {
 	const dispatch = useAppDispatch();
 
-	
-	const { isLanguageMenuOpen, selectedLanguage, isThemeMenuOpen } = useSelector(
+	const { isLanguageMenuOpen, selectedLanguage, isThemeMenuOpen, isFullScreen } = useSelector(
 		(state: RootState) => state.dropdown
 	);
 
@@ -19,6 +18,7 @@ export const CodeEditor = () => {
 			...OneDarkPro,
 		});
 	};
+  
   const handleOpenDropDown = () => {
     if (isLanguageMenuOpen) {
       dispatch(setOpenDropDownMenu({ menu: "languages" }));
@@ -34,8 +34,8 @@ export const CodeEditor = () => {
 			onClick={() => handleOpenDropDown()}
 		>
 			<Editor
-				height="91.6vh"
-				defaultLanguage="java"
+				height={isFullScreen ? "200px ": " 200px"}
+				defaultLanguage="javascript"
 				defaultValue="// some comment"
 				theme="OneDarkPro"
 				language={selectedLanguage}
@@ -61,6 +61,7 @@ export const CodeEditor = () => {
 					},
 				}}
 				beforeMount={handleEditorDidMount}
+				className="rounded-lg"
 
 				// onChange={(value) => {dispatch(setCode(value))}}
 			/>

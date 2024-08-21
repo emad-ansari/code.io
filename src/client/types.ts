@@ -14,6 +14,7 @@ export interface DropDownType {
 	isDifficultyMenuOpen: boolean;
 	isLanguageMenuOpen: boolean
 	isThemeMenuOpen: boolean;
+	isFullScreen: boolean;
 }
 
 export interface Problem { 

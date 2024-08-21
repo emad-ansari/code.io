@@ -10,14 +10,14 @@ export const ProblemDescription = () => {
 		<section className="rounded-lg bg-darkGray  text-white border border-gray-500 ">
 			<div className="flex items-center bg-[#1f2937] px-2 py-1 rounded-tl-lg rounded-tr-lg gap-5 border border-gray-500">
 				<Button 
-					classname="bg-darkGray text-white rounded-md"
+					classname="bg-gray-700 text-white rounded-md"
 					onClick={() => navigate('./')}
 				>
 					<span>Description</span>
 				</Button>
 
 				<Button 
-					classname="bg-darkGray text-white rounded-md"
+					classname="bg-gray-700 text-white rounded-md"
 					onClick={() => navigate('submissions')}
 				>
 					<span>Submissons</span>

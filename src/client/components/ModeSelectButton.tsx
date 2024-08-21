@@ -11,14 +11,13 @@ interface ModeSelectButtonProps {
 	selectedItem: string;
 }
 
-export const ModeSelectButton = memo(
-	({ menuType, ITEMS_ARRAY, isMenuOpen, selectedItem }: ModeSelectButtonProps) => {
+export const ModeSelectButton = memo(({ menuType, ITEMS_ARRAY, isMenuOpen, selectedItem }: ModeSelectButtonProps) => {
 		
 		const dispatch = useAppDispatch();
 
 		return (
 			<Button
-				classname="relative flex flex-row items-center gap-2 hover:bg-hover text-white z-30 rounded-md"
+				classname="relative flex flex-row items-center gap-2 bg-gray-700 text-white z-30 rounded-md"
 				onClick={() =>
 					dispatch(setOpenDropDownMenu({ menu: menuType }))
 				}
