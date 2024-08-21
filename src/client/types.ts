@@ -54,3 +54,8 @@ export interface DropDownItemProps {
 	filterProblems: (difficultyLevel: string) => void;
 }
 
+export interface CustomMuiMenuProps {
+	labelValue: string;
+	
+
+}
