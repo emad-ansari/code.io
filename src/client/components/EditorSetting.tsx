@@ -8,6 +8,10 @@ import { useSelector } from "react-redux";
 import { RootState, useAppDispatch } from "../app/store";
 import { setIsOpen } from "../features/editorSettingSlice";
 import { CustomMuiMenuProps } from "../types";
+
+const EDITOR_THEMES = ["default", "GitHub Dark", "OneDark Pro"];
+const FONT_SIZES = ['12px', '14px', '16px', '18px', '20px', '22px' ];
+
 import {
 	FormControl,
 	InputLabel,
@@ -15,11 +19,6 @@ import {
 	Select,
 	SelectChangeEvent,
 } from "@mui/material";
-
-
-
-
-
 
 const BootstrapDialog = styled(Dialog)(({ theme }) => ({
 	"& .MuiDialogActions-root": {
@@ -77,25 +76,25 @@ export function EditorSetting() {
 					<IoCloseOutline />
 				</IconButton>
 				<div className="flex flex-col gap-5">
-					<CustomMuiSelectMenu />
-					<CustomMuiSelectMenu />
+					<CustomMuiSelectMenu labelName = "Font" labelValue="Font Size" ITEMS_ARRAY={FONT_SIZES}/>
+					<CustomMuiSelectMenu labelName = "Theme" ITEMS_ARRAY={EDITOR_THEMES} labelValue="Theme"/>
 				</div>
 			</BootstrapDialog>
 		</React.Fragment>
 	);
 }
 
-function CustomMuiSelectMenu() {
-	const [fontSize, setFontSize] = React.useState("");
+function CustomMuiSelectMenu(props: CustomMuiMenuProps) {
+	const [item, setItem] = React.useState("");
 
 	const handleChange = (event: SelectChangeEvent) => {
-		setFontSize(event.target.value as string);
+		setItem(event.target.value as string);
 	};
 
 	return (
-		<div className="flex flex-row gap-8 items-center ">
+		<div className="flex flex-row items-center justify-between ">
 			<Typography sx={{ fontSize: "14px", color: "#d1d5db" }}>
-				Font Size:
+				{props.labelValue}
 			</Typography>
 			<FormControl sx={{ width: "70%" }}>
 				<InputLabel
@@ -107,12 +106,12 @@ function CustomMuiSelectMenu() {
 						},
 					}}
 				>
-					Font
+					{props.labelName}
 				</InputLabel>
 				<Select
 					labelId="demo-simple-select-label"
 					id="demo-simple-select"
-					value={fontSize}
+					value={item}
 					label="Age"
 					sx={dropDownStyles}
 					MenuProps={{
@@ -125,14 +124,17 @@ function CustomMuiSelectMenu() {
 					}}
 					onChange={handleChange}
 				>
-					<MenuItem id="font-menu-item" value={12}>
-						12px
-					</MenuItem>
-					<MenuItem value={14}>14px</MenuItem>
-					<MenuItem value={16}>16px</MenuItem>
-					<MenuItem value={18}>18px</MenuItem>
-					<MenuItem value={20}>20px</MenuItem>
-					<MenuItem value={22}>22px</MenuItem>
+					{props.ITEMS_ARRAY.map((item, index) => {
+						return (
+							<MenuItem
+								key={index}
+								id="font-menu-item"
+								value={index}
+							>
+								{item}
+							</MenuItem>
+						);
+					})}
 				</Select>
 			</FormControl>
 		</div>

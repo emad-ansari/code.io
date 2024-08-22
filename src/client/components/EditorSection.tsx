@@ -1,5 +1,5 @@
 import { Button } from "../components/Button";
-// import { MdOutlineFileUpload } from "react-icons/md";
+import { MdOutlineFileUpload } from "react-icons/md";
 import { ModeSelectButton } from "./ModeSelectButton";
 import { CodeEditor } from "./CodeEditor";
 import { IoSettings } from "react-icons/io5";
@@ -13,9 +13,10 @@ import {
 } from "../features/dropDownSlice";
 import Split from "react-split";
 import { setIsOpen } from "../features/editorSettingSlice";
+import { Tooltip } from "@mui/material";
 
 const LANGUAGES = ["java", "cpp", "javascript", "go", "rust"];
-const EDITOR_THEMES = ["default", "GitHub Dark", "OneDark Pro"];
+// const EDITOR_THEMES = ["default", "GitHub Dark", "OneDark Pro"];
 
 export const EditorSection = () => {
 	const dispatch = useAppDispatch();
@@ -62,20 +63,16 @@ export const EditorSection = () => {
 					this is console section
 				</div>
 			</Split>
-			{isOpen && <EditorSetting />  }
+			{isOpen && <EditorSetting />}
 		</section>
 	);
 };
 
 function EditorTopBar() {
 	const dispatch = useAppDispatch();
-	const {
-		isLanguageMenuOpen,
-		selectedLanguage,
-		isThemeMenuOpen,
-		seletedTheme,
-		isFullScreen,
-	} = useSelector((state: RootState) => state.dropdown);
+	const { isLanguageMenuOpen, selectedLanguage, isFullScreen } = useSelector(
+		(state: RootState) => state.dropdown
+	);
 	return (
 		<div className="flex items-center px-2 py-1 bg-[#1f2937] rounded-tl-lg rounded-tr-lg justify-between  gap-5">
 			<ModeSelectButton
@@ -85,18 +82,18 @@ function EditorTopBar() {
 				selectedItem={selectedLanguage}
 			/>
 			<div className="flex flex-row gap-2 items-center ">
-				<ModeSelectButton
-					menuType="theme"
-					ITEMS_ARRAY={EDITOR_THEMES}
-					isMenuOpen={isThemeMenuOpen}
-					selectedItem={seletedTheme}
-				/>
+				<Button classname="bg-gray-700 text-white flex gap-2 items-center rounded-md">
+					<span>Submit</span>
+					<MdOutlineFileUpload />
+				</Button>
+
 				<Button
 					classname={" hover:bg-gray-700 rounded-full "}
 					onClick={() => dispatch(setIsOpen(true))}
 				>
 					<IoSettings className="text-white" />
 				</Button>
+
 				<Button
 					classname={"hover:bg-gray-700 rounded-full"}
 					onClick={() => dispatch(toggleFullScreen(!isFullScreen))}
@@ -104,14 +101,9 @@ function EditorTopBar() {
 					<GoScreenFull className="text-white" />
 				</Button>
 			</div>
-			
 		</div>
 	);
 }
 
 {
-	/* <Button classname="bg-darkGray text-white flex gap-2 items-center rounded-md">
-	<span>Submit</span>
-	<MdOutlineFileUpload />
-</Button>; */
 }

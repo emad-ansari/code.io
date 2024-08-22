@@ -55,7 +55,7 @@ export interface DropDownItemProps {
 }
 
 export interface CustomMuiMenuProps {
+	labelName: string;
 	labelValue: string;
-	
-
+	ITEMS_ARRAY: string[];
 }
