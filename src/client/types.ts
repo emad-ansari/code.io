@@ -8,8 +8,8 @@ export interface ProblemState {
 }
 export interface SettingState {
 	isOpen: boolean;
-	// theme: string,
-	// fontSize: string;
+	theme: string,
+	fontSize: number;
 }
 export interface DropDownType {
 	selectedLanguage: string;
@@ -59,3 +59,10 @@ export interface CustomMuiMenuProps {
 	labelValue: string;
 	ITEMS_ARRAY: string[];
 }
+
+export const FONT_SIZES =  [
+	{
+		
+	}
+
+]

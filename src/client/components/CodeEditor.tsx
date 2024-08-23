@@ -3,10 +3,12 @@ import { useSelector } from "react-redux";
 import { RootState } from "../app/store";
 import OneDarkPro from "../theme/oneDarkPro.json";
 
+
 export const CodeEditor = () => {
 	const { selectedLanguage } = useSelector(
 		(state: RootState) => state.dropdown
 	);
+	const { fontSize } = useSelector((state: RootState) => state.setting);
 	const handleEditorDidMount = (monaco: Monaco) => {
 		monaco.editor.defineTheme("OneDarkPro", {
 			base: "vs-dark",
@@ -25,7 +27,7 @@ export const CodeEditor = () => {
 			value={""}
 			onMount={() => {}}
 			options={{
-				fontSize: 14,
+				fontSize: fontSize,
 				scrollBeyondLastLine: false,
 				fontFamily: "Jetbrains-Mono",
 				fontLigatures: true,

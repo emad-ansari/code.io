@@ -2,6 +2,7 @@ import { MdKeyboardArrowDown } from "react-icons/md";
 import { useAppDispatch } from "../app/store";
 import { setOpenDropDownMenu, setSelectedItem } from "../features/dropDownSlice";
 import { Button } from "./Button";
+import { IoIosCheckmark } from "react-icons/io";
 import { memo } from "react";
 
 interface ModeSelectButtonProps {
@@ -41,12 +42,13 @@ export const ModeSelectButton = memo(({ menuType, ITEMS_ARRAY, isMenuOpen, selec
 						return (
 							<span
 								key={index}
-								className="text-white font-normal hover:bg-hover flex  items-center px-2 py-2 w-[90%] rounded-md h-full"
+								className="text-white font-normal hover:bg-hover flex  items-center px-2 py-2 w-[90%] rounded-md h-full justify-between"
 								onClick={() =>
 									dispatch(setSelectedItem({dropDownType: menuType, selectedItem: item}))
 								}
 							>
 								{item}
+								{ item === selectedItem && <IoIosCheckmark className="text-2xl font-medium"/> }
 							</span>
 						);
 					})}

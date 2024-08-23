@@ -6,7 +6,7 @@ import { IoCloseOutline } from "react-icons/io5";
 import Typography from "@mui/material/Typography";
 import { useSelector } from "react-redux";
 import { RootState, useAppDispatch } from "../app/store";
-import { setIsOpen } from "../features/editorSettingSlice";
+import { setIsOpen, setFontSize, setTheme } from "../features/editorSettingSlice";
 import { CustomMuiMenuProps } from "../types";
 
 const EDITOR_THEMES = ["default", "GitHub Dark", "OneDark Pro"];
@@ -85,16 +85,24 @@ export function EditorSetting() {
 }
 
 function CustomMuiSelectMenu(props: CustomMuiMenuProps) {
-	const [item, setItem] = React.useState("");
-
+	const { labelName, labelValue} = props;
+	const dispatch = useAppDispatch();
+	const { fontSize ,theme} = useSelector((state: RootState) => state.setting);
 	const handleChange = (event: SelectChangeEvent) => {
-		setItem(event.target.value as string);
+		const value = event.target.value as string;
+		if (labelName === "Font"){
+			const newFontSize = Number(value.substring(0, 2));
+			dispatch(setFontSize(newFontSize));
+		}
+		if (labelName === 'Theme'){
+			dispatch(setTheme(value))
+		}
 	};
 
 	return (
 		<div className="flex flex-row items-center justify-between ">
 			<Typography sx={{ fontSize: "14px", color: "#d1d5db" }}>
-				{props.labelValue}
+				{labelValue}
 			</Typography>
 			<FormControl sx={{ width: "70%" }}>
 				<InputLabel
@@ -106,13 +114,13 @@ function CustomMuiSelectMenu(props: CustomMuiMenuProps) {
 						},
 					}}
 				>
-					{props.labelName}
+					{labelName}
 				</InputLabel>
 				<Select
 					labelId="demo-simple-select-label"
 					id="demo-simple-select"
-					value={item}
-					label="Age"
+					value={labelName === "Font" ? `${fontSize}px` : theme}
+					label = {labelName === "Font" ? "Font" : "Theme"}
 					sx={dropDownStyles}
 					MenuProps={{
 						PaperProps: {
@@ -129,7 +137,7 @@ function CustomMuiSelectMenu(props: CustomMuiMenuProps) {
 							<MenuItem
 								key={index}
 								id="font-menu-item"
-								value={index}
+								value={item}
 							>
 								{item}
 							</MenuItem>

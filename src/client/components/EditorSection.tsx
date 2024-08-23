@@ -13,10 +13,9 @@ import {
 } from "../features/dropDownSlice";
 import Split from "react-split";
 import { setIsOpen } from "../features/editorSettingSlice";
-import { Tooltip } from "@mui/material";
 
 const LANGUAGES = ["java", "cpp", "javascript", "go", "rust"];
-// const EDITOR_THEMES = ["default", "GitHub Dark", "OneDark Pro"];
+
 
 export const EditorSection = () => {
 	const dispatch = useAppDispatch();
@@ -105,5 +104,3 @@ function EditorTopBar() {
 	);
 }
 
-{
-}
