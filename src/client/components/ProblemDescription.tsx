@@ -38,6 +38,9 @@ export function Submissions() {
 
 
 export function ProblemStatement() {
+
+	// fetch the test cases here inside useEffect
+	
 	return (
 		<div className="px-5 pb-3 overflow-y-scroll scroll-smooth h-[93%]">
 			<div className="flex flex-col gap-[28px] pt-5 ">
@@ -56,6 +59,5 @@ export function ProblemStatement() {
 				})}
 			</div>
 		</div>
-
 	)
 }

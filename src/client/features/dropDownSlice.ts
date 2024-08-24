@@ -3,13 +3,10 @@ import { DropDownType } from "../types";
 
 
 export const dropDownInitialState: DropDownType = {
-	selectedLanguage: 'javascript',
-	seletedTheme: 'default',
 	isDifficultyMenuOpen: false,
 	isStatusMenuOpen: false,
 	isLanguageMenuOpen: false,
 	isThemeMenuOpen: false,
-	isFullScreen :false
 };
 
 export const dropDownSlice = createSlice({
@@ -25,7 +22,6 @@ export const dropDownSlice = createSlice({
 				isDifficultyMenuOpen,
 				isStatusMenuOpen,
 				isLanguageMenuOpen,
-				isThemeMenuOpen
 			} = state;
 			let updatedValue: DropDownType = { ...state };
 
@@ -52,29 +48,14 @@ export const dropDownSlice = createSlice({
 				};
 				
 			}
-			if (menu == "theme") {
-				updatedValue = {
-					...state,
-					isThemeMenuOpen: !isThemeMenuOpen,
-				};
-			}
+
 			return updatedValue;
 		},
-		setSelectedItem: (state, action: PayloadAction<{dropDownType: string, selectedItem: string}>) => {
-			const { dropDownType, selectedItem } = action.payload;
-			if (dropDownType === 'languages') {
-				state.selectedLanguage = selectedItem;
-			}
-			if (dropDownType == 'theme') {
-				state.seletedTheme = selectedItem
-			}
-		},
-		toggleFullScreen: (state, action: PayloadAction<boolean>) => {
-			state.isFullScreen = action.payload;
-		}
+		
+		
 
 	},
 });
 
 export default dropDownSlice.reducer;
-export const { setOpenDropDownMenu, setSelectedItem, toggleFullScreen } = dropDownSlice.actions;
+export const { setOpenDropDownMenu } = dropDownSlice.actions;

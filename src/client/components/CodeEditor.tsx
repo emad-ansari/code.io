@@ -1,42 +1,21 @@
 import { Editor, Monaco } from "@monaco-editor/react";
 // import * as monaco from "monaco-editor";
 import { useSelector } from "react-redux";
-import { RootState } from "../app/store";
-// import { useEffect } from "react";
+import { setBoilerPlateCode } from "../features/editorSlice";
+import { RootState, useAppDispatch } from "../app/store";
 import OneDarkPro from "../theme/oneDarkPro.json";
-// import GitHubDark from "../theme/gitHubDark.json";
-// import VsLight from "../theme/vsLight.json";
+import { useEffect } from "react";
+
+
+
 
 export const CodeEditor = () => {
-	const { selectedLanguage } = useSelector(
-		(state: RootState) => state.dropdown
+	const { language, boilerPlateCode } = useSelector(
+		(state: RootState) => state.editor
 	);
 	const { fontSize } = useSelector(
 		(state: RootState) => state.setting
 	);
-	// console.log("current theme: ", theme);
-
-	// useEffect(() => {
-	// 	if (!monaco) return;
-	// 	monaco.editor.defineTheme("OneDarkPro", {
-	// 		base: "vs-dark",
-	// 		inherit: true,
-	// 		...OneDarkPro,
-	// 	});
-	// 	monaco.editor.defineTheme("GitHub-Dark", {
-	// 		base: "vs-dark",
-	// 		inherit: true,
-	// 		...GitHubDark,
-	// 	});
-	// 	monaco.editor.defineTheme("Vs-Light", {
-	// 		base: "vs",
-	// 		inherit: true,
-	// 		...VsLight,
-	// 	});
-	// 	// monaco.editor.setTheme(theme);
-
-	// 	console.log("here...");
-	// }, [theme]);
 
 	const handleEditorDidMount = (monaco: Monaco) => {
 		monaco.editor.defineTheme("OneDarkPro", {
@@ -45,15 +24,27 @@ export const CodeEditor = () => {
 			...OneDarkPro,
 		});
 	};
+	const dispatch = useAppDispatch();
+	console.log('component re-render...')
+	/*
+		1. when codeEditor component load fetch all the boilerplate details along with there language
+		2. Embbed all details to corresponding boiler plate.
+		2. make a boilerPlate state variable and setBoiler plate action function.
+		3. setBoiler plate according to selectedLanguage 
+
+	*/
+	useEffect(() => {
+		dispatch(setBoilerPlateCode(language));
+	}, [language])
 
 	return (
 		<Editor
 			height="100%"
-			defaultLanguage="javascript"
-			defaultValue="// some comment"
+			// defaultLanguage="javascript"
+			// defaultValue={boilerPlateCode}
 			theme={"OneDarkPro"}
-			language={selectedLanguage}
-			value={""}
+			language={language}
+			value={boilerPlateCode}
 			onMount={() => {}}
 			options={{
 				fontSize: fontSize,
@@ -82,3 +73,29 @@ export const CodeEditor = () => {
 		/>
 	);
 };
+
+
+
+// console.log("current theme: ", theme);
+
+	// useEffect(() => {
+	// 	if (!monaco) return;
+	// 	monaco.editor.defineTheme("OneDarkPro", {
+	// 		base: "vs-dark",
+	// 		inherit: true,
+	// 		...OneDarkPro,
+	// 	});
+	// 	monaco.editor.defineTheme("GitHub-Dark", {
+	// 		base: "vs-dark",
+	// 		inherit: true,
+	// 		...GitHubDark,
+	// 	});
+	// 	monaco.editor.defineTheme("Vs-Light", {
+	// 		base: "vs",
+	// 		inherit: true,
+	// 		...VsLight,
+	// 	});
+	// 	// monaco.editor.setTheme(theme);
+
+	// 	console.log("here...");
+	// }, [theme]);

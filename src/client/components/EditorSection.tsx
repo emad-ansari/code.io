@@ -7,16 +7,12 @@ import { GoScreenFull } from "react-icons/go";
 import { EditorSetting } from "./EditorSetting";
 import { useSelector } from "react-redux";
 import { RootState, useAppDispatch } from "../app/store";
-import {
-	setOpenDropDownMenu,
-	toggleFullScreen,
-} from "../features/dropDownSlice";
+import { setOpenDropDownMenu } from "../features/dropDownSlice";
+import { toggleFullScreen } from "../features/editorSlice";
 import Split from "react-split";
 import { setIsOpen } from "../features/editorSettingSlice";
 
-
 const LANGUAGES = ["java", "cpp", "javascript", "go", "rust"];
-
 
 export const EditorSection = () => {
 	const dispatch = useAppDispatch();
@@ -37,7 +33,7 @@ export const EditorSection = () => {
 	return (
 		<section className="">
 			<Split
-				sizes={[80, 20]}
+				sizes={[100, 0]}
 				className="h-full rounded-lg "
 				direction="vertical"
 				gutterSize={8}
@@ -70,8 +66,12 @@ export const EditorSection = () => {
 
 function EditorTopBar() {
 	const dispatch = useAppDispatch();
-	const { isLanguageMenuOpen, selectedLanguage, isFullScreen } = useSelector(
+	const { isLanguageMenuOpen } = useSelector(
 		(state: RootState) => state.dropdown
+	);
+
+	const { isFullScreen, language } = useSelector(
+		(state: RootState) => state.editor
 	);
 	return (
 		<div className="flex items-center px-2 py-1 bg-[#1f2937] rounded-tl-lg rounded-tr-lg justify-between  gap-5">
@@ -79,7 +79,7 @@ function EditorTopBar() {
 				menuType="languages"
 				ITEMS_ARRAY={LANGUAGES}
 				isMenuOpen={isLanguageMenuOpen}
-				selectedItem={selectedLanguage}
+				selectedItem={language}
 			/>
 			<div className="flex flex-row gap-2 items-center ">
 				<Button classname="bg-gray-700 text-white flex gap-2 items-center rounded-md">
@@ -104,4 +104,3 @@ function EditorTopBar() {
 		</div>
 	);
 }
-

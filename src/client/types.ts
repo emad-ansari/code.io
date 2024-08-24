@@ -1,38 +1,38 @@
-
 export interface ProblemState {
 	problems: Array<Problem>;
 	pageSize: number;
 	numberOfPages: number;
-	error: any
+	error: any;
 }
 export interface SettingState {
 	isOpen: boolean;
-	theme: string
+	theme: string;
 	fontSize: number;
 }
 export interface DropDownType {
-	selectedLanguage: string;
-	seletedTheme: string;
 	isStatusMenuOpen: boolean;
 	isDifficultyMenuOpen: boolean;
-	isLanguageMenuOpen: boolean
+	isLanguageMenuOpen: boolean;
 	isThemeMenuOpen: boolean;
-	isFullScreen: boolean;
 }
 
-export interface Problem { 
+export interface EditorState {
+	language: string;
+	isFullScreen: boolean;
+	boilerPlateCode: string;
+}
+
+export interface Problem {
 	problemId: number;
 	problemTitle: string;
 	problemDescription: string;
 	difficultyLevel: string;
 	problemStatus: string;
-	problemNo: number
+	problemNo: number;
 }
 
-
-
 export interface ApiResponse<T> {
-	data: T,
+	data: T;
 	totalPages: number;
 	message: string;
 }
@@ -45,7 +45,7 @@ export interface FilterState {
 
 export interface getProblemParameter {
 	pageNumber: number;
-	difficultyLevel: string
+	difficultyLevel: string;
 }
 export interface DropDownItemProps {
 	value: string;
@@ -58,4 +58,3 @@ export interface CustomMuiMenuProps {
 	labelValue: string;
 	ITEMS_ARRAY: string[];
 }
-
