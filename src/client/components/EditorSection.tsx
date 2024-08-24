@@ -14,6 +14,7 @@ import {
 import Split from "react-split";
 import { setIsOpen } from "../features/editorSettingSlice";
 
+
 const LANGUAGES = ["java", "cpp", "javascript", "go", "rust"];
 
 

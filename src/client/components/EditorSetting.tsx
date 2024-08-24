@@ -9,7 +9,7 @@ import { RootState, useAppDispatch } from "../app/store";
 import { setIsOpen, setFontSize, setTheme } from "../features/editorSettingSlice";
 import { CustomMuiMenuProps } from "../types";
 
-const EDITOR_THEMES = ["default", "GitHub Dark", "OneDark Pro"];
+const EDITOR_THEMES = ["vs-dark", "vs", "hc-light", "OneDarkPro"];
 const FONT_SIZES = ['12px', '14px', '16px', '18px', '20px', '22px' ];
 
 import {
@@ -90,12 +90,13 @@ function CustomMuiSelectMenu(props: CustomMuiMenuProps) {
 	const { fontSize ,theme} = useSelector((state: RootState) => state.setting);
 	const handleChange = (event: SelectChangeEvent) => {
 		const value = event.target.value as string;
+
 		if (labelName === "Font"){
 			const newFontSize = Number(value.substring(0, 2));
 			dispatch(setFontSize(newFontSize));
 		}
 		if (labelName === 'Theme'){
-			dispatch(setTheme(value))
+			dispatch(setTheme(value)) //
 		}
 	};
 

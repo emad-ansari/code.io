@@ -1,5 +1,4 @@
 
-
 export interface ProblemState {
 	problems: Array<Problem>;
 	pageSize: number;
@@ -8,7 +7,7 @@ export interface ProblemState {
 }
 export interface SettingState {
 	isOpen: boolean;
-	theme: string,
+	theme: string
 	fontSize: number;
 }
 export interface DropDownType {
@@ -60,9 +59,3 @@ export interface CustomMuiMenuProps {
 	ITEMS_ARRAY: string[];
 }
 
-export const FONT_SIZES =  [
-	{
-		
-	}
-
-]

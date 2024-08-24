@@ -1,11 +1,10 @@
 import { createSlice, PayloadAction } from "@reduxjs/toolkit";
 import { SettingState } from '../types'
 
-
 export const  settingInitialState: SettingState = {
     isOpen: false, 
     fontSize: 14,
-    theme: 'default'
+    theme: 'vs-dark'
 }
 
 export const editorSettingSlice = createSlice({
@@ -19,7 +18,7 @@ export const editorSettingSlice = createSlice({
             state.fontSize = action.payload;
         },
         setTheme: (state, action: PayloadAction<string>) => {
-            state.theme = action.payload;
+            state.theme = action.payload;    
         }
 
     }
