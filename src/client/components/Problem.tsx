@@ -24,7 +24,7 @@ export const Problem = ({title, status, level, problemNo}: ProblemProps) => {
             </div>
             <div
                 className="flex flex-1 justify-start items-center text-white gap-2"
-                onClick={() => navigate (`../../problem/${title}`)} 
+                onClick={() => navigate (`../../problem/${title}/description`)} 
             >
                 <span>{problemNo}.</span>
                 <span>{title}</span>

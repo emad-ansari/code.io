@@ -5,8 +5,7 @@ export const problems = [
 		problemDescription: "",
 		difficultyLevel: "Easy",
 		problemStatus: "daily",
-        problemNo: 1
-        
+		problemNo: 1,
 	},
 	{
 		problemId: 2,
@@ -14,7 +13,7 @@ export const problems = [
 		problemDescription: "",
 		difficultyLevel: "Easy",
 		problemStatus: "completed",
-        problemNo: 2
+		problemNo: 2,
 	},
 	{
 		problemId: 3,
@@ -22,15 +21,19 @@ export const problems = [
 		problemDescription: "",
 		difficultyLevel: "Easy",
 		problemStatus: "completed",
-        problemNo: 3
+		problemNo: 3,
 	},
 	{
 		problemId: 4,
-		problemTitle: "Given an array, find the minimum of it",
-		problemDescription: "",
+		problemTitle: `Two Sum`,
+		problemDescription: `Given an array of integers nums and an integer target, return indices of the two numbers such that they add up to target.
+
+You may assume that each input would have exactly one solution, and you may not use the same element twice.
+
+You can return the answer in any order.`,
 		difficultyLevel: "Easy",
 		problemStatus: "",
-        problemNo: 4
+		problemNo: 4,
 	},
 	{
 		problemId: 5,
@@ -38,7 +41,7 @@ export const problems = [
 		problemDescription: "",
 		difficultyLevel: "Easy",
 		problemStatus: "visited",
-        problemNo: 5
+		problemNo: 5,
 	},
 	{
 		problemId: 6,
@@ -46,7 +49,7 @@ export const problems = [
 		problemDescription: "",
 		difficultyLevel: "Easy",
 		problemStatus: "",
-        problemNo: 6
+		problemNo: 6,
 	},
 	{
 		problemId: 7,
@@ -54,7 +57,7 @@ export const problems = [
 		problemDescription: "",
 		difficultyLevel: "Easy",
 		problemStatus: "completed",
-        problemNo: 7
+		problemNo: 7,
 	},
 	{
 		problemId: 8,
@@ -62,7 +65,7 @@ export const problems = [
 		problemDescription: "",
 		difficultyLevel: "Hard",
 		problemStatus: "",
-        problemNo: 8
+		problemNo: 8,
 	},
 	{
 		problemId: 9,
@@ -70,7 +73,7 @@ export const problems = [
 		problemDescriptiPon: "",
 		difficultyLevel: "Easy",
 		problemStatus: "completed",
-        problemNo: 9
+		problemNo: 9,
 	},
 	{
 		problemId: 10,
@@ -78,7 +81,7 @@ export const problems = [
 		problemDescription: "",
 		difficultyLevel: "Medium",
 		problemStatus: "visited",
-        problemNo: 10
+		problemNo: 10,
 	},
 	{
 		problemId: 11,
@@ -86,7 +89,7 @@ export const problems = [
 		problemDescription: "",
 		difficultyLevel: "Easy",
 		problemStatus: "",
-        problemNo: 11
+		problemNo: 11,
 	},
 	{
 		problemId: 12,
@@ -94,7 +97,7 @@ export const problems = [
 		problemDescription: "",
 		difficultyLevel: "Easy",
 		problemStatus: "",
-        problemNo: 12
+		problemNo: 12,
 	},
 	{
 		problemId: 13,
@@ -102,7 +105,7 @@ export const problems = [
 		problemDescription: "",
 		difficultyLevel: "Easy",
 		problemStatus: "completed",
-        problemNo: 13
+		problemNo: 13,
 	},
 	{
 		problemId: 14,
@@ -110,7 +113,7 @@ export const problems = [
 		problemDescription: "",
 		difficultyLevel: "Medium",
 		problemStatus: "visited",
-        problemNo: 14
+		problemNo: 14,
 	},
 	{
 		problemId: 15,
@@ -118,6 +121,6 @@ export const problems = [
 		problemDescription: "",
 		difficultyLevel: "Hard",
 		problemStatus: "",
-        problemNo: 15
+		problemNo: 15,
 	},
 ];

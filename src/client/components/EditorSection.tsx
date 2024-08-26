@@ -1,8 +1,13 @@
 import { Button } from "../components/Button";
 import { MdOutlineFileUpload } from "react-icons/md";
 import { ModeSelectButton } from "./ModeSelectButton";
+import { useState } from "react";
 import { CodeEditor } from "./CodeEditor";
-import { IoSettings } from "react-icons/io5";
+import {
+	IoSettings,
+	IoChevronDownOutline,
+	IoChevronUpOutline,
+} from "react-icons/io5";
 import { GoScreenFull } from "react-icons/go";
 import { EditorSetting } from "./EditorSetting";
 import { useSelector } from "react-redux";
@@ -29,11 +34,16 @@ export const EditorSection = () => {
 			dispatch(setOpenDropDownMenu({ menu: "theme" }));
 		}
 	};
+	const [openTestCaseTab, setOpenTestCaseTab] = useState<boolean>(true);
+	const [splitRatio, setSplitRatio] = useState<[number, number]>([100, 0]);
+	const [isConsoleOpen, setIsConsoleOpen] = useState<boolean>(false);
+	console.log('split reaito: ', splitRatio);
+	console.log('is console open : ', isConsoleOpen);
 
 	return (
 		<section className="">
 			<Split
-				sizes={[100, 0]}
+				sizes={splitRatio}
 				className="h-full rounded-lg "
 				direction="vertical"
 				gutterSize={8}
@@ -52,11 +62,62 @@ export const EditorSection = () => {
 						<CodeEditor />
 					</div>
 				</div>
-				<div
-					id="console-container"
-					className=" text-white w-full bg-darkGray rounded-lg border border-gray-500 flex flex-1 overflow-hidden"
-				>
-					this is console section
+				<div className="flex-col text-white w-full bg-darkGray rounded-lg border border-gray-500 flex flex-1 overflow-hidden">
+					<div className=" flex bg-[#1f2937] rounded-tl-lg rounded-tr-lg px-2 py-2 items-center justify-between">
+						<div className="flex gap-5">
+							<span
+								className={`text-sm font-medium px-2 py-1 rounded-md cursor-pointer bg-hover`}
+								onClick={() =>
+									setOpenTestCaseTab(
+										(prevState) => !prevState
+									)
+								}
+							>
+								Test Case
+							</span>
+							<span
+								className={`text-sm font-medium px-2 py-1 rounded-md cursor-pointer bg-hover `}
+								onClick={() =>
+									setOpenTestCaseTab(
+										(prevState) => !prevState
+									)
+								}
+							>
+								Output
+							</span>
+						</div>
+
+						<div className="hover:bg-hover rounded-full">
+							{!isConsoleOpen ? (
+								<IoChevronDownOutline
+									onClick={() => {
+										setSplitRatio([60, 40]);
+										setIsConsoleOpen(
+											(prevState) => !prevState
+										);
+									}}
+									className="text-lg w-full h-full rounded-full px-2 py-2"
+								/>
+							) : (
+								<IoChevronUpOutline
+									onClick={() => {
+										setSplitRatio([100, 0]);
+										setIsConsoleOpen(
+											(prevState) => !prevState
+										);
+									}}
+									className="text-lg w-full h-full rounded-full px-2 py-2"
+								/>
+							)}
+						</div>
+					</div>
+					<div>
+						{openTestCaseTab ? (
+							<RenderTestCase />
+						) : (
+							<RenderResult />
+						)}
+					</div>
 				</div>
 			</Split>
 			{isOpen && <EditorSetting />}
@@ -103,4 +164,12 @@ function EditorTopBar() {
 			</div>
 		</div>
 	);
+}
+
+function RenderTestCase() {
+	return <div>Test case will go here</div>;
+}
+
+function RenderResult() {
+	return <div>output will go here</div>;
 }

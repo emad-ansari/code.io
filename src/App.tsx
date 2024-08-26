@@ -11,7 +11,7 @@ import { ProblemList } from "./client/components/ProblemList";
 import { AboutUs } from "./client/pages/AboutUsPage";
 import { Layout } from "./client/layouts/Layout";
 import { ProblemStatement }  from "./client/components/ProblemDescription";
-import { Submissions }  from "./client/components/ProblemDescription";
+import { ProblemSubmissions }  from "./client/components/ProblemSubmissions";
 
 import "./index.css";
 
@@ -35,9 +35,10 @@ const App = () => {
 						<Route path="contests" element={<ContestPage />} />
 						<Route path="standings" element={<StandingPage />} />
 					</Route>
-					<Route path="problem/:problem-name" element={<ProblemDescriptionPage />}>
-						<Route  index element={<ProblemStatement />} />
-						<Route  path = 'submissions' element={< Submissions />} />
+					<Route path="problem/:problem-name/" element={<ProblemDescriptionPage />}>
+						<Route  path = 'description' element={<ProblemStatement />} />
+						<Route  path = 'submissions' element={< ProblemSubmissions />} />
+						
 					</Route>
 					
 				</Routes>

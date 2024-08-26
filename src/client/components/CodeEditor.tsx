@@ -7,8 +7,6 @@ import OneDarkPro from "../theme/oneDarkPro.json";
 import { useEffect } from "react";
 
 
-
-
 export const CodeEditor = () => {
 	const { language, boilerPlateCode } = useSelector(
 		(state: RootState) => state.editor
@@ -25,14 +23,14 @@ export const CodeEditor = () => {
 		});
 	};
 	const dispatch = useAppDispatch();
-	console.log('component re-render...')
+
 	/*
 		1. when codeEditor component load fetch all the boilerplate details along with there language
-		2. Embbed all details to corresponding boiler plate.
+		2. Embed all details to corresponding boiler plate.
 		2. make a boilerPlate state variable and setBoiler plate action function.
 		3. setBoiler plate according to selectedLanguage 
-
 	*/
+	
 	useEffect(() => {
 		dispatch(setBoilerPlateCode(language));
 	}, [language])
