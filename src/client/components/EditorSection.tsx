@@ -37,8 +37,8 @@ export const EditorSection = () => {
 	const [openTestCaseTab, setOpenTestCaseTab] = useState<boolean>(true);
 	const [splitRatio, setSplitRatio] = useState<[number, number]>([100, 0]);
 	const [isConsoleOpen, setIsConsoleOpen] = useState<boolean>(false);
-	console.log('split reaito: ', splitRatio);
-	console.log('is console open : ', isConsoleOpen);
+	console.log("split reaito: ", splitRatio);
+	console.log("is console open : ", isConsoleOpen);
 
 	return (
 		<section className="">
@@ -66,22 +66,7 @@ export const EditorSection = () => {
 					<div className=" flex bg-[#1f2937] rounded-tl-lg rounded-tr-lg px-2 py-2 items-center justify-between">
 						<div className="flex gap-5">
 							<span
-								className={`text-sm font-medium px-2 py-1 rounded-md cursor-pointer bg-hover`}
-								onClick={() =>
-									setOpenTestCaseTab(
-										(prevState) => !prevState
-									)
-								}
-							>
-								Test Case
-							</span>
-							<span
-								className={`text-sm font-medium px-2 py-1 rounded-md cursor-pointer bg-hover `}
-								onClick={() =>
-									setOpenTestCaseTab(
-										(prevState) => !prevState
-									)
-								}
+								className={`text-md font-semibold px-2 py-1 rounded-md cursor-pointer hover:bg-hover `}
 							>
 								Output
 							</span>
@@ -112,11 +97,7 @@ export const EditorSection = () => {
 						</div>
 					</div>
 					<div>
-						{openTestCaseTab ? (
-							<RenderTestCase />
-						) : (
-							<RenderResult />
-						)}
+						<RenderResult />
 					</div>
 				</div>
 			</Split>
@@ -166,10 +147,21 @@ function EditorTopBar() {
 	);
 }
 
-function RenderTestCase() {
-	return <div>Test case will go here</div>;
-}
-
 function RenderResult() {
-	return <div>output will go here</div>;
+	return (
+		<div className="px-4 py-2 flex flex-col gap-4">
+			<div className="flex flex-row items-center justify-between">
+				<span className="text-xl font-semibold text-[#4ac3ab]">
+					Accepted
+				</span>
+				<span>Passed test cases: 2/2</span>
+			</div>
+			<div className="flex flex-row gap-3">
+
+			</div>
+			<div>
+				
+			</div>
+		</div>
+	);
 }
