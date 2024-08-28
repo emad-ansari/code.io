@@ -58,3 +58,15 @@ export interface CustomMuiMenuProps {
 	labelValue: string;
 	ITEMS_ARRAY: string[];
 }
+
+export interface SubmissionResult {
+	status: string;
+	testCasesPassed: number;
+	userOutput?: string | "";
+	expectedOutput?: string;
+	compilationError?: string | "";
+	failedTestCase?: string | "";
+	
+
+
+}

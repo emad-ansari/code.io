@@ -1,8 +1,3 @@
 export const ContestPage = () => {
-    return (
-        <main>  
-        this is contest ContestPage
-
-        </main>
-    )
-}
+	return <main>this is contest ContestPage</main>
+};
