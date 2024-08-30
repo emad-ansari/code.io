@@ -12,3 +12,45 @@ datasource db {
   provider = "postgresql"
   url      = env("DATABASE_URL")
 }
+
+// User schema
+model User {
+  id           String @id @default(cuid())
+  username     String
+  email        String
+  password     String
+  createdAt    DateTime @default(now())
+  updatedAt    DateTime @updatedAt
+}
+
+// Problem Schema
+model Problem {
+  id           String @id @default(cuid())
+  title        String
+  description  String
+  difficulty   String
+  createdAt    DateTime @default(now())
+  updatedAt    DateTime @updatedAt
+
+}
+
+// make a ProblemStaus model having (userid, problemId, status)
+// if user is not login then (disable the status button)/(navigate on sigin page) because he is not authorizes to filter based on status.
+// if user is not signin in then problem status is not display when user is signin then display the problem staus (solved, attempted, todo)
+// Disable the run and Submit button if user is not logedin and display the message(you need to login)
+
+// when a user go on problemset page it will fetch all the problem, how my backend will know that this user is authorized or not in order to send the problem status
+
+// How will you handle the Admin (to create and put problems in database)
+// 
+
+// [Todo]: give the instruction to admin to add the descripition in .md format
+
+
+// UserSignup Details: 
+
+// while creating a user you will set the isAdmin and userId property 
+// set isAdmin property along with userId when creating jwt token.
+// user: {userId: string, isAdmin: boolean}
+
+// 
