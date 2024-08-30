@@ -5,8 +5,6 @@ import { Button } from '../components/Button'
 import { FcGoogle } from "react-icons/fc";
 
 
-
-
 export const LoginPage = () => {
     
     return (

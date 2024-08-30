@@ -12,6 +12,7 @@ import { AboutUs } from "./client/pages/AboutUsPage";
 import { Layout } from "./client/layouts/Layout";
 import { ProblemStatement }  from "./client/components/ProblemDescription";
 import { ProblemSubmissions }  from "./client/components/ProblemSubmissions";
+import { ProblemForm } from "./client/pages/ProblemForm";
 
 import "./index.css";
 
@@ -40,7 +41,7 @@ const App = () => {
 						<Route  path = 'submissions' element={< ProblemSubmissions />} />
 						
 					</Route>
-					
+					<Route path = 'add-new-problem' element = {<ProblemForm />}/> 
 				</Routes>
 			</BrowserRouter>
 		</>

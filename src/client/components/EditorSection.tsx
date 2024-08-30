@@ -64,30 +64,25 @@ export const EditorSection = () => {
 				<div className="flex-col text-white w-full bg-darkGray rounded-lg border border-gray-500 flex flex-1 overflow-hidden">
 					<div className=" flex bg-[#1f2937] rounded-tl-lg rounded-tr-lg px-2 py-1 items-center justify-between">
 						<div className="flex gap-5">
-							<Button classname="relative flex w-28 gap-1 bg-hover rounded-md">
+							<Button
+								classname="relative flex w-28 gap-1 bg-hover rounded-md"
+								onClick={() => {
+									if (!isConsoleOpen) {
+										setSplitRatio([60, 40]);
+									} else {
+										setSplitRatio([100, 0]);
+									}
+
+									setIsConsoleOpen((prevState) => !prevState);
+								}}
+							>
 								<span className="text-md font-medium">
 									Console
 								</span>
 								{!isConsoleOpen ? (
-									<TiArrowSortedDown
-										onClick={() => {
-											setSplitRatio([60, 40]);
-											setIsConsoleOpen(
-												(prevState) => !prevState
-											);
-										}}
-										className="absolute top-1/3 right-4 "
-									/>
+									<TiArrowSortedDown className="absolute top-1/3 right-4 " />
 								) : (
-									<TiArrowSortedUp
-										onClick={() => {
-											setSplitRatio([100, 0]);
-											setIsConsoleOpen(
-												(prevState) => !prevState
-											);
-										}}
-										className="absolute top-1/3 right-4 "
-									/>
+									<TiArrowSortedUp className="absolute top-1/3 right-4 " />
 								)}
 							</Button>
 						</div>
