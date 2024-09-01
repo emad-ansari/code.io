@@ -21,6 +21,8 @@ model User {
   password     String
   createdAt    DateTime @default(now())
   updatedAt    DateTime @updatedAt
+  problem      Problem[]
+  problemStatus  ProblemStaus[]
 }
 
 // Problem Schema
@@ -31,8 +33,33 @@ model Problem {
   difficulty   String
   createdAt    DateTime @default(now())
   updatedAt    DateTime @updatedAt
+  createdBy    String
+  user         User @relation(fields: [createdBy], references: [id])
+  defualtCode  DefaultCode[]
+  problemStatus ProblemStaus[]
 
 }
+
+model DefaultCode {
+  id          String @id @default(cuid())
+  code        String
+  problemId   String
+  languageId  Int
+  problem     Problem @relation(fields: [problemId], references: [id])
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+}
+
+model ProblemStaus {
+  id          String @id @default(cuid())
+  status      String @default("todo")
+  userId      String
+  user        User @relation(fields: [userId], references: [id])
+  problemId   String
+  problem     Problem @relation(fields: [problemId], references: [id])
+  @@unique([problemId, userId])
+}
+
 
 // make a ProblemStaus model having (userid, problemId, status)
 // if user is not login then (disable the status button)/(navigate on sigin page) because he is not authorizes to filter based on status.
