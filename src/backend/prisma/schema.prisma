@@ -37,7 +37,7 @@ model Problem {
   user         User @relation(fields: [createdBy], references: [id])
   defualtCode  DefaultCode[]
   problemStatus ProblemStaus[]
-
+  testcases    TestCase[]
 }
 
 model DefaultCode {
@@ -60,7 +60,19 @@ model ProblemStaus {
   @@unique([problemId, userId])
 }
 
+model TestCase {
+  id          String @id @default(cuid())
+  stdin       String 
+  stdout      String  
+  problemId   String
+  problem     Problem @relation(fields: [problemId], references: [id])
+}
 
+
+
+
+
+// if the input is = [1, 2, 3, 4] it will store as "[1, 2, 3, 4]"
 // make a ProblemStaus model having (userid, problemId, status)
 // if user is not login then (disable the status button)/(navigate on sigin page) because he is not authorizes to filter based on status.
 // if user is not signin in then problem status is not display when user is signin then display the problem staus (solved, attempted, todo)
