@@ -1,14 +1,16 @@
 require("dotenv").config();
-import express, { Request, Response } from "express";
+import express, {Request, Response } from "express";
 const app = express();
 const port = process.env.PORT || 3000;
 import problemRoute from "./src/routes/problemRoute";
 import cors from "cors";
 
+
+
 app.use(cors());
 app.use(express.json());
 
-app.get("/", (req, res) => {
+app.get("/", (req: Request, res: Response) => {
 	return res.json("hello there!");
 });
 

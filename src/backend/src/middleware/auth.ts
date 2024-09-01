@@ -1,16 +1,19 @@
 import jwt from "jsonwebtoken";
-import {Request, Response, NextFunction} from "express";
+import { Request, Response, NextFunction} from "express";
+// import { CustomRequestObject } from "../..";
 
-interface CustomRequestObject extends Request{
+
+export interface CustomRequestObject extends Request{
     userAuthorized: boolean;
     userId: string;
 }
 
-const auth = async(req: CustomRequestObject, res: Response, next: NextFunction) =>  {
+
+const auth = async(req: Request, res: Response, next: NextFunction) =>  {
     try {
         const token = req.headers["authorization"];
         if (!token) {
-            req.userAuthorized = false;
+            (req as CustomRequestObject).userAuthorized = false;
             next();
         }
         // now decode the token
@@ -23,8 +26,8 @@ const auth = async(req: CustomRequestObject, res: Response, next: NextFunction) 
                 if (typeof payload === 'string'){
                     return res.status(402).json({message: "payload type is string"})
                 }
-                req.userAuthorized = true;
-                req.userId = payload.userId;
+                (req as CustomRequestObject).userAuthorized = true;
+                (req as CustomRequestObject).userId = payload.userId;
                 next();
             });
         }

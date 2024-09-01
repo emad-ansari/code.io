@@ -1,7 +1,9 @@
-import { Router, Request, Response } from "express";
+import {Request,  Router, Response } from "express";
 const router = Router();
 import { problems } from "../../problem";
 import auth from "../middleware/auth";
+
+
 
 interface Problem {
 	problemId: number;
@@ -35,5 +37,40 @@ router.get("/", (req: Request, res: Response) => {
 		.status(200)
 		.json({ message: "success", data: newProblemSet, totalPages });
 });
+
+
+// filter the problem based on action type {difficulty, status}
+router.get('filter-problem', auth, async (req: Request , res: Response) => {
+	try {
+		/*
+			- action type : [difficulty, status]
+			- action value: difficulty -> [easy, medium, hard], status -> [todo, solved, attempted]
+			- pageNumber:  current page number
+			- pageSize :  problem render per page
+		*/
+		const { actionType, pageSize } = req.body;
+		const { pageNumber, actionValue } = req.query;
+	}
+	catch(error: any){
+
+	}
+});
+
+
+
+
+router.post('create-problem', auth, async(req: Request, res: Response) => {
+	try {
+		
+
+	}
+	catch(error: any){
+
+	}
+});
+
+
+
+
 
 export default router;
