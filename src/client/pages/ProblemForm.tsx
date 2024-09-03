@@ -1,25 +1,19 @@
 import { useState } from "react";
+import { useAppDispatch, RootState } from "../app/store";
+import {
+	setTitle,
+	setDescription,
+	setFunctionName,
+	setDifficulty,
+	setParameters,
+	setReturnType,
+} from "../features/problemFormSlice";
+import { useSelector } from "react-redux";
 
 export const ProblemForm = () => {
-	const [title, setTitle] = useState("");
-	const [description, setDescription] = useState("");
-	const [difficulty, setDifficulty] = useState("Easy");
-	const [functionName, setFunctionName] = useState("");
-	const [parameters, setParameters] = useState("");
-	const [returnType, setReturnType] = useState("");
-
-	// const handleSubmit = (e: React.ChangeEvent<HTMLInputElement>) => {
-	// 	const problemData = {
-	// 		title,
-	// 		description,
-	// 		difficulty,
-	// 		functionName,
-	// 		parameters,
-	// 		returnType,
-	// 	};
-	// 	console.log("Problem Submitted:", problemData);
-	// 	// Add your form submission logic here
-	// };
+	const dispatch = useAppDispatch();
+	const { title, description, difficulty, functionName, parameters, returnType } = useSelector((state: RootState) => state.problemform);
+	console.log(title, description, difficulty, functionName, parameters, returnType);
 
 	return (
 		<div className="bg-PRIMARY fixed top-16 bottom-0 left-0 right-0">
@@ -40,7 +34,7 @@ export const ProblemForm = () => {
 							id="title"
 							className="w-full px-3 py-2 border rounded-md focus:outline-none  focus:ring focus:ring-offset-[#81E291] bg-transparent text-white"
 							value={title}
-							onChange={(e) => setTitle(e.target.value)}
+							onChange={(e) => dispatch(setTitle(e.target.value))}
 							placeholder="Enter the problem title"
 							required
 						/>
@@ -57,7 +51,7 @@ export const ProblemForm = () => {
 							id="description"
 							className=" text-white w-full px-3 py-2 border rounded-md focus:outline-none  focus:ring focus:ring-offset-[#81E291] bg-transparent"
 							value={description}
-							onChange={(e) => setDescription(e.target.value)}
+							onChange={(e) => dispatch(setDescription(e.target.value))}
 							placeholder="Describe the problem in detail"
 							rows={5}
 							required
@@ -75,7 +69,7 @@ export const ProblemForm = () => {
 							id="difficulty"
 							className=" text-white w-full px-3 py-2 border rounded-md focus:outline-none  focus:ring focus:ring-offset-[#81E291] bg-transparent"
 							value={difficulty}
-							onChange={(e) => setDifficulty(e.target.value)}
+							onChange={(e) => dispatch(setDifficulty(e.target.value))}
 						>
 							<option
 								className="text-white bg-darkGray"
@@ -110,7 +104,7 @@ export const ProblemForm = () => {
 							id="functionName"
 							className="text-white w-full px-3 py-2 border rounded-md focus:outline-none  focus:ring focus:ring-offset-[#81E291] bg-transparent"
 							value={functionName}
-							onChange={(e) => setFunctionName(e.target.value)}
+							onChange={(e) => dispatch(setFunctionName(e.target.value))}
 							placeholder="Enter the function name"
 							required
 						/>
@@ -128,7 +122,7 @@ export const ProblemForm = () => {
 							id="parameters"
 							className="text-white w-full px-3 py-2 border rounded-md focus:outline-none  focus:ring focus:ring-offset-[#81E291] bg-transparent"
 							value={parameters}
-							onChange={(e) => setParameters(e.target.value)}
+							onChange={(e) => dispatch(setParameters(e.target.value))}
 							placeholder="Enter function parameters (comma-separated)"
 							required
 						/>
@@ -146,7 +140,7 @@ export const ProblemForm = () => {
 							id="returnType"
 							className="text-white w-full px-3 py-2 border rounded-md focus:outline-none  focus:ring focus:ring-offset-[#81E291] bg-transparent"
 							value={returnType}
-							onChange={(e) => setReturnType(e.target.value)}
+							onChange={(e) => dispatch(setReturnType(e.target.value))}
 							placeholder="Enter the function return type"
 							required
 						/>

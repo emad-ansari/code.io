@@ -4,6 +4,10 @@ import dropDownReducer from "../features/dropDownSlice";
 import filterReducer from '../features/filterSlice'
 import settingReducer from '../features/editorSettingSlice'
 import editorReducer from '../features/editorSlice'
+import problemFormSlice from "../features/problemFormSlice";
+import TestcaseFormSlice from "../features/TestcaseSlice";
+
+
 import { useDispatch } from "react-redux";
 
 export const store = configureStore({
@@ -12,7 +16,9 @@ export const store = configureStore({
 		dropdown: dropDownReducer,
 		filter: filterReducer,
 		setting: settingReducer,
-		editor: editorReducer
+		editor: editorReducer,
+		problemform: problemFormSlice,
+		TestCaseForm: TestcaseFormSlice
 	},
 });
 

@@ -17,10 +17,10 @@ export const TabBar = () => {
 				<NavLink
 					to="./problem"
 					className={({ isActive }) =>
-						`px-4 py-2 text-sm font-dmMono rounded-full transition-colors duration-300 ${
+						`px-4 py-2 text-white text-sm font-dmMono rounded-full transition-colors duration-300 ${
 							isActive
-								? "bg-cyan text-black"
-								: " text-white bg-hover"
+								? "bg-hover text-white"
+								: ""
 						}`
 					}
 				>
@@ -31,8 +31,8 @@ export const TabBar = () => {
 					className={({ isActive }) =>
 						`px-4 py-2 mx-2 text-sm font-dmMono rounded-full transition-colors duration-300 ${
 							isActive
-								? "bg-cyan text-black"
-								: "bg-hover text-white"
+								? "bg-hover text-white"
+								: "text-white"
 						}`
 					}
 				>

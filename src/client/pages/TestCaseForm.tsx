@@ -1,19 +1,13 @@
 import { useState } from "react";
+import { useAppDispatch, RootState } from "../app/store";
+import { useSelector } from "react-redux";
+import { setProblemTitle, setTestCaseInput, setTestCaseOutput } from "../features/TestcaseSlice";
+
 
 export const TestCaseForm = () => {
-  const [problemTitle, setProblemTitle] = useState("");
-  const [input, setInput] = useState("");
-  const [output, setOutput] = useState("");
+  const dispatch = useAppDispatch();
+  const { title, input, output} = useSelector((state: RootState) => state.TestCaseForm);
 
-  // const handleSubmit = (e: React.ChangeEvent<HTMLInputElement>) => {
-  //   const testCaseData = {
-  //     problemTitle,
-  //     input,
-  //     output,
-  //   };
-  //   console.log("Test Case Submitted:", testCaseData);
-  //   // Add your form submission logic here
-  // };
 
   return (
     <div className="bg-PRIMARY  fixed top-16  bottom-0 left-0 right-0 ">
@@ -33,8 +27,8 @@ export const TestCaseForm = () => {
               type="text"
               id="problemTitle"
               className="w-full px-3 py-2 border rounded-md focus:outline-none focus:ring focus:ring-offset-[#81E291] bg-transparent text-white"
-              value={problemTitle}
-              onChange={(e) => setProblemTitle(e.target.value)}
+              value={title}
+              onChange={(e) => dispatch(setProblemTitle(e.target.value))}
               placeholder="Enter the problem title"
               required
             />
@@ -51,7 +45,7 @@ export const TestCaseForm = () => {
               id="input"
               className=" text-white w-full px-3 py-2 border rounded-md focus:outline-none focus:ring focus:ring-offset-[#81E291] bg-transparent"
               value={input}
-              onChange={(e) => setInput(e.target.value)}
+              onChange={(e) => dispatch(setTestCaseInput(e.target.value))}
               placeholder="Enter the test case input"
               rows={3}
               required
@@ -69,7 +63,7 @@ export const TestCaseForm = () => {
               id="output"
               className=" text-white w-full px-3 py-2 border rounded-md focus:outline-none focus:ring focus:ring-offset-[#81E291] bg-transparent"
               value={output}
-              onChange={(e) => setOutput(e.target.value)}
+              onChange={(e) => dispatch(setTestCaseOutput(e.target.value))}
               placeholder="Enter the expected output"
               rows={3}
               required
