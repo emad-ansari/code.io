@@ -22,13 +22,13 @@ export const ProblemForm = () => {
 	// };
 
 	return (
-		<div className="bg-PRIMARY pt-5">
-			<div className="max-w-3xl mx-auto p-8 bg-darkGray shadow-lg rounded-lg">
-				<h2 className="text-2xl font-bold mb-6 text-white">
+		<div className="bg-PRIMARY fixed top-16 bottom-0 left-0 right-0">
+			<div className="max-w-3xl mx-auto pt-8 pl-8 pr-8 pb-5 bg-darkGray shadow-lg rounded-lg  border border-[#334155]">
+				<h2 className="text-2xl font-bold mb-4 text-white">
 					Add New Problem
 				</h2>
 				<div>
-					<div className="mb-4">
+					<div className="mb-3">
 						<label
 							className="block text-gray-200 text-sm font-bold mb-2"
 							htmlFor="title"
@@ -46,7 +46,7 @@ export const ProblemForm = () => {
 						/>
 					</div>
 
-					<div className="mb-4">
+					<div className="mb-3">
 						<label
 							className="block text-gray-200 text-sm font-bold mb-2"
 							htmlFor="description"
@@ -64,7 +64,7 @@ export const ProblemForm = () => {
 						></textarea>
 					</div>
 
-					<div className="mb-4">
+					<div className="mb-3">
 						<label
 							className="block text-gray-200 text-sm font-bold mb-2"
 							htmlFor="difficulty"
@@ -98,7 +98,7 @@ export const ProblemForm = () => {
 						</select>
 					</div>
 
-					<div className="mb-4">
+					<div className="mb-3">
 						<label
 							className="block text-gray-200 text-sm font-bold mb-2"
 							htmlFor="functionName"
@@ -116,7 +116,7 @@ export const ProblemForm = () => {
 						/>
 					</div>
 
-					<div className="mb-4">
+					<div className="mb-3">
 						<label
 							className="block text-gray-200 text-sm font-bold mb-2"
 							htmlFor="parameters"
@@ -134,7 +134,7 @@ export const ProblemForm = () => {
 						/>
 					</div>
 
-					<div className="mb-4">
+					<div className="mb-2">
 						<label
 							className="block text-gray-200 text-sm font-bold mb-2"
 							htmlFor="returnType"

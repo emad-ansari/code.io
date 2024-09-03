@@ -12,6 +12,8 @@ import { AboutUs } from "./client/pages/AboutUsPage";
 import { Layout } from "./client/layouts/Layout";
 import { ProblemStatement }  from "./client/components/ProblemDescription";
 import { ProblemSubmissions }  from "./client/components/ProblemSubmissions";
+import { Contribution } from "./client/pages/Contribution";
+import { TestCaseForm } from "./client/pages/TestCaseForm";
 import { ProblemForm } from "./client/pages/ProblemForm";
 
 import "./index.css";
@@ -41,7 +43,10 @@ const App = () => {
 						<Route  path = 'submissions' element={< ProblemSubmissions />} />
 						
 					</Route>
-					<Route path = 'add-new-problem' element = {<ProblemForm />}/> 
+					<Route path = 'contribution' element = {<Contribution />}> 
+						<Route path = 'problem' element = {<ProblemForm/>}/> 
+						<Route path = 'testcase' element = {<TestCaseForm/>}/> 
+					</Route>
 				</Routes>
 			</BrowserRouter>
 		</>

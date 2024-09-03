@@ -1,9 +1,7 @@
-import {Request,  Router, Response } from "express";
+import { Request, Router, Response } from "express";
 const router = Router();
 import { problems } from "../../problem";
 import auth from "../middleware/auth";
-
-
 
 interface Problem {
 	problemId: number;
@@ -38,9 +36,8 @@ router.get("/", (req: Request, res: Response) => {
 		.json({ message: "success", data: newProblemSet, totalPages });
 });
 
-
 // filter the problem based on action type {difficulty, status}
-router.get('filter-problem', auth, async (req: Request , res: Response) => {
+router.get("filter-problem", auth, async (req: Request, res: Response) => {
 	try {
 		/*
 			- action type : [difficulty, status]
@@ -50,27 +47,37 @@ router.get('filter-problem', auth, async (req: Request , res: Response) => {
 		*/
 		const { actionType, pageSize } = req.body;
 		const { pageNumber, actionValue } = req.query;
-	}
-	catch(error: any){
-
-	}
+	} 
+	catch (error: any) {}
 });
 
-
-
-
-router.post('create-problem', auth, async(req: Request, res: Response) => {
+router.post("create-problem", auth, async (req: Request, res: Response) => {
 	try {
-		
-
-	}
-	catch(error: any){
-
-	}
+	} catch (error: any) {}
 });
 
+router.post("/submit-problem", async (req: Request, res: Response) => {
+	try {
 
-
-
+	} catch (error: any) {}
+});
 
 export default router;
+
+/*
+	- [Tomorrow taks]: 
+	- tyr to find in algorithmic arena that where code is submited to judge0 server
+	- then also clear that all testcases are given at once or they are given just one by one
+	- test cases are string []
+	- expected output are string[] 
+	Create multiple submissions at once
+	POST https://ce.judge0.com/submissions/batch?base64_encoded=false
+
+
+	- Get multiple submissions at once.
+	 https://ce.judge0.com/submissions/batch{?tokens,base64_encoded,fields}
+
+	 - instead of mounting a input file path just provide the input(as stdin) testcase and exptected_output
+	 -
+
+*/

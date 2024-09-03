@@ -20,3 +20,10 @@
 - function return type.
 
 
+
+|languages |  functionName       |   Return type       |
+|----------|-------------------  |-------------------- |
+|java      |  three sum                   | List<List<Integer>> |
+|c++       |  three sum          |
+|javascript|  three sum         |
+|typscript |  three sum                   |

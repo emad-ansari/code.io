@@ -4,7 +4,7 @@ import { useSelector } from "react-redux";
 import { setBoilerPlateCode } from "../features/editorSlice";
 import { RootState, useAppDispatch } from "../app/store";
 import OneDarkPro from "../theme/oneDarkPro.json";
-import { useEffect } from "react";
+import { useEffect, useState } from "react";
 
 
 export const CodeEditor = () => {
@@ -23,7 +23,8 @@ export const CodeEditor = () => {
 		});
 	};
 	const dispatch = useAppDispatch();
-
+	const [code, setCode] = useState<string>('');
+	console.log('this is code: ', code);
 	/*
 		1. when codeEditor component load fetch all the boilerplate details along with there language
 		2. Embed all details to corresponding boiler plate.
@@ -67,7 +68,7 @@ export const CodeEditor = () => {
 			}}
 			beforeMount={handleEditorDidMount}
 			className="rounded-lg"
-			// onChange={(value) => {dispatch(setCode(value))}}
+			onChange={(value) => setCode(value!)}
 		/>
 	);
 };
