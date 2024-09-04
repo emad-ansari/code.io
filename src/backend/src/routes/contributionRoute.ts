@@ -2,7 +2,8 @@ import { Request, Response, Router} from 'express'
 const router = Router();
 import * as fs from 'fs';
 import { z } from "zod";
-
+import auth from '../middleware/auth';
+import { CustomRequestObject } from '../middleware/auth';
 
 const NewProblemInput = z.object({
 	title: z.string(),
@@ -21,11 +22,11 @@ const NewTestCaseInput = z.object({
 
 // ensure the problem title must be unique when creating a new problem
 
-router.post("/problem", async (req: Request, res: Response) => {
-	// const { userAuthorized } = req.body;
+router.post("/problem", auth,  async (req: Request, res: Response) => {
+	const { userAuthorized, userId } = req as CustomRequestObject;
 
 	try {
-		// if (userAuthorized) {
+		if (userAuthorized) {
 			const parsedInput = NewProblemInput.safeParse(req.body);
 			if (parsedInput.success) {
 				const {
@@ -52,7 +53,8 @@ router.post("/problem", async (req: Request, res: Response) => {
                     `Difficulty: ${difficulty}`,
                     `Function Name: ${functionName}`,
                     `Parameters: ${parameters}`,
-                    `Return Type: ${returnType}`
+                    `Return Type: ${returnType}`,
+					`User Id: ${userId}`
                 ]
 				const content = contentLines.join('\n') ;
 				fs.writeFile(filePath, content, (err) => {
@@ -67,12 +69,10 @@ router.post("/problem", async (req: Request, res: Response) => {
 			} else {
 				return res.status(400).json({ error: parsedInput.error });
 			}
-		// }
-        //  else {
-		// 	return res
-		// 		.status(401)
-		// 		.json({ error: "You  are not Authorize!! please login" });
-		// }
+		}
+		else {
+			return res.status(401).json({ error: "You  are not Authorize!! please login" });
+		}
 	} catch (error: any) {
 		console.error("Error: ", (error as Error).message);
 		return res.status(400).json({ error: "Not able to create problem!!" });
@@ -80,10 +80,13 @@ router.post("/problem", async (req: Request, res: Response) => {
 });
 
 
-router.post('/testcase', async(req: Request, res: Response) => {
-    // const { userAuthorized } = req
+router.post('/testcase', auth,  async(req: Request, res: Response) => {
+    const { userAuthorized, userId } = req as CustomRequestObject;
 
     try{
+		if (!userAuthorized) {
+			return res.status(401).json({error: "You are not authorize please login"});
+		}
         const parseTestcaseInput = NewTestCaseInput.safeParse(req.body);
         if (parseTestcaseInput.success){
             const { problemTitle, input, output } = parseTestcaseInput.data;
@@ -91,7 +94,8 @@ router.post('/testcase', async(req: Request, res: Response) => {
             const prepareTestcaseContent = [
                 `Problem Title: ${problemTitle}`,
                 `Input: ${input}`,
-                `Output: ${output}`
+                `Output: ${output}`,
+				`User Id: ${userId}`
             ];
             const testcase = prepareTestcaseContent.join('\n');
             fs.writeFile(filePath, testcase, (err) => {
@@ -113,5 +117,19 @@ router.post('/testcase', async(req: Request, res: Response) => {
         console.error("Error: ", (error as Error).message);
     }
 });
+
+/*
+	
+	- first save the problem in database so that you can get the problem id (you can use setInterval which runs after every 12 hours)
+	- write a function to trigger the boiler plate generate code after successfully reviewed
+	- save all boiler plate code to database
+	- need problemId, and language id
+	- also save a new problem into Problem model/Table
+	- set language id manual
+	- after creating and saving the boiler plate code delete the temporary file
+*/
+
+
+
 
 export default router;
