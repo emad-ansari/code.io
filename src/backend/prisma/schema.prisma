@@ -28,7 +28,7 @@ model User {
 // Problem Schema
 model Problem {
   id           String @id @default(cuid())
-  title        String
+  title        String @unique
   description  String
   difficulty   String
   createdAt    DateTime @default(now())

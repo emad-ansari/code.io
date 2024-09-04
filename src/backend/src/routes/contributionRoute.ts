@@ -13,8 +13,16 @@ const NewProblemInput = z.object({
 	returnType: z.string(),
 });
 
+const NewTestCaseInput = z.object({
+    problemTitle: z.string(),
+    input: z.string(),
+    output: z.string()
+});
+
+// ensure the problem title must be unique when creating a new problem
+
 router.post("/problem", async (req: Request, res: Response) => {
-	const { userAuthorized } = req.body;
+	// const { userAuthorized } = req.body;
 
 	try {
 		// if (userAuthorized) {
@@ -37,8 +45,9 @@ router.post("/problem", async (req: Request, res: Response) => {
 				*/
 				
 				const filePath = `src/contribution/newproblem/${title.replace(/\s+/g, "_")}.txt`;
+                // [Todo]- make capitalize the first caharacter eg.(hello there -> Hello There)
 				const contentLines = [
-                    `ProblemTitle: ${title}`,
+                    `ProblemTitle: ${title}`, 
                     `Description: ${description}`,
                     `Difficulty: ${difficulty}`,
                     `Function Name: ${functionName}`,
@@ -51,7 +60,7 @@ router.post("/problem", async (req: Request, res: Response) => {
 						console.error("Error writing file:", err);
 					} else {
 						console.log(`File ${title} has been created successfully.`);
-						// if file has been successfully created send an email to user with some nice response like (your problem has been saved thankyou for contribution)
+						// [Todo]-  if file has been successfully created send an email to user with some nice response like (your problem has been saved thankyou for contribution)
 						return res.status(200).json({ message: "Problem has been submitted for review"});
 					}
 				});
@@ -71,11 +80,34 @@ router.post("/problem", async (req: Request, res: Response) => {
 });
 
 
-router.post('testcase', async(req: Request, res: Response) => {
-    const {problemTitle, input, output } = req.body;
+router.post('/testcase', async(req: Request, res: Response) => {
+    // const { userAuthorized } = req
 
     try{
-
+        const parseTestcaseInput = NewTestCaseInput.safeParse(req.body);
+        if (parseTestcaseInput.success){
+            const { problemTitle, input, output } = parseTestcaseInput.data;
+            const filePath = `src/contribution/newtestcase/${problemTitle.replace(/\s+/g, "_")}.txt`;
+            const prepareTestcaseContent = [
+                `Problem Title: ${problemTitle}`,
+                `Input: ${input}`,
+                `Output: ${output}`
+            ];
+            const testcase = prepareTestcaseContent.join('\n');
+            fs.writeFile(filePath, testcase, (err) => {
+                if (err){
+                    console.error("Error while writing testcase file:", err);
+                    return res.status(500).json({error: "Not able to save the problem please try after some time"});
+                }
+                else {
+                    // [Todo] - send an email to user as a response
+                    return res.status(200).json({ message: "Your testcase has been saved for review, thankyou for contribution"});
+                }
+            });
+        }
+        else {
+            return res.status(400).json({ error: parseTestcaseInput.error});
+        }
     }
     catch(error: any){
         console.error("Error: ", (error as Error).message);
