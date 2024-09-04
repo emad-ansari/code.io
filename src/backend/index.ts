@@ -3,6 +3,7 @@ import express, {Request, Response } from "express";
 const app = express();
 const port = process.env.PORT || 3000;
 import problemRoute from "./src/routes/problemRoute";
+import contributionRoute from './src/routes/contributionRoute';
 import cors from "cors";
 
 
@@ -15,6 +16,7 @@ app.get("/", (req: Request, res: Response) => {
 });
 
 app.use("/api/problem", problemRoute);
+app.use("/api/contribute", contributionRoute);
 
 app.listen(port, () => {
 	console.log("server is running on port ✅", port);

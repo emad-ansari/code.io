@@ -1,0 +1,6 @@
+ProblemTitle: Two Sum
+Description: Given two integers return some of them.
+Difficulty:  Easy
+Function Name: twoSum
+Parameters: int a, int b
+Return Type: int

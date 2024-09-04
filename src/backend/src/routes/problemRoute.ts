@@ -1,7 +1,9 @@
 import { Request, Router, Response } from "express";
 const router = Router();
 import { problems } from "../../problem";
+
 import auth from "../middleware/auth";
+import * as fs from 'fs';
 
 interface Problem {
 	problemId: number;
@@ -47,18 +49,11 @@ router.get("filter-problem", auth, async (req: Request, res: Response) => {
 		*/
 		const { actionType, pageSize } = req.body;
 		const { pageNumber, actionValue } = req.query;
-	} 
-	catch (error: any) {}
-});
-
-router.post("create-problem", auth, async (req: Request, res: Response) => {
-	try {
 	} catch (error: any) {}
 });
 
 router.post("/submit-problem", async (req: Request, res: Response) => {
 	try {
-
 	} catch (error: any) {}
 });
 
