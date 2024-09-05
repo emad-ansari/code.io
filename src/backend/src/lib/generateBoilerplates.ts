@@ -5,12 +5,13 @@ class ProblemDetailsParser {
     description: string  = "";
     difficulty: string = "";
     functionName: string = "";
-    parameters: string = "";
     returnType: string =  "";
-
+    inputs: {type: string, name: string, value: string}[] = [];
+    output: string = "";
     userId: string =  "";
+
     
-    parseInput(filePath: string) {
+    parseProblemInfo(filePath: string) {
         // read problem details from file and extract the values assign them to respective property
         
         const content = fs.readFileSync(filePath, 'utf-8');
@@ -25,20 +26,28 @@ class ProblemDetailsParser {
             } else if (line.startsWith('Function Name:')) {
                 this.functionName = line.replace('Function Name:', '').trim();
             } else if (line.startsWith('Parameters:')) {
-                this.parameters = line.replace('Parameters:', '').trim();
+                // this.parameter = line.replace('Parameters:', '').trim();
             } else if (line.startsWith('Return Type:')) {
                 this.returnType = line.replace('Return Type:', '').trim();
             } else if (line.startsWith('User Id:')) {
                 this.userId = line.replace('User Id:', '').trim();
             }
+            else if (line.startsWith('Inputs:')){
+                // extract input over here 
+
+            }
+            else if (line.startsWith("Output:")){
+
+            }
         });
-
-
-
-
     }
 
-    generateJava(){
+    generateJavaBoilerplate(){
+        //
+        // const javaParameters = this.generateJavaParameters(this.parameters);
+        
+
+        const code = `public class Soution{\n\tpublic ${this.returnType} ${this.functionName}(parameters){\n\t\t}}`
 
     }
 
@@ -88,6 +97,14 @@ class ProblemDetailsParser {
                 return 'number[][]';
             default: return 'number';
         }
+    }
+
+    generateJavaParameters(parameters: string){
+
+    }
+    
+    getCppParameter(){
+
     }
 
 

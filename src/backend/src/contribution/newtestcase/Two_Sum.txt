@@ -1,3 +1,55 @@
 Problem Title: Two Sum
 Input: 10, 20
 Output: 30
+
+
+Inputs: nums = [1, 2 ,3 4], target = 9
+Output: [0, 1] 
+
+java => 
+int twosum(int[] nums, int target){
+    //
+}
+
+{
+    "nums": "[1, 2, 3, 4]",
+    "target": "9" 
+}
+
+for java => 
+parameters [
+    {type: string, varableName: string, value: string}
+    {type: int[], varableName: nums, value: [1, 2, 3, 4]},
+    {type: int, varableName: target, value: 9},
+]
+
+for CPP => 
+parameters [
+    {type: string, varableName: string, value: string}
+    {type: vector<int>&, varableName: nums, value: [1, 2, 3, 4]},
+    {type: int, varableName: target, value: 9},
+]
+
+for typescript => 
+
+parameters [
+    {type: string, varableName: string, value: string}
+    {type: number[], varableName: nums, value: [1, 2, 3, 4]},
+    {type: number, varableName: target, value: 9},
+]
+
+
+
+
+public class Main{
+    public static void main(String[] args){
+        {inputReads}
+        {functionCall}
+        {outputWrite}
+    }
+
+    ## user code here
+    public static returntype functioName(){
+
+    }
+}

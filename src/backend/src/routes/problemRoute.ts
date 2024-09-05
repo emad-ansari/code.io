@@ -72,7 +72,7 @@ export default router;
 	- Get multiple submissions at once.
 	 https://ce.judge0.com/submissions/batch{?tokens,base64_encoded,fields}
 
-	 - instead of mounting a input file path just provide the input(as stdin) testcase and exptected_output
+
 	 -
 
 */

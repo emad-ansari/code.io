@@ -4,13 +4,12 @@ import * as fs from 'fs';
 import { z } from "zod";
 import auth from '../middleware/auth';
 import { CustomRequestObject } from '../middleware/auth';
-
 const NewProblemInput = z.object({
 	title: z.string(),
 	description: z.string(),
 	difficulty: z.string(),
 	functionName: z.string(),
-	parameters: z.string(),
+	testcases: z.array(z.object({input: z.string(), output: z.string()})),
 	returnType: z.string(),
 });
 
@@ -26,7 +25,7 @@ router.post("/problem", auth,  async (req: Request, res: Response) => {
 	const { userAuthorized, userId } = req as CustomRequestObject;
 
 	try {
-		if (userAuthorized) {
+		// if (userAuthorized) {
 			const parsedInput = NewProblemInput.safeParse(req.body);
 			if (parsedInput.success) {
 				const {
@@ -34,7 +33,7 @@ router.post("/problem", auth,  async (req: Request, res: Response) => {
 					description,
 					difficulty,
 					functionName,
-					parameters,
+					testcases,
 					returnType,
 				} = parsedInput.data;
 
@@ -52,9 +51,10 @@ router.post("/problem", auth,  async (req: Request, res: Response) => {
                     `Description: ${description}`,
                     `Difficulty: ${difficulty}`,
                     `Function Name: ${functionName}`,
-                    `Parameters: ${parameters}`,
-                    `Return Type: ${returnType}`,
-					`User Id: ${userId}`
+					`Return Type: ${returnType}`,
+					`User Id: ${userId}`,
+                    `TestCases: ${JSON.stringify(testcases, null, 2)}`,
+               
                 ]
 				const content = contentLines.join('\n') ;
 				fs.writeFile(filePath, content, (err) => {
@@ -69,10 +69,10 @@ router.post("/problem", auth,  async (req: Request, res: Response) => {
 			} else {
 				return res.status(400).json({ error: parsedInput.error });
 			}
-		}
-		else {
-			return res.status(401).json({ error: "You  are not Authorize!! please login" });
-		}
+		// }
+		// else {
+		// 	return res.status(401).json({ error: "You  are not Authorize!! please login" });
+		// }
 	} catch (error: any) {
 		console.error("Error: ", (error as Error).message);
 		return res.status(400).json({ error: "Not able to create problem!!" });
@@ -129,6 +129,24 @@ router.post('/testcase', auth,  async(req: Request, res: Response) => {
 	- after creating and saving the boiler plate code delete the temporary file
 */
 
+async function savePoblem(){
+	try{
+		/* you need [title, description, difficulty, userId] in order to save
+		   get the problem id and then 
+		   save the testcases also with problemId
+		   for testcase you need [stdin, stout, problemId]
+		   Exmaple of testcase :
+		   stdin: nums = [1, 2, 3, 4], target = 9
+		   stdout: [0, 5]
+		*/
+		
+
+
+	}
+	catch(error: any){
+		console.error("Error: ", (error as Error).message);
+	}
+}
 
 
 

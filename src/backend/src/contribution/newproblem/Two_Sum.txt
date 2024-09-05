@@ -1,6 +1,16 @@
 ProblemTitle: Two Sum
 Description: Given two integers return some of them.
-Difficulty:  Easy
+Difficulty: Easy
 Function Name: twoSum
-Parameters: int a, int b
 Return Type: int
+User Id: undefined
+TestCases: [
+  {
+    "input": "nums= [1, 2, 3, 4], target = 9",
+    "output": "[0, 1]"
+  },
+  {
+    "input": "nums= [10, 20, 30, 40], target = 5",
+    "output": "[4, 1]"
+  }
+]
