@@ -4,6 +4,10 @@ import * as fs from 'fs';
 import { z } from "zod";
 import auth from '../middleware/auth';
 import { CustomRequestObject } from '../middleware/auth';
+import { ParseProblemDetails } from '../lib/index';
+
+
+
 const NewProblemInput = z.object({
 	title: z.string(),
 	description: z.string(),
@@ -132,9 +136,11 @@ router.post('/testcase', auth,  async(req: Request, res: Response) => {
 async function saveProblem(filePath: string){
 	try{
 		// 1.for above file path extract the problem info
-		
 
-		// 2.const problem = extractProblemDetails(); it will return [title, description, difficulty, userId, testcases]
+		
+		const parser = new ParseProblemDetails();
+		const problem = parser.extractProblemDetails(filePath); 
+		console.log("Extracted problem: ", problem);
 
 
 		// 3.make a database call to create a new problem and return the id.
@@ -151,6 +157,9 @@ async function saveProblem(filePath: string){
 		console.error("Error: ", (error as Error).message);
 	}
 }
+const filePath = `src/contribution/newproblem/Two_Sum.txt`;
+saveProblem(filePath);
+
 
 async function saveBoilerplateCode(problemId: string){			
 	// cosnt java = getJavaBoilerplatecode()

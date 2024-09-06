@@ -5,7 +5,7 @@ import { z } from "zod";
 import axios from "axios";
 import auth, { CustomRequestObject } from "../middleware/auth";
 import * as fs from "fs";
-import { getProblem } from "../lib";
+
 
 interface Problem {
 	problemId: number;
@@ -83,8 +83,8 @@ router.post("/submit-problem", auth, async (req: Request, res: Response) => {
 
 		const testcaseArray: any = [];
 
-		const problem = getProblem(testcaseArray);
-		const fullBoilerPlatecode = problem.fullboilerPlatecode.replace("__USER_CODE_HERE__", code);
+		// const problem = getProblem(testcaseArray);
+		// const fullBoilerPlatecode = problem.fullboilerPlatecode.replace("__USER_CODE_HERE__", code);
 		// 3. create submission array
 		// const submissions: {
 		// 	language_id: number;
