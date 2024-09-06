@@ -69,11 +69,9 @@ router.post("/problem", auth, async (req: Request, res: Response) => {
 				} else {
 					console.log(`File ${title} has been created successfully.`);
 					// [Todo]-  if file has been successfully created send an email to user with some nice response like (your problem has been saved thankyou for contribution)
-					return res
-						.status(200)
-						.json({
-							message: "Problem has been submitted for review",
-						});
+					return res.status(200).json({
+						message: "Problem has been submitted for review",
+					});
 				}
 			});
 		} else {
@@ -115,19 +113,15 @@ router.post("/testcase", auth, async (req: Request, res: Response) => {
 			fs.writeFile(filePath, testcase, (err) => {
 				if (err) {
 					console.error("Error while writing testcase file:", err);
-					return res
-						.status(500)
-						.json({
-							error: "Not able to save the problem please try after some time",
-						});
+					return res.status(500).json({
+						error: "Not able to save the problem please try after some time",
+					});
 				} else {
 					// [Todo] - send an email to user as a response
-					return res
-						.status(200)
-						.json({
-							message:
-								"Your testcase has been saved for review, thankyou for contribution",
-						});
+					return res.status(200).json({
+						message:
+							"Your testcase has been saved for review, thankyou for contribution",
+					});
 				}
 			});
 		} else {
@@ -152,21 +146,19 @@ router.post("/testcase", auth, async (req: Request, res: Response) => {
 async function saveProblem(filePath: string) {
 	try {
 		// 1.for above file path extract the problem info
-
 		const parser = new ParseProblemDetails();
 		const problem = parser.extractProblemDetails(filePath);
 		// 3.make a database call to create a new problem and return the id.
-
 		const newProblem = await createProblem(
 			problem.title,
 			problem.description,
 			problem.difficulty,
 			problem.userId
 		);
-		
+
 		if (!newProblem.success) {
-			console.log('Error: ', newProblem.msg)
-			return ;//  [Todo] - need to use concept of recursion that call atleas 3 times if there is problem in createing new problem or testcases
+			console.log("Error: ", newProblem.msg);
+			return; //  [Todo] - need to use concept of recursion that call atleas 3 times if there is problem in createing new problem or testcases
 		}
 		// 4.make database call to create new testcases with the given problem id
 		const newTestCases = await createTestCases({
@@ -174,13 +166,12 @@ async function saveProblem(filePath: string) {
 			testcases: problem.testcases, // testcases array
 		});
 
-		if (!newTestCases.success){
-			console.log('Error: ', newTestCases.msg)
-			return ;
+		if (!newTestCases.success) {
+			console.log("Error: ", newTestCases.msg);
+			return;
 		}
 
-		// 5.saveBoilerplateCode(problemId);
-
+		// saveBoilerplateCode(newProblem.id);
 	} catch (error: any) {
 		console.error("Error: ", (error as Error).message);
 	}
