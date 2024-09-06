@@ -3,7 +3,7 @@ Description: Given two integers return some of them.
 Difficulty: Easy
 Function Name: twoSum
 Return Type: int
-User Id: undefined
+User Id: cm0qpjsa00000c1h1i72u36x7
 TestCases: [
   {
     "input": "nums= [1, 2, 3, 4], target = 9",

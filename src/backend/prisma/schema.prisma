@@ -31,6 +31,7 @@ model Problem {
   title        String @unique
   description  String
   difficulty   String
+  problemNo    Int @unique
   createdAt    DateTime @default(now())
   updatedAt    DateTime @updatedAt
   createdBy    String

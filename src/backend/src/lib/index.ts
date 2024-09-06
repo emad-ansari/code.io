@@ -15,8 +15,6 @@ export class ParseProblemDetails {
 
 		// Split the content into lines
 		const lines = content.split("\n");
-		console.log("spilted lines: ", lines);
-
 		let testCaseStart = false;
 		let testCasesString = "";
 
