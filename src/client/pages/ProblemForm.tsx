@@ -1,5 +1,6 @@
-import { useState } from "react";
 import { useAppDispatch, RootState } from "../app/store";
+import { Button } from "../components/Button";
+import { IoAdd } from "react-icons/io5";
 import {
 	setTitle,
 	setDescription,
@@ -22,7 +23,7 @@ export const ProblemForm = () => {
 					Add New Problem
 				</h2>
 				<div>
-					<div className="mb-3">
+					<div className="mb-4">
 						<label
 							className="block text-gray-200 text-sm font-bold mb-2"
 							htmlFor="title"
@@ -58,7 +59,7 @@ export const ProblemForm = () => {
 						></textarea>
 					</div>
 
-					<div className="mb-3">
+					<div className="mb-4">
 						<label
 							className="block text-gray-200 text-sm font-bold mb-2"
 							htmlFor="difficulty"
@@ -92,7 +93,7 @@ export const ProblemForm = () => {
 						</select>
 					</div>
 
-					<div className="mb-3">
+					<div className="mb-4">
 						<label
 							className="block text-gray-200 text-sm font-bold mb-2"
 							htmlFor="functionName"
@@ -110,25 +111,8 @@ export const ProblemForm = () => {
 						/>
 					</div>
 
-					<div className="mb-3">
-						<label
-							className="block text-gray-200 text-sm font-bold mb-2"
-							htmlFor="parameters"
-						>
-							Parameters
-						</label>
-						<input
-							type="text"
-							id="parameters"
-							className="text-white w-full px-3 py-2 border rounded-md focus:outline-none  focus:ring focus:ring-offset-[#81E291] bg-transparent"
-							value={parameters}
-							onChange={(e) => dispatch(setParameters(e.target.value))}
-							placeholder="Enter function parameters (comma-separated)"
-							required
-						/>
-					</div>
 
-					<div className="mb-2">
+					<div className="mb-4">
 						<label
 							className="block text-gray-200 text-sm font-bold mb-2"
 							htmlFor="returnType"
@@ -142,6 +126,31 @@ export const ProblemForm = () => {
 							value={returnType}
 							onChange={(e) => dispatch(setReturnType(e.target.value))}
 							placeholder="Enter the function return type"
+							required
+						/>
+					</div>
+					<div className="mb-4">
+						<Button classname = "flex items-center justify-between bg-transparent border rounded-md focus:outline-none  focus:ring focus:ring-offset-[#81E291] w-full">
+							<span className="text-white text-md ">Add Test Case example</span>
+							<IoAdd className="text-white font-medium text-lg"/>
+						</Button>
+						
+					</div>
+					
+					<div className="mb-4">
+						<label
+							className="block text-gray-200 text-sm font-bold mb-2"
+							htmlFor="testcase"
+						>
+							TestCase Example
+						</label>
+						<input
+							type="text"
+							id="testcase"
+							className="text-white w-full px-3 py-2 border rounded-md focus:outline-none  focus:ring focus:ring-offset-[#81E291] bg-transparent"
+							value={parameters}
+							onChange={(e) => dispatch(setParameters(e.target.value))}
+							placeholder="Enter function parameters (comma-separated)"
 							required
 						/>
 					</div>

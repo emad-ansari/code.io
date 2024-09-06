@@ -3,12 +3,12 @@ import { client } from "../api/client";
 import { RootState } from "../app/store";
 
 export interface TestCaseState {
-	title: string;
+	problemTitle: string;
 	input: string;
     output: string
 }
 export const TestCaseFormInitailState: TestCaseState = {
-	title: "",
+	problemTitle: "",
 	input: "",
     output: "",
 };
@@ -16,10 +16,10 @@ export const TestCaseFormInitailState: TestCaseState = {
 export const createTestCase = createAsyncThunk('/testcase/createTestCase', async(_, ThunkAPI) => {
     try{    
         const store = ThunkAPI.getState() as RootState;
-        const { title, input, output} = store.TestCaseForm;
+        const { problemTitle, input, output} = store.TestCaseForm;
 
         const res = await  client.post('/testcase/create-test-case', {
-            title,
+            problemTitle,
             input,
             output
             // also need to send jwt token
@@ -37,7 +37,7 @@ export const problemFormSlice = createSlice({
 	initialState: TestCaseFormInitailState,     
 	reducers: {
 		setProblemTitle: (state, action: PayloadAction<string>) => {
-            state.title = action.payload;
+            state.problemTitle = action.payload;
         },
 		setTestCaseInput: (state, action: PayloadAction<string>) => {
             state.input = action.payload;

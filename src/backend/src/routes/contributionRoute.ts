@@ -129,18 +129,22 @@ router.post('/testcase', auth,  async(req: Request, res: Response) => {
 	- after creating and saving the boiler plate code delete the temporary file
 */
 
-async function savePoblem(){
+async function saveProblem(filePath: string){
 	try{
-		/* you need [title, description, difficulty, userId] in order to save
-		   get the problem id and then 
-		   save the testcases also with problemId
-		   for testcase you need [stdin, stout, problemId]
-		   Exmaple of testcase :
-		   stdin: nums = [1, 2, 3, 4], target = 9
-		   stdout: [0, 5]
-		*/
+		// 1.for above file path extract the problem info
 		
 
+		// 2.const problem = extractProblemDetails(); it will return [title, description, difficulty, userId, testcases]
+
+
+		// 3.make a database call to create a new problem and return the id.
+
+		
+		// 4.make database call to create a new testcase with th given problem id
+
+
+
+		// 5.saveBoilerplateCode(problemId);
 
 	}
 	catch(error: any){
@@ -148,6 +152,15 @@ async function savePoblem(){
 	}
 }
 
+async function saveBoilerplateCode(problemId: string){			
+	// cosnt java = getJavaBoilerplatecode()
+	// const cpp = getCppBoilerplateCode();
+	// const javascript = getJavaScriptBoilerpalatecode();
+	// const typescript = getTypescriptBoilerplatecode();
+	// now save all the boiler code to defualtCode model [needed --> languageId, problemId]
+	// how to get the langauge id? answer --> just hard code it for right now
+
+}
 
 
 export default router;

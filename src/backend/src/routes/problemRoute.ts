@@ -5,6 +5,7 @@ import { z } from "zod";
 import axios from "axios";
 import auth, { CustomRequestObject } from "../middleware/auth";
 import * as fs from "fs";
+import { getProblem } from "../lib";
 
 interface Problem {
 	problemId: number;
@@ -76,38 +77,40 @@ router.post("/submit-problem", auth, async (req: Request, res: Response) => {
 		// now you have to make api call to judg0 server to evalute the code
 		const JUDGE0_API_URL =`${process.env.JUDGE0_API_URL}/submissions/batch?base64_encoded=false&wait=true`;
 		const JUDGE0_API_KEY = process.env.JUDGE0_API_KEY;
-		
-		// need to get the fullProblemDefiniton based on language id
-		let fullProblemDefiniton = getFullProblemDefinition(languageId);
 
-		/* 
-			1. get all test case here from database
-			2. 
-		
-		*/
-		// 2. pasre test case.
 
-		
-		const parsedTestCase = []
+		// first get all the test cases from database
+
+		const testcaseArray: any = [];
+
+		const problem = getProblem(testcaseArray);
+		const fullBoilerPlatecode = problem.fullboilerPlatecode.replace("__USER_CODE_HERE__", code);
 		// 3. create submission array
-		const submissions: {
-			language_id: number;
-			source_code: string,
-			exptected_output: string
-		}[] = [];
+		// const submissions: {
+		// 	language_id: number;
+		// 	source_code: string,
+		// 	exptected_output: string
+		// }[] = testcaseArray.map(testcase => {
+		// 	const source_code = generateJavaCode(testcase);
+		// 	return {
+		// 		language_id: 62, // Java ID for Judge0
+		// 		source_code: source_code,
+		// 		expected_output: JSON.stringify(testcase.stdout)
+		// 	};
+		// });
 
 		// 4. make api call
-		const data = JSON.stringify({submissions});
+		// const data = JSON.stringify({submissions});
 
-		const submissionResponse = await axios.post(JUDGE0_API_URL, data,
-			{
-				headers: {
-					"Content-Type": "application/json",
-					"x-rapidapi-host": "judge0-ce.p.rapidapi.com",
-					"x-rapidapi-key": JUDGE0_API_KEY,
-				},
-			}
-		);
+		// const submissionResponse = await axios.post(JUDGE0_API_URL, data,
+		// 	{
+		// 		headers: {
+		// 			"Content-Type": "application/json",
+		// 			"x-rapidapi-host": "judge0-ce.p.rapidapi.com",
+		// 			"x-rapidapi-key": JUDGE0_API_KEY,
+		// 		},
+		// 	}
+		// );
 	} catch (error: any) {}
 });
 
@@ -127,6 +130,9 @@ function getFullProblemDefinition(languageId: number): string{
 	}
 } 
 
+function getOuput(){
+
+}
 export default router;
 
 /*
@@ -146,20 +152,3 @@ export default router;
 	 -
 
 */
-
-const java = `
-public class Main {
-	public static void main(String args){
-		##inputread##
-		##funcitoncall##
-		##outputwrite##
-	}
-
-
-	// user code
-	public int sum(int a, int b){
-		return a + b;
-	}
-
-}
-`

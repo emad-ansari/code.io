@@ -2,6 +2,7 @@ require("dotenv").config();
 import express, {Request, Response } from "express";
 const app = express();
 const port = process.env.PORT || 3000;
+// import { db } from "./db";
 import problemRoute from "./src/routes/problemRoute";
 import contributionRoute from './src/routes/contributionRoute';
 import cors from "cors";
