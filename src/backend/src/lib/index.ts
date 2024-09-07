@@ -5,7 +5,7 @@ interface Parameter {
 	name: string;
 }
 
-interface TestCase {
+export interface TestCase {
 	inputs: {
 		name: string;
 		type: string;
@@ -61,7 +61,7 @@ export class ParseProblemDetails {
 			})
 			.join(", ");
 
-		return `public ${this.returnType} ${this.functionName}(${inputs}){\n\t// write your code here.\n}`;
+		return `public static ${this.returnType} ${this.functionName}(${inputs}){\n\t// write your code here.\n}`;
 	}
 
 	getCppBoilerplateCode() {

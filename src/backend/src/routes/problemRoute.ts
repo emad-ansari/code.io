@@ -84,6 +84,7 @@ router.post("/submit-problem", auth, async (req: Request, res: Response) => {
 		const testcaseArray: any = [];
 
 		// const problem = getProblem(testcaseArray);
+
 		// const fullBoilerPlatecode = problem.fullboilerPlatecode.replace("__USER_CODE_HERE__", code);
 		// 3. create submission array
 		// const submissions: {
@@ -130,9 +131,7 @@ function getFullProblemDefinition(languageId: number): string{
 	}
 } 
 
-function getOuput(){
 
-}
 export default router;
 
 /*
