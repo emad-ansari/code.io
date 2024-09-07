@@ -1,0 +1,23 @@
+{
+    "title": "Two Sum",
+    "testcases": [
+    {
+      "inputs": [
+        {
+          "name": "nums",
+          "type": "int[]",
+          "value": "[1, 2, 3, 4]"
+        },
+        {
+          "name": "target",
+          "type": "int",
+          "value": "9"
+        }
+      ],
+      "output": {
+        "type": "int[]",
+        "value": "[0, 1]"
+      }
+    }
+  ]
+}

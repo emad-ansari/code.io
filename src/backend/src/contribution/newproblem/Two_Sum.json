@@ -4,6 +4,7 @@
   "difficulty": "Easy",
   "functionName": "TwoSum",
   "returnType": "int",
+  "userId": "cm0qpjsa00000c1h1i72u36x7",
   "parameters": [
     {
       "type": "char[][]",

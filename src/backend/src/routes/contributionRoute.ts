@@ -39,8 +39,21 @@ const NewProblemInput = z.object({
 
 const NewTestCaseInput = z.object({
 	problemTitle: z.string(),
-	input: z.string(),
-	output: z.string(),
+	testcases: z.array(
+		z.object({
+			inputs: z.array(
+				z.object({
+					name: z.string(),
+					type: z.string(),
+					value: z.string(),
+				})
+			),
+			output: z.object({
+				type: z.string(),
+				value: z.string(),
+			}),
+		})
+	),
 });
 
 // ensure the problem title must be unique when creating a new problem
@@ -59,7 +72,10 @@ router.post("/problem", auth, async (req: Request, res: Response) => {
 				"_"
 			)}.json`;
 
-			const jsonString = JSON.stringify(parsedInput.data, null, 2);
+			// attach user id to problem to identify which user create this problem
+			const problemInfo = { ...parsedInput.data, userId };
+
+			const jsonString = JSON.stringify(problemInfo, null, 2);
 
 			fs.writeFile(filePath, jsonString, (err) => {
 				if (err) {
@@ -100,21 +116,19 @@ router.post("/testcase", auth, async (req: Request, res: Response) => {
 				.status(401)
 				.json({ error: "You are not authorize please login" });
 		}
-		const parseTestcaseInput = NewTestCaseInput.safeParse(req.body);
-		if (parseTestcaseInput.success) {
-			const { problemTitle, input, output } = parseTestcaseInput.data;
+		const parsedTestcaseInput = NewTestCaseInput.safeParse(req.body);
+		if (parsedTestcaseInput.success) {
+			const { problemTitle } = parsedTestcaseInput.data;
 			const filePath = `src/contribution/newtestcase/${problemTitle.replace(
 				/\s+/g,
 				"_"
-			)}.txt`;
-			const prepareTestcaseContent = [
-				`Problem Title: ${problemTitle}`,
-				`Input: ${input}`,
-				`Output: ${output}`,
-				`User Id: ${userId}`,
-			];
-			const testcase = prepareTestcaseContent.join("\n");
-			fs.writeFile(filePath, testcase, (err) => {
+			)}.json`;
+			// attach user id to testcase to identify which user create this problem
+			const testcaseInfo = { ...parsedTestcaseInput.data, userId };
+
+			const testcaseString = JSON.stringify(testcaseInfo, null, 2);
+
+			fs.writeFile(filePath, testcaseString, (err) => {
 				if (err) {
 					console.error("Error while writing testcase file:", err);
 					return res.status(500).json({
@@ -129,7 +143,7 @@ router.post("/testcase", auth, async (req: Request, res: Response) => {
 				}
 			});
 		} else {
-			return res.status(400).json({ error: parseTestcaseInput.error });
+			return res.status(400).json({ error: parsedTestcaseInput.error });
 		}
 	} catch (error: any) {
 		console.error("Error: ", (error as Error).message);
@@ -159,29 +173,40 @@ async function saveProblem(filePath: string) {
 			problem.difficulty,
 			problem.userId
 		);
+		
 
 		if (!newProblem.success) {
 			console.log("Error: ", newProblem.msg);
 			return; //  [Todo] - need to use concept of recursion that call atleas 3 times if there is problem in createing new problem or testcases
 		}
-		// 4.make database call to create new testcases with the given problem id
-		const newTestCases = await createTestCases({
-			problemId: newProblem.id,
-			testcases: problem.testcases, // testcases array
-		});
+		const java = parser.getJavaBoilerplateCode();
+		const cpp = parser.getCppBoilerplateCode();
+		const typescript = parser.getTypescriptBoilerplateCode();
+		console.log("Java boiler plate code: ", java)
 
-		if (!newTestCases.success) {
-			console.log("Error: ", newTestCases.msg);
-			return;
-		}
+		console.log();
+		console.log("Cpp boiler plate code: ", cpp)
+		console.log();
+		console.log("Typescript boiler plate code: ", typescript);
+		
+		// 4.make database call to create new testcases with the given problem id
+		// const newTestCases = await createTestCases({
+		// 	problemId: newProblem.id,
+		// 	testcases: problem.testcases, // testcases array
+		// });
+
+		// if (!newTestCases.success) {
+		// 	console.log("Error: ", newTestCases.msg);
+		// 	return;
+		// }
 
 		// saveBoilerplateCode(newProblem.id);
 	} catch (error: any) {
 		console.error("Error: ", (error as Error).message);
 	}
 }
-// const filePath = `src/contribution/newproblem/Two_Sum.txt`;
-// saveProblem(filePath);
+const filePath = `src/contribution/newproblem/Two_Sum.json`;
+saveProblem(filePath);
 
 async function saveBoilerplateCode(problemId: string) {
 	// cosnt java = getJavaBoilerplatecode()
