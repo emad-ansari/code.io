@@ -1,0 +1,37 @@
+{
+  "title": "Two Sum",
+  "description": " Given two integers return some of them.",
+  "difficulty": "Easy",
+  "functionName": "TwoSum",
+  "returnType": "int",
+  "parameters": [
+    {
+      "type": "char[][]",
+      "name": "board"
+    },
+    {
+      "type": "String[]",
+      "name": "words"
+    }
+  ],
+  "testcases": [
+    {
+      "inputs": [
+        {
+          "name": "nums",
+          "type": "int[]",
+          "value": "[1, 2, 3, 4]"
+        },
+        {
+          "name": "target",
+          "type": "int",
+          "value": "9"
+        }
+      ],
+      "output": {
+        "type": "int[]",
+        "value": "[0, 1]"
+      }
+    }
+  ]
+}

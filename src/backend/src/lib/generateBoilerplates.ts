@@ -43,10 +43,8 @@ class ProblemDetailsParser {
     }
 
     generateJavaBoilerplate(){
-        //
-        // const javaParameters = this.generateJavaParameters(this.parameters);
-        
 
+        // const javaParameters = this.generateJavaParameters(this.parameters);
         const code = `public class Soution{\n\tpublic ${this.returnType} ${this.functionName}(parameters){\n\t\t}}`
 
     }

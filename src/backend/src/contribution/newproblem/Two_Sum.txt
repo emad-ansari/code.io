@@ -14,3 +14,26 @@ TestCases: [
     "output": "[4, 1]"
   }
 ]
+
+// Parameters options:
+
+int
+int[]
+int[][]
+char
+char[]
+char[][]
+String
+String[]
+String[][]
+boolean
+boolean[]
+boolean[][]
+float
+float[]
+double
+double[]
+List<Integer>
+List<List<Integer>>
+List<String>
+List<List<String>>

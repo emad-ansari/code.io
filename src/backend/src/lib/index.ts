@@ -7,8 +7,8 @@ export class ParseProblemDetails {
 	functionName: string = "";
 	returnType: string = "";
 	userId: string = "";
+	parameters: string = "";
 	testcases: { input: string; output: string }[] = [];
-	inputFields: { type: string; name: string }[] = [];
 
 	extractProblemDetails(filePath: string) {
 		// Read the file content
@@ -33,6 +33,8 @@ export class ParseProblemDetails {
 				this.functionName = line.replace("Function Name: ", "").trim();
 			} else if (line.startsWith("Return Type:")) {
 				this.returnType = line.replace("Return Type: ", "").trim();
+			} else if (line.startsWith("Parameters:")) {
+				this.parameters = line.replace("Parameters: ", "").trim();
 			} else if (line.startsWith("User Id:")) {
 				this.userId = line.replace("User Id: ", "").trim();
 			} else if (line.startsWith("TestCases:")) {
@@ -61,8 +63,6 @@ export class ParseProblemDetails {
 		// Parse test cases
 		try {
 			const parsedTestCases = JSON.parse(testCasesString);
-			console.log("This is parsed test case : ", parsedTestCases);
-			this.extractInputFields(parsedTestCases[0].input);
 			return parsedTestCases;
 		} catch (error) {
 			console.error("Error parsing test cases:", error);
@@ -70,31 +70,69 @@ export class ParseProblemDetails {
 		}
 	}
 
-	extractInputFields(input: string) {
+	generateJavaBoilerplatecode() {
+		const java = `public ${this.returnType} ${this.functionName}(${this.parameters}){\n\t // write your code here.}`;
+	}
+
+	generateCppBoilerPlateCode() {
+		// get the parameters for cpp
+		// char[][] board, String[] words --> vector<vector<char>>& board, vector<string>& words
+		// const params = this.getCppParams(this.parameters);
+		const cpp = `${this.mapTypeToCpp(this.returnType)} ${this.functionName}()`
+	}	
+
+	getType(){
 		
 	}
 
-	generateJavaBoilerplatecode() {
-		/*
-			nums = [1, 2, 3, 4], target = 5;
-			inputFields = [
-				{type: int[], name: nums},
-				{type: int, name: target},
-			] 
-			final parameters = int[] nums, int target
-		*/
-		const parameters = this.inputFields
-			.map((input) => {
-				return `${input.type} ${input.name}`;
-			})
-			.join(", ");
-
-		const java = `public ${this.returnType} ${this.functionName}(${parameters}){\n\t // write your code here.}`;
+	mapTypeToCpp(returnType: string) {
+		switch (returnType) {
+			case "int":
+				return "int";
+			case "int[]":
+				return "int[]";
+			case "String" || "string":
+				return "string";
+			case "Boolean" || "boolean":
+				return "bool";
+			case "Char" || "char":
+				return "char";
+			case "char[]" || "Char[]":
+				return "vector<string>"
+			case "char[][]" :
+				return "vector<vector<string>>"
+			case "String[]" || "string[]":
+				return "string[]";
+			case "List<Integer>":
+				return "vector<int>";
+			case "List<String>" :
+				return "vector<string>";
+			case "List<List<Integer>>" || "int[][]":
+				return "vector<vector<int>>";
+			case "List<List<String>>" || "int[][]":
+				return "vector<vector<string>>";
+			default:
+				return "";
+		}
 	}
 
-	generateCppBoilerPlateCode() {}
-	getReturnType() {
-		return this.returnType;
+	getTypeScriptReturnType(returnType: string) {
+		switch (returnType) {
+			case "int":
+				return "number";
+			case "int[]" || "List<Integer>":
+				return "number[]";
+			case "String" || "string" || 'char':
+				return "string";
+			case "Boolean" || "boolean":
+				return "boolean";
+			case "String[]" || "string[]":
+				return "string[]";
+			case "List<List<Integer>>" || "int[][]":
+				return "number[][]";
+			default:
+				return "number";
+		}
 	}
 }
 
