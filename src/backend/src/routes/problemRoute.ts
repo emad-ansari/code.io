@@ -5,7 +5,7 @@ import { z } from "zod";
 import axios from "axios";
 import auth, { CustomRequestObject } from "../middleware/auth";
 import * as fs from "fs";
-
+import { GenerateFullProblemDefinition } from '../lib/generateFullProblemDefinition'
 
 interface Problem {
 	problemId: number;
@@ -67,7 +67,7 @@ router.post("/submit-problem", auth, async (req: Request, res: Response) => {
 		if (!userAuthorized) {
 			return res
 				.status(400)
-				.json({ message: "your are not authorize, please login" });
+				.json({ message: "your are not authorized, please login" });
 		}
 		const parseUserSubmitCode = ProblemSubmissionData.safeParse(req.body);
 		if (!parseUserSubmitCode.success) {
@@ -87,18 +87,23 @@ router.post("/submit-problem", auth, async (req: Request, res: Response) => {
 
 		// const fullBoilerPlatecode = problem.fullboilerPlatecode.replace("__USER_CODE_HERE__", code);
 		// 3. create submission array
-		// const submissions: {
-		// 	language_id: number;
-		// 	source_code: string,
-		// 	exptected_output: string
-		// }[] = testcaseArray.map(testcase => {
-		// 	const source_code = generateJavaCode(testcase);
-		// 	return {
-		// 		language_id: 62, // Java ID for Judge0
-		// 		source_code: source_code,
-		// 		expected_output: JSON.stringify(testcase.stdout)
-		// 	};
-		// });
+		const submissions: {
+			language_id: number;
+			source_code: string,
+			exptected_output: string
+		}[] = testcaseArray.map((testcase: any) => {
+			const parser = new GenerateFullProblemDefinition
+			parser.parseTestCase(testcase);
+			//getProblem() --> { fullBoilerplate code, stdin, stdout, }
+			const problem = parser.getProblem(languageId, code);
+
+			return {
+				language_id: languageId, // Java ID for Judge0
+				source_code: problem.fullBoilerplatecode,
+				stdin: problem.stdin,
+				expected_output: JSON.stringify(problem.stdout)
+			};
+		});
 
 		// 4. make api call
 		// const data = JSON.stringify({submissions});
@@ -115,21 +120,6 @@ router.post("/submit-problem", auth, async (req: Request, res: Response) => {
 	} catch (error: any) {}
 });
 
-function getFullProblemDefinition(languageId: number): string{
-	switch(languageId){
-		case 62:
-			// return javaFullCode();
-		case 71:
-			// return pythonFullCode();
-		case 74:
-			// return typescriptFullCode();
-		case 63:
-			// return javascriptFullCode();
-		case 10:
-			// return cppFullCode()
-		default: return '';
-	}
-} 
 
 
 export default router;

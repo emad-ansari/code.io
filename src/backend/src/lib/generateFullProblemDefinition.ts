@@ -1,17 +1,29 @@
 import { TestCase, ParseProblemDetails } from ".";
 
 
-class GenerateFullProblemDefinition {
+export class GenerateFullProblemDefinition {
     functionName: string = "";
     inputs: {type: string, name: string, value: string}[] = [];
-    output: { type: string, value: string } ={type: '', value: ''} ;
+    output: { type: string, value: string } = {type: '', value: ''} ;
 
     parseTestCase(testcase: TestCase){
 
 
     }
 
-    getProblem(){
+    getProblem(languageId: number, code: string):{ fullBoilerplatecode: string, stdin: string, stdout: string }{
+        
+        const fullBoilerplatecode: string =  this.getBoilerplateCode(languageId);
+        const stdin = this.inputs.map(input => {
+            return `${input.value.replace('[', '').replace(']', '').replace(',', '')}`
+        }).join('\n')
+        const stdout = this.output.value;
+
+        return {
+            fullBoilerplatecode: fullBoilerplatecode.replace("__USER_CODE_HERE__", code),
+            stdin,
+            stdout
+        }
 
     }
 
@@ -32,19 +44,22 @@ class GenerateFullProblemDefinition {
             outputWrite = "System.out.println(result);"
         }
 
-        const inputRead = this.inputs.map(input => {
-            if(this.hasSquareBrackets(input.type)){
-                // if input type => array  or matrix 
-                let value = input.value.replace('[', '{');
-                value = value.replace(']', '}');
-                return `${input.type} ${input.name} = ${value};`
+        const inputRead = `
+        Scanner scanner = new Scanner(System.in);
+        ${this.inputs.map(input => {
+            let javaType = this.extractJavaWrapperClass(input.type);
+            if (this.hasSquareBrackets(input.type)) {
+                // Handle arrays
+                return `int[] ${input.name} = Arrays.stream(scanner.nextLine().split(" ")).mapToInt(Integer::parseInt).toArray();`;
+            } else if (this.hasListPattern(input.type)) {
+                // Handle Lists
+                return `List<Integer> ${input.name} = new ArrayList<>();\n` +
+                       `Arrays.stream(scanner.nextLine().split(" ")).mapToInt(Integer::parseInt).forEach(${input.name}::add);`;
+            } else {
+                // Handle simple types
+                return `${javaType} ${input.name} = scanner.nextInt();`;
             }
-            else if (this.hasListPattern(input.type)){
-                let value = input.value.replace('[', '{');
-                value = value.replace(']', '}');
-                return `${input.type} ${input.name} = new ArrayList<>()`
-            }
-        }).join('\n');
+        }).join('\n')}`;
 
 
         return `
@@ -53,20 +68,13 @@ class GenerateFullProblemDefinition {
 
         public class Main {
             public static void main(String[] args){
-                int[] nums =  {1, 2, 3, 4};
-                int target = 9;
-                List<Integer> nums = new ArrayList<>(extractValue)
                 ${inputRead}
-
-                int[] result = twoSum(nums, target)
                 ${functionCall}
                 ${outputWrite}
             }
 
             __USER_CODE_HERE__
         }
-        
-        
         `
     }
      hasSquareBrackets(str: string): boolean {
@@ -82,12 +90,35 @@ class GenerateFullProblemDefinition {
         // Test the string against the regex
         return regex.test(str);
     }
+
+    extractJavaWrapperClass(listType: string): string {
+        // Regular expression to match the innermost type inside List<>
+        const regex = /List<([^>]+)>/;
+        let match = listType.match(regex);
+    
+        // While the match is a nested List, keep extracting the innermost type
+        while (match && match[1].startsWith('List<')) {
+            match = match[1].match(regex);
+        }
+    
+        // Return the innermost type
+        return match ? match[1] : listType;
+    }
+
+    getBoilerplateCode(languageId: number){
+        switch(languageId){
+            case 62:
+                return this.generateJava();
+            case 71:
+                // return pythonFullCode();
+            case 74:
+                // return typescriptFullCode();
+            case 63:
+                // return javascriptFullCode();
+            case 10:
+                // return cppFullCode()
+            default: return '';
+        }
+    }
 }
 
-// int[] nums = 1, 2, 3, 4
-
-// int[][] nums = 1, 2, 3, 4
-//                5, 6, 7, 8
-//                9, 10, 11, 12
-
-// int[][] nums = [[1, 2, 3], [4]]
