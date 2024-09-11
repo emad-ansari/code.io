@@ -66,13 +66,12 @@ model TestCase {
   title       String?
   problemId   String
   problem     Problem @relation(fields: [problemId], references: [id])
-  input      TestCaseInput[]
-  output    TestCaseOutput[]  // [Todo] - need to look on this relation to make one-to-one not one-to-many
-  
+  inputs      TestCaseInput[]
+  output      TestCaseOutput?  // [Todo] - need to look on this relation to make one-to-one not one-to-many
 }
 // Model for Test case Input 
 model TestCaseInput {
-  id          String @id @default(cuid())
+  id          String @id @default(cuid()) 
   name        String
   type        String
   value       String
@@ -85,7 +84,7 @@ model TestCaseOutput {
   id        String @id @default(cuid())
   type      String
   value     String
-  testcaseId  String
+  testcaseId  String @unique
   testcase   TestCase @relation(fields: [testcaseId], references: [id])
 }
 

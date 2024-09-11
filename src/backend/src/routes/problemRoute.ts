@@ -76,16 +76,13 @@ router.post("/submit-problem", auth, async (req: Request, res: Response) => {
 		}
 		const { problemId, languageId, code } = parseUserSubmitCode.data;
 		// now you have to make api call to judg0 server to evalute the code
-		const JUDGE0_API_URL =`${process.env.JUDGE0_API_URL}/submissions/batch?base64_encoded=false&wait=true`;
-		const JUDGE0_API_KEY = process.env.JUDGE0_API_KEY;
-
 
 		// first get all the test cases from database
 
 		// const testcaseArray: any = [];
 
-
 		// 3. create submission array
+		
 		const submissions: {
 			language_id: number;
 			source_code: string,
@@ -105,33 +102,111 @@ router.post("/submit-problem", auth, async (req: Request, res: Response) => {
 		});
 
 		console.log('this is submission array: ', submissions);
-		return res.json({data: submissions});
 
+
+		const JUDGE0_API_URL  =`${process.env.JUDGE0_API_URL}/submissions/batch`;
+		const JUDGE0_API_KEY = process.env.JUDGE0_API_KEY;
 		// 4. make api call
-		const data = JSON.stringify({submissions});
+		const data = JSON.stringify(submissions);
+		const submissionsTokens = await axios.post(JUDGE0_API_URL ,{
+			data,
+			param: {
+				base64_encoded: false		
+			},
 
-		// const submissionResponse = await axios.post(JUDGE0_API_URL, data,
-		// 	{
-		// 		headers: {
-		// 			"Content-Type": "application/json",
-		// 			"x-rapidapi-host": "judge0-ce.p.rapidapi.com",
-		// 			"x-rapidapi-key": JUDGE0_API_KEY,
-		// 		},
-		// 	}
-		// );
+		},	
+			{
+				headers: {
+					"Content-Type": "application/json",
+					"x-rapidapi-host": "judge0-ce.p.rapidapi.com",
+					"x-rapidapi-key": JUDGE0_API_KEY,
+				},
+			}
+		);
+
+		const tokens = submissionsTokens.data as CreateSubmissionApiReponse[];
+		// above response will return array of tokens so make a call to get the submissions result
+		const submissionResult = await axios.get(JUDGE0_API_URL, {
+			params: {
+				tokens: tokens.map((token: CreateSubmissionApiReponse) => {
+					return token
+				}).join(','),
+				base64_encoded: false,
+			}
+		})
+		const executionResult = submissionResult.data as SubmissionsResult[];
+		// above reponse will return a submission array
+		const failedTestCases: SubmissionsResult[] =  executionResult.filter((submission: SubmissionsResult )=> {
+			return submission.status.description !== "Accepted" || submission.compile_output !== null;
+		});
+		if (failedTestCases.length !== 0){
+			// meanse all testcases not passed
+			return res.status(200).json({
+				data: failedTestCases,
+				type: "error"
+			});
+		}
+
+		return res.status(200).json({
+			type: "success",
+			message: "Your submissions has been accepted"
+		})
+		// store the user submission in databases if accepted { problemId, userId, submission status, code}
+		
 	} catch (error: any) {}
 });
 
+interface CreateSubmissionApiReponse {
+	token: string
+}
 
+
+interface SubmissionsResult {
+	time: string;
+	memory: number;
+	status: {
+		id: number;
+		description: string
+	},
+	stdout: string,
+	compile_output: string | null,
+}
 
 export default router;
 
 /*
 	
 	Create multiple submissions at once
-	POST https://ce.judge0.com/submissions/batch?base64_encoded=false
+	- POST
+	- https://judge0-ce.p.rapidapi.com/submissions/batch
+	- body: {
+		"submissions": [
+			{		
+				"language_id": 62,
+				"source_code": "public class Main{public static void main(String[] args){System.out.println(40);}}"
+			},
+			{
+				"language_id": 62,
+				"source_code": "public class Main{public static void main(String[] args){System.out.println(20);}}"
+			},
+			{
+				"language_id": 62,
+				"source_code": "public class Main{public static void main(String[] args){System.out.println(30);}}"
+			}  
+		],
+
+	} ,
+	params: {
+    	base64_encoded: 'false'
+ 	 },
+
 
 	- Get multiple submissions at once.
-	 https://ce.judge0.com/submissions/batch{?tokens,base64_encoded,fields}
+	- https://judge0-ce.p.rapidapi.com/submissions/batch
+	-params: {
+		tokens: 'dce7bbc5-a8c9-4159-a28f-ac264e48c371,1ed737ca-ee34-454d-a06f-bbc73836473e,9670af73-519f-4136-869c-340086d406db',
+		base64_encoded: 'true',
+		fields: '*'
+	},
 
 */
