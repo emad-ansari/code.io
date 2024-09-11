@@ -1,6 +1,6 @@
-import { Problem } from "../components/Problem";
+import { Problem } from "./Problem";
 import { useSelector } from "react-redux";
-import { RootState } from "../app/store";
+import { RootState } from "../../app/store";
 import { memo } from "react";
 
 export const ProblemList = memo(() => {

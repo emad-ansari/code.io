@@ -1,7 +1,7 @@
 import { MdKeyboardArrowDown } from "react-icons/md";
-import { useAppDispatch } from "../app/store";
-import { setOpenDropDownMenu } from "../features/dropDownSlice";
-import { setLanguage } from "../features/editorSlice";
+import { useAppDispatch } from "../../app/store";
+import { setOpenDropDownMenu } from "../../features/dropDownSlice";
+import { setLanguage } from "../../features/editorSlice";
 import { Button } from "./Button";
 import { IoIosCheckmark } from "react-icons/io";
 import { memo } from "react";

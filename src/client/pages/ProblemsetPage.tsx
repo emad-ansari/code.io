@@ -1,4 +1,4 @@
-import { FilterSection } from "../components/FilterSection";
+import { FilterSection } from "../components/common/FilterSection";
 import Pagination from "@mui/material/Pagination";
 import { useSelector } from "react-redux";
 import { RootState, useAppDispatch } from "../app/store";

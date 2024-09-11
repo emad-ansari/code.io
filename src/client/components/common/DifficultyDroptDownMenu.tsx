@@ -1,10 +1,10 @@
 import { IoIosCheckmark } from "react-icons/io";
 import { useSelector } from "react-redux";
-import { RootState, useAppDispatch } from "../app/store";
-import { setFilterOptions } from "../features/filterSlice";
+import { RootState, useAppDispatch } from "../../app/store";
+import { setFilterOptions } from "../../features/filterSlice";
 import { useSearchParams } from "react-router-dom";
-import { getProblems } from "../features/problemSlice";
-import { DropDownItemProps } from '../types'
+import { getProblems } from "../../features/problemSlice";
+import { DropDownItemProps } from '../../types'
 
 
 export const DifficultyDropDownMenu = () => {

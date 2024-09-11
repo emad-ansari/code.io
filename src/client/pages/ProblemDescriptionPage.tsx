@@ -1,6 +1,6 @@
-import { ProblemDescription } from "../components/ProblemDescription";
-import { EditorSection } from "../components/EditorSection";
-import { ProblemNavBar } from "../components/ProblemNavBar";
+import { ProblemDescription } from "../components/common/ProblemDescription";
+import { EditorSection } from "../components/common/EditorSection";
+import { ProblemNavBar } from "../components/common/ProblemNavBar";
 import Split from "react-split";
 import { useSelector} from 'react-redux'
 import { RootState } from "../app/store";

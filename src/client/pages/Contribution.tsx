@@ -10,6 +10,33 @@ export const Contribution = () => {
 	);
 };
 
+// const Tabs = () => {
+// 	return (
+// 		<nav className="flex justify-center space-x-4 p-4 bg-gray-800">
+// 			<NavLink
+// 				className="text-lg px-4 py-2 rounded-md hover:bg-gray-700 transition duration-300"
+// 				to="/problem"
+// 				activeClassName="bg-gray-700"
+// 			>
+// 				New Problem
+// 			</NavLink>
+// 			<NavLink
+// 				className="text-lg px-4 py-2 rounded-md hover:bg-gray-700 transition duration-300"
+// 				className={({ isActive }) =>
+// 					`px-4 py-2 text-white text-sm font-dmMono rounded-full transition-colors duration-300 ${
+// 						isActive ? "bg-hover text-white" : ""
+// 					}`
+// 				}
+// 				to="/testcase"
+// 				activeClassName="bg-gray-700"
+// 			>
+// 				New TestCase
+// 			</NavLink>
+// 		</nav>
+// 	);
+// };
+
+
 export const TabBar = () => {
 	return (
 		<div className="flex justify-center items-center fixed top-0 left-0 right-0 h-16 bg-PRIMARY">
@@ -18,9 +45,7 @@ export const TabBar = () => {
 					to="./problem"
 					className={({ isActive }) =>
 						`px-4 py-2 text-white text-sm font-dmMono rounded-full transition-colors duration-300 ${
-							isActive
-								? "bg-hover text-white"
-								: ""
+							isActive ? "bg-hover text-white" : ""
 						}`
 					}
 				>
@@ -30,9 +55,7 @@ export const TabBar = () => {
 					to="./testcase"
 					className={({ isActive }) =>
 						`px-4 py-2 mx-2 text-sm font-dmMono rounded-full transition-colors duration-300 ${
-							isActive
-								? "bg-hover text-white"
-								: "text-white"
+							isActive ? "bg-hover text-white" : "text-white"
 						}`
 					}
 				>

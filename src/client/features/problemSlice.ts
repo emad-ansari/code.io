@@ -22,7 +22,7 @@ export const getProblems = createAsyncThunk('/problem/getProblems', async({pageN
 				page: pageNumber,
 				pageSize: pageSize,
 				difficultyLevel
-			}
+			},
 		});
 		const data  = res.data;
 

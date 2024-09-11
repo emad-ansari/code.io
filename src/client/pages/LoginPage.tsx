@@ -1,7 +1,7 @@
 import logo from '../../assets/siginLogo.svg'
-import {PasswordInputField } from '../components/PasswordInputField'
-import { EmailInputField } from '../components/EmailInputField'
-import { Button } from '../components/Button'
+import {PasswordInputField } from '../components/common/PasswordInputField'
+import { EmailInputField } from '../components/common/EmailInputField'
+import { Button } from '../components/common/Button'
 import { FcGoogle } from "react-icons/fc";
 
 

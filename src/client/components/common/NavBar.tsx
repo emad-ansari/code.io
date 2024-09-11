@@ -1,4 +1,4 @@
-import CodeInLogo from '../../assets/websiteLogo.svg'
+import CodeInLogo from '../../../assets/websiteLogo.svg'
 import { Link } from "react-router-dom";
 
 

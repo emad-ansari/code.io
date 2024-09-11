@@ -1,4 +1,4 @@
-import CodeInLogo from "../../assets/websiteLogo.svg";
+import CodeInLogo from "../../../assets/websiteLogo.svg";
 import { NavLink } from "react-router-dom";
 import { FaUserCircle } from "react-icons/fa";
 import { FiLogOut } from "react-icons/fi";

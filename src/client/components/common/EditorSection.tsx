@@ -1,4 +1,4 @@
-import { Button } from "../components/Button";
+import { Button } from "../common/Button";
 import { MdOutlineFileUpload } from "react-icons/md";
 import { ModeSelectButton } from "./ModeSelectButton";
 import { useState } from "react";
@@ -12,11 +12,11 @@ import { TiArrowSortedDown, TiArrowSortedUp } from "react-icons/ti";
 import { GoScreenFull } from "react-icons/go";
 import { EditorSetting } from "./EditorSetting";
 import { useSelector } from "react-redux";
-import { RootState, useAppDispatch } from "../app/store";
-import { setOpenDropDownMenu } from "../features/dropDownSlice";
-import { toggleFullScreen } from "../features/editorSlice";
+import { RootState, useAppDispatch } from "../../app/store";
+import { setOpenDropDownMenu } from "../../features/dropDownSlice";
+import { toggleFullScreen } from "../../features/editorSlice";
 import Split from "react-split";
-import { setIsOpen } from "../features/editorSettingSlice";
+import { setIsOpen } from "../../features/editorSettingSlice";
 
 const LANGUAGES = ["java", "cpp", "javascript", "go", "rust"];
 

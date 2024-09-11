@@ -1,9 +1,9 @@
-import { Button } from "../components/Button";
-import { StatusDropDownMenu } from "../components/StatusDropDownMenu";
+import { Button } from "../common/Button";
+import { StatusDropDownMenu } from "../common/StatusDropDownMenu";
 import { MdKeyboardArrowDown } from "react-icons/md";
 import { useSelector } from "react-redux";
-import { RootState, useAppDispatch } from "../app/store";
-import { setOpenDropDownMenu } from "../features/dropDownSlice";
+import { RootState, useAppDispatch } from "../../app/store";
+import { setOpenDropDownMenu } from "../../features/dropDownSlice";
 import { memo } from "react";
 
 export const StatusFilterButton = memo(() => {

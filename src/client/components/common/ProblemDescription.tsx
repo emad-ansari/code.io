@@ -1,5 +1,5 @@
 import { TestCaseExample } from "./TestCaseExample";
-import { testcase } from "../../utils/testcase";
+import { testcase } from "../../../utils/testcase";
 import { Button } from "./Button";
 import { useEffect, useState } from "react";
 import { IoMdCheckmarkCircleOutline } from "react-icons/io";

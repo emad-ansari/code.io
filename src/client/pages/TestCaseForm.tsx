@@ -1,4 +1,3 @@
-import { useState } from "react";
 import { useAppDispatch, RootState } from "../app/store";
 import { useSelector } from "react-redux";
 import { setProblemTitle, setTestCaseInput, setTestCaseOutput } from "../features/TestcaseSlice";
@@ -6,7 +5,7 @@ import { setProblemTitle, setTestCaseInput, setTestCaseOutput } from "../feature
 
 export const TestCaseForm = () => {
   const dispatch = useAppDispatch();
-  const { title, input, output} = useSelector((state: RootState) => state.TestCaseForm);
+  const { problemTitle, input, output} = useSelector((state: RootState) => state.TestCaseForm);
 
 
   return (
@@ -27,7 +26,7 @@ export const TestCaseForm = () => {
               type="text"
               id="problemTitle"
               className="w-full px-3 py-2 border rounded-md focus:outline-none focus:ring focus:ring-offset-[#81E291] bg-transparent text-white"
-              value={title}
+              value={problemTitle}
               onChange={(e) => dispatch(setProblemTitle(e.target.value))}
               placeholder="Enter the problem title"
               required

@@ -5,9 +5,9 @@ import IconButton from "@mui/material/IconButton";
 import { IoCloseOutline } from "react-icons/io5";
 import Typography from "@mui/material/Typography";
 import { useSelector } from "react-redux";
-import { RootState, useAppDispatch } from "../app/store";
-import { setIsOpen, setFontSize, setTheme } from "../features/editorSettingSlice";
-import { CustomMuiMenuProps } from "../types";
+import { RootState, useAppDispatch } from "../../app/store";
+import { setIsOpen, setFontSize, setTheme } from "../../features/editorSettingSlice";
+import { CustomMuiMenuProps } from "../../types";
 
 const EDITOR_THEMES = ["vs-dark", "vs", "hc-light", "OneDarkPro"];
 const FONT_SIZES = ['12px', '14px', '16px', '18px', '20px', '22px' ];

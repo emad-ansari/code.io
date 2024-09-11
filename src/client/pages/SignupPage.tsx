@@ -1,7 +1,7 @@
-import { Button } from "../components/Button";
+import { Button } from "../components/common/Button";
 import logo from "../../assets/siginLogo.svg";
-import { EmailInputField } from "../components/EmailInputField";
-import { PasswordInputField } from "../components/PasswordInputField";
+// import { EmailInputField } from "../components/common/EmailInputField";
+import { PasswordInputField } from "../components/common/PasswordInputField";
 import { FcGoogle } from "react-icons/fc";
 
 export const SignupPage = () => {

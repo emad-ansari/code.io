@@ -2,7 +2,7 @@ import { IoIosCheckmark } from "react-icons/io";
 import { BiAdjust } from "react-icons/bi";
 import { FaMinus } from "react-icons/fa6";
 import { useSelector } from "react-redux";
-import { RootState, useAppDispatch } from "../app/store";
+import { RootState, useAppDispatch } from "../../app/store";
 // import { filterProblems } from "../features/problemSlice";
 
 export const StatusDropDownMenu = () => {

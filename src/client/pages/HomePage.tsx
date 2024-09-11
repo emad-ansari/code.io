@@ -1,6 +1,6 @@
 import { FaArrowRightLong } from "react-icons/fa6";
-import { Button } from "../components/Button"
-import { NavBar } from "../components/NavBar"
+import { Button } from "../components/common/Button"
+import { NavBar } from "../components/common/NavBar"
 import { useNavigate } from "react-router-dom"
 import NQueen from '../../assets/NQueen.png'
 

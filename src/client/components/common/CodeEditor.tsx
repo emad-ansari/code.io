@@ -1,9 +1,9 @@
 import { Editor, Monaco } from "@monaco-editor/react";
 // import * as monaco from "monaco-editor";
 import { useSelector } from "react-redux";
-import { setBoilerPlateCode } from "../features/editorSlice";
-import { RootState, useAppDispatch } from "../app/store";
-import OneDarkPro from "../theme/oneDarkPro.json";
+import { setBoilerPlateCode } from "../../features/editorSlice";
+import { RootState, useAppDispatch } from "../../app/store";
+import OneDarkPro from "../../theme/oneDarkPro.json";
 import { useEffect, useState } from "react";
 
 
