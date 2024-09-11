@@ -181,14 +181,9 @@ async function saveProblem(filePath: string) {
 		}
 		const java = parser.getJavaBoilerplateCode();
 		const cpp = parser.getCppBoilerplateCode();
-		const typescript = parser.getTypescriptBoilerplateCode();
-		console.log("Java boiler plate code: ", java)
+		const typescript = parser.getTypescriptBoilerplateCode();       
 
-		console.log();
-		console.log("Cpp boiler plate code: ", cpp)
-		console.log();
-		console.log("Typescript boiler plate code: ", typescript);
-		
+
 		// 4.make database call to create new testcases with the given problem id
 		// const newTestCases = await createTestCases({
 		// 	problemId: newProblem.id,
@@ -205,8 +200,8 @@ async function saveProblem(filePath: string) {
 		console.error("Error: ", (error as Error).message);
 	}
 }
-const filePath = `src/contribution/newproblem/Two_Sum.json`;
-saveProblem(filePath);
+// const filePath = `src/contribution/newproblem/Two_Sum.json`;
+// saveProblem(filePath);
 
 async function saveBoilerplateCode(problemId: string) {
 	// cosnt java = getJavaBoilerplatecode()

@@ -62,13 +62,14 @@ router.get("filter-problem", auth, async (req: Request, res: Response) => {
 
 router.post("/submit-problem", auth, async (req: Request, res: Response) => {
 	const { userAuthorized, userId } = req as CustomRequestObject;
+	const { testcases } = req.body;
 
 	try {
-		if (!userAuthorized) {
-			return res
-				.status(400)
-				.json({ message: "your are not authorized, please login" });
-		}
+		// if (!userAuthorized) {
+		// 	return res
+		// 		.status(400)
+		// 		.json({ message: "your are not authorized, please login" });
+		// }
 		const parseUserSubmitCode = ProblemSubmissionData.safeParse(req.body);
 		if (!parseUserSubmitCode.success) {
 			return res.status(401).json({ error: parseUserSubmitCode.error });
@@ -81,17 +82,15 @@ router.post("/submit-problem", auth, async (req: Request, res: Response) => {
 
 		// first get all the test cases from database
 
-		const testcaseArray: any = [];
+		// const testcaseArray: any = [];
 
-		// const problem = getProblem(testcaseArray);
 
-		// const fullBoilerPlatecode = problem.fullboilerPlatecode.replace("__USER_CODE_HERE__", code);
 		// 3. create submission array
 		const submissions: {
 			language_id: number;
 			source_code: string,
 			exptected_output: string
-		}[] = testcaseArray.map((testcase: any) => {
+		}[] = testcases.map((testcase: any) => {
 			const parser = new GenerateFullProblemDefinition
 			parser.parseTestCase(testcase);
 			//getProblem() --> { fullBoilerplate code, stdin, stdout, }
@@ -105,8 +104,11 @@ router.post("/submit-problem", auth, async (req: Request, res: Response) => {
 			};
 		});
 
+		console.log('this is submission array: ', submissions);
+		return res.json({data: submissions});
+
 		// 4. make api call
-		// const data = JSON.stringify({submissions});
+		const data = JSON.stringify({submissions});
 
 		// const submissionResponse = await axios.post(JUDGE0_API_URL, data,
 		// 	{
@@ -125,19 +127,11 @@ router.post("/submit-problem", auth, async (req: Request, res: Response) => {
 export default router;
 
 /*
-	- [Tomorrow taks]: 
-	- tyr to find in algorithmic arena that where code is submited to judge0 server
-	- then also clear that all testcases are given at once or they are given just one by one
-	- test cases are string []
-	- expected output are string[] 
+	
 	Create multiple submissions at once
 	POST https://ce.judge0.com/submissions/batch?base64_encoded=false
 
-
 	- Get multiple submissions at once.
 	 https://ce.judge0.com/submissions/batch{?tokens,base64_encoded,fields}
-
-
-	 -
 
 */

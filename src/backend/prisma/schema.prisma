@@ -63,10 +63,30 @@ model ProblemStaus {
 
 model TestCase {
   id          String @id @default(cuid())
-  stdin       String 
-  stdout      String  
+  title       String?
   problemId   String
   problem     Problem @relation(fields: [problemId], references: [id])
+  input      TestCaseInput[]
+  output    TestCaseOutput[]  // [Todo] - need to look on this relation to make one-to-one not one-to-many
+  
+}
+// Model for Test case Input 
+model TestCaseInput {
+  id          String @id @default(cuid())
+  name        String
+  type        String
+  value       String
+  testcaseId  String
+  testcase   TestCase @relation(fields: [testcaseId], references: [id])
+}
+
+// model for Test case Output
+model TestCaseOutput {
+  id        String @id @default(cuid())
+  type      String
+  value     String
+  testcaseId  String
+  testcase   TestCase @relation(fields: [testcaseId], references: [id])
 }
 
 
