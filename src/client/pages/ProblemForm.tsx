@@ -9,7 +9,17 @@ import {
 	setParameters,
 	setReturnType,
 } from "../features/problemFormSlice";
+
 import { useSelector } from "react-redux";
+import {
+	Select,
+	SelectContent,
+	SelectGroup,
+	SelectItem,
+	SelectLabel,
+	SelectTrigger,
+	SelectValue,
+} from "../components/ui/select";
 
 export const ProblemForm = () => {
 	const dispatch = useAppDispatch();
@@ -54,8 +64,8 @@ export const ProblemForm = () => {
 	];
 
 	return (
-		<div className="bg-PRIMARY fixed top-16 bottom-0 left-0 right-0">
-			<div className="max-w-3xl mx-auto pt-8 pl-8 pr-8 pb-20 bg-darkGray shadow-lg rounded-lg  border border-[#334155]  overflow-y-scroll">
+		<div className="bg-PRIMARY fixed top-16 bottom-0 left-0 right-0 flex flex-row justify-between gap-5 pl-4 pr-4 pb-4">
+			<div className="max-w-3xl mx-auto pt-8 pl-8 pr-8 pb-20 bg-darkGray shadow-lg rounded-lg  border border-[#334155]  flex flex-1 flex-col overflow-y-scroll">
 				<h2 className="text-2xl font-bold mb-4 text-white">
 					Add New Problem
 				</h2>
@@ -99,39 +109,25 @@ export const ProblemForm = () => {
 					</div>
 
 					<div className="mb-4">
-						<label
-							className="block text-gray-200 text-sm font-bold mb-2"
-							htmlFor="difficulty"
-						>
-							Difficulty Level
-						</label>
-						<select
-							id="difficulty"
-							className=" text-white w-full px-3 py-2 border rounded-md focus:outline-none  focus:ring focus:ring-offset-[#81E291] bg-transparent"
-							value={difficulty}
-							onChange={(e) =>
-								dispatch(setDifficulty(e.target.value))
-							}
-						>
-							<option
-								className="text-white bg-darkGray"
-								value="Easy"
-							>
-								Easy
-							</option>
-							<option
-								className="text-white bg-darkGray"
-								value="Medium"
-							>
-								Medium
-							</option>
-							<option
-								className="text-white bg-darkGray"
-								value="Hard"
-							>
-								Hard
-							</option>
-						</select>
+						<label htmlFor="Difficulty" className="block text-gray-200 text-sm font-bold mb-2">Difficulty</label>
+						<Select >
+							<SelectTrigger className="w-full">
+								<SelectValue placeholder="Select a timezone" />
+							</SelectTrigger>
+							<SelectContent>
+								<SelectGroup className="bg-transparent">
+									<SelectItem value="easy" className="bg-transparent">
+										Easy
+									</SelectItem>
+									<SelectItem value="medium">
+										Medium
+									</SelectItem>
+									<SelectItem value="hard">
+										Hard
+									</SelectItem>
+								</SelectGroup>
+							</SelectContent>
+						</Select>
 					</div>
 
 					<div className="mb-4">
@@ -217,6 +213,9 @@ export const ProblemForm = () => {
 						</button>
 					</div>
 				</div>
+			</div>
+			<div className="text-white flex flex-1 bg-darkGray shadow-lg rounded-lg  border border-[#334155] ">
+				<h1>Example</h1>
 			</div>
 		</div>
 	);
