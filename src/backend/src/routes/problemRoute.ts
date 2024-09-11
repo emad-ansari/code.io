@@ -6,6 +6,7 @@ import axios from "axios";
 import auth, { CustomRequestObject } from "../middleware/auth";
 import * as fs from "fs";
 import { GenerateFullProblemDefinition } from '../lib/generateFullProblemDefinition'
+import { getAllTestcases, TestCase } from "../db/testcase";
 
 interface Problem {
 	problemId: number;
@@ -75,19 +76,20 @@ router.post("/submit-problem", auth, async (req: Request, res: Response) => {
 			return res.status(401).json({ error: parseUserSubmitCode.error });
 		}
 		const { problemId, languageId, code } = parseUserSubmitCode.data;
-		// now you have to make api call to judg0 server to evalute the code
+		
+		const testcases = await getAllTestcases(problemId);
 
-		// first get all the test cases from database
-
-		// const testcaseArray: any = [];
-
+		if (testcases.data === undefined || !testcases.success ){
+			return res.status(500).json({ error: testcases?.err || "Error occured while fetching testcases" });
+		}
 		// 3. create submission array
 		
 		const submissions: {
 			language_id: number;
 			source_code: string,
-			exptected_output: string
-		}[] = testcases.map((testcase: any) => {
+			stdin: string,
+			expected_output: string
+		}[] = testcases.data.map((testcase: any) => {  // [Todo] - remove any and add testcase actual type 
 			const parser = new GenerateFullProblemDefinition
 			parser.parseTestCase(testcase);
 			//getProblem() --> { fullBoilerplate code, stdin, stdout, }

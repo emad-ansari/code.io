@@ -15,8 +15,8 @@ interface TestCaseProps {
 		} | null
 	}[]
 }
-type TestCase = Pick<TestCaseProps, 'testcases'>['testcases'];
-// needs to modify createTestCase function
+export type TestCase = Pick<TestCaseProps, 'testcases'>['testcases'];
+
 export async function createTestCases({ problemId, problemTitle, testcases }: TestCaseProps): Promise<{success: boolean, msg: string}> {
 	try {
 
@@ -52,7 +52,7 @@ export async function createTestCases({ problemId, problemTitle, testcases }: Te
                 });
             }
 		}
-		
+
         return {
             success: true,
             msg: "Testcases created successfully"
@@ -71,7 +71,7 @@ export async function createTestCases({ problemId, problemTitle, testcases }: Te
 }
 
 // get all test cases
-async function getAllTestcases(problemId: string ): Promise<{ success: boolean, data?:TestCase, err?: string }>{
+export async function getAllTestcases(problemId: string ): Promise<{ success: boolean, data?:TestCase, err?: string }>{
 	try{
 		const testcases = await prisma.testCase.findMany({
 			where: {
