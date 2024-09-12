@@ -4,11 +4,7 @@ import { RootState } from "../app/store";
 
 export interface TestCase {
 	id: string;
-	inputs: {
-		name: string;
-		type: string;
-		value: string;
-	}[];
+	inputs: TestCaseInputType[]
 	output: {
 		type: string;
 		value: string;
@@ -20,6 +16,12 @@ export interface Parameter {
 	type: string;
 }
 
+export interface TestCaseInputType {
+	id: string;
+	name: string;
+	type: string;
+	value: string;
+}
 export interface ProblemFormState {
 	title: string;
 	description: string;
@@ -37,7 +39,7 @@ export const ProblemFormInitailState: ProblemFormState = {
 	testcases: [
 		{
 			id: "1",
-			inputs: [{ name: "", type: "", value: "" }],
+			inputs: [{ id: "1", name: "", type: "", value: "" }],
 			output: {
 				type: "",
 				value: "",
@@ -45,7 +47,7 @@ export const ProblemFormInitailState: ProblemFormState = {
 		},
 		{
 			id: "2",
-			inputs: [{ name: "", type: "", value: "" }],
+			inputs: [{ id: "2", name: "", type: "", value: "" }],
 			output: {
 				type: "",
 				value: "",
@@ -131,6 +133,25 @@ export const problemFormSlice = createSlice({
 			updateTestCase.push(action.payload);
 			state.testcases = updateTestCase;
 		},
+		addTestCaseInput: (
+			state,
+			action: PayloadAction<{testcaseId: string, newInput: TestCaseInputType}>
+		) => {
+            const { testcaseId, newInput } = action.payload;
+			let testcases = [...state.testcases];
+            const updatedTestCases = testcases.map(testcase => {
+                if (testcase.id === testcaseId){
+                    const upatedTestCaseInput = [...testcase.inputs];
+                    upatedTestCaseInput.push(newInput);
+                    return {...testcase, inputs: upatedTestCaseInput};
+                }
+                else{
+                    return testcase;
+                }
+            })
+            console.log("Updated testcase array: ", state.testcases);
+            state.testcases = updatedTestCases;
+		},
 		setTestCaseName: (
 			state,
 			action: PayloadAction<{ testcaseId: string; name: string }>
@@ -168,4 +189,5 @@ export const {
 	deleteParameter,
 	setparameterName,
 	setParameterType,
+    addTestCaseInput
 } = problemFormSlice.actions;

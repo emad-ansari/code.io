@@ -12,6 +12,8 @@ import {
 	setparameterName,
 	setParameterType,
 	addNewTestCase,
+	addTestCaseInput,
+	TestCaseInputType,
 } from "../features/problemFormSlice";
 
 import { useSelector } from "react-redux";
@@ -23,6 +25,7 @@ import {
 	SelectTrigger,
 	SelectValue,
 } from "../components/ui/select";
+
 
 const typeOptions: string[] = [
 	"int",
@@ -59,7 +62,7 @@ export const ProblemForm = () => {
 	} = useSelector((state: RootState) => state.problemform);
 
 	const difficultyOption: string[] = ["Easy", "Medium", "Hard"];
-
+	console.log("testcase input : ", testcases);
 	const handleParameters = () => {
 		const newParameter = {
 			id: Date.now().toString() + Math.floor(Math.random() * 10),
@@ -74,6 +77,7 @@ export const ProblemForm = () => {
 			id: Date.now().toString() + Math.floor(Math.random() * 10),
 			inputs: [
 				{
+					id: Date.now().toString() + Math.floor(Math.random() * 10),
 					name: "",
 					type: "",
 					value: "",
@@ -212,9 +216,7 @@ export const ProblemForm = () => {
 							classname="flex items-center justify-between bg-transparent border rounded-md focus:outline-none  focus:ring focus:ring-offset-[#81E291] w-full hover:bg-[#ecfeff] text-[#9ca3af] hover:text-black"
 							onClick={() => handleParameters()}
 						>
-							<span className="text-md ">
-								Add new Parameter
-							</span>
+							<span className="text-md ">Add new Parameter</span>
 							<IoAdd className="font-medium text-xl" />
 						</Button>
 					</div>
@@ -240,15 +242,20 @@ export const ProblemForm = () => {
 							classname="flex items-center justify-between bg-transparent border rounded-md focus:outline-none  focus:ring focus:ring-offset-[#81E291] w-full hover:bg-[#ecfeff] text-[#9ca3af] hover:text-black"
 							onClick={() => handleNewTestCase()}
 						>
-							<span className="text-md ">
-								Add new TestCase
-							</span>
+							<span className="text-md ">Add new TestCase</span>
 							<IoAdd className="font-medium text-xl" />
 						</Button>
 					</div>
 					<div className="mb-4 flex flex-col gap-2">
-						{testcases.map((_, index) => {
-							return <TestCaseContainer key={index} />;
+						{testcases.map((testcase, index) => {
+							return (
+								<TestCaseContainer
+									key={index}
+									id={testcase.id}
+									testcaseNo={index + 1}
+									inputs={testcase.inputs}
+								/>
+							);
 						})}
 					</div>
 
@@ -269,7 +276,7 @@ export const ProblemForm = () => {
 	);
 };
 
-export function TestCaseInput() {
+export function TestCaseInput({ id }: { id: string }) {
 	return (
 		<div className="flex flex-row gap-2 bg-[#1f2937] px-3 py-3 rounded-md">
 			<input
@@ -317,13 +324,39 @@ export function TestCaseInput() {
 		</div>
 	);
 }
-export function TestCaseContainer() {
+
+export function TestCaseContainer({
+	id,
+	testcaseNo,
+	inputs,
+}: {
+	id: string;
+	testcaseNo: number;
+	inputs: TestCaseInputType[];
+}) {
+	const dispatch = useAppDispatch();
+
+	const handleTestCaseInput = () => {
+		const newInput = {
+			id: Date.now().toString() + Math.floor(Math.random() * 10),
+			name: "",
+			type: "",
+			value: "",
+		};
+		dispatch(addTestCaseInput({ testcaseId: id, newInput }));
+	};
+
 	return (
 		<div className="rounded-md px-3 py-3 border border-[#334155] ">
-			<div className="flex justify-center">
-				<h1 className="test-white text-gray-200 text-lg font-bold mb-3 ">
-					TestCase 1
-				</h1>
+			<div className="flex justify-between items-center mb-3">
+				<div className="flex flex-1 justify-end items-center">
+					<span className="test-white text-gray-200 text-lg font-bold">
+						TestCase {testcaseNo}
+					</span>
+				</div>
+				<div className="flex flex-1 justify-end  px-1.5 cursor-pointer items-center">
+					<MdDelete className="w-9 h-9 text-red-500 hover:bg-red-100  rounded-md px-2 p-2" />
+				</div>
 			</div>
 			<div className="mb-4 flex flex-col gap-3">
 				<label className="block text-gray-200 text-sm font-bold mb-2">
@@ -331,14 +364,18 @@ export function TestCaseContainer() {
 				</label>
 				<Button
 					classname="flex items-center justify-between bg-transparent border rounded-md focus:outline-none  focus:ring focus:ring-offset-[#81E291] w-full hover:bg-[#ecfeff] text-[#9ca3af] hover:text-black"
-					// onClick={() => handleNewTestCase()}
+					onClick={() => handleTestCaseInput()}
 				>
-					<span className=" text-md ">
-						Add Testcase Input	
-					</span>
+					<span className=" text-md ">Add Testcase Input</span>
 					<IoAdd className=" font-medium text-xl" />
 				</Button>
-				{<TestCaseInput />}
+				<div className="flex flex-col gap-2  border border-[#334155] rounded-md px-2 py-2">
+					{
+						inputs.map((input, index) => {
+							return <TestCaseInput key={index} id={input.id} />;
+						})
+					}
+				</div>
 			</div>
 			<div className="flex flex-col justify-between  bg-[#1f2937] px-3 py-3 rounded-md border border-[#334155] ">
 				<label className="block text-gray-200 text-sm font-bold mb-2">
