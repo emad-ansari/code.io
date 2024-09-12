@@ -2,33 +2,21 @@ import { createSlice, PayloadAction, createAsyncThunk } from "@reduxjs/toolkit";
 import { client } from "../api/client";
 import { RootState } from "../app/store";
 
-export interface TestCase {
-	id: string;
-	inputs: TestCaseInputType[]
-	output: {
-		type: string;
-		value: string;
-	};
-}
+
 export interface Parameter {
 	id: string;
 	name: string;
 	type: string;
 }
 
-export interface TestCaseInputType {
-	id: string;
-	name: string;
-	type: string;
-	value: string;
-}
+
 export interface ProblemFormState {
 	title: string;
 	description: string;
 	difficulty: string;
 	returnType: string;
 	parameters: Parameter[];
-	testcases: TestCase[];
+	// testcases: TestCase[];
 }
 export const ProblemFormInitailState: ProblemFormState = {
 	title: "",
@@ -36,24 +24,24 @@ export const ProblemFormInitailState: ProblemFormState = {
 	difficulty: "Easy",
 	returnType: "",
 	parameters: [],
-	testcases: [
-		{
-			id: "1",
-			inputs: [{ id: "1", name: "", type: "", value: "" }],
-			output: {
-				type: "",
-				value: "",
-			},
-		},
-		{
-			id: "2",
-			inputs: [{ id: "2", name: "", type: "", value: "" }],
-			output: {
-				type: "",
-				value: "",
-			},
-		},
-	],
+	// testcases: [
+	// 	{
+	// 		id: "1",
+	// 		inputs: [{ id: "1", name: "", type: "", value: "" }],
+	// 		output: {
+	// 			type: "",
+	// 			value: "",
+	// 		},
+	// 	},
+	// 	{
+	// 		id: "2",
+	// 		inputs: [{ id: "2", name: "", type: "", value: "" }],
+	// 		output: {
+	// 			type: "",
+	// 			value: "",
+	// 		},
+	// 	},
+	// ],
 };
 
 export const createProblem = createAsyncThunk(
@@ -63,7 +51,9 @@ export const createProblem = createAsyncThunk(
 			const store = ThunkAPI.getState() as RootState;
 			const { title, description, difficulty, parameters, returnType } =
 				store.problemform;
-
+                // test case of Testcase slice are accessible over here
+            // const { testcases } = store.TestCaseForm;
+            
 			const res = await client.post("/problem/create-problem", {
 				title,
 				description,
@@ -128,47 +118,15 @@ export const problemFormSlice = createSlice({
 			state.returnType = action.payload;
 		},
 
-		addNewTestCase: (state, action: PayloadAction<TestCase>) => {
-			let updateTestCase = [...state.testcases];
-			updateTestCase.push(action.payload);
-			state.testcases = updateTestCase;
-		},
-		addTestCaseInput: (
-			state,
-			action: PayloadAction<{testcaseId: string, newInput: TestCaseInputType}>
-		) => {
-            const { testcaseId, newInput } = action.payload;
-			let testcases = [...state.testcases];
-            const updatedTestCases = testcases.map(testcase => {
-                if (testcase.id === testcaseId){
-                    const upatedTestCaseInput = [...testcase.inputs];
-                    upatedTestCaseInput.push(newInput);
-                    return {...testcase, inputs: upatedTestCaseInput};
-                }
-                else{
-                    return testcase;
-                }
-            })
-            console.log("Updated testcase array: ", state.testcases);
-            state.testcases = updatedTestCases;
-		},
-		setTestCaseName: (
-			state,
-			action: PayloadAction<{ testcaseId: string; name: string }>
-		) => {
-			const { testcaseId, name } = action.payload;
-			const updatedTestcases = state.testcases.map((testcase) =>
-				testcase.id === testcaseId
-					? { ...testcase, name: name }
-					: testcase
-			);
-			state.testcases = updatedTestcases;
-		},
+		
+		
+        
+
 	},
 	extraReducers: (builder) => {
 		builder.addCase(createProblem.pending, (_, action) => {
 			console.log("status is pending", action.payload);
-		}),
+		}), 
 			builder.addCase(createProblem.fulfilled, (_, action) => {
 				console.log("status is fulfilled", action.payload);
 			}),
@@ -185,9 +143,8 @@ export const {
 	setDifficulty,
 	addParameter,
 	setReturnType,
-	addNewTestCase,
 	deleteParameter,
 	setparameterName,
 	setParameterType,
-    addTestCaseInput
+    
 } = problemFormSlice.actions;

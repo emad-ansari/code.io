@@ -10,12 +10,9 @@ import {
 	setReturnType,
 	deleteParameter,
 	setparameterName,
-	setParameterType,
-	addNewTestCase,
-	addTestCaseInput,
-	TestCaseInputType,
+	setParameterType,	
 } from "../features/problemFormSlice";
-
+import {addNewTestCase,addTestCaseInput, TestCaseInputType, } from '../features/TestcaseSlice'
 import { useSelector } from "react-redux";
 import {
 	Select,
@@ -55,14 +52,12 @@ export const ProblemForm = () => {
 	const {
 		title,
 		description,
-		difficulty,
 		parameters,
-		returnType,
-		testcases,
 	} = useSelector((state: RootState) => state.problemform);
+	const { testcases } = useSelector((state: RootState) => state.TestCaseForm);
 
 	const difficultyOption: string[] = ["Easy", "Medium", "Hard"];
-	console.log("testcase input : ", testcases);
+
 	const handleParameters = () => {
 		const newParameter = {
 			id: Date.now().toString() + Math.floor(Math.random() * 10),
@@ -71,7 +66,8 @@ export const ProblemForm = () => {
 		};
 		dispatch(addParameter(newParameter));
 	};
-	console.log("return type and difficulty", returnType, difficulty);
+
+
 	const handleNewTestCase = () => {
 		const newTestCase = {
 			id: Date.now().toString() + Math.floor(Math.random() * 10),

@@ -1,11 +1,11 @@
 import { useAppDispatch, RootState } from "../app/store";
 import { useSelector } from "react-redux";
-import { setProblemTitle, setTestCaseInput, setTestCaseOutput } from "../features/TestcaseSlice";
+// import { setProblemTitle, setTestCaseInput, setTestCaseOutput } from "../features/TestcaseSlice";
 
 
 export const TestCaseForm = () => {
   const dispatch = useAppDispatch();
-  const { problemTitle, input, output} = useSelector((state: RootState) => state.TestCaseForm);
+  // const { problemTitle, input, output} = useSelector((state: RootState) => state.TestCaseForm);
 
 
   return (
@@ -26,8 +26,8 @@ export const TestCaseForm = () => {
               type="text"
               id="problemTitle"
               className="w-full px-3 py-2 border rounded-md focus:outline-none focus:ring focus:ring-offset-[#81E291] bg-transparent text-white"
-              value={problemTitle}
-              onChange={(e) => dispatch(setProblemTitle(e.target.value))}
+              // value={problemTitle}
+              // onChange={(e) => dispatch(setProblemTitle(e.target.value))}
               placeholder="Enter the problem title"
               required
             />
@@ -43,8 +43,8 @@ export const TestCaseForm = () => {
             <textarea
               id="input"
               className=" text-white w-full px-3 py-2 border rounded-md focus:outline-none focus:ring focus:ring-offset-[#81E291] bg-transparent"
-              value={input}
-              onChange={(e) => dispatch(setTestCaseInput(e.target.value))}
+              // value={input}
+              // onChange={(e) => dispatch(setTestCaseInput(e.target.value))}
               placeholder="Enter the test case input"
               rows={3}
               required
@@ -61,8 +61,8 @@ export const TestCaseForm = () => {
             <textarea
               id="output"
               className=" text-white w-full px-3 py-2 border rounded-md focus:outline-none focus:ring focus:ring-offset-[#81E291] bg-transparent"
-              value={output}
-              onChange={(e) => dispatch(setTestCaseOutput(e.target.value))}
+              // value={output}
+              // onChange={(e) => dispatch(setTestCaseOutput(e.target.value))}
               placeholder="Enter the expected output"
               rows={3}
               required
