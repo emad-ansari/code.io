@@ -8,7 +8,10 @@ import {
 	setDifficulty,
 	addParameter,
 	setReturnType,
-	deleteParameter
+	deleteParameter,
+	setparameterName,
+	setParameterType,
+	addNewTestCase,
 } from "../features/problemFormSlice";
 
 import { useSelector } from "react-redux";
@@ -17,10 +20,32 @@ import {
 	SelectContent,
 	SelectGroup,
 	SelectItem,
-	// SelectLabel,
 	SelectTrigger,
 	SelectValue,
 } from "../components/ui/select";
+
+const typeOptions: string[] = [
+	"int",
+	"int[]",
+	"int[][]",
+	"char",
+	"char[]",
+	"char[][]",
+	"String",
+	"String[]",
+	"String[][]",
+	"boolean",
+	"boolean[]",
+	"boolean[][]",
+	"float",
+	"float[]",
+	"double",
+	"double[]",
+	"List<Integer>",
+	"List<List<Integer>>",
+	"List<String>",
+	"List<List<String>>",
+];
 
 export const ProblemForm = () => {
 	const dispatch = useAppDispatch();
@@ -30,8 +55,8 @@ export const ProblemForm = () => {
 		difficulty,
 		parameters,
 		returnType,
+		testcases,
 	} = useSelector((state: RootState) => state.problemform);
-
 
 	const difficultyOption: string[] = ["Easy", "Medium", "Hard"];
 
@@ -39,10 +64,28 @@ export const ProblemForm = () => {
 		const newParameter = {
 			id: Date.now().toString() + Math.floor(Math.random() * 10),
 			name: "",
-			type: ""
-		}
-		dispatch(addParameter(newParameter))
-	}
+			type: "",
+		};
+		dispatch(addParameter(newParameter));
+	};
+	console.log("return type and difficulty", returnType, difficulty);
+	const handleNewTestCase = () => {
+		const newTestCase = {
+			id: Date.now().toString() + Math.floor(Math.random() * 10),
+			inputs: [
+				{
+					name: "",
+					type: "",
+					value: "",
+				},
+			],
+			output: {
+				type: "",
+				value: "",
+			},
+		};
+		dispatch(addNewTestCase(newTestCase));
+	};
 
 	return (
 		<div className="bg-PRIMARY fixed top-16 bottom-0 left-0 right-0 flex flex-row justify-between gap-5 pl-4 pr-4 pb-4">
@@ -96,7 +139,11 @@ export const ProblemForm = () => {
 						>
 							Difficulty
 						</label>
-						<Select>
+						<Select
+							onValueChange={(value) =>
+								dispatch(setDifficulty(value))
+							}
+						>
 							<SelectTrigger className="w-full text-[#9ca3af]">
 								<SelectValue
 									placeholder="Difficulty level"
@@ -110,7 +157,7 @@ export const ProblemForm = () => {
 											return (
 												<SelectItem
 													key={index}
-													value="easy"
+													value={difficulty}
 													className="hover:bg-[#334155] !important cursor-pointer"
 												>
 													{difficulty}
@@ -129,28 +176,79 @@ export const ProblemForm = () => {
 						>
 							Function Return Type
 						</label>
-						<CustomSelectTypes />
+						<Select
+							onValueChange={(value) =>
+								dispatch(setReturnType(value))
+							}
+						>
+							<SelectTrigger className="w-full text-[#9ca3af] bg-darkGray">
+								<SelectValue
+									placeholder="Type"
+									className="text-white"
+								/>
+							</SelectTrigger>
+							<SelectContent className="bg-darkGray text-white">
+								<SelectGroup className="">
+									{typeOptions.map((type, index) => {
+										return (
+											<SelectItem
+												key={index}
+												value={type}
+												className="cursor-pointer"
+											>
+												{type}
+											</SelectItem>
+										);
+									})}
+								</SelectGroup>
+							</SelectContent>
+						</Select>
+					</div>
+					<div className="mb-4">
+						<label className="block text-gray-200 text-sm font-bold mb-2">
+							Add Parameters name and return type
+						</label>
+						<Button
+							classname="flex items-center justify-between bg-transparent border rounded-md focus:outline-none  focus:ring focus:ring-offset-[#81E291] w-full hover:bg-[#ecfeff] text-[#9ca3af] hover:text-black"
+							onClick={() => handleParameters()}
+						>
+							<span className="text-md ">
+								Add new Parameter
+							</span>
+							<IoAdd className="font-medium text-xl" />
+						</Button>
+					</div>
+					<div className="mb-4 flex flex-col gap-2">
+						{parameters.map((parameter, index) => {
+							return (
+								<ParameterCotnainer
+									key={index}
+									id={parameter.id}
+									name={parameter.name}
+								/>
+							);
+						})}
 					</div>
 					<div className="mb-4">
 						<label
 							className="block text-gray-200 text-sm font-bold mb-2"
 							htmlFor="testcase"
 						>
-							Add Parameters name and return type
+							Add Test Case Exmaples
 						</label>
 						<Button
-							classname="flex items-center justify-between bg-transparent border rounded-md focus:outline-none  focus:ring focus:ring-offset-[#81E291] w-full"
-							onClick={() => handleParameters()}
+							classname="flex items-center justify-between bg-transparent border rounded-md focus:outline-none  focus:ring focus:ring-offset-[#81E291] w-full hover:bg-[#ecfeff] text-[#9ca3af] hover:text-black"
+							onClick={() => handleNewTestCase()}
 						>
-							<span className="text-[#9ca3af] text-md ">
-								Add new Prameter
+							<span className="text-md ">
+								Add new TestCase
 							</span>
-							<IoAdd className="text-[#9ca3af] font-medium text-xl" />
+							<IoAdd className="font-medium text-xl" />
 						</Button>
 					</div>
 					<div className="mb-4 flex flex-col gap-2">
-						{parameters.map((parameter, index) => {
-							return <ParameterCotnainer key={index} id= {parameter.id} />;
+						{testcases.map((_, index) => {
+							return <TestCaseContainer key={index} />;
 						})}
 					</div>
 
@@ -171,19 +269,130 @@ export const ProblemForm = () => {
 	);
 };
 
-function TestCaseContainer() {
-	return <div></div>;
+export function TestCaseInput() {
+	return (
+		<div className="flex flex-row gap-2 bg-[#1f2937] px-3 py-3 rounded-md">
+			<input
+				type="text"
+				id="input-name"
+				className="text-white w-full px-3  border rounded-md focus:outline-none  focus:ring focus:ring-offset-[#81E291] bg-darkGray"
+				// value={name}
+				// onChange={(e) =>
+				// 	dispatch(setparameterName({ id, name: e.target.value }))
+				// }
+				placeholder="Input name"
+				required
+			/>
+			<Select>
+				<SelectTrigger className="w-full text-[#9ca3af] bg-darkGray">
+					<SelectValue placeholder="Type" className="text-white" />
+				</SelectTrigger>
+				<SelectContent className="bg-darkGray text-white">
+					<SelectGroup className="">
+						{typeOptions.map((type, index) => {
+							return (
+								<SelectItem
+									key={index}
+									value={type}
+									className="cursor-pointer"
+								>
+									{type}
+								</SelectItem>
+							);
+						})}
+					</SelectGroup>
+				</SelectContent>
+			</Select>
+			<input
+				type="text"
+				id="input-value"
+				className="text-white w-full px-3  border rounded-md focus:outline-none  focus:ring focus:ring-offset-[#81E291] bg-darkGray"
+				// value={name}
+				// onChange={(e) =>
+				// 	dispatch(setparameterName({ id, name: e.target.value }))
+				// }
+				placeholder="Value"
+				required
+			/>
+		</div>
+	);
+}
+export function TestCaseContainer() {
+	return (
+		<div className="rounded-md px-3 py-3 border border-[#334155] ">
+			<div className="flex justify-center">
+				<h1 className="test-white text-gray-200 text-lg font-bold mb-3 ">
+					TestCase 1
+				</h1>
+			</div>
+			<div className="mb-4 flex flex-col gap-3">
+				<label className="block text-gray-200 text-sm font-bold mb-2">
+					Add TestCase Input Details
+				</label>
+				<Button
+					classname="flex items-center justify-between bg-transparent border rounded-md focus:outline-none  focus:ring focus:ring-offset-[#81E291] w-full hover:bg-[#ecfeff] text-[#9ca3af] hover:text-black"
+					// onClick={() => handleNewTestCase()}
+				>
+					<span className=" text-md ">
+						Add Testcase Input	
+					</span>
+					<IoAdd className=" font-medium text-xl" />
+				</Button>
+				{<TestCaseInput />}
+			</div>
+			<div className="flex flex-col justify-between  bg-[#1f2937] px-3 py-3 rounded-md border border-[#334155] ">
+				<label className="block text-gray-200 text-sm font-bold mb-2">
+					Output Type And Value
+				</label>
+				<div className="flex flex-row gap-4 ">
+					<Select
+					// onValueChange={(value) => dispatch(setReturnType(value))}
+					>
+						<SelectTrigger className="w-full text-[#9ca3af] bg-darkGray">
+							<SelectValue
+								placeholder="Type"
+								className="text-white"
+							/>
+						</SelectTrigger>
+						<SelectContent className="bg-darkGray text-white">
+							<SelectGroup className="">
+								{typeOptions.map((type, index) => {
+									return (
+										<SelectItem
+											key={index}
+											value={type}
+											className="cursor-pointer"
+										>
+											{type}
+										</SelectItem>
+									);
+								})}
+							</SelectGroup>
+						</SelectContent>
+					</Select>
+					<input
+						type="text"
+						className="text-white w-full px-3  border rounded-md focus:outline-none  focus:ring focus:ring-offset-[#81E291] bg-darkGray"
+						// value={name}
+						// onChange={(e) =>
+						// 	dispatch(setparameterName({ id, name: e.target.value }))
+						// }
+						placeholder="Value"
+						required
+					/>
+				</div>
+			</div>
+		</div>
+	);
 }
 
-function ParameterCotnainer({ id }: {id: string}) {
+function ParameterCotnainer({ id, name }: { id: string; name: string }) {
 	const dispatch = useAppDispatch();
-
-	
 
 	return (
 		<div className="flex flex-row gap-2 bg-[#1f2937] px-3 py-3 rounded-md ">
 			<div className="flex flex-1">
-				<CustomSelectTypes />
+				<CustomSelectTypes id={id} />
 			</div>
 
 			<div className="flex flex-1">
@@ -191,44 +400,33 @@ function ParameterCotnainer({ id }: {id: string}) {
 					type="text"
 					id="testcase"
 					className="text-white w-full px-3  border rounded-md focus:outline-none  focus:ring focus:ring-offset-[#81E291] bg-darkGray"
-					value={""}
-					// onChange={(e) => dispatch(setParameters(e.target.value))}
+					value={name}
+					onChange={(e) =>
+						dispatch(setparameterName({ id, name: e.target.value }))
+					}
 					placeholder="Name"
 					required
 				/>
 			</div>
-			<div className="flex items-center cursor-pointer bg-darkGray px-1.5 rounded-lg" onClick = {() => dispatch(deleteParameter({ id }))} >	
-				<MdDelete className=" text-white w-5 h-5 "/>
+			<div
+				className="flex items-center cursor-pointer bg-darkGray px-1.5 rounded-lg"
+				onClick={() => dispatch(deleteParameter({ id }))}
+			>
+				<MdDelete className=" text-white w-5 h-5 " />
 			</div>
 		</div>
 	);
 }
 
-function CustomSelectTypes() {
-	const typeOptions: string[] = [
-		"int",
-		"int[]",
-		"int[][]",
-		"char",
-		"char[]",
-		"char[][]",
-		"String",
-		"String[]",
-		"String[][]",
-		"boolean",
-		"boolean[]",
-		"boolean[][]",
-		"float",
-		"float[]",
-		"double",
-		"double[]",
-		"List<Integer>",
-		"List<List<Integer>>",
-		"List<String>",
-		"List<List<String>>",
-	];
+function CustomSelectTypes({ id }: { id: string }) {
+	const dispatch = useAppDispatch();
+
 	return (
-		<Select>
+		<Select
+			onValueChange={(value) =>
+				dispatch(setParameterType({ id, type: value }))
+			}
+		>
 			<SelectTrigger className="w-full text-[#9ca3af] bg-darkGray">
 				<SelectValue placeholder="Type" className="text-white" />
 			</SelectTrigger>
@@ -250,4 +448,3 @@ function CustomSelectTypes() {
 		</Select>
 	);
 }
-

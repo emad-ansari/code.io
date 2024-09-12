@@ -22,7 +22,7 @@
           "name": "nums",
           "type": "int[]",
           "value": "[1, 2, 3, 4]"
-        },
+        },    
         {
           "name": "target",
           "type": "int",
