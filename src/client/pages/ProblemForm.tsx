@@ -10,9 +10,14 @@ import {
 	setReturnType,
 	deleteParameter,
 	setparameterName,
-	setParameterType,	
+	setParameterType,
 } from "../features/problemFormSlice";
-import {addNewTestCase,addTestCaseInput, TestCaseInputType, } from '../features/TestcaseSlice'
+import {
+	addNewTestCase,
+	addTestCaseInput,
+	removeTestCase,
+	TestCaseInputType,
+} from "../features/TestcaseSlice";
 import { useSelector } from "react-redux";
 import {
 	Select,
@@ -22,7 +27,6 @@ import {
 	SelectTrigger,
 	SelectValue,
 } from "../components/ui/select";
-
 
 const typeOptions: string[] = [
 	"int",
@@ -49,11 +53,9 @@ const typeOptions: string[] = [
 
 export const ProblemForm = () => {
 	const dispatch = useAppDispatch();
-	const {
-		title,
-		description,
-		parameters,
-	} = useSelector((state: RootState) => state.problemform);
+	const { title, description, parameters } = useSelector(
+		(state: RootState) => state.problemform
+	);
 	const { testcases } = useSelector((state: RootState) => state.TestCaseForm);
 
 	const difficultyOption: string[] = ["Easy", "Medium", "Hard"];
@@ -66,7 +68,6 @@ export const ProblemForm = () => {
 		};
 		dispatch(addParameter(newParameter));
 	};
-
 
 	const handleNewTestCase = () => {
 		const newTestCase = {
@@ -350,7 +351,10 @@ export function TestCaseContainer({
 						TestCase {testcaseNo}
 					</span>
 				</div>
-				<div className="flex flex-1 justify-end  px-1.5 cursor-pointer items-center">
+				<div
+					className="flex flex-1 justify-end  px-1.5 cursor-pointer items-center"
+					onClick={() => dispatch(removeTestCase(id))}
+				>
 					<MdDelete className="w-9 h-9 text-red-500 hover:bg-red-100  rounded-md px-2 p-2" />
 				</div>
 			</div>
@@ -366,11 +370,9 @@ export function TestCaseContainer({
 					<IoAdd className=" font-medium text-xl" />
 				</Button>
 				<div className="flex flex-col gap-2  border border-[#334155] rounded-md px-2 py-2">
-					{
-						inputs.map((input, index) => {
-							return <TestCaseInput key={index} id={input.id} />;
-						})
-					}
+					{inputs.map((input, index) => {
+						return <TestCaseInput key={index} id={input.id} />;
+					})}
 				</div>
 			</div>
 			<div className="flex flex-col justify-between  bg-[#1f2937] px-3 py-3 rounded-md border border-[#334155] ">

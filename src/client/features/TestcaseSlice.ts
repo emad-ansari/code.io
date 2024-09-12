@@ -109,7 +109,12 @@ export const testCaseSlice = createSlice({
 			state.testcases = updatedTestcases;
 		},
 
-		removeTestCase: (state, action) => {},
+		removeTestCase: (state, action: PayloadAction<string>) => {
+            const testcaseId = action.payload;
+            const filteredTestcases = state.testcases.filter(testcase => testcase.id !== testcaseId);
+            state.testcases = filteredTestcases;
+        },
+        
 	},
 	// extraReducers: (builder) => {
 	//     builder.addCase(createTestCase.pending, (_, action) => {
