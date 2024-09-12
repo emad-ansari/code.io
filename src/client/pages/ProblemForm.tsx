@@ -1,13 +1,14 @@
 import { useAppDispatch, RootState } from "../app/store";
 import { Button } from "../components/common/Button";
 import { IoAdd } from "react-icons/io5";
+import { MdDelete } from "react-icons/md";
 import {
 	setTitle,
 	setDescription,
-	setFunctionName,
 	setDifficulty,
-	setParameters,
+	addParameter,
 	setReturnType,
+	deleteParameter
 } from "../features/problemFormSlice";
 
 import { useSelector } from "react-redux";
@@ -16,7 +17,7 @@ import {
 	SelectContent,
 	SelectGroup,
 	SelectItem,
-	SelectLabel,
+	// SelectLabel,
 	SelectTrigger,
 	SelectValue,
 } from "../components/ui/select";
@@ -27,41 +28,21 @@ export const ProblemForm = () => {
 		title,
 		description,
 		difficulty,
-		functionName,
 		parameters,
 		returnType,
 	} = useSelector((state: RootState) => state.problemform);
-	console.log(
-		title,
-		description,
-		difficulty,
-		functionName,
-		parameters,
-		returnType
-	);
 
-	const typeOptions: string[] = [
-		"int",
-		"int[]",
-		"int[][]",
-		"char",
-		"char[]",
-		"char[][]",
-		"String",
-		"String[]",
-		"String[][]",
-		"boolean",
-		"boolean[]",
-		"boolean[][]",
-		"float",
-		"float[]",
-		"double",
-		"double[]",
-		"List<Integer>",
-		"List<List<Integer>>",
-		"List<String>",
-		"List<List<String>>",
-	];
+
+	const difficultyOption: string[] = ["Easy", "Medium", "Hard"];
+
+	const handleParameters = () => {
+		const newParameter = {
+			id: Date.now().toString() + Math.floor(Math.random() * 10),
+			name: "",
+			type: ""
+		}
+		dispatch(addParameter(newParameter))
+	}
 
 	return (
 		<div className="bg-PRIMARY fixed top-16 bottom-0 left-0 right-0 flex flex-row justify-between gap-5 pl-4 pr-4 pb-4">
@@ -109,47 +90,38 @@ export const ProblemForm = () => {
 					</div>
 
 					<div className="mb-4">
-						<label htmlFor="Difficulty" className="block text-gray-200 text-sm font-bold mb-2">Difficulty</label>
-						<Select >
-							<SelectTrigger className="w-full">
-								<SelectValue placeholder="Select a timezone" />
+						<label
+							htmlFor="Difficulty"
+							className="block text-gray-200 text-sm font-bold mb-2"
+						>
+							Difficulty
+						</label>
+						<Select>
+							<SelectTrigger className="w-full text-[#9ca3af]">
+								<SelectValue
+									placeholder="Difficulty level"
+									className="text-white"
+								/>
 							</SelectTrigger>
-							<SelectContent>
-								<SelectGroup className="bg-transparent">
-									<SelectItem value="easy" className="bg-transparent">
-										Easy
-									</SelectItem>
-									<SelectItem value="medium">
-										Medium
-									</SelectItem>
-									<SelectItem value="hard">
-										Hard
-									</SelectItem>
+							<SelectContent className="bg-darkGray text-white">
+								<SelectGroup className="">
+									{difficultyOption.map(
+										(difficulty, index) => {
+											return (
+												<SelectItem
+													key={index}
+													value="easy"
+													className="hover:bg-[#334155] !important cursor-pointer"
+												>
+													{difficulty}
+												</SelectItem>
+											);
+										}
+									)}
 								</SelectGroup>
 							</SelectContent>
 						</Select>
 					</div>
-
-					<div className="mb-4">
-						<label
-							className="block text-gray-200 text-sm font-bold mb-2"
-							htmlFor="functionName"
-						>
-							Function Name
-						</label>
-						<input
-							type="text"
-							id="functionName"
-							className="text-white w-full px-3 py-2 border rounded-md focus:outline-none  focus:ring focus:ring-offset-[#81E291] bg-transparent"
-							value={functionName}
-							onChange={(e) =>
-								dispatch(setFunctionName(e.target.value))
-							}
-							placeholder="Enter the function name"
-							required
-						/>
-					</div>
-
 					<div className="mb-4">
 						<label
 							className="block text-gray-200 text-sm font-bold mb-2"
@@ -157,60 +129,38 @@ export const ProblemForm = () => {
 						>
 							Function Return Type
 						</label>
-						<select
-							name="type"
-							// value={param.type}
-							id="returnType"
-							// onChange={(e) => handleInputChange(index, e)}
-							className=" text-white w-full px-3 py-2 border rounded-md focus:outline-none  focus:ring focus:ring-offset-[#81E291] bg-transparent"
-						>
-							{typeOptions.map((option) => (
-								<option
-									key={option}
-									value={option}
-									className="text-white bg-darkGray"
-								>
-									{option}
-								</option>
-							))}
-						</select>
+						<CustomSelectTypes />
 					</div>
-					<div className="mb-4">
-						<Button classname="flex items-center justify-between bg-transparent border rounded-md focus:outline-none  focus:ring focus:ring-offset-[#81E291] w-full">
-							<span className="text-white text-md ">
-								Add Test Case example
-							</span>
-							<IoAdd className="text-white font-medium text-lg" />
-						</Button>
-					</div>
-
 					<div className="mb-4">
 						<label
 							className="block text-gray-200 text-sm font-bold mb-2"
 							htmlFor="testcase"
 						>
-							TestCase Example
+							Add Parameters name and return type
 						</label>
-						<input
-							type="text"
-							id="testcase"
-							className="text-white w-full px-3 py-2 border rounded-md focus:outline-none  focus:ring focus:ring-offset-[#81E291] bg-transparent"
-							value={parameters}
-							onChange={(e) =>
-								dispatch(setParameters(e.target.value))
-							}
-							placeholder="Enter function parameters (comma-separated)"
-							required
-						/>
+						<Button
+							classname="flex items-center justify-between bg-transparent border rounded-md focus:outline-none  focus:ring focus:ring-offset-[#81E291] w-full"
+							onClick={() => handleParameters()}
+						>
+							<span className="text-[#9ca3af] text-md ">
+								Add new Prameter
+							</span>
+							<IoAdd className="text-[#9ca3af] font-medium text-xl" />
+						</Button>
+					</div>
+					<div className="mb-4 flex flex-col gap-2">
+						{parameters.map((parameter, index) => {
+							return <ParameterCotnainer key={index} id= {parameter.id} />;
+						})}
 					</div>
 
 					<div className="flex justify-end">
-						<button
+						{/* <button
 							type="submit"
 							className="bg-cyan text-black font-medium px-4 py-2 rounded-md hover:bg-[#a5f3fc] focus:outline-none  focus:ring focus:ring-offset-[#81E291]"
 						>
 							Submit Problem
-						</button>
+						</button> */}
 					</div>
 				</div>
 			</div>
@@ -220,3 +170,84 @@ export const ProblemForm = () => {
 		</div>
 	);
 };
+
+function TestCaseContainer() {
+	return <div></div>;
+}
+
+function ParameterCotnainer({ id }: {id: string}) {
+	const dispatch = useAppDispatch();
+
+	
+
+	return (
+		<div className="flex flex-row gap-2 bg-[#1f2937] px-3 py-3 rounded-md ">
+			<div className="flex flex-1">
+				<CustomSelectTypes />
+			</div>
+
+			<div className="flex flex-1">
+				<input
+					type="text"
+					id="testcase"
+					className="text-white w-full px-3  border rounded-md focus:outline-none  focus:ring focus:ring-offset-[#81E291] bg-darkGray"
+					value={""}
+					// onChange={(e) => dispatch(setParameters(e.target.value))}
+					placeholder="Name"
+					required
+				/>
+			</div>
+			<div className="flex items-center cursor-pointer bg-darkGray px-1.5 rounded-lg" onClick = {() => dispatch(deleteParameter({ id }))} >	
+				<MdDelete className=" text-white w-5 h-5 "/>
+			</div>
+		</div>
+	);
+}
+
+function CustomSelectTypes() {
+	const typeOptions: string[] = [
+		"int",
+		"int[]",
+		"int[][]",
+		"char",
+		"char[]",
+		"char[][]",
+		"String",
+		"String[]",
+		"String[][]",
+		"boolean",
+		"boolean[]",
+		"boolean[][]",
+		"float",
+		"float[]",
+		"double",
+		"double[]",
+		"List<Integer>",
+		"List<List<Integer>>",
+		"List<String>",
+		"List<List<String>>",
+	];
+	return (
+		<Select>
+			<SelectTrigger className="w-full text-[#9ca3af] bg-darkGray">
+				<SelectValue placeholder="Type" className="text-white" />
+			</SelectTrigger>
+			<SelectContent className="bg-darkGray text-white">
+				<SelectGroup className="">
+					{typeOptions.map((type, index) => {
+						return (
+							<SelectItem
+								key={index}
+								value={type}
+								className="cursor-pointer"
+							>
+								{type}
+							</SelectItem>
+						);
+					})}
+				</SelectGroup>
+			</SelectContent>
+		</Select>
+	);
+}
+

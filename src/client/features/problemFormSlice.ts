@@ -2,20 +2,23 @@ import { createSlice, PayloadAction, createAsyncThunk } from "@reduxjs/toolkit";
 import { client } from "../api/client";
 import { RootState } from "../app/store";
 
+
 export interface ProblemFormState {
 	title: string;
 	description: string;
 	difficulty: string;
-	functionName: string;
-	parameters: string;
+	parameters: {
+        id: string,
+        name: string,
+        type: string
+    }[];
 	returnType: string;
 }
 export const ProblemFormInitailState: ProblemFormState = {
 	title: "",
 	description: "",
 	difficulty: "Easy",
-	functionName: "",
-	parameters: "",
+	parameters: [],
 	returnType: "",
 };
 
@@ -23,13 +26,12 @@ export const ProblemFormInitailState: ProblemFormState = {
 export const createProblem = createAsyncThunk('/problem/createProblem', async(_, ThunkAPI) => {
     try{    
         const store = ThunkAPI.getState() as RootState;
-        const { title, description, difficulty, functionName, parameters, returnType} = store.problemform;
+        const { title, description, difficulty, parameters, returnType} = store.problemform;
 
         const res = await  client.post('/problem/create-problem', {
             title,
             description,
             difficulty, 
-            functionName,
             parameters,
             returnType
         });
@@ -54,15 +56,23 @@ export const problemFormSlice = createSlice({
 		setDifficulty: (state, action: PayloadAction<string>) => {
             state.difficulty = action.payload;
         },
-		setFunctionName: (state, action: PayloadAction<string>) => {
-            state.functionName = action.payload;
+
+		addParameter: (state, action: PayloadAction<{id: string, name: string, type: string}>) => {
+            let updatedValue = [...state.parameters];
+            updatedValue.push(action.payload);
+            state.parameters = updatedValue;
         },
-		setParameters: (state, action: PayloadAction<string>) => {
-            state.parameters = action.payload;
+        deleteParameter: (state, action: PayloadAction<{id: string}>) => {
+            const { id } = action.payload;
+            const filteredParameter = state.parameters.filter(parameter => parameter.id !== id);
+            state.parameters = filteredParameter;
         },
 		setReturnType: (state, action: PayloadAction<string>) => {
             state.returnType = action.payload;
         },
+        setTestCases: (state, action) => {
+            
+        }
 	},
     extraReducers: (builder) => {
         builder.addCase(createProblem.pending, (_, action) => {
@@ -84,7 +94,8 @@ export const {
 	setTitle,
     setDescription,
 	setDifficulty,
-	setFunctionName,
-	setParameters,
+    addParameter,
 	setReturnType,
+    setTestCases,
+    deleteParameter
 } = problemFormSlice.actions;
