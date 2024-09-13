@@ -20,7 +20,11 @@ import {
 	removeTestCaseInput,
 	setTestCaseOutputType,
 	setTestCaseOutputValue,
-	TestCaseOutput
+	TestCaseOutput,
+	setTestCaseInputName,
+	setTestCaseInputType,
+	setTestCaseInputValue,
+
 } from "../features/TestcaseSlice";
 import { useSelector } from "react-redux";
 import {
@@ -281,26 +285,32 @@ export const ProblemForm = () => {
 export function TestCaseInput({
 	testcaseId,
 	inputId,
+	name,
+	type,
+	value
 }: {
 	testcaseId: string;
 	inputId: string;
+	name: string,
+	type: string
+	value: string
 }) {
 	const dispatch = useAppDispatch();
-
+	
 	return (
 		<div className="flex flex-row gap-2 bg-[#1f2937] px-3 py-3 rounded-md">
 			<input
 				type="text"
 				id="input-name"
 				className="text-white w-full px-3  border rounded-md focus:outline-none  focus:ring focus:ring-offset-[#81E291] bg-darkGray"
-				// value={name}
-				// onChange={(e) =>
-				// 	dispatch(setparameterName({ id, name: e.target.value }))
-				// }
+				value={name}
+				onChange={(e) =>
+					dispatch(setTestCaseInputName({ testcaseId, inputId,  name: e.target.value }))
+				}
 				placeholder="Input name"
 				required
 			/>
-			<Select>
+			<Select onValueChange={(value) => dispatch(setTestCaseInputType({ testcaseId, inputId, type: value}))}>
 				<SelectTrigger className="w-full text-[#9ca3af] bg-darkGray">
 					<SelectValue placeholder="Type" className="text-white" />
 				</SelectTrigger>
@@ -324,10 +334,10 @@ export function TestCaseInput({
 				type="text"
 				id="input-value"
 				className="text-white w-full px-3  border rounded-md focus:outline-none  focus:ring focus:ring-offset-[#81E291] bg-darkGray"
-				// value={name}
-				// onChange={(e) =>
-				// 	dispatch(setparameterName({ id, name: e.target.value }))
-				// }
+				value={value}
+				onChange={(e) =>
+					dispatch(setTestCaseInputValue({ testcaseId, inputId, value: e.target.value }))
+				}
 				placeholder="Value"
 				required
 			/>
@@ -397,6 +407,9 @@ export function TestCaseContainer({
 								key={index}
 								inputId={input.id}
 								testcaseId={id}
+								name = {input.name}
+								value = {input.value}
+								type = {input.type}
 							/>
 						);
 					})}

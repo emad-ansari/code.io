@@ -96,19 +96,7 @@ export const testCaseSlice = createSlice({
 			console.log("Updated testcase array: ", state.testcases);
 			state.testcases = updatedTestCases;
 		},
-		setTestCaseName: (
-			state,
-			action: PayloadAction<{ testcaseId: string; name: string }>
-		) => {
-			const { testcaseId, name } = action.payload;
-			const updatedTestcases = state.testcases.map((testcase) =>
-				testcase.id === testcaseId
-					? { ...testcase, name: name }
-					: testcase
-			);
-			state.testcases = updatedTestcases;
-		},
-
+		
 		removeTestCase: (state, action: PayloadAction<string>) => {
             const testcaseId = action.payload;
             const filteredTestcases = state.testcases.filter(testcase => testcase.id !== testcaseId);
@@ -129,9 +117,69 @@ export const testCaseSlice = createSlice({
             });
             state.testcases = updatedTestcases;
         },
-        setTestCaseInputValue: (state, action) => {
-            
+        setTestCaseInputValue: (state, action: PayloadAction<{testcaseId: string, inputId: string, value: string}>) => {
+            const { testcaseId, inputId, value} = action.payload;
+            const testcases = [...state.testcases];
+            const updatedTestCases = testcases.map(testcase => {
+                if (testcase.id === testcaseId){
+                    const updateTestcaesInput = testcase.inputs.map(input => {
+                        if (input.id === inputId){
+                            return {...input, value: value};
+                        }
+                        else {
+                            return input;
+                        }
+                    })
+                    return { ...testcase, inputs: updateTestcaesInput};
+                }
+                else {
+                    return testcase;
+                }
+            });
+            state.testcases = updatedTestCases;
         },
+        setTestCaseInputType: (state, action: PayloadAction<{testcaseId: string, inputId: string, type: string}>) => {
+            const { testcaseId, inputId, type} = action.payload;
+            const testcases = [...state.testcases];
+            const updatedTestCases = testcases.map(testcase => {
+                if (testcase.id === testcaseId){
+                    const updateTestcaesInput = testcase.inputs.map(input => {
+                        if (input.id === inputId){
+                            return {...input, type: type};
+                        }
+                        else {
+                            return input;
+                        }
+                    })
+                    return { ...testcase, inputs: updateTestcaesInput};
+                }
+                else {
+                    return testcase;
+                }
+            });
+            state.testcases = updatedTestCases;
+        },
+        setTestCaseInputName: (state, action: PayloadAction<{testcaseId: string, inputId: string, name: string}>) => {
+            const { testcaseId, inputId, name} = action.payload;
+            const testcases = [...state.testcases];
+            const updatedTestCases = testcases.map(testcase => {
+                if (testcase.id === testcaseId){
+                    const updateTestcaesInput = testcase.inputs.map(input => {
+                        if (input.id === inputId){
+                            return {...input, name: name};
+                        }
+                        else {
+                            return input;
+                        }
+                    })
+                    return { ...testcase, inputs: updateTestcaesInput};
+                }
+                else {
+                    return testcase;
+                }
+            });
+            state.testcases = updatedTestCases;
+		},
         setTestCaseOutputValue: (state, action: PayloadAction<{testcaseId: string,  outputValue: string}>) => {
             const { testcaseId, outputValue } = action.payload;
             const testcases = [...state.testcases];
@@ -183,6 +231,8 @@ export const {
 	removeTestCase,
     removeTestCaseInput,
     setTestCaseInputValue,
+    setTestCaseInputType,
+    setTestCaseInputName,
     setTestCaseOutputValue,
-    setTestCaseOutputType
+    setTestCaseOutputType,
 } = testCaseSlice.actions;
