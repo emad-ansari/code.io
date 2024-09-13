@@ -1,4 +1,5 @@
-import { TestCase, ParseProblemDetails } from ".";
+import { TestCase } from "../db/testcase";
+
 
 
 export class GenerateFullProblemDefinition {
@@ -8,7 +9,8 @@ export class GenerateFullProblemDefinition {
 
     parseTestCase(testcase: TestCase){
         this.inputs = testcase.inputs;
-        this.output = testcase.output;
+        this.output = testcase.output !== null ? testcase.output : { type: "", value: ""};
+        this.functionName = testcase.title !== null ? testcase.title : "";
     }
 
     getProblem(languageId: number, code: string):{ fullBoilerplatecode: string, stdin: string, stdout: string }{

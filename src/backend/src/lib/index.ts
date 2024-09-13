@@ -1,12 +1,16 @@
 import * as fs from "fs";
 
+
 interface Parameter {
+	parameterId: string;
 	type: string;
 	name: string;
 }
 
 export interface TestCase {
+	testcaseId: string;
 	inputs: {
+		inputId: string;
 		name: string;
 		type: string;
 		value: string;
@@ -36,7 +40,7 @@ export class ParseProblemDetails {
 		this.title = data.title || "";
 		this.description = data.description || "";
 		this.difficulty = data.difficulty || "";
-		this.functionName = data.functionName || "";
+		this.functionName = data.title.replace(' ' ,'').trim() || "";
 		this.returnType = data.returnType || "";
 		this.userId = data.userId;
 		this.parameters = data.parameters;

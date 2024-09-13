@@ -38,7 +38,6 @@ const NewProblemInput = z.object({
 	title: z.string(),
 	description: z.string(),
 	difficulty: z.string(),
-	functionName: z.string(),
 	returnType: z.string(),
 	parameters: ParameterFormat,
 	testcases: TestCaseFormat
@@ -82,11 +81,11 @@ router.post("/problem", auth, async (req: Request, res: Response) => {
 			});
 
 			/*
-				 - user might click multiples time to send data, so also implement reate limit here.
-				 - dynamiclly create a new file in problem folder 
-				 - then save new problem into file temporary
-				 - 
-				*/
+				- user might click multiples time to send data, so also implement reate limit here.
+				- dynamiclly create a new file in problem folder 
+				- then save new problem into file temporary
+
+			*/
 		} else {
 			return res.status(400).json({ error: parsedInput.error });
 		}
