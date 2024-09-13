@@ -66,7 +66,28 @@ export interface SubmissionResult {
 	expectedOutput?: string;
 	compilationError?: string | "";
 	failedTestCase?: string | "";
-	
-
 
 }
+
+export const typeOptions: string[] = [
+	"int",
+	"int[]",
+	"int[][]",
+	"char",
+	"char[]",
+	"char[][]",
+	"String",
+	"String[]",
+	"String[][]",
+	"boolean",
+	"boolean[]",
+	"boolean[][]",
+	"float",
+	"float[]",
+	"double",
+	"double[]",
+	"List<Integer>",
+	"List<List<Integer>>",
+	"List<String>",
+	"List<List<String>>",
+];
