@@ -11,10 +11,8 @@ import { createTestCases } from "../db/testcase";
 
 const TestCaseFormat = z.array(
 	z.object({
-		testcaseId: z.string(),
 		inputs: z.array(
 			z.object({
-				inputId: z.string(),
 				name: z.string(),
 				type: z.string(),
 				value: z.string(),
@@ -45,7 +43,7 @@ export const NewProblemInput = z.object({
 });
 
 export const NewTestCaseFormat = z.object({
-	id: z.string(),
+	testcaseId: z.string(),
 	problemTitle: z.string(),
 	testcases: TestCaseFormat
 });
@@ -145,7 +143,6 @@ router.post("/testcase", auth, async (req: Request, res: Response) => {
 });
 
 /*
-	
 	- first save the problem in database so that you can get the problem id (you can use setInterval which runs after every 12 hours)
 	- write a function to trigger the boiler plate generate code after successfully reviewed
 	- save all boiler plate code to database

@@ -10,7 +10,6 @@ interface Parameter {
 export interface TestCase {
 	testcaseId: string;
 	inputs: {
-		inputId: string;
 		name: string;
 		type: string;
 		value: string;
@@ -22,6 +21,7 @@ export interface TestCase {
 }
 
 export class ParseProblemDetails {
+	id: string = "";
 	title: string = "";
 	description: string = "";
 	difficulty: string = "";
@@ -36,7 +36,7 @@ export class ParseProblemDetails {
 		const fileContent = fs.readFileSync(filePath, "utf-8");
 
 		const data = JSON.parse(fileContent);
-
+		this.id = data.id;
 		this.title = data.title || "";
 		this.description = data.description || "";
 		this.difficulty = data.difficulty || "";
@@ -46,15 +46,22 @@ export class ParseProblemDetails {
 		this.parameters = data.parameters;
 		this.testcases = data.testcases;
 
+		const modifiedTestcases = this.testcases.map(testcase => {
+			return {inputs: testcase.inputs, output: testcase.output};
+		})		
+
 		return {
+			id: this.id,
 			title: this.title,
 			description: this.description,
 			difficulty: this.difficulty,
 			userId: this.userId,
+			testcases: modifiedTestcases
 		};
 	}
 
 	private extractTestCases(testCasesString: string) {}
+
 
 	getJavaBoilerplateCode() {
 		// since return type is already standard to java type .
