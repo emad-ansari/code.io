@@ -63,7 +63,7 @@ router.get("filter-problem", auth, async (req: Request, res: Response) => {
 
 router.post("/submit-problem", auth, async (req: Request, res: Response) => {
 	const { userAuthorized, userId } = req as CustomRequestObject;
-	const { testcases } = req.body;
+
 
 	try {
 		// if (!userAuthorized) {

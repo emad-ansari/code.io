@@ -24,6 +24,7 @@ router.get("/new-problems", async (req: Request, res: Response) => {
 		console.error("Error: ", (error as Error).message);
 	}
 });
+
 router.get("/new-testcases", async (req: Request, res: Response) => {
 	try {
 		// get all new testcases from contribute/newtestcases folder
@@ -34,18 +35,23 @@ router.get("/new-testcases", async (req: Request, res: Response) => {
 		console.error("Error: ", (error as Error).message);
 	}
 });
+
 // Save problem after review
 router.post("/save-problem", async (req: Request, res: Response) => {
 	const { problemId } = req.body;
 	try {
-		// save the problem in database with with given id
-        const newProblem = saveProblemAndTestCase(problemId);
+		// save the problem and testcases in database with with given problemId
+		const isSaved = saveProblemAndTestCase(problemId);
 
-        //generate boilerplate code if problem has been saved and save them into database
+		//generate boilerplate code if problem has been saved and save them into database
+		if (isSaved.success) {
+            // then prepare the boilerplate code array to save them into database
+            
 
-        // save testcases in database 
-        
+            return res.status(200).json({ msg: "Problem has been saved successfully"});
 
+		}
+        return res.status(200).json({ error: isSaved.err});
 	} catch (error: any) {
 		console.error("Error: ", (error as Error).message);
 	}
@@ -153,8 +159,11 @@ function getAllNewTestcases(): TestCaseType[] {
 	return testcases;
 }
 
-function saveProblemAndTestCase(problemId: string) {
-	// read the file and match the problem id
+function saveProblemAndTestCase(problemId: string): {
+	success: boolean;
+	err: string;
+	boilerplatecode?: { java: string; cpp: string; typescript: string };
+} {
 	const folderPath = path.join(__dirname, "contribute", "newproblem");
 	const files = fs.readdirSync(folderPath);
 
@@ -162,53 +171,69 @@ function saveProblemAndTestCase(problemId: string) {
 		// Only process JSON files
 		if (path.extname(file) === ".json") {
 			const filePath = path.join(folderPath, file);
-            
+
 			// Read the file contents
 			try {
 				// Parse the JSON content
-                const parser = new ParseProblemDetails()
-                const problem =  parser.extractProblemDetails(filePath);
-                if (problem.id === problemId){
-                    // read the details and save it into database
-                    const newProblem = await createProblem(
-                        problem.title,
-                        problem.description,
-                        problem.difficulty,
-                        problem.userId
-                    );
-                    // new problem will return the problem id
-                    // use the problem id to save the testcases
-                    
-                    if (!newProblem.success) {
-                        console.log("Error: ", newProblem.msg);
-                        return; //  [Todo] - need to use concept of recursion that call atleas 3 times if there is problem in createing new problem or testcases
-                    }
-                    // save testcase
-                    const newTestcase = await createTestCases({
-                        problemId: newProblem.id,
-                        title: problem.title,
-                        testcases: problem.testcases
-                    })
-                    if (!newTestcase.success){
-                        return;
-                    }
+				const parser = new ParseProblemDetails();
+				const problem = parser.extractProblemDetails(filePath);
+				if (problem.id === problemId) {
+					// read the details and save it into database
+					const newProblem = await createProblem(
+						problem.title,
+						problem.description,
+						problem.difficulty,
+						problem.userId
+					);
 
-                    const java = parser.getJavaBoilerplateCode();
-                    const cpp = parser.getCppBoilerplateCode();
-                    const typescript = parser.getTypescriptBoilerplateCode();
+					if (!newProblem.success) {
+						console.log("Error: ", newProblem.msg);
+						return {
+							success: false,
+							err: newProblem.msg,
+						};
+					}
+					// save testcase
+					const newTestcase = await createTestCases({
+						problemId: newProblem.id,
+						title: problem.title,
+						testcases: problem.testcases,
+					});
+					if (!newTestcase.success) {
+						return {
+							success: false,
+							err: newTestcase.msg,
+						};
+					}
 
-                }
-				// // Do something with the JSON data
-				// console.log("Title:", jsonData.title);
-				// console.log("Description:", jsonData.description);
-				// console.log("Difficulty:", jsonData.difficulty);
-				// console.log("Testcases:", jsonData.testcases);
-				// console.log("-----------------------------------");
+					const java = parser.getJavaBoilerplateCode();
+					const cpp = parser.getCppBoilerplateCode();
+					const typescript = parser.getTypescriptBoilerplateCode();
+					// What about language id
+					// how to get it
+					return {
+						success: true,
+						boilerplatecode: {
+							java,
+							cpp,
+							typescript,
+						},
+						err: "",
+					};
+				}
 			} catch (err) {
 				console.error(`Error parsing JSON in file ${file}:`, err);
+				return {
+                    success: false,
+                    err: `Error parsing JSON in file ${file}: ${err}`
+                };
 			}
 		}
 	});
+	return {
+		success: false,
+		err: "Error while checking file",
+	};
 }
 
 export default router;

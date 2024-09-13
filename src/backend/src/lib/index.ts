@@ -21,7 +21,7 @@ export interface TestCase {
 }
 
 export class ParseProblemDetails {
-	id: string = "";
+	id: string = ""; // problem id
 	title: string = "";
 	description: string = "";
 	difficulty: string = "";
