@@ -44,7 +44,8 @@ export const NewProblemInput = z.object({
 	testcases: TestCaseFormat
 });
 
-const NewTestCaseInput = z.object({
+export const NewTestCaseFormat = z.object({
+	id: z.string(),
 	problemTitle: z.string(),
 	testcases: TestCaseFormat
 });
@@ -109,7 +110,7 @@ router.post("/testcase", auth, async (req: Request, res: Response) => {
 				.status(401)
 				.json({ error: "You are not authorize please login" });
 		}
-		const parsedTestcaseInput = NewTestCaseInput.safeParse(req.body);
+		const parsedTestcaseInput = NewTestCaseFormat.safeParse(req.body);
 		if (parsedTestcaseInput.success) {
 			const { problemTitle } = parsedTestcaseInput.data;
 			const filePath = `src/contribution/newtestcase/${problemTitle.replace(
