@@ -34,7 +34,8 @@ const ParameterFormat = z.array(
 		name: z.string(),
 	})
 )
-const NewProblemInput = z.object({
+export const NewProblemInput = z.object({
+	id: z.string(),
 	title: z.string(),
 	description: z.string(),
 	difficulty: z.string(),
