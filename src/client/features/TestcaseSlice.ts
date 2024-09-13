@@ -3,14 +3,14 @@ import { client } from "../api/client";
 import { RootState } from "../app/store";
 
 export interface TestCaseInputType {
-	id: string;
+	inputId: string;
 	name: string;
 	type: string;
 	value: string;
 }
 
 export interface TestCase {
-	id: string;
+	testcaseId: string;
 	inputs: TestCaseInputType[];
 	output: TestCaseOutput;
 }
@@ -26,16 +26,16 @@ export const TestCaseFormInitailState: TestCaseState = {
 	problemTitle: "",
 	testcases: [
 		{
-			id: "1",
-			inputs: [{ id: "1", name: "", type: "", value: "" }],
+			testcaseId: "1",
+			inputs: [{ inputId: "1", name: "", type: "", value: "" }],
 			output: {
 				type: "",
 				value: "",
 			},
 		},
 		{
-			id: "2",
-			inputs: [{ id: "2", name: "", type: "", value: "" }],
+			testcaseId: "2",
+			inputs: [{ inputId: "2", name: "", type: "", value: "" }],
 			output: {
 				type: "",
 				value: "",
@@ -85,7 +85,7 @@ export const testCaseSlice = createSlice({
 			const { testcaseId, newInput } = action.payload;
 			let testcases = [...state.testcases];
 			const updatedTestCases = testcases.map((testcase) => {
-				if (testcase.id === testcaseId) {
+				if (testcase.testcaseId === testcaseId) {
 					const upatedTestCaseInput = [...testcase.inputs];
 					upatedTestCaseInput.push(newInput);
 					return { ...testcase, inputs: upatedTestCaseInput };
@@ -99,16 +99,16 @@ export const testCaseSlice = createSlice({
 		
 		removeTestCase: (state, action: PayloadAction<string>) => {
             const testcaseId = action.payload;
-            const filteredTestcases = state.testcases.filter(testcase => testcase.id !== testcaseId);
+            const filteredTestcases = state.testcases.filter(testcase => testcase.testcaseId !== testcaseId);
             state.testcases = filteredTestcases;
         },
         removeTestCaseInput: (state, action: PayloadAction<{testcaseId: string, inputId: string}>) => {
             const {testcaseId, inputId} = action.payload;
             const testcases = [...state.testcases];
             const updatedTestcases = testcases.map(testcase => {
-                if (testcase.id === testcaseId){    
+                if (testcase.testcaseId === testcaseId){    
                     const inputs = [...testcase.inputs];
-                    const updatedTestcaseInput = inputs.filter(input => input.id !== inputId );
+                    const updatedTestcaseInput = inputs.filter(input => input.inputId !== inputId );
                     return {...testcase, inputs: updatedTestcaseInput};
                 }
                 else {
@@ -121,9 +121,9 @@ export const testCaseSlice = createSlice({
             const { testcaseId, inputId, value} = action.payload;
             const testcases = [...state.testcases];
             const updatedTestCases = testcases.map(testcase => {
-                if (testcase.id === testcaseId){
+                if (testcase.testcaseId === testcaseId){
                     const updateTestcaesInput = testcase.inputs.map(input => {
-                        if (input.id === inputId){
+                        if (input.inputId === inputId){
                             return {...input, value: value};
                         }
                         else {
@@ -142,9 +142,9 @@ export const testCaseSlice = createSlice({
             const { testcaseId, inputId, type} = action.payload;
             const testcases = [...state.testcases];
             const updatedTestCases = testcases.map(testcase => {
-                if (testcase.id === testcaseId){
+                if (testcase.testcaseId === testcaseId){
                     const updateTestcaesInput = testcase.inputs.map(input => {
-                        if (input.id === inputId){
+                        if (input.inputId === inputId){
                             return {...input, type: type};
                         }
                         else {
@@ -163,9 +163,9 @@ export const testCaseSlice = createSlice({
             const { testcaseId, inputId, name} = action.payload;
             const testcases = [...state.testcases];
             const updatedTestCases = testcases.map(testcase => {
-                if (testcase.id === testcaseId){
+                if (testcase.testcaseId === testcaseId){
                     const updateTestcaesInput = testcase.inputs.map(input => {
-                        if (input.id === inputId){
+                        if (input.inputId === inputId){
                             return {...input, name: name};
                         }
                         else {
@@ -184,7 +184,7 @@ export const testCaseSlice = createSlice({
             const { testcaseId, outputValue } = action.payload;
             const testcases = [...state.testcases];
             const updateTestCases = testcases.map(testcase => {
-                if (testcase.id === testcaseId){
+                if (testcase.testcaseId === testcaseId){
                     return {...testcase, output: {...testcase.output, value: outputValue}};
                 }
                 else {
@@ -197,7 +197,7 @@ export const testCaseSlice = createSlice({
             const { testcaseId, outputType } = action.payload;
             const testcases = [...state.testcases];
             const updateTestCases = testcases.map(testcase => {
-                if (testcase.id === testcaseId){
+                if (testcase.testcaseId === testcaseId){
                     return {...testcase, output: {...testcase.output, type: outputType}};
                 }
                 else {

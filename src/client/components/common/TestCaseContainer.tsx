@@ -25,10 +25,10 @@ export function TestCaseContainer({
 	output: TestCaseOutput
 }) {
 	const dispatch = useAppDispatch();
-	console.log('testcase output: ', output);
+
 	const handleTestCaseInput = () => {
 		const newInput = {
-			id: Date.now().toString() + Math.floor(Math.random() * 10),
+			inputId: Date.now().toString() + Math.floor(Math.random() * 10),
 			name: "",
 			type: "",
 			value: "",
@@ -67,7 +67,7 @@ export function TestCaseContainer({
 						return (
 							<TestCaseInput
 								key={index}
-								inputId={input.id}
+								inputId={input.inputId}
 								testcaseId={id}
 								name = {input.name}
 								value = {input.value}

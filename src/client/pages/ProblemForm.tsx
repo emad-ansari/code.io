@@ -3,6 +3,8 @@ import { Button } from "../components/common/Button";
 import { IoAdd } from "react-icons/io5";
 import { MdDelete } from "react-icons/md";
 import { TestCaseContainer } from "../components/common/TestCaseContainer";
+import { ContributionExample } from "../components/common/ContributionExample";
+
 import {
 	setTitle,
 	setDescription,
@@ -12,6 +14,7 @@ import {
 	deleteParameter,
 	setparameterName,
 	setParameterType,
+	createProblem
 } from "../features/problemFormSlice";
 import { addNewTestCase } from "../features/TestcaseSlice";
 import { useSelector } from "react-redux";
@@ -33,12 +36,12 @@ export const ProblemForm = () => {
 		(state: RootState) => state.problemform
 	);
 	const { testcases } = useSelector((state: RootState) => state.TestCaseForm);
-	console.log('testcases:', testcases)
+	
 	const difficultyOption: string[] = ["Easy", "Medium", "Hard"];
 
 	const handleParameters = () => {
 		const newParameter = {
-			id: Date.now().toString() + Math.floor(Math.random() * 10),
+			parameterId: Date.now().toString() + Math.floor(Math.random() * 10),
 			name: "",
 			type: "",
 		};
@@ -47,10 +50,10 @@ export const ProblemForm = () => {
 
 	const handleNewTestCase = () => {
 		const newTestCase = {
-			id: Date.now().toString() + Math.floor(Math.random() * 10),
+			testcaseId: Date.now().toString() + Math.floor(Math.random() * 10),
 			inputs: [
 				{
-					id: Date.now().toString() + Math.floor(Math.random() * 10),
+					inputId: Date.now().toString() + Math.floor(Math.random() * 10),
 					name: "",
 					type: "",
 					value: "",
@@ -198,7 +201,7 @@ export const ProblemForm = () => {
 							return (
 								<ParameterCotnainer
 									key={index}
-									id={parameter.id}
+									id={parameter.parameterId}
 									name={parameter.name}
 								/>
 							);
@@ -224,7 +227,7 @@ export const ProblemForm = () => {
 							return (
 								<TestCaseContainer
 									key={index}
-									id={testcase.id}
+									id={testcase.testcaseId}
 									testcaseNo={index + 1}
 									inputs={testcase.inputs}
 									output = {testcase.output}
@@ -237,6 +240,7 @@ export const ProblemForm = () => {
 						<button
 							type="submit"
 							className="bg-cyan text-black font-medium px-4 py-2 rounded-md hover:bg-[#a5f3fc] focus:outline-none  focus:ring focus:ring-offset-[#81E291]"
+							onClick={() => dispatch(createProblem())}
 						>
 							Submit Problem
 						</button>
@@ -244,7 +248,7 @@ export const ProblemForm = () => {
 				</div>
 			</div>
 			<div className="text-white flex flex-1 bg-darkGray shadow-lg rounded-lg  border border-[#334155] ">
-				<h1>Example</h1>
+				<ContributionExample /> 
 			</div>
 		</div>
 	);

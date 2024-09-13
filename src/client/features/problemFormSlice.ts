@@ -4,13 +4,14 @@ import { RootState } from "../app/store";
 
 
 export interface Parameter {
-	id: string;
+	parameterId: string;
 	name: string;
 	type: string;
 }
 
 
 export interface ProblemFormState {
+	id: string;
 	title: string;
 	description: string;
 	difficulty: string;
@@ -19,29 +20,12 @@ export interface ProblemFormState {
 	// testcases: TestCase[];
 }
 export const ProblemFormInitailState: ProblemFormState = {
+	id: "",
 	title: "",
 	description: "",
 	difficulty: "Easy",
 	returnType: "",
 	parameters: [],
-	// testcases: [
-	// 	{
-	// 		id: "1",
-	// 		inputs: [{ id: "1", name: "", type: "", value: "" }],
-	// 		output: {
-	// 			type: "",
-	// 			value: "",
-	// 		},
-	// 	},
-	// 	{
-	// 		id: "2",
-	// 		inputs: [{ id: "2", name: "", type: "", value: "" }],
-	// 		output: {
-	// 			type: "",
-	// 			value: "",
-	// 		},
-	// 	},
-	// ],
 };
 
 export const createProblem = createAsyncThunk(
@@ -51,17 +35,20 @@ export const createProblem = createAsyncThunk(
 			const store = ThunkAPI.getState() as RootState;
 			const { title, description, difficulty, parameters, returnType } =
 				store.problemform;
-                // test case of Testcase slice are accessible over here
-            // const { testcases } = store.TestCaseForm;
-            
-			const res = await client.post("/problem/create-problem", {
-				title,
-				description,
-				difficulty,
-				parameters,
-				returnType,
-			});
-			return res.data;
+               
+            const { testcases } = store.TestCaseForm;
+			console.log('these are testcases in problem form slice :', testcases);
+			console.log('others detials: ', title, description, difficulty, parameters, returnType)
+
+			// const res = await client.post("/problem/create-problem", {
+			// id: new id
+			// 	title,
+			// 	description,
+			// 	difficulty,
+			// 	parameters,
+			// 	returnType,
+			// });
+			// return res.data;
 		} catch (error: any) {
 			console.error("Error: ", (error as Error).message);
 		}
@@ -90,7 +77,7 @@ export const problemFormSlice = createSlice({
 		deleteParameter: (state, action: PayloadAction<{ id: string }>) => {
 			const { id } = action.payload;
 			const filteredParameter = state.parameters.filter(
-				(parameter) => parameter.id !== id
+				(parameter) => parameter.parameterId !== id
 			);
 			state.parameters = filteredParameter;
 		},
@@ -100,7 +87,7 @@ export const problemFormSlice = createSlice({
 		) => {
 			const { id, name } = action.payload;
 			const updatedParameter = state.parameters.map((parameter) =>
-				parameter.id === id ? { ...parameter, name: name } : parameter
+				parameter.parameterId === id ? { ...parameter, name: name } : parameter
 			);
 			state.parameters = updatedParameter;
 		},
@@ -110,7 +97,7 @@ export const problemFormSlice = createSlice({
 		) => {
 			const { id, type } = action.payload;
 			const updatedParameter = state.parameters.map((parameter) =>
-				parameter.id === id ? { ...parameter, type } : parameter
+				parameter.parameterId === id ? { ...parameter, type } : parameter
 			);
 			state.parameters = updatedParameter;
 		},
