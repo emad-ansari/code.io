@@ -114,7 +114,27 @@ export const testCaseSlice = createSlice({
             const filteredTestcases = state.testcases.filter(testcase => testcase.id !== testcaseId);
             state.testcases = filteredTestcases;
         },
-        
+        removeTestCaseInput: (state, action: PayloadAction<{testcaseId: string, inputId: string}>) => {
+            const {testcaseId, inputId} = action.payload;
+            const testcases = [...state.testcases];
+            const updatedTestcases = testcases.map(testcase => {
+                if (testcase.id === testcaseId){    
+                    const inputs = [...testcase.inputs];
+                    const updatedTestcaseInput = inputs.filter(input => input.id !== inputId );
+                    return {...testcase, inputs: updatedTestcaseInput};
+                }
+                else {
+                    return testcase
+                }
+            });
+            state.testcases = updatedTestcases;
+        },
+        setTestCaseInputValue: (state, action) => {
+
+        },
+        setTestCaseOutputValue: () => {
+
+        }
 	},
 	// extraReducers: (builder) => {
 	//     builder.addCase(createTestCase.pending, (_, action) => {
@@ -137,4 +157,5 @@ export const {
 	addNewTestCase,
 	addTestCaseInput,
 	removeTestCase,
+    removeTestCaseInput
 } = testCaseSlice.actions;

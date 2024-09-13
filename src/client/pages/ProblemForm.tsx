@@ -17,6 +17,7 @@ import {
 	addTestCaseInput,
 	removeTestCase,
 	TestCaseInputType,
+	removeTestCaseInput
 } from "../features/TestcaseSlice";
 import { useSelector } from "react-redux";
 import {
@@ -273,7 +274,10 @@ export const ProblemForm = () => {
 	);
 };
 
-export function TestCaseInput({ id }: { id: string }) {
+export function TestCaseInput({ testcaseId, inputId }: { testcaseId: string, inputId: string }) {
+
+	const dispatch = useAppDispatch();
+
 	return (
 		<div className="flex flex-row gap-2 bg-[#1f2937] px-3 py-3 rounded-md">
 			<input
@@ -317,6 +321,10 @@ export function TestCaseInput({ id }: { id: string }) {
 				// }
 				placeholder="Value"
 				required
+			/>
+			<MdDelete
+				className=" w-20 h-8 text-red-600 hover:bg-red-100 rounded-md py-1.5 px-1.5 "
+				onClick={() => dispatch(removeTestCaseInput({testcaseId, inputId}))}
 			/>
 		</div>
 	);
@@ -371,7 +379,7 @@ export function TestCaseContainer({
 				</Button>
 				<div className="flex flex-col gap-2  border border-[#334155] rounded-md px-2 py-2">
 					{inputs.map((input, index) => {
-						return <TestCaseInput key={index} id={input.id} />;
+						return <TestCaseInput key={index} inputId={input.id} testcaseId= {id}/>;
 					})}
 				</div>
 			</div>
