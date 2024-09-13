@@ -12,12 +12,12 @@ export interface TestCaseInputType {
 export interface TestCase {
 	id: string;
 	inputs: TestCaseInputType[];
-	output: {
-		type: string;
-		value: string;
-	};
+	output: TestCaseOutput;
 }
-
+export interface TestCaseOutput{
+    type: string;
+    value: string;
+}
 export interface TestCaseState {
 	problemTitle: string;
 	testcases: TestCase[];
@@ -130,11 +130,35 @@ export const testCaseSlice = createSlice({
             state.testcases = updatedTestcases;
         },
         setTestCaseInputValue: (state, action) => {
-
+            
         },
-        setTestCaseOutputValue: () => {
+        setTestCaseOutputValue: (state, action: PayloadAction<{testcaseId: string,  outputValue: string}>) => {
+            const { testcaseId, outputValue } = action.payload;
+            const testcases = [...state.testcases];
+            const updateTestCases = testcases.map(testcase => {
+                if (testcase.id === testcaseId){
+                    return {...testcase, output: {...testcase.output, value: outputValue}};
+                }
+                else {
+                    return testcase;
+                }
+            })
+            state.testcases = updateTestCases;
+        },
+        setTestCaseOutputType: (state, action: PayloadAction<{testcaseId: string,  outputType: string}>) => {
+            const { testcaseId, outputType } = action.payload;
+            const testcases = [...state.testcases];
+            const updateTestCases = testcases.map(testcase => {
+                if (testcase.id === testcaseId){
+                    return {...testcase, output: {...testcase.output, type: outputType}};
+                }
+                else {
+                    return testcase;
+                }
+            })
+            state.testcases = updateTestCases;
+        },
 
-        }
 	},
 	// extraReducers: (builder) => {
 	//     builder.addCase(createTestCase.pending, (_, action) => {
@@ -157,5 +181,8 @@ export const {
 	addNewTestCase,
 	addTestCaseInput,
 	removeTestCase,
-    removeTestCaseInput
+    removeTestCaseInput,
+    setTestCaseInputValue,
+    setTestCaseOutputValue,
+    setTestCaseOutputType
 } = testCaseSlice.actions;

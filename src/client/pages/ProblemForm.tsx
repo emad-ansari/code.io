@@ -17,7 +17,10 @@ import {
 	addTestCaseInput,
 	removeTestCase,
 	TestCaseInputType,
-	removeTestCaseInput
+	removeTestCaseInput,
+	setTestCaseOutputType,
+	setTestCaseOutputValue,
+	TestCaseOutput
 } from "../features/TestcaseSlice";
 import { useSelector } from "react-redux";
 import {
@@ -58,7 +61,7 @@ export const ProblemForm = () => {
 		(state: RootState) => state.problemform
 	);
 	const { testcases } = useSelector((state: RootState) => state.TestCaseForm);
-
+	console.log('testcases:', testcases)
 	const difficultyOption: string[] = ["Easy", "Medium", "Hard"];
 
 	const handleParameters = () => {
@@ -252,6 +255,7 @@ export const ProblemForm = () => {
 									id={testcase.id}
 									testcaseNo={index + 1}
 									inputs={testcase.inputs}
+									output = {testcase.output}
 								/>
 							);
 						})}
@@ -274,8 +278,13 @@ export const ProblemForm = () => {
 	);
 };
 
-export function TestCaseInput({ testcaseId, inputId }: { testcaseId: string, inputId: string }) {
-
+export function TestCaseInput({
+	testcaseId,
+	inputId,
+}: {
+	testcaseId: string;
+	inputId: string;
+}) {
 	const dispatch = useAppDispatch();
 
 	return (
@@ -324,7 +333,9 @@ export function TestCaseInput({ testcaseId, inputId }: { testcaseId: string, inp
 			/>
 			<MdDelete
 				className=" w-20 h-8 text-red-600 hover:bg-red-100 rounded-md py-1.5 px-1.5 "
-				onClick={() => dispatch(removeTestCaseInput({testcaseId, inputId}))}
+				onClick={() =>
+					dispatch(removeTestCaseInput({ testcaseId, inputId }))
+				}
 			/>
 		</div>
 	);
@@ -334,13 +345,15 @@ export function TestCaseContainer({
 	id,
 	testcaseNo,
 	inputs,
+	output
 }: {
 	id: string;
 	testcaseNo: number;
 	inputs: TestCaseInputType[];
+	output: TestCaseOutput
 }) {
 	const dispatch = useAppDispatch();
-
+	console.log('testcase output: ', output);
 	const handleTestCaseInput = () => {
 		const newInput = {
 			id: Date.now().toString() + Math.floor(Math.random() * 10),
@@ -379,7 +392,13 @@ export function TestCaseContainer({
 				</Button>
 				<div className="flex flex-col gap-2  border border-[#334155] rounded-md px-2 py-2">
 					{inputs.map((input, index) => {
-						return <TestCaseInput key={index} inputId={input.id} testcaseId= {id}/>;
+						return (
+							<TestCaseInput
+								key={index}
+								inputId={input.id}
+								testcaseId={id}
+							/>
+						);
 					})}
 				</div>
 			</div>
@@ -389,7 +408,14 @@ export function TestCaseContainer({
 				</label>
 				<div className="flex flex-row gap-4 ">
 					<Select
-					// onValueChange={(value) => dispatch(setReturnType(value))}
+						onValueChange={(value) =>
+							dispatch(
+								setTestCaseOutputType({
+									testcaseId: id,
+									outputType: value,
+								})
+							)
+						}
 					>
 						<SelectTrigger className="w-full text-[#9ca3af] bg-darkGray">
 							<SelectValue
@@ -415,12 +441,17 @@ export function TestCaseContainer({
 					</Select>
 					<input
 						type="text"
-						className="text-white w-full px-3  border rounded-md focus:outline-none  focus:ring focus:ring-offset-[#81E291] bg-darkGray"
-						// value={name}
-						// onChange={(e) =>
-						// 	dispatch(setparameterName({ id, name: e.target.value }))
-						// }
+						className="text-white w-full px-3 border rounded-md focus:outline-none  focus:ring focus:ring-offset-[#81E291] bg-darkGray"
 						placeholder="Value"
+						value={output.value}
+						onChange={(e) =>
+							dispatch(
+								setTestCaseOutputValue({
+									testcaseId: id,
+									outputValue: e.currentTarget.value,
+								})
+							)
+						}
 						required
 					/>
 				</div>
