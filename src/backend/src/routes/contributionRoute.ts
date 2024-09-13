@@ -8,52 +8,45 @@ import { ParseProblemDetails } from "../lib/index";
 import { createProblem } from "../db/problem";
 import { createTestCases } from "../db/testcase";
 
+
+const TestCaseFormat = z.array(
+	z.object({
+		testcaseId: z.string(),
+		inputs: z.array(
+			z.object({
+				inputId: z.string(),
+				name: z.string(),
+				type: z.string(),
+				value: z.string(),
+			})
+		),
+		output: z.object({
+			type: z.string(),
+			value: z.string(),
+		}),
+	})
+)
+
+const ParameterFormat = z.array(
+	z.object({
+		parameterId: z.string(),
+		type: z.string(),
+		name: z.string(),
+	})
+)
 const NewProblemInput = z.object({
 	title: z.string(),
 	description: z.string(),
 	difficulty: z.string(),
 	functionName: z.string(),
 	returnType: z.string(),
-	parameters: z.array(
-		z.object({
-			type: z.string(),
-			name: z.string(),
-		})
-	),
-	testcases: z.array(
-		z.object({
-			inputs: z.array(
-				z.object({
-					name: z.string(),
-					type: z.string(),
-					value: z.string(),
-				})
-			),
-			output: z.object({
-				type: z.string(),
-				value: z.string(),
-			}),
-		})
-	),
+	parameters: ParameterFormat,
+	testcases: TestCaseFormat
 });
 
 const NewTestCaseInput = z.object({
 	problemTitle: z.string(),
-	testcases: z.array(
-		z.object({
-			inputs: z.array(
-				z.object({
-					name: z.string(),
-					type: z.string(),
-					value: z.string(),
-				})
-			),
-			output: z.object({
-				type: z.string(),
-				value: z.string(),
-			}),
-		})
-	),
+	testcases: TestCaseFormat
 });
 
 // ensure the problem title must be unique when creating a new problem
