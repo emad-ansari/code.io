@@ -7,6 +7,7 @@ import { z } from "zod";
 import { createProblem } from "../db/problem";
 import { ParseProblemDetails } from "../lib";
 import { createTestCases } from "../db/testcase";
+import { createBoilerplateCode } from "../db/boilerplate";
 
 router.post("/signup", async (req: Request, res: Response) => {});
 
@@ -36,22 +37,31 @@ router.get("/new-testcases", async (req: Request, res: Response) => {
 	}
 });
 
+const LNAGUAGE_MAPPING: {
+	[key: string]: { name: string; languageId: number };
+} = {
+	js: { name: "javascript", languageId: 1 },
+	cpp: { name: "cpp", languageId: 2 },
+	typescript: { name: "typescript", languageId: 3 },
+	java: { name: "java", languageId: 4 },
+	python: { name: "python", languageId: 5 },
+};
+
+const id = LNAGUAGE_MAPPING["java"];
+
 // Save problem after review
 router.post("/save-problem", async (req: Request, res: Response) => {
 	const { problemId } = req.body;
 	try {
 		// save the problem and testcases in database with with given problemId
 		const isSaved = saveProblemAndTestCase(problemId);
-
-		//generate boilerplate code if problem has been saved and save them into database
 		if (isSaved.success) {
-            // then prepare the boilerplate code array to save them into database
-            
-
-            return res.status(200).json({ msg: "Problem has been saved successfully"});
-
+			// then prepare the boilerplate code array to save them into database
+			return res
+				.status(200)
+				.json({ msg: "Problem has been saved successfully" });
 		}
-        return res.status(200).json({ error: isSaved.err});
+		return res.status(200).json({ error: isSaved.err });
 	} catch (error: any) {
 		console.error("Error: ", (error as Error).message);
 	}
@@ -162,7 +172,6 @@ function getAllNewTestcases(): TestCaseType[] {
 function saveProblemAndTestCase(problemId: string): {
 	success: boolean;
 	err: string;
-	boilerplatecode?: { java: string; cpp: string; typescript: string };
 } {
 	const folderPath = path.join(__dirname, "contribute", "newproblem");
 	const files = fs.readdirSync(folderPath);
@@ -209,24 +218,24 @@ function saveProblemAndTestCase(problemId: string): {
 					const java = parser.getJavaBoilerplateCode();
 					const cpp = parser.getCppBoilerplateCode();
 					const typescript = parser.getTypescriptBoilerplateCode();
-					// What about language id
-					// how to get it
+					const array = [
+						{ name: "java", code: java },
+						{ name: "cpp", code: cpp },
+						{ name: "typescript", code: typescript },
+					];
+					// save boiler plate code
+					saveBoilerplateCode(newProblem.id, array);
 					return {
 						success: true,
-						boilerplatecode: {
-							java,
-							cpp,
-							typescript,
-						},
 						err: "",
 					};
 				}
 			} catch (err) {
 				console.error(`Error parsing JSON in file ${file}:`, err);
 				return {
-                    success: false,
-                    err: `Error parsing JSON in file ${file}: ${err}`
-                };
+					success: false,
+					err: `Error parsing JSON in file ${file}: ${err}`,
+				};
 			}
 		}
 	});
@@ -234,6 +243,24 @@ function saveProblemAndTestCase(problemId: string): {
 		success: false,
 		err: "Error while checking file",
 	};
+}
+
+async function saveBoilerplateCode(
+	problemId: string,
+	languages: { name: string; code: string }[]
+) {
+	try {
+		const boilerplatecodes: { languageId: number; code: string }[] =
+			languages.map((language) => {
+				return {
+					languageId: LNAGUAGE_MAPPING[`${language.name}`].languageId,
+					code: language.code,
+				};
+			});
+		await createBoilerplateCode({ problemId, boilerplatecodes }); // database call to save the boilerplate code;
+	} catch (error: any) {
+		console.log(error.message);
+	}
 }
 
 export default router;

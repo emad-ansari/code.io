@@ -3,12 +3,12 @@ import prisma from "../db/index";
 interface BoilerPlateCode {
 	problemId: string;
 	boilerplatecodes: {
-		langugageId: number;
+		languageId: number;
 		code: string;
 	}[];
 }
 
-export async function saveBoilerplateCode({
+export async function createBoilerplateCode({
 	problemId,
 	boilerplatecodes,
 }: BoilerPlateCode) {
@@ -18,7 +18,7 @@ export async function saveBoilerplateCode({
 				await prisma.defaultCode.create({
 					data: {
 						problemId,
-						languageId: defaultCode.langugageId,
+						languageId: defaultCode.languageId,
 						code: defaultCode.code,
 					},
 				});
@@ -29,10 +29,3 @@ export async function saveBoilerplateCode({
 	}
 }
 
-const LNAGUAGE_MAPPING = {
-	js: { name: "javascript", languageId: 1 },
-	cpp: { name: "cpp", languageId: 2 },
-	typescript: { name: "typescript", languageId: 3 },
-	java: { name: "java", languageId: 4 },
-	python: { name: "python", languageId: 5 },
-};
