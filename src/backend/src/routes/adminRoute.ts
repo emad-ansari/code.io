@@ -9,6 +9,7 @@ import { ParseProblemDetails } from "../lib";
 import { addTestCases, createTestCases } from "../db/testcase";
 import { createBoilerplateCode } from "../db/boilerplate";
 import { TestCaseParser } from "../lib/testcase";
+import { CustomRequestObject } from "../middleware/auth";
 
 router.post("/signup", async (req: Request, res: Response) => {});
 
@@ -73,10 +74,10 @@ router.post("/save-testcase", async (req: Request, res: Response) => {
 	const { testcaesId } = req.body;
 
 	try {
-
 		saveTestCases(testcaesId);
-		return res.status(200).json({ message: "testcase has been saved successfuly"});
-
+		return res
+			.status(200)
+			.json({ message: "testcase has been saved successfuly" });
 	} catch (error: any) {
 		console.error("Error: ", (error as Error).message);
 	}
@@ -84,7 +85,45 @@ router.post("/save-testcase", async (req: Request, res: Response) => {
 
 // After problem details if find error while reviewing
 router.post("/update-problem", async (req: Request, res: Response) => {
+	const { problemId, updatedProblem } = req.body;
+	const { userAuthorized, userId } = req as CustomRequestObject;
 	try {
+		//  admin want to make some changes to user created problem, to remove mistakes and error
+		// read the folder path and updated the all detials
+		const folderPath = path.join(__dirname, "contribute", "newproblem");
+		const files = fs.readdirSync(folderPath);
+
+		files.forEach((file) => {
+			if (path.extname(file) === ".json") {
+				const filePath = path.join(folderPath, file);
+				const parser = new ParseProblemDetails();
+				const problem = parser.extractProblemDetails(filePath);
+				if (problem.id === problemId) {
+					// then update the details
+					const newProblemInfo = { ...updatedProblem, userId };
+
+					const jsonString = JSON.stringify(newProblemInfo, null, 2);
+
+					fs.writeFile(filePath, jsonString, (err) => {
+						if (err) {
+							console.log("Error writing file", err);
+							return res
+								.status(500)
+								.json({
+									err: "server is not able to save you problem please try again!!",
+								});
+						} else {
+							console.log("Updated problem successfully written to file");
+							return res
+								.status(200)
+								.json({
+									msg: "Problem has been updated successfully",
+								});
+						}
+					});
+				}
+			}
+		});
 	} catch (error: any) {
 		console.error("Error: ", (error as Error).message);
 	}
@@ -92,7 +131,44 @@ router.post("/update-problem", async (req: Request, res: Response) => {
 
 // After testcase details if find error while reviewing
 router.get("/update-tesctcase", async (req: Request, res: Response) => {
+	const { userId, userAuthorized} = req as CustomRequestObject;
+	const { testcaseId, updatedTestCase} = req.body;
 	try {
+		const folderPath = path.join(__dirname, "contribute", "newtestcase");
+		const files = fs.readdirSync(folderPath);
+
+		files.forEach((file) => {
+			if (path.extname(file) === ".json") {
+				const filePath = path.join(folderPath, file);
+				const parser = new TestCaseParser();
+				const testcase = parser.extractTestCaseDetails(filePath);
+				if (testcase.id === testcaseId) {
+					// then update the details
+					const newProblemInfo = { ...updatedTestCase, userId };
+
+					const jsonString = JSON.stringify(newProblemInfo, null, 2);
+
+					fs.writeFile(filePath, jsonString, (err) => {
+						if (err) {
+							console.log("Error writing file", err);
+							return res
+								.status(500)
+								.json({
+									err: "server is not able to save you problem please try again!!",
+								});
+						} else {
+							console.log("Updated Testcase successfully written to file");
+							return res
+								.status(200)
+								.json({
+									msg: "Testcase has been updated successfully",
+								});
+						}
+					});
+				}
+			}
+		});
+
 	} catch (error: any) {
 		console.error("Error: ", (error as Error).message);
 	}
@@ -231,7 +307,10 @@ function saveProblemAndTestCase(problemId: string): {
 						{ name: "typescript", code: typescript },
 					];
 					// save boiler plate code
-					const isBoilerplateSaved = saveBoilerplateCodes(newProblem.id, array);
+					const isBoilerplateSaved = saveBoilerplateCodes(
+						newProblem.id,
+						array
+					);
 					return {
 						success: true,
 						err: "",
@@ -265,27 +344,26 @@ async function saveBoilerplateCodes(
 				};
 			});
 		await createBoilerplateCode({ problemId, boilerplateCodes }); // database call to save the boilerplate code;
-
 	} catch (error: any) {
 		console.log(error.message);
 	}
 }
 
 // here you are going to save the testcase that already exist.
-function saveTestCases(tempTestcaseId: string){
+function saveTestCases(tempTestcaseId: string) {
 	const folderPath = path.join(__dirname, "contribute", "newtestcase");
-	const files = fs.readdirSync(folderPath);	
+	const files = fs.readdirSync(folderPath);
 	files.forEach(async (file) => {
 		if (path.extname(file) === ".json") {
 			const filePath = path.join(folderPath, file);
-			// need to extract the testcase here 
+			// need to extract the testcase here
 			const parser = new TestCaseParser();
 			const testcaseDetails = parser.extractTestCaseDetails(filePath);
-			if (testcaseDetails.id === tempTestcaseId){
+			if (testcaseDetails.id === tempTestcaseId) {
 				addTestCases(testcaseDetails.title, testcaseDetails.testcases);
 			}
 		}
-	})
+	});
 }
 
 export default router;
