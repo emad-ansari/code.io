@@ -63,7 +63,7 @@ model ProblemStaus {
 
 model TestCase {
   id          String @id @default(cuid())
-  title       String?
+  title       String?  // Included this because user dont't know problemId so he will just enter the problem title
   problemId   String
   problem     Problem @relation(fields: [problemId], references: [id])
   inputs      TestCaseInput[]

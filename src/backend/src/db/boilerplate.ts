@@ -2,7 +2,7 @@ import prisma from "../db/index";
 
 interface BoilerPlateCode {
 	problemId: string;
-	boilerplatecodes: {
+	boilerplateCodes: {
 		languageId: number;
 		code: string;
 	}[];
@@ -10,11 +10,15 @@ interface BoilerPlateCode {
 
 export async function createBoilerplateCode({
 	problemId,
-	boilerplatecodes,
+	boilerplateCodes,
 }: BoilerPlateCode) {
+	if (!problemId || boilerplateCodes.length === 0) {
+		console.log("Invalid input: problemId or boilerplateCodes is missing.");
+		return;
+	}
 	try {
-		if ( problemId ) {
-			for (const defaultCode of boilerplatecodes) {
+		if (problemId) {
+			for (const defaultCode of boilerplateCodes) {
 				await prisma.defaultCode.create({
 					data: {
 						problemId,
@@ -28,4 +32,3 @@ export async function createBoilerplateCode({
 		console.log("Error while saving boilerplate code: ", error.message);
 	}
 }
-

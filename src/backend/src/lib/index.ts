@@ -1,5 +1,5 @@
 import * as fs from "fs";
-
+import { SingleTestCase } from "../routes/contributionRoute";
 
 interface Parameter {
 	parameterId: string;
@@ -7,7 +7,7 @@ interface Parameter {
 	name: string;
 }
 
-export interface TestCase {
+export interface TestCaseWithProblem {
 	testcaseId: string;
 	inputs: {
 		name: string;
@@ -22,6 +22,7 @@ export interface TestCase {
 
 export class ParseProblemDetails {
 	id: string = ""; // problem id
+	testcaseId: string = "";
 	title: string = "";
 	description: string = "";
 	difficulty: string = "";
@@ -29,7 +30,7 @@ export class ParseProblemDetails {
 	returnType: string = "";
 	userId: string = "";
 	parameters: Parameter[] = [];
-	testcases: TestCase[] = [];
+	testcases: TestCaseWithProblem[] = []; // testcases that comes while creating new problem
 
 	extractProblemDetails(filePath: string) {
 		// Read the JSON file
@@ -60,8 +61,7 @@ export class ParseProblemDetails {
 		};
 	}
 
-	private extractTestCases(testCasesString: string) {}
-
+	
 
 	getJavaBoilerplateCode() {
 		// since return type is already standard to java type .

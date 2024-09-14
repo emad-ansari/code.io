@@ -9,21 +9,24 @@ import { createProblem } from "../db/problem";
 import { createTestCases } from "../db/testcase";
 
 
-const TestCaseFormat = z.array(
-	z.object({
-		inputs: z.array(
-			z.object({
-				name: z.string(),
-				type: z.string(),
-				value: z.string(),
-			})
-		),
-		output: z.object({
+
+export const SingleTestCase = z.object({
+	inputs: z.array(
+		z.object({
+			name: z.string(),
 			type: z.string(),
 			value: z.string(),
-		}),
-	})
-)
+		})
+	),
+	output: z.object({
+		type: z.string(),
+		value: z.string(),
+	}),
+})
+
+export const TestCaseFormat = z.array(SingleTestCase)
+
+
 
 const ParameterFormat = z.array(
 	z.object({
@@ -141,16 +144,6 @@ router.post("/testcase", auth, async (req: Request, res: Response) => {
 		console.error("Error: ", (error as Error).message);
 	}
 });
-
-/*
-	- first save the problem in database so that you can get the problem id (you can use setInterval which runs after every 12 hours)
-	- write a function to trigger the boiler plate generate code after successfully reviewed
-	- save all boiler plate code to database
-	- need problemId, and language id
-	- also save a new problem into Problem model/Table
-	- set language id manual
-	- after creating and saving the boiler plate code delete the temporary file
-*/
 
 
 export default router;

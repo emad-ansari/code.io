@@ -1,4 +1,4 @@
-import { TestCase } from "../db/testcase";
+import { TestCaseReturnType } from "../db/testcase";
 
 
 
@@ -7,7 +7,7 @@ export class GenerateFullProblemDefinition {
     inputs: {type: string, name: string, value: string}[] = [];
     output: { type: string, value: string } = {type: '', value: ''} ;
 
-    parseTestCase(testcase: TestCase){
+    parseTestCase(testcase: TestCaseReturnType){
         this.inputs = testcase.inputs;
         this.output = testcase.output !== null ? testcase.output : { type: "", value: ""};
         this.functionName = testcase.title !== null ? testcase.title : "";

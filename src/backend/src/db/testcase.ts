@@ -1,4 +1,8 @@
 import prisma from "../db/index";
+import { SingleTestCase } from "../routes/contributionRoute";
+import { z } from "zod";
+
+export type TestCase = z.infer<typeof SingleTestCase>;
 
 interface TestCaseProps {
 	problemId: string;
@@ -12,11 +16,11 @@ interface TestCaseProps {
 		output: {
 			type: string;
 			value: string;
-		} | null;
+		} 
 	}[];
 }
 
-export interface TestCase {
+export interface TestCaseReturnType {
 	title: string | null;
 	inputs: {
 		name: string;
@@ -28,7 +32,7 @@ export interface TestCase {
 		value: string;
 	} | null;
 }
-
+// function to create new testcase which does not exist
 export async function createTestCases({
 	problemId,
 	title,
@@ -45,27 +49,8 @@ export async function createTestCases({
 			});
 
 			// Insert each input for the testcase
-			for (const input of testcase.inputs) {
-				await prisma.testCaseInput.create({
-					data: {
-						name: input.name,
-						type: input.type,
-						value: input.value,
-						testcaseId: createdTestCase.id, // Link to the created TestCase
-					},
-				});
-			}
-
-			// Insert the output for the testcase if it exists
-			if (testcase.output) {
-				await prisma.testCaseOutput.create({
-					data: {
-						type: testcase.output.type,
-						value: testcase.output.value,
-						testcaseId: createdTestCase.id, // Link to the created TestCase
-					},
-				});
-			}
+			createTestCaseInputAndOutput(createdTestCase.id, testcase);
+			
 		}
 
 		return {
@@ -87,7 +72,7 @@ export async function createTestCases({
 // get all test cases
 export async function getAllTestcases(
 	problemId: string
-): Promise<{ success: boolean; data?: TestCase[]; err?: string }> {
+): Promise<{ success: boolean; data?: TestCaseReturnType[]; err?: string }> {
 	try {
 		const testcases = await prisma.testCase.findMany({
 			where: {
@@ -124,5 +109,60 @@ export async function getAllTestcases(
 			success: false,
 			err: "Error occurred while fetching all Testcases",
 		};
+	}
+}
+
+// this function will add new input and output  for an existing testcase
+export async function addTestCases(title: string, testcases: TestCase[]) {
+	try {
+		// find the problem id in Problem model with given title
+		const testcase = await prisma.testCase.findFirst({
+			where: {
+				title,
+			},
+			select: {
+				id: true,
+			},
+		});
+		if (!testcase) {
+			return;
+		}
+		// Now query on Testcase model to save the testcases
+		for (const exampleCase of testcases) {
+			createTestCaseInputAndOutput(testcase.id, exampleCase);
+		}
+
+	} catch (error: any) {
+		console.error(error.message);
+	}
+}
+
+async function createTestCaseInputAndOutput(
+	testcaseId: string,
+	testcase: TestCase
+) {
+	try {
+		for (const input of testcase.inputs) {
+			await prisma.testCaseInput.create({
+				data: {
+					name: input.name,
+					type: input.type,
+					value: input.value,
+					testcaseId: testcaseId, // Link to the created TestCase
+				},
+			});
+		}
+		// Insert the output for the testcase if it exists
+		if (testcase.output) {
+			await prisma.testCaseOutput.create({
+				data: {
+					type: testcase.output.type,
+					value: testcase.output.value,
+					testcaseId: testcaseId // Link to the created TestCase
+				},
+			});
+		}
+	} catch (error: any) {
+		console.error(error.message);
 	}
 }
