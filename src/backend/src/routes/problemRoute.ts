@@ -6,7 +6,7 @@ import axios from "axios";
 import auth, { CustomRequestObject } from "../middleware/auth";
 import * as fs from "fs";
 import { GenerateFullProblemDefinition } from '../lib/generateFullProblemDefinition'
-import { getAllTestcases, TestCase } from "../db/testcase";
+import { getAllTestcases, TestCaseReturnType } from "../db/testcase";
 
 interface Problem {
 	problemId: number;
@@ -89,7 +89,7 @@ router.post("/submit-problem", auth, async (req: Request, res: Response) => {
 			source_code: string,
 			stdin: string,
 			expected_output: string
-		}[] = testcases.data.map((testcase: TestCase) => {  // [Todo] - remove type any and add testcase actual type 
+		}[] = testcases.data.map((testcase:  TestCaseReturnType) => {  // [Todo] - remove type any and add testcase actual type 
 			const parser = new GenerateFullProblemDefinition
 			parser.parseTestCase(testcase);
 			//getProblem() --> { fullBoilerplate code, stdin, stdout, }

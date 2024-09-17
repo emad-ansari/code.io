@@ -1,4 +1,4 @@
-import { json, Request, Response, Router } from "express";
+import { Request, Response, Router } from "express";
 const router = Router();
 import * as fs from "fs";
 import path from "path";
@@ -8,10 +8,44 @@ import { createProblem } from "../db/problem";
 import { ParseProblemDetails } from "../lib";
 import { addTestCases, createTestCases } from "../db/testcase";
 import { createBoilerplateCode } from "../db/boilerplate";
-import { TestCaseParser } from "../lib/testcase";
+import { TestCaseParser } from "../lib/testcaseParser";
 import { CustomRequestObject } from "../middleware/auth";
+import { createAdmin } from "../db/admin";
+import prisma from "../db";
 
-router.post("/signup", async (req: Request, res: Response) => {});
+const SignUpInput = z.object({
+	username: z.string(),
+	email: z.string().email(),
+	password: z.string(),
+});
+
+router.post("/signup", async (req: Request, res: Response) => {
+	const parsedSingUpInput = SignUpInput.safeParse(req.body);
+	if (!parsedSingUpInput.success) {
+		return res.status(400).json({ err: parsedSingUpInput.error });
+	}
+	try {
+		const { username, email, password } = parsedSingUpInput.data
+		const admin = await prisma.admin.findFirst({
+			where: {
+				email: parsedSingUpInput.data.email
+			}
+		})
+		if (admin){
+			return res.status(400).json({ msg: "Admin already exist"})
+		}
+		// create a new admin
+		const result = await createAdmin(username, email, password);
+		if (result.success){
+			return res.status(200).json({msg: result.msg})
+		}
+		return res.status(400).json({msg: result.msg})
+
+	} catch (error: any) {
+		console.error(error.message);
+		return res.status(500).json({ err: error.message });
+	}
+});
 
 router.post("/login", async (req: Request, res: Response) => {});
 
@@ -107,18 +141,16 @@ router.post("/update-problem", async (req: Request, res: Response) => {
 					fs.writeFile(filePath, jsonString, (err) => {
 						if (err) {
 							console.log("Error writing file", err);
-							return res
-								.status(500)
-								.json({
-									err: "server is not able to save you problem please try again!!",
-								});
+							return res.status(500).json({
+								err: "server is not able to save you problem please try again!!",
+							});
 						} else {
-							console.log("Updated problem successfully written to file");
-							return res
-								.status(200)
-								.json({
-									msg: "Problem has been updated successfully",
-								});
+							console.log(
+								"Updated problem successfully written to file"
+							);
+							return res.status(200).json({
+								msg: "Problem has been updated successfully",
+							});
 						}
 					});
 				}
@@ -131,8 +163,8 @@ router.post("/update-problem", async (req: Request, res: Response) => {
 
 // After testcase details if find error while reviewing
 router.get("/update-tesctcase", async (req: Request, res: Response) => {
-	const { userId, userAuthorized} = req as CustomRequestObject;
-	const { testcaseId, updatedTestCase} = req.body;
+	const { userId, userAuthorized } = req as CustomRequestObject;
+	const { testcaseId, updatedTestCase } = req.body;
 	try {
 		const folderPath = path.join(__dirname, "contribute", "newtestcase");
 		const files = fs.readdirSync(folderPath);
@@ -151,24 +183,21 @@ router.get("/update-tesctcase", async (req: Request, res: Response) => {
 					fs.writeFile(filePath, jsonString, (err) => {
 						if (err) {
 							console.log("Error writing file", err);
-							return res
-								.status(500)
-								.json({
-									err: "server is not able to save you problem please try again!!",
-								});
+							return res.status(500).json({
+								err: "server is not able to save you problem please try again!!",
+							});
 						} else {
-							console.log("Updated Testcase successfully written to file");
-							return res
-								.status(200)
-								.json({
-									msg: "Testcase has been updated successfully",
-								});
+							console.log(
+								"Updated Testcase successfully written to file"
+							);
+							return res.status(200).json({
+								msg: "Testcase has been updated successfully",
+							});
 						}
 					});
 				}
 			}
 		});
-
 	} catch (error: any) {
 		console.error("Error: ", (error as Error).message);
 	}
