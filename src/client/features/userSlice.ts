@@ -45,6 +45,32 @@ export const signup = createAsyncThunk("/user/signup", async (_, ThunkAPI) => {
     }
 });
 
+
+export const login = createAsyncThunk("/user/login", async (_, ThunkAPI) => {
+
+    try {
+        const store = ThunkAPI.getState() as RootState;
+        const { email, password } = store.user;
+
+        const res = await client.post("/user/login", {
+            data: {
+                email,
+                password
+            }
+        },
+        {
+            headers: {
+                "Content-Type": "application/json"
+            }
+        });
+
+        console.log('user Signup response: ' , res);
+        return res.data;
+    } catch (error: any) {
+        console.error("Error occured during signup : ", (error as Error).message);
+    }
+});
+
 export const userSlice = createSlice({
     name: 'user',
     initialState,
@@ -73,6 +99,24 @@ export const userSlice = createSlice({
             state.isLogin = false;
         })
         builder.addCase(signup.rejected, (state, _) => {
+            state.isLogin = false;
+            state.isSignup = false;
+        })
+        builder.addCase(login.pending, (state, _) => {
+            state.isLogin = false;
+            state.isSignup = false;
+        })
+        builder.addCase(login.fulfilled, (state, action: PayloadAction<{success: boolean, msg: any, token: string}>) => {
+            const { success, msg, token } = action.payload;
+            if (success){
+                state.isLogin = true;
+                localStorage.setItem("jwtToken", token);
+                
+            }
+            console.log('Login response msg : ',msg);
+            state.isSignup = false;
+        })
+        builder.addCase(login.rejected, (state, _) => {
             state.isLogin = false;
             state.isSignup = false;
         })

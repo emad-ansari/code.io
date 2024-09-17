@@ -6,7 +6,7 @@ import { useNavigate } from "react-router-dom";
 interface ProblemProps  {
     title: string;
     status: string;
-    level: string,
+    level: string,  
     problemNo: number
 
 }
