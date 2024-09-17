@@ -7,17 +7,14 @@ import NQueen from '../../assets/NQueen.png'
 export const HomePage = () => {
     const navigate = useNavigate();
 
-
-
-
     return (
-        <main className = 'bg-PRIMARY fixed top-0 bottom-0 left-0 right-0'>
+        <main className = 'bg-[#09090b] fixed top-0 bottom-0 left-0 right-0'>
             <NavBar />
             <div className = 'grid grid-cols-2 fixed bottom-0 left-0 right-0 top-16'>
                 <div className = 'pt-20 flex flex-col items-center gap-20'>
                     <p className =  " w-[710px] font-fugaz  text-white text-[38px] text-center tracking-[3.20px] leading-[normal]">Master Coding Challenges and Enhance Problem-Solving Skills with Code.In</p>
                     <Button 
-                        classname="w-[60%] h-12 text-white bg-[#0D1621] font-semibold  hover:bg-[#1e293b] rounded-full flex  justify-center gap-5 shadow-md text-justify"
+                        classname="w-[60%] h-12 text-white bg-[#0D1621] font-semibold  hover:bg-[#1e293b] rounded-full flex  justify-center gap-5 shadow-md text-justify border-[]"
                         onClick = {() => navigate('/signup')}
                     >
                         <span className="flex text-justify ">Create an account</span>
