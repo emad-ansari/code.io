@@ -46,9 +46,7 @@ export class ParseProblemDetails {
 		this.parameters = data.parameters;
 		this.testcases = data.testcases;
 
-		const modifiedTestcases = this.testcases.map(testcase => {
-			return {inputs: testcase.inputs, output: testcase.output};
-		})		
+
 
 		return {
 			id: this.id,
@@ -56,7 +54,7 @@ export class ParseProblemDetails {
 			description: this.description,
 			difficulty: this.difficulty,
 			userId: this.userId,
-			testcases: modifiedTestcases
+			testcases: this.testcases
 		};
 	}
 
