@@ -1,5 +1,4 @@
 import * as fs from "fs";
-import { SingleTestCase } from "../routes/contributionRoute";
 
 interface Parameter {
 	parameterId: string;
