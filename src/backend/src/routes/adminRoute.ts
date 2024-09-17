@@ -12,7 +12,9 @@ import { TestCaseParser } from "../lib/testcaseParser";
 import { CustomRequestObject } from "../middleware/auth";
 import { createAdmin, findAdmin } from "../db/admin";
 import  jwt from "jsonwebtoken";
+import auth from "../middleware/auth";
 import prisma from "../db";
+import { TestCase } from "../db/testcase";
 
 const SignUpInput = z.object({
 	username: z.string(),
@@ -24,6 +26,7 @@ const LoginInput = z.object({
 	email: z.string().email(),
 	password: z.string(),
 });
+
 
 router.post("/signup", async (req: Request, res: Response) => {
 	const parsedSingUpInput = SignUpInput.safeParse(req.body);
@@ -75,6 +78,7 @@ router.post("/login", async (req: Request, res: Response) => {
 	}
 });
 
+
 router.get("/new-problems", async (req: Request, res: Response) => {
 	try {
 		// get all new problems from contribute/newproblem folder
@@ -109,13 +113,20 @@ const LNAGUAGE_MAPPING: {
 	python: { name: "python", languageId: 5 },
 };
 
-const id = LNAGUAGE_MAPPING["java"];
 
 // Save problem after review
-router.post("/save-problem", async (req: Request, res: Response) => {
+router.post("/save-problem", auth, async (req: Request, res: Response) => {
+	const { userAuthorized } = req as CustomRequestObject;
 	const { problemId } = req.body;
+	if (!userAuthorized){
+		return res.status(401).json({ err: "You are not authorize, please login "})
+	}
+	const { role } = req as CustomRequestObject;
+	if ( role !== 'admin') return res.json({ err: " You are not admin"});
+
 	try {
 		// save the problem and testcases in database with with given problemId
+		
 		const isSaved = saveProblemAndTestCase(problemId);
 		if (isSaved.success) {
 			// then prepare the boilerplate code array to save them into database
@@ -124,17 +135,24 @@ router.post("/save-problem", async (req: Request, res: Response) => {
 				.json({ msg: "Problem has been saved successfully" });
 		}
 		return res.status(200).json({ error: isSaved.err });
+
 	} catch (error: any) {
 		console.error("Error: ", (error as Error).message);
 	}
 });
 
 // Save testcase after review - here we are going to save the testcase of existing problem
-router.post("/save-testcase", async (req: Request, res: Response) => {
-	const { testcaesId } = req.body;
+router.post("/add-testcase", auth, async (req: Request, res: Response) => {
+	const { userAuthorized } = req as CustomRequestObject;
+	const { title } = req.body;
+	if (!userAuthorized){
+		return res.status(401).json({ err: "You are not authorize, please login "})
+	}
+	const { role } = req as CustomRequestObject;
+	if ( role !== 'admin') return res.json({ err: " You are not admin"});
 
 	try {
-		saveTestCases(testcaesId);
+		saveTestCases(title); // edit this function
 		return res
 			.status(200)
 			.json({ message: "testcase has been saved successfuly" });
@@ -144,12 +162,18 @@ router.post("/save-testcase", async (req: Request, res: Response) => {
 });
 
 // After problem details if find error while reviewing
-router.post("/update-problem", async (req: Request, res: Response) => {
+router.post("/update-problem", auth, async (req: Request, res: Response) => {
 	const { problemId, updatedProblem } = req.body;
-	const { userAuthorized, userId } = req as CustomRequestObject;
+	const { userAuthorized } = req as CustomRequestObject;
+	if (!userAuthorized){
+		return res.status(401).json({ err: "You are not authorize, please login "})
+	}
+	const { role } = req as CustomRequestObject;
+
+	if ( role !== 'admin') return res.json({ err: " You are not admin"});
+	
 	try {
-		//  admin want to make some changes to user created problem, to remove mistakes and error
-		// read the folder path and updated the all detials
+	
 		const folderPath = path.join(__dirname, "contribute", "newproblem");
 		const files = fs.readdirSync(folderPath);
 
@@ -160,7 +184,7 @@ router.post("/update-problem", async (req: Request, res: Response) => {
 				const problem = parser.extractProblemDetails(filePath);
 				if (problem.id === problemId) {
 					// then update the details
-					const newProblemInfo = { ...updatedProblem, userId };
+					const newProblemInfo = { ...updatedProblem, userId: problem.userId };
 
 					const jsonString = JSON.stringify(newProblemInfo, null, 2);
 
@@ -188,9 +212,17 @@ router.post("/update-problem", async (req: Request, res: Response) => {
 });
 
 // After testcase details if find error while reviewing
-router.get("/update-tesctcase", async (req: Request, res: Response) => {
-	const { userId, userAuthorized } = req as CustomRequestObject;
-	const { testcaseId, updatedTestCase } = req.body;
+router.get("/update-tesctcase", auth,  async (req: Request, res: Response) => {
+	const { userAuthorized } = req as CustomRequestObject;
+	if (!userAuthorized){
+		return res.status(401).json({ err: "You are not authorize, please login "})
+	}
+	const { role } = req as CustomRequestObject;
+
+	if ( role !== 'admin') return res.json({ err: " You are not admin"});
+	
+	const { updatedTestCase } = req.body;
+
 	try {
 		const folderPath = path.join(__dirname, "contribute", "newtestcase");
 		const files = fs.readdirSync(folderPath);
@@ -200,11 +232,14 @@ router.get("/update-tesctcase", async (req: Request, res: Response) => {
 				const filePath = path.join(folderPath, file);
 				const parser = new TestCaseParser();
 				const testcase = parser.extractTestCaseDetails(filePath);
-				if (testcase.id === testcaseId) {
-					// then update the details
-					const newProblemInfo = { ...updatedTestCase, userId };
 
-					const jsonString = JSON.stringify(newProblemInfo, null, 2);
+				if (testcase.title === updatedTestCase.title ) {
+					// then update the details
+					const modifiedTestcases: TestCase[] = testcase.testcases.map(t => t.testcaseId === updatedTestCase.testcaseId ? updatedTestCase : t);
+					
+					const updatedProblemInfo  = { ... testcase, testcases: modifiedTestcases };
+
+					const jsonString = JSON.stringify(updatedProblemInfo , null, 2);
 
 					fs.writeFile(filePath, jsonString, (err) => {
 						if (err) {
@@ -288,7 +323,6 @@ function getAllNewTestcases(): TestCaseType[] {
 				// Parse the JSON content
 				const jsonData = JSON.parse(fileContents);
 				const newTestcase: TestCaseType = {
-					testcaseId: jsonData.testcaseId,
 					problemTitle: jsonData.problemTitle,
 					testcases: jsonData.testcases,
 				};
@@ -405,7 +439,7 @@ async function saveBoilerplateCodes(
 }
 
 // here you are going to save the testcase that already exist.
-function saveTestCases(tempTestcaseId: string) {
+function saveTestCases(title: string) {
 	const folderPath = path.join(__dirname, "contribute", "newtestcase");
 	const files = fs.readdirSync(folderPath);
 	files.forEach(async (file) => {
@@ -414,7 +448,7 @@ function saveTestCases(tempTestcaseId: string) {
 			// need to extract the testcase here
 			const parser = new TestCaseParser();
 			const testcaseDetails = parser.extractTestCaseDetails(filePath);
-			if (testcaseDetails.id === tempTestcaseId) {
+			if (testcaseDetails.title === title) {
 				addTestCases(testcaseDetails.title, testcaseDetails.testcases);
 			}
 		}
