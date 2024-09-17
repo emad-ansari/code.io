@@ -6,6 +6,7 @@ import { Request, Response, NextFunction} from "express";
 export interface CustomRequestObject extends Request{
     userAuthorized: boolean;
     userId: string;
+    role: string
 }
 
 
@@ -28,6 +29,7 @@ const auth = async(req: Request, res: Response, next: NextFunction) =>  {
                 }
                 (req as CustomRequestObject).userAuthorized = true;
                 (req as CustomRequestObject).userId = payload.userId;
+                (req as CustomRequestObject).role = payload.role;
                 next();
             });
         }
