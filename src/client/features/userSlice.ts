@@ -20,24 +20,30 @@ export const initialState: User = {
 
 
 export const signup = createAsyncThunk("/user/signup", async (_, ThunkAPI) => {
-		try {
-			const store = ThunkAPI.getState() as RootState;
-			const { username, email, password} = store.user;
 
-			const res = await client.post("/user/signup", {
-                data: {
-                    username,
-                    email,
-                    password
-                }
-			});
-            console.log('user login: response' , res.data);
-			return res.data;
-		} catch (error: any) {
-			console.error("Error: ", (error as Error).message);
-		}
-	}
-);
+    try {
+        const store = ThunkAPI.getState() as RootState;
+        const { username, email, password} = store.user;
+
+        const res = await client.post("/user/signup", {
+            data: {
+                username,
+                email,
+                password
+            }
+        },
+        {
+            headers: {
+                "Content-Type": "application/json"
+            }
+        });
+
+        console.log('user Signup response: ' , res);
+        return res.data;
+    } catch (error: any) {
+        console.error("Error occured during signup : ", (error as Error).message);
+    }
+});
 
 export const userSlice = createSlice({
     name: 'user',
@@ -58,7 +64,7 @@ export const userSlice = createSlice({
             state.isLogin = false;
             state.isSignup = false;
         })
-        builder.addCase(signup.fulfilled, (state, action: PayloadAction<{ success: boolean, msg: any}>) => {
+        builder.addCase(signup.fulfilled, (state, action: PayloadAction<{success: boolean, msg: any}>) => {
             const { success, msg } = action.payload;
             if (success){
                 state.isSignup = true;

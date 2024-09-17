@@ -2,14 +2,21 @@ import { Button } from "../components/common/Button";
 import logo from "../../assets/siginLogo.svg";
 import { PasswordInputField } from "../components/common/PasswordInputField";
 import { FcGoogle } from "react-icons/fc";
-import { setUsername, setEmail } from "../features/userSlice";
+import { setUsername, setEmail, signup } from "../features/userSlice";
 import { useSelector } from "react-redux";
 import { useAppDispatch, RootState } from "../app/store";
-
-
+import { useEffect } from "react";
+import { useNavigate } from "react-router-dom";
 export const SignupPage = () => {
+	const navigate = useNavigate();
 	const dispatch = useAppDispatch();
-	const { username, email } = useSelector((state: RootState) => state.user);
+	const { username, email, isSignup } = useSelector((state: RootState) => state.user);
+	console.log('user form: ', username, email)
+	useEffect(() => {
+		if (isSignup){
+			navigate ('/login')
+		}
+	}, [dispatch, isSignup])
 
 	return (
 		<main className="bg-[#030303]  fixed top-0 right-0 left-0 bottom-0 flex justify-center pt-32">
@@ -34,7 +41,10 @@ export const SignupPage = () => {
 						onChange = {(e) => dispatch(setEmail(e.target.value))}
 					/>
 					<PasswordInputField  />
-					<Button classname="w-full bg-[#cffafe] text-sm font-medium shadow-lg rounded-md">
+					<Button
+						classname="w-full bg-[#cffafe] text-sm font-medium shadow-lg rounded-md"
+						onClick={() => dispatch(signup())}
+					>
 						Sign up
 					</Button>
 					<div className="flex flex-row gap-4 items-center justify-between">
