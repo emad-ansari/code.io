@@ -6,6 +6,7 @@ import settingReducer from '../features/editorSettingSlice'
 import editorReducer from '../features/editorSlice'
 import problemFormSlice from "../features/problemFormSlice";
 import TestcaseFormSlice from "../features/TestcaseSlice";
+import userSlice from '../features/userSlice'
 
 
 import { useDispatch } from "react-redux";
@@ -18,7 +19,8 @@ export const store = configureStore({
 		setting: settingReducer,
 		editor: editorReducer,
 		problemform: problemFormSlice,
-		TestCaseForm: TestcaseFormSlice
+		TestCaseForm: TestcaseFormSlice,
+		user: userSlice
 	},
 });
 
