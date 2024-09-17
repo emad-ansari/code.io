@@ -2,9 +2,11 @@ require("dotenv").config();
 import express, {Request, Response } from "express";
 const app = express();
 const port = process.env.PORT || 3000;
-// import { db } from "./db";
 import problemRoute from "./src/routes/problemRoute";
 import contributionRoute from './src/routes/contributionRoute';
+import adminRoute from './src/routes/adminRoute'
+
+
 import cors from "cors";
 
 
@@ -18,6 +20,7 @@ app.get("/", (req: Request, res: Response) => {
 
 app.use("/api/problem", problemRoute);
 app.use("/api/contribute", contributionRoute);
+app.use('/api/admin', adminRoute);
 
 app.listen(port, () => {
 	console.log("server is running on port ✅", port);
