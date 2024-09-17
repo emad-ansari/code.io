@@ -15,6 +15,7 @@ export const SignupPage = () => {
 	useEffect(() => {
 		if (isSignup){
 			navigate ('/login')
+			// make isSignup false over here
 		}
 	}, [dispatch, isSignup])
 
