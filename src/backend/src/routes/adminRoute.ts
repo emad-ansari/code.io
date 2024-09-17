@@ -10,11 +10,17 @@ import { addTestCases, createTestCases } from "../db/testcase";
 import { createBoilerplateCode } from "../db/boilerplate";
 import { TestCaseParser } from "../lib/testcaseParser";
 import { CustomRequestObject } from "../middleware/auth";
-import { createAdmin } from "../db/admin";
+import { createAdmin, findAdmin } from "../db/admin";
+import  jwt from "jsonwebtoken";
 import prisma from "../db";
 
 const SignUpInput = z.object({
 	username: z.string(),
+	email: z.string().email(),
+	password: z.string(),
+});
+
+const LoginInput = z.object({
 	email: z.string().email(),
 	password: z.string(),
 });
@@ -47,7 +53,27 @@ router.post("/signup", async (req: Request, res: Response) => {
 	}
 });
 
-router.post("/login", async (req: Request, res: Response) => {});
+router.post("/login", async (req: Request, res: Response) => {
+	const parsedLoginInput = LoginInput.safeParse(req.body);
+	if (!parsedLoginInput.success){
+		return res.status(400).json({ err: parsedLoginInput.error});
+	}
+	try {
+		const { email, password } = parsedLoginInput.data;
+		// check if admin exist or not
+		const admin = await findAdmin(email, password);
+		if (!admin.success){
+			return res.json({ err: admin.msg});
+		}
+		// else create jwt token 
+		const token = jwt.sign({ userId: admin.adminId, role: "admin" } , process.env.JWT_SECRET!, { expiresIn: '1d'} )
+		return res.status(201).json({ msg: 'login successfully' ,  adminToken: token })
+	}
+	catch(error: any){
+		console.error(error.message);
+		return res.status(500).json({err: error.message});
+	}
+});
 
 router.get("/new-problems", async (req: Request, res: Response) => {
 	try {
