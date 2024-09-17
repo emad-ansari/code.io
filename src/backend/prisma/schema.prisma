@@ -13,6 +13,14 @@ datasource db {
   url      = env("DATABASE_URL")
 }
 
+// Admin model
+model Admin {
+  id        String @id @default(cuid())
+  username  String
+  email     String
+  password  String
+}
+
 // User schema
 model User {
   id           String @id @default(cuid())
