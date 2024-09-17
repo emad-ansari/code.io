@@ -4,13 +4,12 @@ import * as fs from "fs";
 import { z } from "zod";
 import auth from "../middleware/auth";
 import { CustomRequestObject } from "../middleware/auth";
-import { ParseProblemDetails } from "../lib/index";
-import { createProblem } from "../db/problem";
-import { createTestCases } from "../db/testcase";
+
 
 
 
 export const SingleTestCase = z.object({
+	testcaseId: z.string(),
 	inputs: z.array(
 		z.object({
 			name: z.string(),
@@ -24,9 +23,7 @@ export const SingleTestCase = z.object({
 	}),
 })
 
-export const TestCaseFormat = z.array(SingleTestCase)
-
-
+export const TestCaseArray = z.array(SingleTestCase)
 
 const ParameterFormat = z.array(
 	z.object({
@@ -35,6 +32,7 @@ const ParameterFormat = z.array(
 		name: z.string(),
 	})
 )
+
 export const NewProblemInput = z.object({
 	id: z.string(),
 	title: z.string(),
@@ -42,22 +40,24 @@ export const NewProblemInput = z.object({
 	difficulty: z.string(),
 	returnType: z.string(),
 	parameters: ParameterFormat,
-	testcases: TestCaseFormat
+	testcases: TestCaseArray
 });
 
 export const NewTestCaseFormat = z.object({
-	testcaseId: z.string(),
 	problemTitle: z.string(),
-	testcases: TestCaseFormat
+	testcases: TestCaseArray
 });
 
 // ensure the problem title must be unique when creating a new problem
 
 router.post("/problem", auth, async (req: Request, res: Response) => {
-	const { userAuthorized, userId } = req as CustomRequestObject;
-
+	const { userAuthorized } = req as CustomRequestObject;
+	if (!userAuthorized){
+		return res.status(401).json({ err: "You are not authorize, please login "})
+	}
+	const { userId } = req as CustomRequestObject;
+	
 	try {
-		// if (userAuthorized) {
 		const parsedInput = NewProblemInput.safeParse(req.body);
 		if (parsedInput.success) {
 			const { title } = parsedInput.data;
@@ -92,10 +92,6 @@ router.post("/problem", auth, async (req: Request, res: Response) => {
 		} else {
 			return res.status(400).json({ error: parsedInput.error });
 		}
-		// }
-		// else {
-		// 	return res.status(401).json({ error: "You  are not Authorize!! please login" });
-		// }
 	} catch (error: any) {
 		console.error("Error: ", (error as Error).message);
 		return res.status(400).json({ error: "Not able to create problem!!" });
@@ -103,14 +99,14 @@ router.post("/problem", auth, async (req: Request, res: Response) => {
 });
 
 router.post("/testcase", auth, async (req: Request, res: Response) => {
-	const { userAuthorized, userId } = req as CustomRequestObject;
+	const { userAuthorized } = req as CustomRequestObject;
+	if (!userAuthorized){
+		return res.status(401).json({ err: "You are not authorize, please login "})
+	}
+	const { userId } = req as CustomRequestObject;
 
 	try {
-		if (!userAuthorized) {
-			return res
-				.status(401)
-				.json({ error: "You are not authorize please login" });
-		}
+
 		const parsedTestcaseInput = NewTestCaseFormat.safeParse(req.body);
 		if (parsedTestcaseInput.success) {
 			const { problemTitle } = parsedTestcaseInput.data;
