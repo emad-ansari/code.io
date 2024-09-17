@@ -2,7 +2,9 @@
     "title": "Two Sum",
     "testcases": [
     {
+      "testcaseId": "1212",
       "inputs": [
+
         {
           "name": "nums",
           "type": "int[]",
@@ -19,7 +21,8 @@
         "value": "[0, 1]"
       }
     }
-  ]
+  ],
+  "userId": "12132"
 }
 
 

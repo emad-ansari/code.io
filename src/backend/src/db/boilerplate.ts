@@ -1,12 +1,7 @@
+import { BoilerPlateCode } from "../@utils/types";
 import prisma from "../db/index";
 
-interface BoilerPlateCode {
-	problemId: string;
-	boilerplateCodes: {
-		languageId: number;
-		code: string;
-	}[];
-}
+
 
 export async function createBoilerplateCode({
 	problemId,

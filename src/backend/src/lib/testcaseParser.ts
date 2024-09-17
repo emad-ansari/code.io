@@ -2,7 +2,6 @@ import * as fs from "fs";
 import { TestCase } from "../db/testcase";
 
 
-
 export class TestCaseParser {
 	userId: string = "";
 	title: string = "";

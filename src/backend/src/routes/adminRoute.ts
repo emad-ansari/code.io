@@ -2,8 +2,7 @@ import { Request, Response, Router } from "express";
 const router = Router();
 import * as fs from "fs";
 import path from "path";
-import { NewProblemInput, NewTestCaseFormat } from "./contributionRoute";
-import { z } from "zod";
+import { ProblemType, TestCaseType, SignUpInput, LoginInput } from "../@utils/types";
 import { createProblem } from "../db/problem";
 import { ParseProblemDetails } from "../lib";
 import { addTestCases, createTestCases } from "../db/testcase";
@@ -15,17 +14,6 @@ import  jwt from "jsonwebtoken";
 import auth from "../middleware/auth";
 import prisma from "../db";
 import { TestCase } from "../db/testcase";
-
-const SignUpInput = z.object({
-	username: z.string(),
-	email: z.string().email(),
-	password: z.string(),
-});
-
-const LoginInput = z.object({
-	email: z.string().email(),
-	password: z.string(),
-});
 
 
 router.post("/signup", async (req: Request, res: Response) => {
@@ -81,8 +69,6 @@ router.post("/login", async (req: Request, res: Response) => {
 
 router.get("/new-problems", async (req: Request, res: Response) => {
 	try {
-		// get all new problems from contribute/newproblem folder
-		// and send it to admin for review
 		const ALL_PROBLEMS = getAllNewProblem();
 		return res.status(200).json({
 			problems: ALL_PROBLEMS,
@@ -94,8 +80,6 @@ router.get("/new-problems", async (req: Request, res: Response) => {
 
 router.get("/new-testcases", async (req: Request, res: Response) => {
 	try {
-		// get all new testcases from contribute/newtestcases folder
-		// and send it to admin for review
 		const ALL_TESTCASES = getAllNewTestcases();
 		return res.status(200).json({ testcases: ALL_TESTCASES });
 	} catch (error: any) {
@@ -264,7 +248,7 @@ router.get("/update-tesctcase", auth,  async (req: Request, res: Response) => {
 	}
 });
 
-type ProblemType = z.infer<typeof NewProblemInput>;
+
 
 function getAllNewProblem(): ProblemType[] {
 	let problems: ProblemType[] = [];
@@ -305,7 +289,7 @@ function getAllNewProblem(): ProblemType[] {
 	return problems;
 }
 
-type TestCaseType = z.infer<typeof NewTestCaseFormat>;
+
 
 function getAllNewTestcases(): TestCaseType[] {
 	let testcases: TestCaseType[] = [];

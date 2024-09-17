@@ -5,6 +5,7 @@ const port = process.env.PORT || 3000;
 import problemRoute from "./src/routes/problemRoute";
 import contributionRoute from './src/routes/contributionRoute';
 import adminRoute from './src/routes/adminRoute'
+import userRoute from './src/routes/userRoute';
 
 
 import cors from "cors";
@@ -21,6 +22,7 @@ app.get("/", (req: Request, res: Response) => {
 app.use("/api/problem", problemRoute);
 app.use("/api/contribute", contributionRoute);
 app.use('/api/admin', adminRoute);
+app.use('/api/user', userRoute);
 
 app.listen(port, () => {
 	console.log("server is running on port ✅", port);

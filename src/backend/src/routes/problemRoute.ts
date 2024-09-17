@@ -4,24 +4,10 @@ import { problems } from "../../problem";
 import { z } from "zod";
 import axios from "axios";
 import auth, { CustomRequestObject } from "../middleware/auth";
-import * as fs from "fs";
 import { GenerateFullProblemDefinition } from '../lib/generateFullProblemDefinition'
 import { getAllTestcases, TestCaseReturnType } from "../db/testcase";
+import { ProblemSubmissionData } from "../@utils/types";
 
-interface Problem {
-	problemId: number;
-	problemTitle: string;
-	problemDescription: string;
-	difficultyLevel: string;
-	problemStatus: string;
-	problemNo: number;
-}
-
-const ProblemSubmissionData = z.object({
-	problemId: z.string(),
-	languageId: z.number(),
-	code: z.string(),
-});
 
 router.get("/", (req: Request, res: Response) => {
 	console.log("request reach here");

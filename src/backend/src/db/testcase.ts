@@ -1,37 +1,15 @@
 import prisma from "../db/index";
-import { SingleTestCase } from "../routes/contributionRoute";
+import { SingleTestCase, TestCaseReturnType } from "../@utils/types";
 import { z } from "zod";
 
-export type TestCase = z.infer<typeof SingleTestCase>;
+export type TestCase = z.infer<typeof SingleTestCase>; // without title
 
 interface TestCaseProps {
 	problemId: string;
 	title: string;
-	testcases: {
-		inputs: {
-			name: string;
-			type: string;
-			value: string;
-		}[];
-		output: {
-			type: string;
-			value: string;
-		} 
-	}[];
+	testcases: TestCase[]
 }
 
-export interface TestCaseReturnType {
-	title: string | null;
-	inputs: {
-		name: string;
-		type: string;
-		value: string;
-	}[];
-	output: {
-		type: string;
-		value: string;
-	} | null;
-}
 // function to create new testcase which does not exist
 export async function createTestCases({
 	problemId,
@@ -125,7 +103,7 @@ export async function addTestCases(title: string, testcases: TestCase[]) {
 			},
 		});
 		if (!testcase) {
-			return;
+			return; // you can return the message: "problem with title does not exist in record"
 		}
 		// Now query on Testcase model to save the testcases
 		for (const exampleCase of testcases) {

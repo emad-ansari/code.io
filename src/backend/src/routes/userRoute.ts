@@ -1,26 +1,13 @@
-import { Prisma } from '@prisma/client';
 import { Request, Response, Router } from 'express'
-import { z } from 'zod'
 import jwt from 'jsonwebtoken'
 import prisma from '../db';
 import { createUser, findUser } from '../db/user';
+import { LoginInput, SignUpInput } from '../@utils/types';
 const router = Router();
-
-const UserSignupInput = z.object({
-  username: z.string().min(5).max(20),
-  email: z.string().email(),
-  password: z.string().min(5).max(20)
-})
-
-const UserLoginInput = z.object({
-  email: z.string().email(),
-  password: z.string().min(5).max(20)
-})
-
 
 
 router.post('/signup', async (req: Request, res: Response ) => {
-  const parsedInput = UserSignupInput.safeParse(req.body);
+  const parsedInput = SignUpInput.safeParse(req.body);
   if (!parsedInput.success){
     return res.status(400).json({ err: parsedInput.error });
   }
@@ -51,7 +38,7 @@ router.post('/signup', async (req: Request, res: Response ) => {
 
 
 router.post('/login', async (req: Request, res: Response ) => {
-  const parsedInput = UserLoginInput.safeParse(req.body);
+  const parsedInput = LoginInput.safeParse(req.body);
   if (!parsedInput.success){
     return res.status(400).json({ err: parsedInput.error });
   }
@@ -73,14 +60,3 @@ router.post('/login', async (req: Request, res: Response ) => {
 
 
 export default router;
-
-
-
-
-
-/*
-  - How to check the user is Admin or not while creating a new User?
-  
-  - while creating a new user set the isAdmin and userId property to jwt token
-  - user: {userId: string, isAdmin: boolean}
-*/

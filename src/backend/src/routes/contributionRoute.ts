@@ -1,54 +1,10 @@
 import { Request, Response, Router } from "express";
 const router = Router();
 import * as fs from "fs";
-import { z } from "zod";
 import auth from "../middleware/auth";
 import { CustomRequestObject } from "../middleware/auth";
+import { NewTestCaseFormat, ProblemInput } from "../@utils/types";
 
-
-
-
-export const SingleTestCase = z.object({
-	testcaseId: z.string(),
-	inputs: z.array(
-		z.object({
-			name: z.string(),
-			type: z.string(),
-			value: z.string(),
-		})
-	),
-	output: z.object({
-		type: z.string(),
-		value: z.string(),
-	}),
-})
-
-export const TestCaseArray = z.array(SingleTestCase)
-
-const ParameterFormat = z.array(
-	z.object({
-		parameterId: z.string(),
-		type: z.string(),
-		name: z.string(),
-	})
-)
-
-export const NewProblemInput = z.object({
-	id: z.string(),
-	title: z.string(),
-	description: z.string(),
-	difficulty: z.string(),
-	returnType: z.string(),
-	parameters: ParameterFormat,
-	testcases: TestCaseArray
-});
-
-export const NewTestCaseFormat = z.object({
-	problemTitle: z.string(),
-	testcases: TestCaseArray
-});
-
-// ensure the problem title must be unique when creating a new problem
 
 router.post("/problem", auth, async (req: Request, res: Response) => {
 	const { userAuthorized } = req as CustomRequestObject;
@@ -58,7 +14,7 @@ router.post("/problem", auth, async (req: Request, res: Response) => {
 	const { userId } = req as CustomRequestObject;
 	
 	try {
-		const parsedInput = NewProblemInput.safeParse(req.body);
+		const parsedInput = ProblemInput.safeParse(req.body);
 		if (parsedInput.success) {
 			const { title } = parsedInput.data;
 
@@ -82,13 +38,6 @@ router.post("/problem", auth, async (req: Request, res: Response) => {
 					return res.status(200).json({ msg: "Problem has been saved for review, thank for contribution!"});
 				}
 			});
-
-			/*
-				- user might click multiples time to send data, so also implement reate limit here.
-				- dynamiclly create a new file in problem folder 
-				- then save new problem into file temporary
-
-			*/
 		} else {
 			return res.status(400).json({ error: parsedInput.error });
 		}
