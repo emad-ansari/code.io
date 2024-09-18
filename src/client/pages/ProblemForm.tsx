@@ -35,12 +35,9 @@ import {
 import { typeOptions } from "../types";
 import { v4 as uuidv4 } from "uuid";
 
-import { useNavigate, useLocation } from "react-router-dom";
-import { useEffect } from "react";
-
 export const ProblemForm = () => {
-	const navigate = useNavigate();
-	const location = useLocation();
+
+
 
 	const dispatch = useAppDispatch();
 	const { title, description, parameters } = useSelector(
@@ -254,11 +251,7 @@ export const ProblemForm = () => {
 							<Tooltip>
 								<TooltipTrigger asChild>
 									<button
-										disabled={
-											localStorage.getItem("CToken")
-												? false
-												: true
-										}
+										disabled={ isLogin? false: true }
 										type="submit"
 										className="bg-cyan text-black font-medium px-4 py-2 rounded-md hover:bg-[#a5f3fc] focus:outline-none "
 										onClick={() => dispatch(createProblem())}

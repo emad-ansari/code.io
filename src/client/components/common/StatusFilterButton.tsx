@@ -11,9 +11,12 @@ export const StatusFilterButton = memo(() => {
 	const { isStatusMenuOpen } = useSelector(
 		(state: RootState) => state.dropdown
 	);
+	const { isLogin } = useSelector((state: RootState) => state.user)
+
 
 	return (
 		<Button
+			disabled = {isLogin ? false: true}
 			classname="relative flex flex-row itmes-center bg-darkGray gap-2 text-white z-50 rounded-md border border-[#334155]"
 			onClick={(e: React.SyntheticEvent<EventTarget>) => {
 				e.stopPropagation();

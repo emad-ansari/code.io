@@ -6,12 +6,13 @@ import { CustomRequestObject } from "../middleware/auth";
 import { NewTestCaseFormat, ProblemInput } from "../@utils/types";
 
 
-router.post("/problem", auth, async (req: Request, res: Response) => {
+router.post("/create-problem", auth, async (req: Request, res: Response) => {
 	const { userAuthorized } = req as CustomRequestObject;
 	if (!userAuthorized){
 		return res.status(401).json({ err: "You are not authorize, please login "})
 	}
 	const { userId } = req as CustomRequestObject;
+	console.log('user id is here: ', userId);
 	
 	try {
 		const parsedInput = ProblemInput.safeParse(req.body);
@@ -25,7 +26,7 @@ router.post("/problem", auth, async (req: Request, res: Response) => {
 
 			// attach user id to problem to identify which user create this problem
 			const problemInfo = { ...parsedInput.data, userId };
-
+			console.log('new problem info, ', problemInfo)
 			const jsonString = JSON.stringify(problemInfo, null, 2);
 
 			fs.writeFile(filePath, jsonString, (err) => {

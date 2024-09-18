@@ -40,7 +40,7 @@ export const createProblem = createAsyncThunk(
 				return;
 			}
 
-			const res = await client.post("/problem/create-problem", {
+			const res = await client.post("/contribute/create-problem", {
 				id: uuidv4(),
 				title,
 				description,
