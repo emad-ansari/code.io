@@ -4,6 +4,7 @@ import { TestCaseContainer } from "../components/common/TestCaseContainer";
 import { Button } from "../components/common/Button";
 import { addNewTestCase, setProblemTitle } from "../features/TestcaseSlice";
 import { IoAdd } from "react-icons/io5";
+import { v4 as uuidv4 } from 'uuid';
 
 export const TestCaseForm = () => {
 	const dispatch = useAppDispatch();
@@ -12,10 +13,10 @@ export const TestCaseForm = () => {
 
   const handleNewTestCase = () => {
 		const newTestCase = {
-			id: Date.now().toString() + Math.floor(Math.random() * 10),
+			testcaseId: uuidv4(),
 			inputs: [
 				{
-					id: Date.now().toString() + Math.floor(Math.random() * 10),
+					inputId: uuidv4(),
 					name: "",
 					type: "",
 					value: "",
@@ -30,7 +31,7 @@ export const TestCaseForm = () => {
 	};
   
 	return (
-		<div className="bg-PRIMARY fixed top-16 bottom-0 left-0 right-0 flex flex-row justify-between gap-5 pl-4 pr-4 pb-4">
+		<div className="bg-PRIMARY fixed top-32 bottom-0 left-0 right-0 flex flex-row justify-between gap-5 pl-4 pr-4 pb-4">
 			<div className="max-w-3xl mx-auto pt-8 pl-8 pr-8 pb-20 bg-darkGray shadow-lg rounded-lg  border border-[#334155]  flex flex-1 flex-col overflow-y-scroll">
 				<h2 className="text-2xl font-bold mb-4 text-white">
 					Add New Test Case Here
@@ -74,7 +75,7 @@ export const TestCaseForm = () => {
 							return (
 								<TestCaseContainer
 									key={index}
-									id={testcase.id}
+									id={testcase.testcaseId}
 									testcaseNo={index + 1}
 									inputs={testcase.inputs}
 									output={testcase.output}

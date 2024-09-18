@@ -14,7 +14,7 @@ import {
 	deleteParameter,
 	setparameterName,
 	setParameterType,
-	createProblem
+	createProblem,
 } from "../features/problemFormSlice";
 import { addNewTestCase } from "../features/TestcaseSlice";
 import { useSelector } from "react-redux";
@@ -27,8 +27,7 @@ import {
 	SelectValue,
 } from "../components/ui/select";
 import { typeOptions } from "../types";
-
-
+import { v4 as uuidv4 } from 'uuid';
 
 export const ProblemForm = () => {
 	const dispatch = useAppDispatch();
@@ -36,12 +35,12 @@ export const ProblemForm = () => {
 		(state: RootState) => state.problemform
 	);
 	const { testcases } = useSelector((state: RootState) => state.TestCaseForm);
-	
+
 	const difficultyOption: string[] = ["Easy", "Medium", "Hard"];
 
 	const handleParameters = () => {
 		const newParameter = {
-			parameterId: Date.now().toString() + Math.floor(Math.random() * 10),
+			parameterId: uuidv4(),
 			name: "",
 			type: "",
 		};
@@ -50,10 +49,10 @@ export const ProblemForm = () => {
 
 	const handleNewTestCase = () => {
 		const newTestCase = {
-			testcaseId: Date.now().toString() + Math.floor(Math.random() * 10),
+			testcaseId: uuidv4(),
 			inputs: [
 				{
-					inputId: Date.now().toString() + Math.floor(Math.random() * 10),
+					inputId: uuidv4(),
 					name: "",
 					type: "",
 					value: "",
@@ -68,7 +67,7 @@ export const ProblemForm = () => {
 	};
 
 	return (
-		<div className="bg-PRIMARY fixed top-16 bottom-0 left-0 right-0 flex flex-row justify-between gap-5 pl-4 pr-4 pb-4">
+		<div className="bg-PRIMARY  flex flex-row justify-between gap-5 pl-4 pr-4 pb-4 fixed top-32 left-0 right-0 bottom-0">
 			<div className="max-w-3xl mx-auto pt-8 pl-8 pr-8 pb-20 bg-darkGray shadow-lg rounded-lg  border border-[#334155]  flex flex-1 flex-col overflow-y-scroll">
 				<h2 className="text-2xl font-bold mb-4 text-white">
 					Add New Problem
@@ -230,7 +229,7 @@ export const ProblemForm = () => {
 									id={testcase.testcaseId}
 									testcaseNo={index + 1}
 									inputs={testcase.inputs}
-									output = {testcase.output}
+									output={testcase.output}
 								/>
 							);
 						})}
@@ -247,13 +246,13 @@ export const ProblemForm = () => {
 					</div>
 				</div>
 			</div>
+
 			<div className="text-white flex flex-1 bg-darkGray shadow-lg rounded-lg  border border-[#334155] ">
-				<ContributionExample /> 
+				<ContributionExample />
 			</div>
 		</div>
 	);
 };
-
 
 function ParameterCotnainer({ id, name }: { id: string; name: string }) {
 	const dispatch = useAppDispatch();

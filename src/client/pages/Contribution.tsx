@@ -3,43 +3,16 @@ import { NavLink, Outlet } from "react-router-dom";
 
 export const Contribution = () => {
 	return (
-		<main className="flex justify-center flex-col">
+		<main className="flex justify-center flex-col fixed top-16 left-0 right-0 ">
 			<TabBar />
 			<Outlet />
 		</main>
 	);
 };
 
-// const Tabs = () => {
-// 	return (
-// 		<nav className="flex justify-center space-x-4 p-4 bg-gray-800">
-// 			<NavLink
-// 				className="text-lg px-4 py-2 rounded-md hover:bg-gray-700 transition duration-300"
-// 				to="/problem"
-// 				activeClassName="bg-gray-700"
-// 			>
-// 				New Problem
-// 			</NavLink>
-// 			<NavLink
-// 				className="text-lg px-4 py-2 rounded-md hover:bg-gray-700 transition duration-300"
-// 				className={({ isActive }) =>
-// 					`px-4 py-2 text-white text-sm font-dmMono rounded-full transition-colors duration-300 ${
-// 						isActive ? "bg-hover text-white" : ""
-// 					}`
-// 				}
-// 				to="/testcase"
-// 				activeClassName="bg-gray-700"
-// 			>
-// 				New TestCase
-// 			</NavLink>
-// 		</nav>
-// 	);
-// };
-
-
 export const TabBar = () => {
 	return (
-		<div className="flex justify-center items-center fixed top-0 left-0 right-0 h-16 bg-PRIMARY">
+		<div className="flex justify-center items-center h-16 bg-PRIMARY">
 			<div className="bg-darkGray h-11 px-5 flex items-center gap-3 rounded-full shadow-md border border-[#334155] ">
 				<NavLink
 					to="./problem"
