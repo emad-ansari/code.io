@@ -1,28 +1,30 @@
 {
+  "id": "e39471e0-5743-48b3-89ab-b11d4c45c581",
   "title": "Two Sum",
-  "description": " Given two integers return some of them.",
+  "description": "Given an array of integers nums and an integer target, return indices of the two numbers such that they add up to target.\n\nYou may assume that each input would have exactly one solution, and you may not use the same element twice.\n\nYou can return the answer in any order.\n\n ",
   "difficulty": "Easy",
-  "functionName": "TwoSum",
-  "returnType": "int",
-  "userId": "cm0qpjsa00000c1h1i72u36x7",
+  "returnType": "int[]",
   "parameters": [
     {
-      "type": "char[][]",
-      "name": "board"
+      "parameterId": "08b37282-8b74-46fd-bc8e-d3038ae1c9b3",
+      "type": "int[]",
+      "name": "nums"
     },
     {
-      "type": "String[]",
-      "name": "words"
+      "parameterId": "8caceefc-74d3-4ffd-905c-46ed9c6aea8a",
+      "type": "int",
+      "name": "target"
     }
   ],
   "testcases": [
     {
+      "testcaseId": "1",
       "inputs": [
         {
           "name": "nums",
           "type": "int[]",
-          "value": "[1, 2, 3, 4]"
-        },    
+          "value": "[2,7,11,15]"
+        },
         {
           "name": "target",
           "type": "int",
@@ -33,6 +35,26 @@
         "type": "int[]",
         "value": "[0, 1]"
       }
+    },
+    {
+      "testcaseId": "2",
+      "inputs": [
+        {
+          "name": "nums",
+          "type": "int[]",
+          "value": "[3,2,4]"
+        },
+        {
+          "name": "target",
+          "type": "int",
+          "value": "6"
+        }
+      ],
+      "output": {
+        "type": "int[]",
+        "value": "[1, 2]"
+      }
     }
-  ]
+  ],
+  "userId": "cm16fq3px0000xpubw9vf8f3q"
 }

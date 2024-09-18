@@ -41,7 +41,7 @@ export async function createUser (username: string, email: string, password: str
 
 export async function findUser (email: string, password: string): Promise<{ success: boolean, msg: string, userId?: string}> {
     try {   
-        const user = await prisma.admin.findFirst({
+        const user = await prisma.user.findFirst({
 			where: {
 				email
 			},

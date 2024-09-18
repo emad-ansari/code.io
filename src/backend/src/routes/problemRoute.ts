@@ -5,8 +5,8 @@ import { z } from "zod";
 import axios from "axios";
 import auth, { CustomRequestObject } from "../middleware/auth";
 import { GenerateFullProblemDefinition } from '../lib/generateFullProblemDefinition'
-import { getAllTestcases, TestCaseReturnType } from "../db/testcase";
-import { ProblemSubmissionData } from "../@utils/types";
+import { getAllTestcases } from "../db/testcase";
+import { ProblemSubmissionData, TestCaseReturnType } from "../@utils/types";
 
 
 router.get("/", (req: Request, res: Response) => {

@@ -1,4 +1,4 @@
-import { TestCaseReturnType } from "../db/testcase";
+import { TestCaseReturnType } from "../@utils/types";
 
 
 

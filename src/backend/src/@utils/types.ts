@@ -17,7 +17,7 @@ export const SingleTestCase = z.object({
 
 export const TestCaseArray = z.array(SingleTestCase);
 
-const ParameterFormat = z.array(
+const Parameters = z.array(
 	z.object({
 		parameterId: z.string(),
 		type: z.string(),
@@ -31,7 +31,7 @@ export const ProblemInput = z.object({
 	description: z.string(),
 	difficulty: z.string(),
 	returnType: z.string(),
-	parameters: ParameterFormat,
+	parameters: Parameters,
 	testcases: TestCaseArray,
 });
 
@@ -43,9 +43,9 @@ export type ProblemType = z.infer<typeof ProblemInput>;
 export type TestCaseType = z.infer<typeof NewTestCaseFormat>; // with title
 
 export const SignUpInput = z.object({
-	username: z.string().min(5).max(20),
+	username: z.string().min(4).max(20),
 	email: z.string().email(),
-	password: z.string().min(5).max(20),
+	password: z.string().min(4).max(20),
 });
 
 export const LoginInput = z.object({

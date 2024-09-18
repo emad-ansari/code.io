@@ -58,7 +58,7 @@ router.post("/login", async (req: Request, res: Response) => {
 		}
 		// else create jwt token 
 		const token = jwt.sign({ userId: admin.adminId, role: "admin" } , process.env.JWT_SECRET!, { expiresIn: '1d'} )
-		return res.status(201).json({ msg: 'login successfully' ,  adminToken: token })
+		return res.status(201).json({ msg: 'login successfully' ,  token: token })
 	}
 	catch(error: any){
 		console.error(error.message);
