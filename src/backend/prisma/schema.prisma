@@ -30,7 +30,7 @@ model User {
   createdAt    DateTime @default(now())
   updatedAt    DateTime @updatedAt
   problem      Problem[]
-  problemStatus  ProblemStaus[]
+  problemStatus  ProblemStatus[]
 }
 
 // Problem Schema
@@ -45,7 +45,7 @@ model Problem {
   createdBy    String
   user         User @relation(fields: [createdBy], references: [id])
   defualtCode  DefaultCode[]
-  problemStatus ProblemStaus[]
+  problemStatus ProblemStatus[]
   testcases    TestCase[]
 }
 
@@ -59,7 +59,7 @@ model DefaultCode {
   updatedAt   DateTime @updatedAt
 }
 
-model ProblemStaus {
+model ProblemStatus {
   id          String @id @default(cuid())
   status      String @default("todo")
   userId      String
