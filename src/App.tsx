@@ -16,8 +16,18 @@ import { TestCaseForm } from "./client/pages/TestCaseForm";
 import { ProblemForm } from "./client/pages/ProblemForm";
 import { ProblemNavBar } from "./client/components/common/ProblemNavBar";
 import "./index.css";
+import { useEffect } from "react";
+import { rehydrateAuth } from "./client/features/authSlice";
+import { useAppDispatch } from "./client/app/store";
 
 const App = () => {
+
+	const dispatch = useAppDispatch();
+	useEffect(() => {
+		// On app load, rehydrate the login state
+		dispatch(rehydrateAuth());
+	}, [dispatch]);
+
 	return (
 		<>
 			<BrowserRouter>

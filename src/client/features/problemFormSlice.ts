@@ -1,7 +1,7 @@
 import { createSlice, PayloadAction, createAsyncThunk } from "@reduxjs/toolkit";
 import { client } from "../api/client";
 import { RootState } from "../app/store";
-
+import { v4 as uuidv4 } from 'uuid'
 
 export interface Parameter {
 	parameterId: string;
@@ -17,7 +17,6 @@ export interface ProblemFormState {
 	difficulty: string;
 	returnType: string;
 	parameters: Parameter[];
-	// testcases: TestCase[];
 }
 export const ProblemFormInitailState: ProblemFormState = {
 	id: "",
@@ -34,21 +33,31 @@ export const createProblem = createAsyncThunk(
 		try {
 			const store = ThunkAPI.getState() as RootState;
 			const { title, description, difficulty, parameters, returnType } =
-				store.problemform;
-               
+				store.problemform;   
             const { testcases } = store.TestCaseForm;
-			console.log('these are testcases in problem form slice :', testcases);
-			console.log('others detials: ', title, description, difficulty, parameters, returnType)
+			if (title === ""){
+				alert("please fill the title");
+				return;
+			}
 
-			// const res = await client.post("/problem/create-problem", {
-			// id: new id
-			// 	title,
-			// 	description,
-			// 	difficulty,
-			// 	parameters,
-			// 	returnType,
-			// });
-			// return res.data;
+			const res = await client.post("/problem/create-problem", {
+				id: uuidv4(),
+				title,
+				description,
+				difficulty,
+				parameters,
+				returnType,
+				testcases
+			},
+			{
+				headers: {
+					"Content-Type": "application/json",
+					Authorization: localStorage.getItem("CToken")
+				}
+			});
+
+			console.log('new problme contribution response: ', res.data)
+			return res.data;
 		} catch (error: any) {
 			console.error("Error: ", (error as Error).message);
 		}

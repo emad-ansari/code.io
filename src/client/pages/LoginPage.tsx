@@ -4,19 +4,19 @@ import { Button } from "../components/common/Button";
 import { FcGoogle } from "react-icons/fc";
 import { useAppDispatch, RootState } from "../app/store";
 import { useSelector } from "react-redux";
-import { setEmail, login } from "../features/userSlice";
+import { setEmail, login } from "../features/authSlice";
 // import { useEffect } from "react";
 // import { useNavigate } from "react-router-dom";
 
 export const LoginPage = () => {
-    const { email } = useSelector((state: RootState) => state.user);
-    const dispatch = useAppDispatch();
-    // const navigate = useNavigate();
-    // useEffect(() => {
-    //     if (isLogin){
-    //         navigate('/p/problemset')
-    //     }
-    // }, [dispatch, isLogin ])
+	const { email } = useSelector((state: RootState) => state.user);
+	const dispatch = useAppDispatch();
+	// const navigate = useNavigate();
+	// useEffect(() => {
+	//     if (isLogin){
+	//         navigate('/p/problemset')
+	//     }
+	// }, [dispatch, isLogin ])
 	return (
 		<main className="bg-[#030303]  fixed top-0 right-0 left-0 bottom-0 flex justify-center pt-32 ">
 			<div className="w-[350px] h-[400px] md:w-[450px] md:h-[500px]  bg-[#0D1621] rounded-lg flex flex-col items-center border border-[#334155]">
@@ -28,15 +28,15 @@ export const LoginPage = () => {
 					<input
 						type="email"
 						placeholder="Email"
-                        value = {email}
+						value={email}
 						className="focus:outline-none focus:ring focus:ring-offset-[#81E291] rounded-md border  px-3 py-3 bg-transparent text-white relative w-full text-sm"
-                        onChange={(e) => dispatch(setEmail(e.target.value)) }
+						onChange={(e) => dispatch(setEmail(e.target.value))}
 					/>
 					<PasswordInputField />
-					<Button 
-                        classname="w-full bg-cyan text-sm font-medium hover:bg-[#a5f3fc] rounded-md"
-                        onClick={() => dispatch(login())}
-                    >
+					<Button
+						classname="w-full bg-cyan text-sm font-medium hover:bg-[#a5f3fc] rounded-md"
+						onClick={() => dispatch(login())}
+					>
 						Log In
 					</Button>
 					<div className="flex flex-row gap-4 items-center justify-between">

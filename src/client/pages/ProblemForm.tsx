@@ -4,6 +4,12 @@ import { IoAdd } from "react-icons/io5";
 import { MdDelete } from "react-icons/md";
 import { TestCaseContainer } from "../components/common/TestCaseContainer";
 import { ContributionExample } from "../components/common/ContributionExample";
+import {
+	Tooltip,
+	TooltipContent,
+	TooltipProvider,
+	TooltipTrigger,
+} from "../components/ui/tooltip";
 
 import {
 	setTitle,
@@ -27,15 +33,22 @@ import {
 	SelectValue,
 } from "../components/ui/select";
 import { typeOptions } from "../types";
-import { v4 as uuidv4 } from 'uuid';
+import { v4 as uuidv4 } from "uuid";
+
+import { useNavigate, useLocation } from "react-router-dom";
+import { useEffect } from "react";
 
 export const ProblemForm = () => {
+	const navigate = useNavigate();
+	const location = useLocation();
+
 	const dispatch = useAppDispatch();
 	const { title, description, parameters } = useSelector(
 		(state: RootState) => state.problemform
 	);
 	const { testcases } = useSelector((state: RootState) => state.TestCaseForm);
-
+	const { isLogin } = useSelector((state: RootState) => state.user);
+	
 	const difficultyOption: string[] = ["Easy", "Medium", "Hard"];
 
 	const handleParameters = () => {
@@ -65,6 +78,7 @@ export const ProblemForm = () => {
 		};
 		dispatch(addNewTestCase(newTestCase));
 	};
+
 
 	return (
 		<div className="bg-PRIMARY  flex flex-row justify-between gap-5 pl-4 pr-4 pb-4 fixed top-32 left-0 right-0 bottom-0">
@@ -236,13 +250,27 @@ export const ProblemForm = () => {
 					</div>
 
 					<div className="flex justify-end">
-						<button
-							type="submit"
-							className="bg-cyan text-black font-medium px-4 py-2 rounded-md hover:bg-[#a5f3fc] focus:outline-none  focus:ring focus:ring-offset-[#81E291]"
-							onClick={() => dispatch(createProblem())}
-						>
-							Submit Problem
-						</button>
+						<TooltipProvider>
+							<Tooltip>
+								<TooltipTrigger asChild>
+									<button
+										disabled={
+											localStorage.getItem("CToken")
+												? false
+												: true
+										}
+										type="submit"
+										className="bg-cyan text-black font-medium px-4 py-2 rounded-md hover:bg-[#a5f3fc] focus:outline-none "
+										onClick={() => dispatch(createProblem())}
+									>
+										Submit Problem
+									</button>
+								</TooltipTrigger>
+								<TooltipContent>
+									<p>{isLogin ? "" : "You are not logged in, please login "}</p>
+								</TooltipContent>
+							</Tooltip>
+						</TooltipProvider>
 					</div>
 				</div>
 			</div>

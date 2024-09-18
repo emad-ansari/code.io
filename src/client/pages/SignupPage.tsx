@@ -2,7 +2,7 @@ import { Button } from "../components/common/Button";
 import logo from "../../assets/siginLogo.svg";
 import { PasswordInputField } from "../components/common/PasswordInputField";
 import { FcGoogle } from "react-icons/fc";
-import { setUsername, setEmail, signup } from "../features/userSlice";
+import { setUsername, setEmail, signup } from "../features/authSlice";
 import { useSelector } from "react-redux";
 import { useAppDispatch, RootState } from "../app/store";
 import { useEffect } from "react";
@@ -10,14 +10,16 @@ import { useNavigate } from "react-router-dom";
 export const SignupPage = () => {
 	const navigate = useNavigate();
 	const dispatch = useAppDispatch();
-	const { username, email, isSignup } = useSelector((state: RootState) => state.user);
-	console.log('user form: ', username, email)
+	const { username, email, isSignup } = useSelector(
+		(state: RootState) => state.user
+	);
+	console.log("user form: ", username, email);
 	useEffect(() => {
-		if (isSignup){
-			navigate ('/login')
+		if (isSignup) {
+			navigate("/login");
 			// make isSignup false over here
 		}
-	}, [dispatch, isSignup])
+	}, [dispatch, isSignup]);
 
 	return (
 		<main className="bg-[#030303]  fixed top-0 right-0 left-0 bottom-0 flex justify-center pt-32">
@@ -29,19 +31,19 @@ export const SignupPage = () => {
 				<div className="flex flex-col gap-5 pt-5  w-[350px]">
 					<input
 						type="text"
-						value = {username}
+						value={username}
 						placeholder="Username"
 						className="focus:outline-none focus:ring focus:ring-offset-[#81E291] rounded-md border  px-3 py-3 bg-transparent text-white relative w-full text-sm"
-						onChange = {(e) => dispatch(setUsername(e.target.value))}
+						onChange={(e) => dispatch(setUsername(e.target.value))}
 					/>
 					<input
 						type="email"
-						value = {email}
+						value={email}
 						placeholder="Email"
 						className="focus:outline-none focus:ring focus:ring-offset-[#81E291] rounded-md border  px-3 py-3 bg-transparent text-white relative w-full text-sm"
-						onChange = {(e) => dispatch(setEmail(e.target.value))}
+						onChange={(e) => dispatch(setEmail(e.target.value))}
 					/>
-					<PasswordInputField  />
+					<PasswordInputField />
 					<Button
 						classname="w-full bg-[#cffafe] text-sm font-medium shadow-lg rounded-md"
 						onClick={() => dispatch(signup())}

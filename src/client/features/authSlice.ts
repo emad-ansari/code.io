@@ -83,7 +83,13 @@ export const userSlice = createSlice({
         },
         setPassword : (state, action: PayloadAction<string>) => {
             state.password = action.payload;
-        }
+        },
+        rehydrateAuth: (state) => {
+            const token = localStorage.getItem('CToken');
+            if (token) {
+              state.isLogin = true;
+            }
+        },
     },
     extraReducers: (builder) => {
         builder.addCase(signup.pending, (state, _) => {
@@ -110,18 +116,16 @@ export const userSlice = createSlice({
             const { success, msg, token } = action.payload;
             if (success){
                 state.isLogin = true;
-                localStorage.setItem("jwtToken", token);
-                
+                localStorage.setItem("CToken", token);   
             }
             console.log('Login response msg : ',msg);
             state.isSignup = false;
         })
         builder.addCase(login.rejected, (state, _) => {
-            state.isLogin = false;
             state.isSignup = false;
         })
     }
 })
 
 export default userSlice.reducer;
-export const { setUsername, setEmail, setPassword } = userSlice.actions;
+export const { setUsername, setEmail, setPassword, rehydrateAuth } = userSlice.actions;

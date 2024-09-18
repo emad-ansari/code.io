@@ -2,8 +2,7 @@ import { MdVisibility, MdVisibilityOff } from "react-icons/md";
 import { useState } from "react";
 import { useSelector } from "react-redux";
 import { useAppDispatch, RootState } from "@/client/app/store";
-import { setPassword } from "@/client/features/userSlice";
-
+import { setPassword } from "@/client/features/authSlice";
 
 export const PasswordInputField = () => {
   const [showPassword, setShowPassword] = useState(false);
