@@ -1,12 +1,12 @@
 import { Request, Router, Response } from "express";
 const router = Router();
 import { problems } from "../../problem";
-import { z } from "zod";
 import axios from "axios";
 import auth, { CustomRequestObject } from "../middleware/auth";
 import { GenerateFullProblemDefinition } from '../lib/generateFullProblemDefinition'
 import { getAllTestcases } from "../db/testcase";
-import { ProblemSubmissionData, TestCaseReturnType } from "../@utils/types";
+import { ProblemSubmissionData, TestCaseReturnType, Problem } from "../@utils/types";
+import { getProblemsWithStatus, getProblemsWithoutStatus } from "../db/problem";
 
 
 router.get("/", (req: Request, res: Response) => {
@@ -33,18 +33,69 @@ router.get("/", (req: Request, res: Response) => {
 		.json({ message: "success", data: newProblemSet, totalPages });
 });
 
+
+
 // filter the problem based on action type {difficulty, status}
-router.get("filter-problem", auth, async (req: Request, res: Response) => {
+router.get("/filter-problem", auth, async (req: Request, res: Response) => {
+	const { userAuthorized } = req as CustomRequestObject;
+	const query  = req.query;
+	const pageNumber  = Number(query.pageNumber);
+	const pageSize = Number(query.pageSize);
+	const difficulty = String(query.difficulty);
+	const status = String(query.status);
+
 	try {
-		/*
-			- action type : [difficulty, status]
-			- action value: difficulty -> [easy, medium, hard], status -> [todo, solved, attempted]
-			- pageNumber:  current page number
-			- pageSize :  problem render per page
-		*/
-		const { actionType, pageSize } = req.body;
-		const { pageNumber, actionValue } = req.query;
-	} catch (error: any) {}
+		
+		const startIndex = (pageNumber - 1) * pageSize;
+		if (userAuthorized){
+			const { userId } = req as CustomRequestObject;
+			const problemsWithStatus = await getProblemsWithStatus(userId);
+			if (!problemsWithStatus.success){
+				return res.json({ err: "something went wrong while quering to database"});
+			}
+
+			let problems: Problem[] = problemsWithStatus.problems;
+			
+			if (difficulty !== "" && status !== ""){
+				// means there is  difficulty and status query just so filter based on that
+				problems = problems.filter(p => p.problem.difficulty === difficulty && p.status === status)
+
+			}
+			else if (difficulty !== "" && status === ""){
+				// means there is  no status but difficulty
+				problems = problems.filter(p => p.problem.difficulty === difficulty );
+			}
+			else if (difficulty === "" && status !== ""){
+				problems = problems.filter(p => p.status === status)
+			}
+			// 
+			const endIndex = Math.min(pageNumber * pageSize, problems.length);
+			const problemSet = problems.slice(startIndex, endIndex);
+			const totalPages = Math.ceil(problems.length / pageSize);
+			return res.status(200).json({
+				message: "success",
+				data: problemSet, 
+				totalPages
+			})
+		}
+		else {
+			// just send the problem without Problem status because user is not authorized
+			const problemWithoutStatus = await getProblemsWithoutStatus()
+			if (!problemWithoutStatus.success){
+				return res.json({ err: "check cehck...."})
+			}
+			const endIndex = Math.min(pageNumber * pageSize, problemWithoutStatus.problems.length);
+			const problemSet = problems.slice(startIndex, endIndex);
+			const totalPages = Math.ceil(problemWithoutStatus.problems.length / pageSize);
+			return res.status(200).json({
+				message: "success",
+				data: problemSet, 
+				totalPages
+			})
+		}
+	} catch (error: any) {
+		console.error("Error during getting problme: ", error.message);
+	}
 });
 
 router.post("/submit-problem", auth, async (req: Request, res: Response) => {
