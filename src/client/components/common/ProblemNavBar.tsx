@@ -65,7 +65,7 @@ export const ProblemNavBar = ({
 							Standings
 						</NavLink>
 						<NavLink
-							to={"contribution"}
+							to={"/contribution"}
 							className={({ isActive }) =>
 								`text-sm font-dmMono  px-4 py-2 rounded-full  hover:bg-hover ${
 									isActive ? "bg-hover" : ""

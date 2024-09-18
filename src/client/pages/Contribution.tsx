@@ -15,7 +15,8 @@ export const TabBar = () => {
 		<div className="flex justify-center items-center h-16 bg-PRIMARY">
 			<div className="bg-darkGray h-11 px-5 flex items-center gap-3 rounded-full shadow-md border border-[#334155] ">
 				<NavLink
-					to="./problem"
+					to="/contribution"
+					end
 					className={({ isActive }) =>
 						`px-4 py-2 text-white text-sm font-dmMono rounded-full transition-colors duration-300 ${
 							isActive ? "bg-hover text-white" : ""
@@ -25,7 +26,7 @@ export const TabBar = () => {
 					Problem
 				</NavLink>
 				<NavLink
-					to="./testcase"
+					to="/contribution/testcase"
 					className={({ isActive }) =>
 						`px-4 py-2 mx-2 text-sm font-dmMono rounded-full transition-colors duration-300 ${
 							isActive ? "bg-hover text-white" : "text-white"
