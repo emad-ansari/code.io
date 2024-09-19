@@ -1,5 +1,5 @@
 import { createSlice, PayloadAction, createAsyncThunk } from "@reduxjs/toolkit";
-import { ProblemState, Problem, ApiResponse, getProblemParameter, ServerProblem } from "../types";
+import { ProblemState,  ApiResponse, getProblemParameter, ServerProblem } from "../types";
 import { client } from "../api/client";
 import { RootState } from "../app/store";
 
@@ -25,7 +25,8 @@ export const getProblems = createAsyncThunk('/problem/getProblems', async({pageN
 				difficulty,
 				status
 			}
-		});
+		},
+		);
 		const data  = res.data;
 
 		return data;

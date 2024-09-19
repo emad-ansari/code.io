@@ -19,6 +19,7 @@ export const DifficultyDropDownMenu = () => {
 
 	const filterProblems = ( difficultyLevel: string) => {		
 		console.log('re-computing......')
+
 		if (searchParams.get('difficulty') === difficultyLevel){
 			searchParams.delete('difficulty'); // remove it from url
 		}
@@ -30,7 +31,8 @@ export const DifficultyDropDownMenu = () => {
 		dispatch(
 			getProblems({
 				pageNumber:  Number(searchParams.get('page')) ||  1,
-				difficultyLevel: searchParams.get('difficulty') || ""
+				difficulty: searchParams.get('difficulty') || "",
+				status: ""
 			})
 		);		
 	};
