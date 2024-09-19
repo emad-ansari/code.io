@@ -85,6 +85,7 @@ export interface TestCaseReturnType {
 export interface Problem {
 	status: string;
 	problem: {
+		id: string;
 		title: string;
 		difficulty: string;
 		problemNo: number;

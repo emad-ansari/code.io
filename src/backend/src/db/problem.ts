@@ -82,6 +82,7 @@ export async function getProblemsWithStatus(userId: string): Promise<{success: b
 				status: true,
 				problem: {
 					select: {
+						id: true,
 						title: true,
 						difficulty: true,
 						problemNo: true,
@@ -110,19 +111,23 @@ export async function getProblemsWithStatus(userId: string): Promise<{success: b
 }
 
 
-export async function getProblemsWithoutStatus(): Promise<{success: boolean, problems: {title: string, difficulty: string, problemNo: number}[]}>{
+export async function getProblemsWithoutStatus(): Promise<{success: boolean, problems: Problem[]}>{
 	try {
 		const problems = await prisma.problem.findMany({
 			select: {
+				id: true,
 				title: true,
 				difficulty: true,
 				problemNo: true
 			}
 		});
 		if (problems){
+			const updatedProblems: Problem[] = problems.map(p => {
+				return { status: "", problem: {...p}};
+			})
 			return {
 				success: true,
-				problems
+				problems: updatedProblems
 			}
 		}
 		return {

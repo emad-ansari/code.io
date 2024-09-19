@@ -17,7 +17,7 @@ import { TestCase } from "../db/testcase";
 
 
 router.post("/signup", async (req: Request, res: Response) => {
-	const parsedSingUpInput = SignUpInput.safeParse(req.body);
+	const parsedSingUpInput = SignUpInput.safeParse(req.body.data);
 	if (!parsedSingUpInput.success) {
 		return res.status(400).json({ err: parsedSingUpInput.error });
 	}
@@ -45,7 +45,7 @@ router.post("/signup", async (req: Request, res: Response) => {
 });
 
 router.post("/login", async (req: Request, res: Response) => {
-	const parsedLoginInput = LoginInput.safeParse(req.body);
+	const parsedLoginInput = LoginInput.safeParse(req.body.data);
 	if (!parsedLoginInput.success){
 		return res.status(400).json({ err: parsedLoginInput.error});
 	}
@@ -58,7 +58,7 @@ router.post("/login", async (req: Request, res: Response) => {
 		}
 		// else create jwt token 
 		const token = jwt.sign({ userId: admin.adminId, role: "admin" } , process.env.JWT_SECRET!, { expiresIn: '1d'} )
-		return res.status(201).json({ msg: 'login successfully' ,  token: token })
+		return res.status(201).json({ msg: 'login successfully' ,  adminToken: token })
 	}
 	catch(error: any){
 		console.error(error.message);
@@ -252,7 +252,7 @@ router.get("/update-tesctcase", auth,  async (req: Request, res: Response) => {
 
 function getAllNewProblem(): ProblemType[] {
 	let problems: ProblemType[] = [];
-	const folderPath = path.join(__dirname, "contribute", "newproblem");
+	const folderPath = `src/contribution/newproblem`
 	const files = fs.readdirSync(folderPath);
 	files.forEach((file) => {
 		// Only process JSON files
@@ -293,7 +293,7 @@ function getAllNewProblem(): ProblemType[] {
 
 function getAllNewTestcases(): TestCaseType[] {
 	let testcases: TestCaseType[] = [];
-	const folderPath = path.join(__dirname, "contribute", "newtestcase");
+	const folderPath = `src/contribution/newtestcase`
 	const files = fs.readdirSync(folderPath);
 	files.forEach((file) => {
 		// Only process JSON files

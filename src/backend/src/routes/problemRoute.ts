@@ -85,7 +85,7 @@ router.get("/filter-problem", auth, async (req: Request, res: Response) => {
 				return res.json({ err: "check cehck...."})
 			}
 			const endIndex = Math.min(pageNumber * pageSize, problemWithoutStatus.problems.length);
-			const problemSet = problems.slice(startIndex, endIndex);
+			const problemSet = problemWithoutStatus.problems.slice(startIndex, endIndex);
 			const totalPages = Math.ceil(problemWithoutStatus.problems.length / pageSize);
 			return res.status(200).json({
 				message: "success",
