@@ -7,7 +7,7 @@ import { RootState } from "../app/store";
 
 
 export const ProblemDescriptionPage = () => {
-	const { isFullScreen } = useSelector((state: RootState) => state.dropdown);
+	const { isFullScreen } = useSelector((state: RootState) => state.editor);
 
 	return (
 		<>

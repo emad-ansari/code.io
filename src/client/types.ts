@@ -1,5 +1,5 @@
 export interface ProblemState {
-	problems: Array<Problem>;
+	problems: ServerProblem[];
 	pageSize: number;
 	numberOfPages: number;
 	error: any;
@@ -8,6 +8,7 @@ export interface SettingState {
 	isOpen: boolean;
 	theme: string;
 	fontSize: number;
+	isFullScreen: boolean
 }
 export interface DropDownType {
 	isStatusMenuOpen: boolean;
@@ -22,14 +23,17 @@ export interface EditorState {
 	boilerPlateCode: string;
 }
 
-export interface Problem {
-	problemId: number;
-	problemTitle: string;
-	problemDescription: string;
-	difficultyLevel: string;
-	problemStatus: string;
-	problemNo: number;
+export interface ServerProblem {
+	status: string;
+	problem: Problem
 }
+export interface  Problem {
+	id: string;
+	title: string;
+	difficulty: string;
+	problemNo: number
+}
+
 
 export interface ApiResponse<T> {
 	data: T;
@@ -45,7 +49,8 @@ export interface FilterState {
 
 export interface getProblemParameter {
 	pageNumber: number;
-	difficultyLevel: string;
+	difficulty: string;
+	status: string
 }
 export interface DropDownItemProps {
 	value: string;

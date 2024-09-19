@@ -19,7 +19,8 @@ export const ProblemsetPage = () => {
 		dispatch(
 			getProblems({
 				pageNumber: Number(searchParams.get("page")) || 1,
-				difficultyLevel: searchParams.get("difficulty") || "",
+				difficulty: searchParams.get("difficulty") || "",
+				status: searchParams.get("status") || ""
 			})
 		);
 	}, []);
@@ -80,19 +81,43 @@ const CustomPagination = memo(() => {
 	const changeProblemSetPage = (value: number) => {
 		searchParams.set("page", value.toString());
 		setSearchParams(searchParams);
+		const difficulty = searchParams.get("difficulty");
+		const status  =  searchParams.get("status");
 
-		if (searchParams.get("difficulty") == null) {
+		if (difficulty == null && status == null) {
 			dispatch(
 				getProblems({
 					pageNumber: value,
-					difficultyLevel: "",
+					difficulty: "",
+					status: ""
 				})
 			);
-		} else {
+		} 
+		else if (difficulty == null && status !== null){
 			dispatch(
 				getProblems({
 					pageNumber: value,
-					difficultyLevel: searchParams.get("difficulty") || "",
+					difficulty:  "",
+					status: status
+				})
+			);
+		}
+		else if (difficulty !== null && status == null){
+			dispatch(
+				getProblems({
+					pageNumber: value,
+					difficulty:  difficulty,
+					status: ""
+				})
+			);
+		}
+		else {
+			//  meanse both are not null
+			dispatch(
+				getProblems({
+					pageNumber: value,
+					difficulty:  difficulty || "",
+					status: status || ""
 				})
 			);
 		}

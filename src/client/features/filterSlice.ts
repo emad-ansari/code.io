@@ -5,7 +5,8 @@ import { FilterState } from "../types";
 export const filterInitialState: FilterState= {
     easy: false,
 	medium: false,
-	hard: false
+	hard: false,
+
 }
 
 export const filterSlice = createSlice({

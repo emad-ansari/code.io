@@ -4,7 +4,8 @@ import { SettingState } from '../types'
 export const  settingInitialState: SettingState = {
     isOpen: false, 
     fontSize: 14,
-    theme: 'vs-dark'
+    theme: 'vs-dark',
+    isFullScreen: false
 }
 
 export const editorSettingSlice = createSlice({
@@ -19,6 +20,9 @@ export const editorSettingSlice = createSlice({
         },
         setTheme: (state, action: PayloadAction<string>) => {
             state.theme = action.payload;    
+        },
+        setFullScreen: (state, action: PayloadAction<boolean>) => {
+            state.isFullScreen = action.payload;
         }
 
     }

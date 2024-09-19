@@ -80,3 +80,13 @@ export interface TestCaseReturnType {
 		value: string;
 	} | null;
 }
+
+
+export interface Problem {
+	status: string;
+	problem: {
+		title: string;
+		difficulty: string;
+		problemNo: number;
+	}
+}

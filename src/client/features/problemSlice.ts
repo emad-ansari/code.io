@@ -1,5 +1,5 @@
 import { createSlice, PayloadAction, createAsyncThunk } from "@reduxjs/toolkit";
-import { ProblemState, Problem, ApiResponse, getProblemParameter } from "../types";
+import { ProblemState, Problem, ApiResponse, getProblemParameter, ServerProblem } from "../types";
 import { client } from "../api/client";
 import { RootState } from "../app/store";
 
@@ -12,17 +12,19 @@ export const problemSliceInitialState: ProblemState = {
 	error: null,
 };
 
-export const getProblems = createAsyncThunk('/problem/getProblems', async({pageNumber, difficultyLevel}: getProblemParameter, ThunkAPI) => {
+export const getProblems = createAsyncThunk('/problem/getProblems', async({pageNumber, difficulty, status}: getProblemParameter, ThunkAPI) => {
 	const store = ThunkAPI.getState() as RootState;
 	const { pageSize } = store.problem;
-
+	console.log('difficulty', difficulty);
+	
 	try {
-		const res = await client.get<ApiResponse<Problem[]>>(`/problem`, {
+		const res = await client.get<ApiResponse<ServerProblem[]>>(`/problem/filter-problem`, {
 			params: {
-				page: pageNumber,
-				pageSize: pageSize,
-				difficultyLevel
-			},
+				pageNumber,
+				pageSize,
+				difficulty,
+				status
+			}
 		});
 		const data  = res.data;
 
@@ -40,8 +42,7 @@ export const problemSlice = createSlice({
 		setPageSize: (state, action: PayloadAction<number>) => {
 			state.pageSize = action.payload;
 		},
-		
-		
+	
 	},
 	extraReducers: (builder) => {
 		builder.addCase(getProblems.pending, (_, action) => {
@@ -50,6 +51,7 @@ export const problemSlice = createSlice({
 		builder.addCase(getProblems.fulfilled, (state, action) => {
 			const { message, data, totalPages} = action.payload;
 			state.problems = data;
+			console.log(message);
 			state.numberOfPages = totalPages;
 		}) 
 		builder.addCase(getProblems.rejected, (_, action) => {

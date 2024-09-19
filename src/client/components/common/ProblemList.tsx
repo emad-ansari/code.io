@@ -9,14 +9,15 @@ export const ProblemList = memo(() => {
 	return (
 		
     <div className="flex flex-col gap-2">
-      {problems.map((problem) => {
+      {problems.map((sp) => {
         return (
           <Problem
-            key={problem.problemId}
-            title={problem.problemTitle}
-            status={problem.problemStatus}
-            level={problem.difficultyLevel}
-            problemNo={problem.problemNo}
+            key={sp.problem.id}
+            id = {sp.problem.id}
+            title={sp.problem.title}
+            status={sp.status}
+            difficulty={sp.problem.difficulty}
+            problemNo={sp.problem.problemNo}
           />
         );
       })}
