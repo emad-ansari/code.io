@@ -43,7 +43,7 @@ model Problem {
   createdAt    DateTime @default(now())
   updatedAt    DateTime @updatedAt
   createdBy    String
-  user         User @relation(fields: [createdBy], references: [id])
+  user         User @relation(fields: [createdBy], references: [id], onDelete: Cascade)
   defualtCode  DefaultCode[]
   problemStatus ProblemStatus[]
   testcases    TestCase[]
@@ -54,7 +54,7 @@ model DefaultCode {
   code        String
   problemId   String
   languageId  Int
-  problem     Problem @relation(fields: [problemId], references: [id])
+  problem     Problem @relation(fields: [problemId], references: [id], onDelete: Cascade)
   createdAt   DateTime @default(now())
   updatedAt   DateTime @updatedAt
 }
@@ -63,9 +63,9 @@ model ProblemStatus {
   id          String @id @default(cuid())
   status      String @default("todo")
   userId      String
-  user        User @relation(fields: [userId], references: [id])
+  user        User @relation(fields: [userId], references: [id], onDelete: Cascade)
   problemId   String
-  problem     Problem @relation(fields: [problemId], references: [id])
+  problem     Problem @relation(fields: [problemId], references: [id], onDelete: Cascade)
   @@unique([problemId, userId])
 }
 
@@ -73,7 +73,7 @@ model TestCase {
   id          String @id @default(cuid())
   title       String?  // Included this because user dont't know problemId so he will just enter the problem title
   problemId   String
-  problem     Problem @relation(fields: [problemId], references: [id])
+  problem     Problem @relation(fields: [problemId], references: [id], onDelete: Cascade)
   inputs      TestCaseInput[]
   output      TestCaseOutput?  // [Todo] - need to look on this relation to make one-to-one not one-to-many
 }
@@ -84,7 +84,7 @@ model TestCaseInput {
   type        String
   value       String
   testcaseId  String
-  testcase   TestCase @relation(fields: [testcaseId], references: [id])
+  testcase   TestCase @relation(fields: [testcaseId], references: [id], onDelete: Cascade)
 }
 
 // model for Test case Output
@@ -93,7 +93,7 @@ model TestCaseOutput {
   type      String
   value     String
   testcaseId  String @unique
-  testcase   TestCase @relation(fields: [testcaseId], references: [id])
+  testcase   TestCase @relation(fields: [testcaseId], references: [id], onDelete: Cascade)
 }
 
 
