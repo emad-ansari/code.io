@@ -101,7 +101,7 @@ const LNAGUAGE_MAPPING: {
 // Save problem after review
 router.post("/save-problem", auth, async (req: Request, res: Response) => {
 	const { userAuthorized } = req as CustomRequestObject;
-	const { problemId } = req.body;
+	const { problemId } = req.body.data;
 	if (!userAuthorized){
 		return res.status(401).json({ err: "You are not authorize, please login "})
 	}
@@ -111,7 +111,7 @@ router.post("/save-problem", auth, async (req: Request, res: Response) => {
 	try {
 		// save the problem and testcases in database with with given problemId
 		
-		const isSaved = saveProblemAndTestCase(problemId);
+		const isSaved = await  saveProblemAndTestCase(problemId);
 		if (isSaved.success) {
 			// then prepare the boilerplate code array to save them into database
 			return res
@@ -254,6 +254,7 @@ function getAllNewProblem(): ProblemType[] {
 	let problems: ProblemType[] = [];
 	const folderPath = `src/contribution/newproblem`
 	const files = fs.readdirSync(folderPath);
+	
 	files.forEach((file) => {
 		// Only process JSON files
 		if (path.extname(file) === ".json") {
@@ -275,12 +276,6 @@ function getAllNewProblem(): ProblemType[] {
 					testcases: jsonData.testcases,
 				};
 				problems.push(newProblem);
-				// Do something with the JSON data
-				console.log("Title:", jsonData.title);
-				console.log("Description:", jsonData.description);
-				console.log("Difficulty:", jsonData.difficulty);
-				console.log("Testcases:", jsonData.testcases);
-				console.log("-----------------------------------");
 			} catch (err) {
 				console.error(`Error parsing JSON in file ${file}:`, err);
 			}
@@ -325,15 +320,15 @@ function getAllNewTestcases(): TestCaseType[] {
 	return testcases;
 }
 
-function saveProblemAndTestCase(problemId: string): {
-	success: boolean;
-	err: string;
-} {
-	const folderPath = path.join(__dirname, "contribute", "newproblem");
+async function saveProblemAndTestCase(problemId: string):Promise<{success: boolean, err: string}> {
+	const folderPath = `src/contribution/newproblem`
 	const files = fs.readdirSync(folderPath);
+	console.log('these are files', files);
+	console.log('problemId: ', problemId)
 
-	files.forEach(async (file) => {
+	for (let file of files) {
 		// Only process JSON files
+		console.log('this is a file : ', file)
 		if (path.extname(file) === ".json") {
 			const filePath = path.join(folderPath, file);
 
@@ -344,6 +339,7 @@ function saveProblemAndTestCase(problemId: string): {
 				const problem = parser.extractProblemDetails(filePath);
 				if (problem.id === problemId) {
 					// read the details and save it into database
+					
 					const newProblem = await createProblem(
 						problem.title,
 						problem.description,
@@ -365,6 +361,7 @@ function saveProblemAndTestCase(problemId: string): {
 						testcases: problem.testcases,
 					});
 					if (!newTestcase.success) {
+						console.log(newTestcase.msg);
 						return {
 							success: false,
 							err: newTestcase.msg,
@@ -380,14 +377,16 @@ function saveProblemAndTestCase(problemId: string): {
 						{ name: "typescript", code: typescript },
 					];
 					// save boiler plate code
-					const isBoilerplateSaved = saveBoilerplateCodes(
+					await saveBoilerplateCodes(
 						newProblem.id,
 						array
 					);
+					console.log('control reaches here...');
 					return {
 						success: true,
-						err: "",
+						err: "No error",
 					};
+					
 				}
 			} catch (err) {
 				console.error(`Error parsing JSON in file ${file}:`, err);
@@ -397,7 +396,7 @@ function saveProblemAndTestCase(problemId: string): {
 				};
 			}
 		}
-	});
+	};
 	return {
 		success: false,
 		err: "Error while checking file",

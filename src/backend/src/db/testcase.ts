@@ -17,16 +17,15 @@ export async function createTestCases({
 	testcases,
 }: TestCaseProps): Promise<{ success: boolean; msg: string }> {
 	try {
+		
 		for (const testcase of testcases) {
-			// Create the TestCase entry
+			// Insert each input for the testcase
 			const createdTestCase = await prisma.testCase.create({
 				data: {
 					title, // You can use the same title for all test cases, or modify this
 					problemId, // Problem this testcase is associated with
 				},
 			});
-
-			// Insert each input for the testcase
 			createTestCaseInputAndOutput(createdTestCase.id, testcase);
 			
 		}
