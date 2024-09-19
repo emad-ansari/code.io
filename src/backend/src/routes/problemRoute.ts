@@ -43,11 +43,14 @@ router.get("/filter-problem", auth, async (req: Request, res: Response) => {
 	const pageSize = Number(query.pageSize);
 	const difficulty = String(query.difficulty);
 	const status = String(query.status);
+	console.log('check user authoriztion: ', userAuthorized);
+	console.log('difficulty data on backend: ', difficulty);
 
 	try {
 		
 		const startIndex = (pageNumber - 1) * pageSize;
 		if (userAuthorized){
+			console.log('inside authorization')
 			const { userId } = req as CustomRequestObject;
 			const problemsWithStatus = await getProblemsWithStatus(userId);
 			if (!problemsWithStatus.success){
@@ -64,11 +67,13 @@ router.get("/filter-problem", auth, async (req: Request, res: Response) => {
 			else if (difficulty !== "" && status === ""){
 				// means there is  no status but difficulty
 				problems = problems.filter(p => p.problem.difficulty === difficulty );
+				console.log('problem after filter: ', problems);
 			}
 			else if (difficulty === "" && status !== ""){
 				problems = problems.filter(p => p.status === status)
 			}
 			// 
+			console.log(problems)
 			const endIndex = Math.min(pageNumber * pageSize, problems.length);
 			const problemSet = problems.slice(startIndex, endIndex);
 			const totalPages = Math.ceil(problems.length / pageSize);
