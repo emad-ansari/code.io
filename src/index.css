@@ -16,11 +16,11 @@
 
 
 .gutter:hover {
-    background-color: #1c94fc;
+    background-color: #1f2937;
 }
 
 .gutter {
-	background-color: rgb(26, 26, 26);
+	background-color: #030303;
     background-repeat: no-repeat;
     background-position: 50%;
 }

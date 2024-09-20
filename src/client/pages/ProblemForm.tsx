@@ -260,7 +260,7 @@ export const ProblemForm = () => {
 									</button>
 								</TooltipTrigger>
 								<TooltipContent>
-									<p>{isLogin ? "" : "You are not logged in, please login "}</p>
+									<p className="text-white">{isLogin ? "" : "You are not logged in, please login "}</p>
 								</TooltipContent>
 							</Tooltip>
 						</TooltipProvider>

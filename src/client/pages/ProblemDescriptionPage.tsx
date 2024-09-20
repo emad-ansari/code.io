@@ -20,7 +20,7 @@ export const ProblemDescriptionPage = () => {
 					isFullScreen ? "z-50 " : "mt-[64px]"
 				}`}
 				sizes={[45, 55]}
-				gutterSize={8}
+				gutterSize={6}
 				minSize={0}
 				gutterAlign = {'start'}
 				

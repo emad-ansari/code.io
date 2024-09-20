@@ -16,7 +16,7 @@ export const TestCaseExample = ({ testCaseNumber, inputs, output }: TestCaseProp
 				<span className=" w-1 bg-[#4ac3ab] rounded-tl-lg rounded-bl-lg"></span>
 				<div className="flex flex-col gap-3 px-4 py-3  flex-1">
 					<div className="flex flex-row gap-5">
-						<span className="font-semibold text-[#4ac3ab] ">
+						<span className="font-semibold text-[#4ac3ab] text-md">
 							Input:
 						</span>
 						<span>

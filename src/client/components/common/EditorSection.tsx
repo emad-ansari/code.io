@@ -17,6 +17,12 @@ import { setOpenDropDownMenu } from "../../features/dropDownSlice";
 import { toggleFullScreen } from "../../features/editorSlice";
 import Split from "react-split";
 import { setIsOpen } from "../../features/editorSettingSlice";
+import {
+	Tooltip,
+	TooltipContent,
+	TooltipProvider,
+	TooltipTrigger,
+} from "../ui/tooltip";
 
 const LANGUAGES = ["java", "cpp", "javascript", "go", "rust"];
 
@@ -38,6 +44,7 @@ export const EditorSection = () => {
 
 	const [splitRatio, setSplitRatio] = useState<[number, number]>([100, 0]);
 	const [isConsoleOpen, setIsConsoleOpen] = useState<boolean>(false);
+	const { isLogin } = useSelector((state: RootState) => state.user);
 
 	return (
 		<section className="">
@@ -59,7 +66,6 @@ export const EditorSection = () => {
 						onClick={() => handleOpenDropDown()}
 					>
 						<CodeEditor />
-					
 					</div>
 				</div>
 				<div className="flex-col text-white w-full bg-darkGray rounded-lg border border-[#334155] flex flex-1 overflow-hidden transition-all duration-500 ease-in-out">
@@ -89,13 +95,47 @@ export const EditorSection = () => {
 						</div>
 
 						<div className="flex flex-row items-center gap-5">
-							<Button classname=" text-white justify-center flex items-center rounded-md w-20 border border-[#334155]">
-								Run
-							</Button>
-							<Button classname="bg-GREEN text-white flex gap-2 items-center rounded-md">
-								<span className="font-semibold">Submit</span>
-								<MdOutlineFileUpload />
-							</Button>
+							<TooltipProvider>
+								<Tooltip>
+									<TooltipTrigger asChild>
+										<Button
+											disabled={isLogin ? false : true}
+											classname=" text-white justify-center flex items-center rounded-md w-20 border border-[#334155]"
+										>
+											Run
+										</Button>
+									</TooltipTrigger>
+									<TooltipContent>
+										<p>
+											{isLogin
+												? ""
+												: "You are not logged in, please login "}
+										</p>
+									</TooltipContent>
+								</Tooltip>
+							</TooltipProvider>
+							<TooltipProvider>
+								<Tooltip>
+									<TooltipTrigger asChild>
+										<Button
+											disabled={isLogin ? false : true}
+											classname="bg-GREEN text-white flex gap-2 items-center rounded-md"
+										>
+											<span className="font-semibold">
+												Submit
+											</span>
+											<MdOutlineFileUpload />
+										</Button>
+									</TooltipTrigger>
+									<TooltipContent>
+										<p>
+											{isLogin
+												? ""
+												: "You are not logged in, please login "}
+										</p>
+									</TooltipContent>
+								</Tooltip>
+							</TooltipProvider>
 						</div>
 					</div>
 					<div>

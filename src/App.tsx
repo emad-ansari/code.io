@@ -49,7 +49,7 @@ const App = () => {
 						<Route index  element = {<ProblemForm />} />
 						<Route path = 'testcase' element = {<TestCaseForm />} />
 					</Route>
-					<Route path="problem/:problem-name/" element={<ProblemDescriptionPage />}>
+					<Route path="problem/:id/" element={<ProblemDescriptionPage />}>
 						<Route  path = 'description' element={<ProblemStatement />} />
 						<Route  path = 'submissions' element={< ProblemSubmissions />} />	
 					</Route>
