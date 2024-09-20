@@ -2,6 +2,7 @@ export interface ProblemState {
 	problems: ServerProblem[];
 	pageSize: number;
 	numberOfPages: number;
+	problemDetail: ProblemDetail
 	error: any;
 }
 export interface SettingState {
@@ -32,6 +33,23 @@ export interface  Problem {
 	title: string;
 	difficulty: string;
 	problemNo: number
+}
+export interface ProblemDetail extends ServerProblem  {
+	problem: ServerProblem['problem'] & { 
+		description: string; 
+	},
+	testcaseExamples :{
+		id: string;
+		inputs: Input[],
+		output: Output | null
+	}[]
+}
+export interface Input {
+	name: string;
+	value: string
+}
+export interface Output {
+	value: string
 }
 
 
@@ -75,6 +93,7 @@ export interface SubmissionResult {
 }
 
 export const typeOptions: string[] = [
+	"void",
 	"int",
 	"int[]",
 	"int[][]",

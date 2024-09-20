@@ -51,21 +51,22 @@ export const EditorSection = () => {
 			>
 				<div
 					id="editor-container "
-					className="  bg-darkGray rounded-lg border border-gray-500  flex flex-1 flex-col overflow-hidden "
+					className="  bg-darkGray rounded-lg   flex flex-1 flex-col overflow-hidden border border-[#334155] transition-all duration-500 ease-in-out"
 				>
 					<EditorTopBar />
 					<div
-						className="border border-gray-500 h-full"
+						className=" h-full"
 						onClick={() => handleOpenDropDown()}
 					>
 						<CodeEditor />
+					
 					</div>
 				</div>
-				<div className="flex-col text-white w-full bg-darkGray rounded-lg border border-gray-500 flex flex-1 overflow-hidden">
-					<div className=" flex bg-[#1f2937] rounded-tl-lg rounded-tr-lg px-2 py-1 items-center justify-between">
+				<div className="flex-col text-white w-full bg-darkGray rounded-lg border border-[#334155] flex flex-1 overflow-hidden transition-all duration-500 ease-in-out">
+					<div className=" flex bg-darkGray rounded-tl-lg rounded-tr-lg px-2 py-1.5 items-center justify-between border border-b-[#334155] border-l-transparent border-r-transparent border-t-transparent">
 						<div className="flex gap-5">
 							<Button
-								classname="relative flex w-28 gap-1 bg-hover rounded-md"
+								classname="relative flex w-28 gap-1 hover:bg-gray-800 rounded-md"
 								onClick={() => {
 									if (!isConsoleOpen) {
 										setSplitRatio([60, 40]);
@@ -88,7 +89,7 @@ export const EditorSection = () => {
 						</div>
 
 						<div className="flex flex-row items-center gap-5">
-							<Button classname="bg-gray-700 text-white justify-center flex items-center rounded-md w-20">
+							<Button classname=" text-white justify-center flex items-center rounded-md w-20 border border-[#334155]">
 								Run
 							</Button>
 							<Button classname="bg-GREEN text-white flex gap-2 items-center rounded-md">
@@ -117,7 +118,7 @@ function EditorTopBar() {
 		(state: RootState) => state.editor
 	);
 	return (
-		<div className="flex items-center px-2 py-1 bg-[#1f2937] rounded-tl-lg rounded-tr-lg justify-between  gap-5">
+		<div className="flex items-center px-2 py-1 bg-darkGray rounded-tl-lg rounded-tr-lg justify-between  gap-5 border border-b-[#334155] border-t-transparent border-l-transparent border-r-transparent">
 			<ModeSelectButton
 				menuType="languages"
 				ITEMS_ARRAY={LANGUAGES}
@@ -126,14 +127,14 @@ function EditorTopBar() {
 			/>
 			<div className="flex flex-row gap-2 items-center ">
 				<Button
-					classname={" hover:bg-gray-700 rounded-full "}
+					classname={" hover:bg-gray-800 rounded-full "}
 					onClick={() => dispatch(setIsOpen(true))}
 				>
 					<IoSettings className="text-white" />
 				</Button>
 
 				<Button
-					classname={"hover:bg-gray-700 rounded-full"}
+					classname={"hover:bg-gray-800 rounded-full"}
 					onClick={() => dispatch(toggleFullScreen(!isFullScreen))}
 				>
 					<GoScreenFull className="text-white" />

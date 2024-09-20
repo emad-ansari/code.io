@@ -1,10 +1,12 @@
+import { Input, Output } from "@/client/types";
+
 interface TestCaseProps {
 	testCaseNumber: number;
-	input: string;
-	output: string;
+	inputs: Input[]
+	output: Output | null
 }
 
-export const TestCaseExample = ({ testCaseNumber, input, output }: TestCaseProps) => {
+export const TestCaseExample = ({ testCaseNumber, inputs, output }: TestCaseProps) => {
 	return (
 		<div className="flex flex-col  gap-3 w-full">
 			<h1 className="text-lg font-semibold text-white">
@@ -17,13 +19,19 @@ export const TestCaseExample = ({ testCaseNumber, input, output }: TestCaseProps
 						<span className="font-semibold text-[#4ac3ab] ">
 							Input:
 						</span>
-						<span>nums = [3, 4, 5, 6] target = 7</span>
+						<span>
+							{
+								`${inputs.map(input => {
+									return `${input.name} = ${input.value}`
+								}).join(', ')}`
+							}
+						</span>
 					</div>
 					<div className="flex flex-row gap-5">
 						<span className="font-semibold text-[#4ac3ab]">
 							Output:
 						</span>
-						<span>[0, 1]</span>
+						<span>{ `${output?.value}`}</span>
 					</div>
 				</div>
 			</code>

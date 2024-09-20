@@ -6,14 +6,11 @@ import { RootState, useAppDispatch } from "../../app/store";
 import OneDarkPro from "../../theme/oneDarkPro.json";
 import { useEffect, useState } from "react";
 
-
 export const CodeEditor = () => {
 	const { language, boilerPlateCode } = useSelector(
 		(state: RootState) => state.editor
 	);
-	const { fontSize } = useSelector(
-		(state: RootState) => state.setting
-	);
+	const { fontSize } = useSelector((state: RootState) => state.setting);
 
 	const handleEditorDidMount = (monaco: Monaco) => {
 		monaco.editor.defineTheme("OneDarkPro", {
@@ -23,18 +20,18 @@ export const CodeEditor = () => {
 		});
 	};
 	const dispatch = useAppDispatch();
-	const [code, setCode] = useState<string>('');
-	console.log('this is code: ', code);
+	const [code, setCode] = useState<string>("");
+	console.log("this is code: ", code);
 	/*
 		1. when codeEditor component load fetch all the boilerplate details along with there language
 		2. Embed all details to corresponding boiler plate.
 		2. make a boilerPlate state variable and setBoiler plate action function.
 		3. setBoiler plate according to selectedLanguage 
 	*/
-	
+
 	useEffect(() => {
 		dispatch(setBoilerPlateCode(language));
-	}, [language])
+	}, [language]);
 
 	return (
 		<Editor
@@ -73,28 +70,26 @@ export const CodeEditor = () => {
 	);
 };
 
-
-
 // console.log("current theme: ", theme);
 
-	// useEffect(() => {
-	// 	if (!monaco) return;
-	// 	monaco.editor.defineTheme("OneDarkPro", {
-	// 		base: "vs-dark",
-	// 		inherit: true,
-	// 		...OneDarkPro,
-	// 	});
-	// 	monaco.editor.defineTheme("GitHub-Dark", {
-	// 		base: "vs-dark",
-	// 		inherit: true,
-	// 		...GitHubDark,
-	// 	});
-	// 	monaco.editor.defineTheme("Vs-Light", {
-	// 		base: "vs",
-	// 		inherit: true,
-	// 		...VsLight,
-	// 	});
-	// 	// monaco.editor.setTheme(theme);
+// useEffect(() => {
+// 	if (!monaco) return;
+// 	monaco.editor.defineTheme("OneDarkPro", {
+// 		base: "vs-dark",
+// 		inherit: true,
+// 		...OneDarkPro,
+// 	});
+// 	monaco.editor.defineTheme("GitHub-Dark", {
+// 		base: "vs-dark",
+// 		inherit: true,
+// 		...GitHubDark,
+// 	});
+// 	monaco.editor.defineTheme("Vs-Light", {
+// 		base: "vs",
+// 		inherit: true,
+// 		...VsLight,
+// 	});
+// 	// monaco.editor.setTheme(theme);
 
-	// 	console.log("here...");
-	// }, [theme]);
+// 	console.log("here...");
+// }, [theme]);

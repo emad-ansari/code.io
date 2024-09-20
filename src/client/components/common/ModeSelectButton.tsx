@@ -19,7 +19,7 @@ export const ModeSelectButton = memo(({ menuType, ITEMS_ARRAY, isMenuOpen, selec
 
 		return (
 			<Button
-				classname="relative flex flex-row items-center gap-2 bg-gray-700 text-white z-30 rounded-md"
+				classname="relative flex flex-row items-center gap-2 bg-gray-800 text-white z-30 rounded-md"
 				onClick={() =>
 					dispatch(setOpenDropDownMenu({ menu: menuType }))
 				}

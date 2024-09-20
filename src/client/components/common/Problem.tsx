@@ -11,7 +11,7 @@ interface ProblemProps  {
     problemNo: number
 }
 
-export const Problem = ({id, title, status, difficulty, problemNo}: ProblemProps) => {
+export const Problem = ({ id,  title, status, difficulty, problemNo}: ProblemProps) => {
     const navigate = useNavigate();
 
     return (
@@ -21,7 +21,7 @@ export const Problem = ({id, title, status, difficulty, problemNo}: ProblemProps
             </div>
             <div
                 className="flex flex-1 justify-start items-center text-white gap-2"
-                onClick={() => navigate (`../../problem/${title}/description`)} 
+                onClick={() => navigate (`../../problem/${id}/description`)} 
             >
                 <span>{problemNo}.</span>
                 <span>{title}</span>
