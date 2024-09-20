@@ -1,5 +1,5 @@
 import prisma from "./index";
-import { Problem } from "../@utils/types";
+import { Problem, ProblemWithDescription } from "../@utils/types";
 
 export async function createProblem(
 	title: string,
@@ -160,4 +160,134 @@ export async function createProblemStatus(problemId: string) {
 		});
 
 	} catch (error: any) {}
+}
+
+
+export async function getProblemDetailWithStatus( userId: string, problemId: string): Promise<{success: boolean, problemDetail?: ProblemWithDescription, msg: string}>{
+	try {
+		console.log(userId)
+		const result = await prisma.problemStatus.findFirst({
+			where: {
+				userId,
+				problemId
+			},
+			select: {
+				status: true,
+				problem: {
+					select: {
+						id: true,
+						title: true,
+						description: true,
+						difficulty: true,
+						problemNo: true
+					}
+				}
+			}
+		})
+		if (result){
+			const testcaseExamples = await getTestCaseExample(problemId);
+			if (!testcaseExamples){
+				return {
+					success: false,
+					msg: "Test case not found"
+				}
+			}
+			console.log('testcases: ', testcaseExamples);	
+			const problemDetails: ProblemWithDescription = { ...result, testcaseExamples}
+			return {
+				success: true,
+				problemDetail: problemDetails,
+				msg: ""
+			}
+		}
+		// console.log('problem details: ', problemDetail)
+		return {
+			success: false,
+			msg: "problem not found"
+		}
+
+	}
+	catch(error: any){
+		console.log(error.message);
+		return {
+			success: false,
+			msg: error.message
+		}
+	}
+
+}
+
+export async function getProblemDetailWithoutStatus(problemId: string){
+	// i have to also send the testcases 
+	try{
+		const result = await prisma.problem.findFirst({
+			where: {
+				id: problemId
+			},
+			select: {
+				id: true,
+				title: true,
+				description: true,
+				difficulty: true,
+				problemNo: true
+			}
+		})
+		if (result){
+			// find the testcase
+			const testcaseExamples = await getTestCaseExample(problemId);
+			if (!testcaseExamples){
+				return {
+					success: false,
+					msg: "Test case not found"
+				}
+			}
+			console.log('testcases: ', testcaseExamples);
+			const problemDetail: ProblemWithDescription = {status: "", problem: {...result}, testcaseExamples }
+			return {
+				success: true,
+				problemDetail,
+				msg: ""
+			}
+		}
+		return {
+			success: false,
+			msg: "Problem Not found"
+		}
+
+	}	
+	catch(error: any){
+		return {
+			success: false,
+			msg: error.message
+		}
+	}
+}
+
+async function getTestCaseExample(problemId: string){
+	try {
+		const testcaseExamples = await prisma.testCase.findMany({
+			where: {
+				problemId
+			},
+			take: 3,
+			select: {
+				id: true,
+				inputs: {
+					select: {
+						name: true,
+						value: true
+					}
+				},
+				output: {
+					select: {
+						value: true
+					}
+				}
+			}
+		})
+		return testcaseExamples;
+	}
+	catch(error: any){
+
+	}
 }

@@ -91,3 +91,18 @@ export interface Problem {
 		problemNo: number;
 	}
 }
+export interface ProblemWithDescription extends Problem {
+	problem: Problem['problem'] & { 
+		description: string; 
+	};
+	testcaseExamples: {
+		id: string;
+		inputs: {
+			name: string;
+			value: string
+		}[],
+		output: {
+			value: string
+		} | null
+	}[]
+}

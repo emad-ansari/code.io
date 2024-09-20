@@ -6,32 +6,32 @@ import auth, { CustomRequestObject } from "../middleware/auth";
 import { GenerateFullProblemDefinition } from '../lib/generateFullProblemDefinition'
 import { getAllTestcases } from "../db/testcase";
 import { ProblemSubmissionData, TestCaseReturnType, Problem } from "../@utils/types";
-import { getProblemsWithStatus, getProblemsWithoutStatus } from "../db/problem";
+import { getProblemDetailWithStatus, getProblemDetailWithoutStatus, getProblemsWithStatus, getProblemsWithoutStatus } from "../db/problem";
 
 
-router.get("/", (req: Request, res: Response) => {
-	console.log("request reach here");
-	const q = req.query;
-	const pageNumber = Number(q.page);
-	const pageSize = Number(q.pageSize);
-	const difficultyLevel = String(q.difficultyLevel);
-	console.log(difficultyLevel);
-	const startIndex = (pageNumber - 1) * pageSize;
-	let problemsSet = problems;
+// router.get("/", (req: Request, res: Response) => {
+// 	console.log("request reach here");
+// 	const q = req.query;
+// 	const pageNumber = Number(q.page);
+// 	const pageSize = Number(q.pageSize);
+// 	const difficultyLevel = String(q.difficultyLevel);
+// 	console.log(difficultyLevel);
+// 	const startIndex = (pageNumber - 1) * pageSize;
+// 	let problemsSet = problems;
 
-	if (difficultyLevel !== "") {
-		problemsSet = problemsSet.filter(
-			(problem) => problem.difficultyLevel === difficultyLevel
-		);
-	}
-	const endIndex = Math.min(pageNumber * pageSize, problemsSet.length);
-	const newProblemSet = problemsSet.slice(startIndex, endIndex);
-	const totalPages = Math.ceil(problemsSet.length / pageSize);
+// 	if (difficultyLevel !== "") {
+// 		problemsSet = problemsSet.filter(
+// 			(problem) => problem.difficultyLevel === difficultyLevel
+// 		);
+// 	}
+// 	const endIndex = Math.min(pageNumber * pageSize, problemsSet.length);
+// 	const newProblemSet = problemsSet.slice(startIndex, endIndex);
+// 	const totalPages = Math.ceil(problemsSet.length / pageSize);
 
-	return res
-		.status(200)
-		.json({ message: "success", data: newProblemSet, totalPages });
-});
+// 	return res
+// 		.status(200)
+// 		.json({ message: "success", data: newProblemSet, totalPages });
+// });
 
 
 
@@ -43,14 +43,12 @@ router.get("/filter-problem", auth, async (req: Request, res: Response) => {
 	const pageSize = Number(query.pageSize);
 	const difficulty = String(query.difficulty);
 	const status = String(query.status);
-	console.log('check user authoriztion: ', userAuthorized);
-	console.log('difficulty data on backend: ', difficulty);
 
 	try {
 		
 		const startIndex = (pageNumber - 1) * pageSize;
 		if (userAuthorized){
-			console.log('inside authorization')
+
 			const { userId } = req as CustomRequestObject;
 			const problemsWithStatus = await getProblemsWithStatus(userId);
 			if (!problemsWithStatus.success){
@@ -67,13 +65,11 @@ router.get("/filter-problem", auth, async (req: Request, res: Response) => {
 			else if (difficulty !== "" && status === ""){
 				// means there is  no status but difficulty
 				problems = problems.filter(p => p.problem.difficulty === difficulty );
-				console.log('problem after filter: ', problems);
 			}
 			else if (difficulty === "" && status !== ""){
 				problems = problems.filter(p => p.status === status)
 			}
-			// 
-			console.log(problems)
+
 			const endIndex = Math.min(pageNumber * pageSize, problems.length);
 			const problemSet = problems.slice(startIndex, endIndex);
 			const totalPages = Math.ceil(problems.length / pageSize);
@@ -215,6 +211,62 @@ interface SubmissionsResult {
 	stdout: string,
 	compile_output: string | null,
 }
+
+router.get('/get-problem-details/:problemId', auth, async(req: Request, res: Response) => {
+	// const { problemId } = req.body.data;
+	const { problemId } = req.params;
+	console.log('prolbem Id: ', problemId);
+	
+	const { userAuthorized } = req as CustomRequestObject;
+	if (problemId === undefined){
+		return ;
+	}
+
+	try {
+		if (userAuthorized){
+			// send with problem status
+			const { userId } = req as CustomRequestObject;
+			const result = await getProblemDetailWithStatus( userId, problemId)
+			if (!result.success){
+				return res.json({ message: "error", err: result.msg});
+			}
+			return res.json({ message: "success", problemDetails: result.problemDetail})
+		}
+		else {
+			// send with empty status if user is not authorized
+			const result  = await getProblemDetailWithoutStatus(problemId);
+			if (!result.success){
+				return res.json({ message: "error", err: result.msg});
+			}
+			return res.json({ message: "success", problemDetails: result.problemDetail})
+		}
+	}
+	catch(error: any){
+		console.log(error.message)
+		return res.json({ message: error.message});
+	}
+})
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 export default router;
 

@@ -30,6 +30,7 @@ const auth = async(req: Request, res: Response, next: NextFunction) =>  {
                 (req as CustomRequestObject).userAuthorized = true;
                 (req as CustomRequestObject).userId = payload.userId;
                 (req as CustomRequestObject).role = payload.role;
+                console.log('hi there.....')
                 next();
             });
         }
