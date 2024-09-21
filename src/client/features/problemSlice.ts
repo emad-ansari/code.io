@@ -4,7 +4,6 @@ import {
 	ApiResponse,
 	getProblemParameter,
 	ServerProblem,
-	ProblemDetail,
 } from "../types";
 import { client } from "../api/client";
 import { RootState } from "../app/store";
@@ -43,7 +42,7 @@ export const getProblems = createAsyncThunk(
 	) => {
 		const store = ThunkAPI.getState() as RootState;
 		const { pageSize } = store.problem;
-		console.log("difficulty", difficulty);
+		
 
 		try {
 			const res = await client.get<ApiResponse<ServerProblem[]>>(
@@ -80,7 +79,6 @@ export const getSpecificProblemDetails = createAsyncThunk(
 			const res = await client.get(
 				`/problem/get-problem-details/${problemId}`
 			);
-			console.log(res.data);
 			const data = res.data;
 			return data;
 		} catch (error: any) {
@@ -104,7 +102,6 @@ export const problemSlice = createSlice({
 		builder.addCase(getProblems.fulfilled, (state, action) => {
 			const { message, data, totalPages } = action.payload;
 			state.problems = data;
-			console.log(message);
 			state.numberOfPages = totalPages;
 		});
 		builder.addCase(getProblems.rejected, (_, action) => {
@@ -120,7 +117,6 @@ export const problemSlice = createSlice({
 				if (message === "success") {
 					state.problemDetail = action.payload.problemDetails;
 				}
-				console.log("fullfilled :", action.payload);
 			}
 		);
 		builder.addCase(getSpecificProblemDetails.rejected, (_, action) => {

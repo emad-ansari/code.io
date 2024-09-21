@@ -1,10 +1,13 @@
 import { Editor, Monaco } from "@monaco-editor/react";
 // import * as monaco from "monaco-editor";
 import { useSelector } from "react-redux";
-import { setBoilerPlateCode } from "../../features/editorSlice";
+import { LNAGUAGE_MAPPING } from "./EditorSection";
+
 import { RootState, useAppDispatch } from "../../app/store";
 import OneDarkPro from "../../theme/oneDarkPro.json";
 import { useEffect, useState } from "react";
+import { getDefaultCode } from "@/client/features/editorSlice";
+import { useParams } from "react-router-dom";
 
 export const CodeEditor = () => {
 	const { language, boilerPlateCode } = useSelector(
@@ -21,23 +24,28 @@ export const CodeEditor = () => {
 	};
 	const dispatch = useAppDispatch();
 	const [code, setCode] = useState<string>("");
-	console.log("this is code: ", code);
+	
+	console.log('this is boiler plate code: ', boilerPlateCode)
+	console.log('language: ', language)
+
 	/*
 		1. when codeEditor component load fetch all the boilerplate details along with there language
 		2. Embed all details to corresponding boiler plate.
 		2. make a boilerPlate state variable and setBoiler plate action function.
 		3. setBoiler plate according to selectedLanguage 
 	*/
-
+	const { id } = useParams()
 	useEffect(() => {
-		dispatch(setBoilerPlateCode(language));
-	}, [language]);
-
+		if (id){
+			dispatch(getDefaultCode({problemId: id, languageId: LNAGUAGE_MAPPING[`${language}`].languageId}));
+		}
+	}, []);
+	console.log("this is code: ", code);
 	return (
 		<Editor
 			height="100%"
-			// defaultLanguage="javascript"
-			// defaultValue={boilerPlateCode}
+			// defaultLanguage="java"
+			defaultValue={boilerPlateCode}
 			theme={"OneDarkPro"}
 			language={language}
 			value={boilerPlateCode}

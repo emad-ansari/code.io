@@ -13,7 +13,7 @@ export const HomePage = () => {
                 <div className = 'pt-20 flex flex-col items-center gap-20'>
                     <p className =  " w-[710px] font-fugaz  text-white text-[38px] text-center tracking-[3.20px] leading-[normal]">Master Coding Challenges and Enhance Problem-Solving Skills with Code.In</p>
                     <Button 
-                        classname="w-[60%] h-12 text-white bg-[#0D1621] font-semibold  hover:bg-[#1e293b] rounded-full flex  justify-center gap-5 shadow-md text-justify border-[]"
+                        classname="w-[60%] h-12 text-white  font-semibold  hover:bg-darkGray rounded-full flex justify-center gap-5 shadow-md text-justify border border-[#334155]"
                         onClick = {() => navigate('/signup')}
                     >
                         <span className="flex text-justify ">Create an account</span>

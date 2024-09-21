@@ -85,7 +85,7 @@ export function ProblemStatement() {
 						)}
 					</div>
 				</div>
-				<span className="text-justify">{problem.description}</span>
+				<span className="text-justify text-gray-400">{problem.description}</span>
 			</div>
 			<div className="flex flex-col gap-8 ">
 				{testcaseExamples.map((testcase, index) => {

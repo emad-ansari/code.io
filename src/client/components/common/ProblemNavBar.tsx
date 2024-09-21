@@ -34,7 +34,7 @@ export const ProblemNavBar = ({
 						<NavLink
 							to={"/problemset/"}
 							className={({ isActive }) =>
-								`text-sm font-dmMono  px-4 py-2 rounded-full  hover:bg-hover ${
+								`text-sm font-dmMono  px-4 py-2 rounded-full  hover:bg-gray-800 ${
 									isActive ? "bg-hover" : ""
 								}`
 							}
@@ -45,7 +45,7 @@ export const ProblemNavBar = ({
 						<NavLink
 							to={"contests"}
 							className={({ isActive }) =>
-								`text-sm font-dmMono  px-4 py-2 rounded-full  hover:bg-hover ${
+								`text-sm font-dmMono  px-4 py-2 rounded-full  hover:bg-gray-800 ${
 									isActive ? "bg-hover" : ""
 								}`
 							}
@@ -56,7 +56,7 @@ export const ProblemNavBar = ({
 						<NavLink
 							to={"standings"}
 							className={({ isActive }) =>
-								`text-sm font-dmMono  px-4 py-2 rounded-full  hover:bg-hover ${
+								`text-sm font-dmMono  px-4 py-2 rounded-full  hover:bg-gray-800 ${
 									isActive ? "bg-hover" : ""
 								}`
 							}
@@ -66,7 +66,7 @@ export const ProblemNavBar = ({
 						<NavLink
 							to={"/contribution"}
 							className={({ isActive }) =>
-								`text-sm font-dmMono  px-4 py-2 rounded-full  hover:bg-hover ${
+								`text-sm font-dmMono  px-4 py-2 rounded-full  hover:bg-gray-800 ${
 									isActive ? "bg-hover" : ""
 								}`
 							}
@@ -78,7 +78,7 @@ export const ProblemNavBar = ({
 				{!isLogin ? (
 					<div className="flex flex-1 justify-end pr-5">
 						<div className="flex gap-3 items-center">
-							<MdOutlineNightlightRound className="bg-gray-800  w-10 h-10 rounded-full px-3 py-3 cursor-pointer" />
+							<MdOutlineNightlightRound className="hover:bg-gray-800 w-10 h-10 rounded-full px-3 py-3 cursor-pointer border border-[#334155]" />
 							<Button
 								variant="ghost"
 								className=" hover:bg-darkGray  hover:text-white  border border-[#334155]"
