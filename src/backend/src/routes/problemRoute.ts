@@ -1,41 +1,14 @@
 import { Request, Router, Response } from "express";
 const router = Router();
-import { problems } from "../../problem";
 import axios from "axios";
 import auth, { CustomRequestObject } from "../middleware/auth";
 import { GenerateFullProblemDefinition } from '../lib/generateFullProblemDefinition'
 import { getAllTestcases } from "../db/testcase";
 import { ProblemSubmissionData, TestCaseReturnType, Problem } from "../@utils/types";
 import { getProblemDetailWithStatus, getProblemDetailWithoutStatus, getProblemsWithStatus, getProblemsWithoutStatus } from "../db/problem";
+import prisma from "../db";
 
 
-// router.get("/", (req: Request, res: Response) => {
-// 	console.log("request reach here");
-// 	const q = req.query;
-// 	const pageNumber = Number(q.page);
-// 	const pageSize = Number(q.pageSize);
-// 	const difficultyLevel = String(q.difficultyLevel);
-// 	console.log(difficultyLevel);
-// 	const startIndex = (pageNumber - 1) * pageSize;
-// 	let problemsSet = problems;
-
-// 	if (difficultyLevel !== "") {
-// 		problemsSet = problemsSet.filter(
-// 			(problem) => problem.difficultyLevel === difficultyLevel
-// 		);
-// 	}
-// 	const endIndex = Math.min(pageNumber * pageSize, problemsSet.length);
-// 	const newProblemSet = problemsSet.slice(startIndex, endIndex);
-// 	const totalPages = Math.ceil(problemsSet.length / pageSize);
-
-// 	return res
-// 		.status(200)
-// 		.json({ message: "success", data: newProblemSet, totalPages });
-// });
-
-
-
-// filter the problem based on action type {difficulty, status}
 router.get("/filter-problem", auth, async (req: Request, res: Response) => {
 	const { userAuthorized } = req as CustomRequestObject;
 	const query  = req.query;
@@ -215,7 +188,6 @@ interface SubmissionsResult {
 router.get('/get-problem-details/:problemId', auth, async(req: Request, res: Response) => {
 	// const { problemId } = req.body.data;
 	const { problemId } = req.params;
-	console.log('prolbem Id: ', problemId);
 	
 	const { userAuthorized } = req as CustomRequestObject;
 	if (problemId === undefined){
@@ -251,21 +223,30 @@ router.get('/get-problem-details/:problemId', auth, async(req: Request, res: Res
 
 
 
+router.get('/default-code', async(req: Request, res: Response) => {
+	try {	
+		const query = req.query;
+		const problemId = String(query.problemId)
 
+		const langId = Number(query.languageId);
+		console.log(langId, problemId);
+		const result = await prisma.defaultCode.findFirst({
+			where: {
+				problemId,
+				languageId: langId
+			},
+			select: {
+				code: true
+			}
+		})
+		return res.json({ message: "success", defaultCode: result?.code})
 
-
-
-
-
-
-
-
-
-
-
-
-
-
+	}
+	catch(error: any){
+		console.log(error);
+		return res.json({ message: "error"})
+	}
+}) 
 
 
 export default router;

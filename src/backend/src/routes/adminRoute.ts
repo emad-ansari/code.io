@@ -90,11 +90,11 @@ router.get("/new-testcases", async (req: Request, res: Response) => {
 const LNAGUAGE_MAPPING: {
 	[key: string]: { name: string; languageId: number };
 } = {
-	js: { name: "javascript", languageId: 1 },
-	cpp: { name: "cpp", languageId: 2 },
-	typescript: { name: "typescript", languageId: 3 },
-	java: { name: "java", languageId: 4 },
-	python: { name: "python", languageId: 5 },
+	js: { name: "javascript", languageId: 63 },
+	cpp: { name: "cpp", languageId: 10 },
+	typescript: { name: "typescript", languageId: 74 },
+	java: { name: "java", languageId: 62 },
+	python: { name: "python", languageId: 71 },
 };
 
 
