@@ -24,9 +24,10 @@ export const problemSliceInitialState: ProblemState = {
 		},
 		testcaseExamples: [
 			{
-				id: "",
-				inputs: [{ name: "", value: "" }],
+				title: "",
+				inputs: [{type: "",  name: "", value: "" }],
 				output: {
+					type: "",
 					value: "",
 				},
 			},

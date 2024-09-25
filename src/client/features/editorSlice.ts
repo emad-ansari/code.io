@@ -7,23 +7,42 @@ export const editorSliceInitialState: EditorState = {
 	isFullScreen: false,
 	language: "java",
 	boilerPlateCode: "",
+	code: ""
 };
 
 
 interface DefaultCodeProps {
 	problemId: string;
 	languageId: number;
+	code?: string;
 }
 export const getDefaultCode = createAsyncThunk("/editor/getDefaultCode", async ({problemId, languageId}: DefaultCodeProps, _) => {
 	try {
-		console.log('this is langugage id: ',  languageId)
 		const res = await client.get('/problem/default-code', {
 			params: {
 				problemId,
 				languageId
 			}
 		})
-		console.log('default code: ', res.data);
+		return res.data;
+	}
+	catch(error: any){
+		console.log(error.message);
+	}
+})
+
+
+export const runCode = createAsyncThunk("/editor/runCode", async ({problemId, languageId, code}: DefaultCodeProps, _) => {
+	try {
+		const res = await client.get('/problem/evaluate-code', {
+			data: {
+				problemId,
+				languageId,
+				code: code
+
+			}
+		})
+		console.log(res.data);
 		return res.data;
 	}
 	catch(error: any){
@@ -42,6 +61,10 @@ export const editorSlice = createSlice({
 		toggleFullScreen: (state, action: PayloadAction<boolean>) => {
 			state.isFullScreen = action.payload;
 		},
+		setCode: (state, action: PayloadAction<string>) => {
+			state.code = action.payload;
+		},
+		
 	},
 	extraReducers: (builder) => {
 		builder.addCase(getDefaultCode.pending , (_, action) => {
@@ -64,4 +87,4 @@ export const editorSlice = createSlice({
 });
 
 export default editorSlice.reducer;
-export const { setLanguage, toggleFullScreen } = editorSlice.actions;
+export const { setLanguage, toggleFullScreen, setCode } = editorSlice.actions;

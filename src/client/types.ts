@@ -22,6 +22,7 @@ export interface EditorState {
 	language: string;
 	isFullScreen: boolean;
 	boilerPlateCode: string;
+	code: string;
 }
 
 export interface ServerProblem {
@@ -39,17 +40,19 @@ export interface ProblemDetail extends ServerProblem  {
 		description: string; 
 	},
 	testcaseExamples :{
-		id: string;
+		title: string,
 		inputs: Input[],
 		output: Output | null
 	}[]
 }
 export interface Input {
+	type: string;
 	name: string;
 	value: string
 }
 export interface Output {
-	value: string
+	value: string,
+	type: string;
 }
 
 
@@ -115,3 +118,8 @@ export const typeOptions: string[] = [
 	"List<String>",
 	"List<List<String>>",
 ];
+
+
+interface CodeRunProps {
+	
+}

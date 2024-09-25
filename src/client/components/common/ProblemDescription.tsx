@@ -91,7 +91,7 @@ export function ProblemStatement() {
 				{testcaseExamples.map((testcase, index) => {
 					return (
 						<TestCaseExample
-							key={testcase.id}
+							key={index}
 							testCaseNumber={index}
 							inputs={testcase.inputs}
 							output={testcase.output}

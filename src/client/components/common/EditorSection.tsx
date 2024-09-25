@@ -16,9 +16,10 @@ import { useSelector } from "react-redux";
 import { RootState, useAppDispatch } from "../../app/store";
 import { setOpenDropDownMenu } from "../../features/dropDownSlice";
 import {
-	toggleFullScreen,	
+	toggleFullScreen,
 	getDefaultCode,
 	setLanguage,
+	runCode
 } from "../../features/editorSlice";
 import Split from "react-split";
 import { setIsOpen } from "../../features/editorSettingSlice";
@@ -30,14 +31,16 @@ import {
 } from "../ui/tooltip";
 import { useParams } from "react-router-dom";
 
-const LANGUAGES = ["java", "cpp", "typescript", "javascript", "go", "rust", ];
+const LANGUAGES = ["java", "cpp", "typescript", "javascript", "go", "rust"];
 
 export const EditorSection = () => {
 	const dispatch = useAppDispatch();
+	const { id } = useParams();
 	const { isLanguageMenuOpen, isThemeMenuOpen } = useSelector(
 		(state: RootState) => state.dropdown
 	);
 	const { isOpen } = useSelector((state: RootState) => state.setting);
+	const { language, code } = useSelector((state: RootState) => state.editor);
 
 	const handleOpenDropDown = () => {
 		if (isLanguageMenuOpen) {
@@ -107,6 +110,21 @@ export const EditorSection = () => {
 										<Button
 											disabled={isLogin ? false : true}
 											classname=" text-white justify-center flex items-center rounded-md w-20 border border-[#334155]"
+											onClick={() => {
+												if(!id){
+													return;
+												}
+												dispatch(
+													runCode({
+														problemId: id,
+														languageId:
+															LNAGUAGE_MAPPING[
+																`${language}`
+															].languageId,
+														code: code,
+													})
+												);
+											}}
 										>
 											Run
 										</Button>
@@ -205,10 +223,15 @@ function EditorTopBar() {
 								key={index}
 								className="text-white font-normal hover:bg-gray-800 flex  items-center px-2 py-2 w-[90%] rounded-md h-full justify-between"
 								onClick={() => {
-									if (id){
-										dispatch(setLanguage(item))
+									if (id) {
+										dispatch(setLanguage(item));
 										dispatch(
-											getDefaultCode({ problemId: id, languageId: LNAGUAGE_MAPPING[`${item}`].languageId })
+											getDefaultCode({
+												problemId: id,
+												languageId:
+													LNAGUAGE_MAPPING[`${item}`]
+														.languageId,
+											})
 										);
 									}
 								}}

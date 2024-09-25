@@ -6,7 +6,7 @@ import { LNAGUAGE_MAPPING } from "./EditorSection";
 import { RootState, useAppDispatch } from "../../app/store";
 import OneDarkPro from "../../theme/oneDarkPro.json";
 import { useEffect, useState } from "react";
-import { getDefaultCode } from "@/client/features/editorSlice";
+import { getDefaultCode, setCode } from "@/client/features/editorSlice";
 import { useParams } from "react-router-dom";
 
 export const CodeEditor = () => {
@@ -23,10 +23,10 @@ export const CodeEditor = () => {
 		});
 	};
 	const dispatch = useAppDispatch();
-	const [code, setCode] = useState<string>("");
 	
-	console.log('this is boiler plate code: ', boilerPlateCode)
-	console.log('language: ', language)
+
+	
+
 
 	/*
 		1. when codeEditor component load fetch all the boilerplate details along with there language
@@ -40,11 +40,11 @@ export const CodeEditor = () => {
 			dispatch(getDefaultCode({problemId: id, languageId: LNAGUAGE_MAPPING[`${language}`].languageId}));
 		}
 	}, []);
-	console.log("this is code: ", code);
+
 	return (
 		<Editor
 			height="100%"
-			// defaultLanguage="java"
+			defaultLanguage="java"
 			defaultValue={boilerPlateCode}
 			theme={"OneDarkPro"}
 			language={language}
@@ -73,7 +73,7 @@ export const CodeEditor = () => {
 			}}
 			beforeMount={handleEditorDidMount}
 			className="rounded-lg"
-			onChange={(value) => setCode(value!)}
+			onChange={(value) => dispatch(setCode(value!))}
 		/>
 	);
 };
