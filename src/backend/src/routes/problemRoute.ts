@@ -5,12 +5,13 @@ import auth, { CustomRequestObject } from "../middleware/auth";
 import { GenerateFullProblemDefinition } from '../lib/generateFullProblemDefinition'
 import { getAllTestcases } from "../db/testcase";
 import { ProblemSubmissionData, TestCaseReturnType, Problem } from "../@utils/types";
-import { getProblemDetailWithStatus, getProblemDetailWithoutStatus, getProblemsWithStatus, getProblemsWithoutStatus } from "../db/problem";
+import { getProblemDetailWithStatus, getProblemDetailWithoutStatus, getProblemsWithStatus, getProblemsWithoutStatus, getTestCaseExample } from "../db/problem";
 import prisma from "../db";
 
 
 router.get("/filter-problem", auth, async (req: Request, res: Response) => {
 	const { userAuthorized } = req as CustomRequestObject;
+	console.log('control reaches here...');
 	const query  = req.query;
 	const pageNumber  = Number(query.pageNumber);
 	const pageSize = Number(query.pageSize);
@@ -72,16 +73,19 @@ router.get("/filter-problem", auth, async (req: Request, res: Response) => {
 	}
 });
 
+const JUDGE0_API_URL  =`${process.env.JUDGE0_API_URL}/submissions/batch`;
+const JUDGE0_API_KEY = process.env.JUDGE0_API_KEY;
+
 router.post("/submit-problem", auth, async (req: Request, res: Response) => {
 	const { userAuthorized, userId } = req as CustomRequestObject;
 
 
 	try {
-		// if (!userAuthorized) {
-		// 	return res
-		// 		.status(400)
-		// 		.json({ message: "your are not authorized, please login" });
-		// }
+		if (!userAuthorized) {
+			return res
+				.status(400)
+				.json({ message: "your are not authorized, please login" });
+		}
 		const parseUserSubmitCode = ProblemSubmissionData.safeParse(req.body);
 		if (!parseUserSubmitCode.success) {
 			return res.status(401).json({ error: parseUserSubmitCode.error });
@@ -117,8 +121,6 @@ router.post("/submit-problem", auth, async (req: Request, res: Response) => {
 		console.log('this is submission array: ', submissions);
 
 
-		const JUDGE0_API_URL  =`${process.env.JUDGE0_API_URL}/submissions/batch`;
-		const JUDGE0_API_KEY = process.env.JUDGE0_API_KEY;
 		// 4. make api call
 		const data = JSON.stringify(submissions);
 		const submissionsTokens = await axios.post(JUDGE0_API_URL ,{
@@ -169,6 +171,83 @@ router.post("/submit-problem", auth, async (req: Request, res: Response) => {
 	} catch (error: any) {}
 });
 
+router.post('/evaluate-code', auth, async(req: Request, res: Response) => {
+	const { userAuthorized } = req as CustomRequestObject;
+	try{
+		if (!userAuthorized) {
+			return res
+				.status(400)
+				.json({ message: "your are not authorized, please login" });
+		}
+		console.log('evalutation data: ', req.body.data);
+		const parseUserSubmitCode = ProblemSubmissionData.safeParse(req.body.data);
+		if (!parseUserSubmitCode.success) {
+			return res.status(401).json({ error: parseUserSubmitCode.error });
+		}
+		const { problemId, languageId, code } = parseUserSubmitCode.data;
+		// here get the first three testcases and run it on jude0
+		const testcaseExamples = await  getTestCaseExample(problemId);
+		// run these testcase exmaples
+		if (testcaseExamples !== undefined){
+			
+			const submissions: {
+				language_id: number;
+				source_code: string,
+				stdin: string,
+				expected_output: string
+			}[] = testcaseExamples.map((testcase:  TestCaseReturnType) => {  
+				const parser = new GenerateFullProblemDefinition
+				parser.parseTestCase(testcase);
+				//getProblem() --> { fullBoilerplate code, stdin, stdout, }
+				const problem = parser.getProblem(languageId, code);
+				
+				return {
+					language_id: languageId, // Java ID for Judge0
+					source_code: problem.fullBoilerplatecode,
+					stdin: problem.stdin,
+					expected_output: JSON.stringify(problem.stdout)
+				};
+			});
+			console.log('this is submission array: ', submissions);
+			// 4. make api call
+			const data = JSON.stringify(submissions);
+			const submissionsTokens = await axios.post(JUDGE0_API_URL ,{
+				data,
+				param: {
+					base64_encoded: false		
+				},
+
+			},	
+				{
+					headers: {
+						"Content-Type": "application/json",
+						"x-rapidapi-host": "judge0-ce.p.rapidapi.com",
+						"x-rapidapi-key": JUDGE0_API_KEY,
+					},
+				}
+			);
+
+			const tokens = submissionsTokens.data as CreateSubmissionApiReponse[];
+			// above response will return array of tokens so make a call to get the submissions result
+			const submissionResult = await axios.get(JUDGE0_API_URL, {
+				params: {
+					tokens: tokens.map((token: CreateSubmissionApiReponse) => {
+						return token
+					}).join(','),
+					base64_encoded: false,
+				}
+			})	
+			console.log('control reached....');
+			return res.status(200).json({result: submissionResult});
+		}
+
+	}
+	catch(error: any){
+		console.log(error);
+		return res.json({ err: "error while running program"})
+	}
+})
+
 interface CreateSubmissionApiReponse {
 	token: string
 }
@@ -186,7 +265,6 @@ interface SubmissionsResult {
 }
 
 router.get('/get-problem-details/:problemId', auth, async(req: Request, res: Response) => {
-	// const { problemId } = req.body.data;
 	const { problemId } = req.params;
 	
 	const { userAuthorized } = req as CustomRequestObject;
@@ -227,8 +305,8 @@ router.get('/default-code', async(req: Request, res: Response) => {
 	try {	
 		const query = req.query;
 		const problemId = String(query.problemId)
-
 		const langId = Number(query.languageId);
+
 		console.log(langId, problemId);
 		const result = await prisma.defaultCode.findFirst({
 			where: {
@@ -247,6 +325,7 @@ router.get('/default-code', async(req: Request, res: Response) => {
 		return res.json({ message: "error"})
 	}
 }) 
+
 
 
 export default router;
