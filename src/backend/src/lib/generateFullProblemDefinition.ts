@@ -10,7 +10,8 @@ export class GenerateFullProblemDefinition {
     parseTestCase(testcase: TestCaseReturnType){
         this.inputs = testcase.inputs;
         this.output = testcase.output !== null ? testcase.output : { type: "", value: ""};
-        this.functionName = testcase.title !== null ? testcase.title : "";
+        const title = testcase.title !== null ? testcase.title.replaceAll(" ", "").trim() : "";
+        this.functionName = title.charAt(0).toLowerCase() + title.slice(1);
     }
 
     getProblem(languageId: number, code: string):{ fullBoilerplatecode: string, stdin: string, stdout: string }{

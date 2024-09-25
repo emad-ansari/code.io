@@ -34,18 +34,18 @@ export class ParseProblemDetails {
 	extractProblemDetails(filePath: string) {
 		// Read the JSON file
 		const fileContent = fs.readFileSync(filePath, "utf-8");
-
 		const data = JSON.parse(fileContent);
 		this.id = data.id;
 		this.title = data.title || "";
 		this.description = data.description || "";
 		this.difficulty = data.difficulty || "";
-		this.functionName = data.title.replace(' ' ,'').trim() || "";
+		
 		this.returnType = data.returnType || "";
 		this.userId = data.userId;
 		this.parameters = data.parameters;
 		this.testcases = data.testcases;
-
+		const name: string  = data.title.replaceAll(" ", "").trim() || ""; 
+		this.functionName = name.charAt(0).toLowerCase() + name.slice(1);
 
 
 		return {
@@ -81,7 +81,7 @@ export class ParseProblemDetails {
 
 		return  `${this.mapTypeToCpp(this.returnType)} ${
 			this.functionName
-		}(${inputs}){\n\t // write your code here. \n}`;
+		}(${inputs}){\n\t //write your code here. \n}`;
 	}
 
 	getTypescriptBoilerplateCode(){
