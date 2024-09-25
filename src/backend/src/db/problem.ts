@@ -263,7 +263,7 @@ export async function getProblemDetailWithoutStatus(problemId: string){
 	}
 }
 
-async function getTestCaseExample(problemId: string){
+export async function getTestCaseExample(problemId: string){
 	try {
 		const testcaseExamples = await prisma.testCase.findMany({
 			where: {
@@ -271,15 +271,17 @@ async function getTestCaseExample(problemId: string){
 			},
 			take: 3,
 			select: {
-				id: true,
+				title: true,
 				inputs: {
 					select: {
+						type: true,
 						name: true,
 						value: true
 					}
 				},
 				output: {
 					select: {
+						type: true,
 						value: true
 					}
 				}
