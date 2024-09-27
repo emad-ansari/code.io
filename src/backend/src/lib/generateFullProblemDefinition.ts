@@ -23,7 +23,6 @@ export class GenerateFullProblemDefinition {
 
         }).join('\n')
         const stdout = this.output.value;
-        console.log('standard input: ', stdin);
         return {
             fullBoilerplatecode: fullBoilerplatecode.replace("__USER_CODE_HERE__", code),
             stdin,
@@ -42,11 +41,11 @@ export class GenerateFullProblemDefinition {
 
 
         if (this.output.type == "void"){
-            functionCall = `${this.functionName}(${argument})`
+            functionCall = `${this.functionName}(${argument});`
         }
         else {
-            functionCall = `${this.output.type} result =  ${this.functionName}(${argument})`
-            outputWrite = "System.out.println(result);"
+            functionCall = `${this.output.type} result =  ${this.functionName}(${argument});`
+            outputWrite = "System.out.print(result);"
         }
 
         const inputRead = `
@@ -145,7 +144,6 @@ export class GenerateFullProblemDefinition {
         return 's -> s'; // Default to String
     }
     getScannerMethod(type: string) {
-        console.log("java Type: ", type);
         if (type === 'int') return 'nextInt()';
         if (type === 'boolean') return 'nextBoolean()';
         if (type === 'char') return 'next().charAt(0)';
