@@ -165,7 +165,7 @@ export async function createProblemStatus(problemId: string) {
 
 export async function getProblemDetailWithStatus( userId: string, problemId: string): Promise<{success: boolean, problemDetail?: ProblemWithDescription, msg: string}>{
 	try {
-		console.log(userId)
+		
 		const result = await prisma.problemStatus.findFirst({
 			where: {
 				userId,
@@ -192,7 +192,6 @@ export async function getProblemDetailWithStatus( userId: string, problemId: str
 					msg: "Test case not found"
 				}
 			}
-			console.log('testcases: ', testcaseExamples);	
 			const problemDetails: ProblemWithDescription = { ...result, testcaseExamples}
 			return {
 				success: true,
@@ -200,7 +199,7 @@ export async function getProblemDetailWithStatus( userId: string, problemId: str
 				msg: ""
 			}
 		}
-		// console.log('problem details: ', problemDetail)
+
 		return {
 			success: false,
 			msg: "problem not found"
@@ -241,7 +240,6 @@ export async function getProblemDetailWithoutStatus(problemId: string){
 					msg: "Test case not found"
 				}
 			}
-			console.log('testcases: ', testcaseExamples);
 			const problemDetail: ProblemWithDescription = {status: "", problem: {...result}, testcaseExamples }
 			return {
 				success: true,
