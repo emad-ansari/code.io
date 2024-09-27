@@ -3,7 +3,7 @@ import { SettingState } from '../types'
 
 export const  settingInitialState: SettingState = {
     isOpen: false, 
-    fontSize: 14,
+    fontSize: 15,
     theme: 'vs-dark',
     isFullScreen: false
 }
