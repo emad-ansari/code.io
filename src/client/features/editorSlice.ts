@@ -34,7 +34,7 @@ export const getDefaultCode = createAsyncThunk("/editor/getDefaultCode", async (
 
 export const runCode = createAsyncThunk("/editor/runCode", async ({problemId, languageId, code}: DefaultCodeProps, _) => {
 	try {
-		const res = await client.get('/problem/evaluate-code', {
+		const res = await client.post('/problem/evaluate-code', {
 			data: {
 				problemId,
 				languageId,
@@ -42,7 +42,7 @@ export const runCode = createAsyncThunk("/editor/runCode", async ({problemId, la
 
 			}
 		})
-		console.log(res.data);
+		console.log('Result of evaluation: ', res.data);
 		return res.data;
 	}
 	catch(error: any){
