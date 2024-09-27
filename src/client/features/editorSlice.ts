@@ -1,5 +1,5 @@
 import { createAsyncThunk, createSlice, PayloadAction } from "@reduxjs/toolkit";
-import { EditorState } from "../types";
+import { EditorState, CodeExecutionResponse } from "../types";
 
 import { client } from "../api/client";
 
@@ -7,7 +7,10 @@ export const editorSliceInitialState: EditorState = {
 	isFullScreen: false,
 	language: "java",
 	boilerPlateCode: "",
-	code: ""
+	code: "",
+	execution_result: null,
+	error: null,
+	loading: false
 };
 
 
@@ -32,14 +35,13 @@ export const getDefaultCode = createAsyncThunk("/editor/getDefaultCode", async (
 })
 
 
-export const runCode = createAsyncThunk("/editor/runCode", async ({problemId, languageId, code}: DefaultCodeProps, _) => {
+export const runCode = createAsyncThunk<CodeExecutionResponse, DefaultCodeProps>("/editor/runCode", async ({problemId, languageId, code}: DefaultCodeProps, thunkAPI) => {
 	try {
 		const res = await client.post('/problem/evaluate-code', {
 			data: {
 				problemId,
 				languageId,
 				code: code
-
 			}
 		})
 		console.log('Result of evaluation: ', res.data);
@@ -47,9 +49,9 @@ export const runCode = createAsyncThunk("/editor/runCode", async ({problemId, la
 	}
 	catch(error: any){
 		console.log(error.message);
+		return thunkAPI.rejectWithValue(error.message);
 	}
 })
-
 
 export const editorSlice = createSlice({
 	name: "editor",
@@ -81,6 +83,20 @@ export const editorSlice = createSlice({
 		})
 		builder.addCase(getDefaultCode.rejected , (_, action) => {
 			console.log(action.payload);
+		})
+		builder.addCase(runCode.pending , (state) => {
+			state.loading = true;
+		})
+		builder.addCase(runCode.fulfilled , (state, action) => {
+			const { success, data } = action.payload;
+			if (success){
+				state.execution_result = data;
+				state.loading = false;
+			}
+		})
+		builder.addCase(runCode.rejected , (state, action) => {
+			state.loading = false;
+			state.error = action.error.message
 		})
 	}
 	
