@@ -2,14 +2,14 @@ export interface ProblemState {
 	problems: ServerProblem[];
 	pageSize: number;
 	numberOfPages: number;
-	problemDetail: ProblemDetail
+	problemDetail: ProblemDetail;
 	error: any;
 }
 export interface SettingState {
 	isOpen: boolean;
 	theme: string;
 	fontSize: number;
-	isFullScreen: boolean
+	isFullScreen: boolean;
 }
 export interface DropDownType {
 	isStatusMenuOpen: boolean;
@@ -23,38 +23,40 @@ export interface EditorState {
 	isFullScreen: boolean;
 	boilerPlateCode: string;
 	code: string;
+	execution_result: ExecutionResult | null
+	loading: boolean;
+	error: string | null | undefined
 }
 
 export interface ServerProblem {
 	status: string;
-	problem: Problem
+	problem: Problem;
 }
-export interface  Problem {
+export interface Problem {
 	id: string;
 	title: string;
 	difficulty: string;
-	problemNo: number
+	problemNo: number;
 }
-export interface ProblemDetail extends ServerProblem  {
-	problem: ServerProblem['problem'] & { 
-		description: string; 
-	},
-	testcaseExamples :{
-		title: string,
-		inputs: Input[],
-		output: Output | null
-	}[]
+export interface ProblemDetail extends ServerProblem {
+	problem: ServerProblem["problem"] & {
+		description: string;
+	};
+	testcaseExamples: {
+		title: string;
+		inputs: Input[];
+		output: Output | null;
+	}[];
 }
 export interface Input {
 	type: string;
 	name: string;
-	value: string
+	value: string;
 }
 export interface Output {
-	value: string,
+	value: string;
 	type: string;
 }
-
 
 export interface ApiResponse<T> {
 	data: T;
@@ -71,7 +73,7 @@ export interface FilterState {
 export interface getProblemParameter {
 	pageNumber: number;
 	difficulty: string;
-	status: string
+	status: string;
 }
 export interface DropDownItemProps {
 	value: string;
@@ -92,7 +94,6 @@ export interface SubmissionResult {
 	expectedOutput?: string;
 	compilationError?: string | "";
 	failedTestCase?: string | "";
-
 }
 
 export const typeOptions: string[] = [
@@ -119,7 +120,25 @@ export const typeOptions: string[] = [
 	"List<List<String>>",
 ];
 
+export interface CodeExecutionResponse {
+	success: boolean;
+	data: ExecutionResult;
+	message?: string
+}
+export interface ExecutionResult {
+	overallStatus: string; // Wrong Answer || Compilation Error || Accepted || Time Limit Exceed
+	passed_testcases: number;
+	submissions: SubmissionDetails[];
+} 
 
-interface CodeRunProps {
-	
+export interface SubmissionDetails {
+	languageId: number;
+	stdin: string;
+	stdout: string;
+	expected_output: string;
+	status: {
+		id: number;
+		description: string;
+	};
+	compile_output: string | null;
 }
