@@ -1,4 +1,4 @@
-import { Request, Router, Response } from "express";
+import { Request, Router, Response, request } from "express";
 const router = Router();
 import axios from "axios";
 import auth, { CustomRequestObject } from "../middleware/auth";
@@ -17,6 +17,9 @@ import {
 	getTestCaseExample,
 } from "../db/problem";
 import prisma from "../db";
+import { date } from "zod";
+
+const JUDGE0_CALLBACK_URL = process.env.JUDGE0_CALLBACK_URL;
 
 router.get("/filter-problem", auth, async (req: Request, res: Response) => {
 	const { userAuthorized } = req as CustomRequestObject;
@@ -96,7 +99,7 @@ const JUDGE0_API_URL = process.env.JUDGE0_API_URL;
 const JUDGE0_API_KEY = process.env.JUDGE0_API_KEY;
 
 router.post("/submit-problem", auth, async (req: Request, res: Response) => {
-	const { userAuthorized, userId } = req as CustomRequestObject;
+	const { userAuthorized } = req as CustomRequestObject;
 
 	try {
 		if (!userAuthorized) {
@@ -119,49 +122,15 @@ router.post("/submit-problem", auth, async (req: Request, res: Response) => {
 			});
 		}
 		// 3. create submission array
+		const result = await evaluateCode(testcases.data, languageId, code);
+		if (!result?.success){
+			return res.status(400).json({ error: result?.msg});
+		}
+		
+		//  save the user submission with {userId, problemId, code, languageId, time, memory, status }
+		// one user can have more than one submissons
+		// update the ProblemStaus { Attempted: if user run code, Sovled: if user paased all testcases}
 
-		const submissions: {
-			language_id: number;
-			source_code: string;
-			stdin: string;
-			expected_output: string;
-		}[] = testcases.data.map((testcase: TestCaseReturnType) => {
-			// [Todo] - remove type any and add testcase actual type
-			const parser = new GenerateFullProblemDefinition();
-			parser.parseTestCase(testcase);
-			//getProblem() --> { fullBoilerplate code, stdin, stdout, }
-			const problem = parser.getProblem(languageId, code);
-
-			return {
-				language_id: languageId, // Java ID for Judge0
-				source_code: problem.fullBoilerplatecode,
-				stdin: problem.stdin,
-				expected_output: JSON.stringify(problem.stdout),
-			};
-		});
-
-		console.log("this is submission array: ", submissions);
-
-		// 4. make api call
-		const data = JSON.stringify(submissions);
-
-		// const executionResult = submissionResult.data as SubmissionsResult[];
-		// above reponse will return a submission array
-		// const failedTestCases: SubmissionsResult[] = executionResult.filter(
-		// 	(submission: SubmissionsResult) => {
-		// 		return (
-		// 			submission.status.description !== "Accepted" ||
-		// 			submission.compile_output !== null
-		// 		);
-		// 	}
-		// );
-		// if (failedTestCases.length !== 0) {
-		// 	// meanse all testcases not passed
-		// 	return res.status(200).json({
-		// 		data: failedTestCases,
-		// 		type: "error",
-		// 	});
-		// }
 
 		return res.status(200).json({
 			type: "success",
@@ -171,10 +140,16 @@ router.post("/submit-problem", auth, async (req: Request, res: Response) => {
 	} catch (error: any) {}
 });
 
-
 router.post("/evaluate-code", auth, async (req: Request, res: Response) => {
 	const { userAuthorized } = req as CustomRequestObject;
-	console.log("evalutation data: ", req.body.data, userAuthorized);
+	const parseUserSubmitCode = ProblemSubmissionData.safeParse(
+		req.body.data
+	);
+	if (!parseUserSubmitCode.success) {
+		return res.status(401).json({ error: parseUserSubmitCode.error });
+	}
+
+
 	try {
 		if (!userAuthorized) {
 			return res
@@ -182,95 +157,61 @@ router.post("/evaluate-code", auth, async (req: Request, res: Response) => {
 				.json({ message: "your are not authorized, please login" });
 		}
 
-		const parseUserSubmitCode = ProblemSubmissionData.safeParse(
-			req.body.data
-		);
-		if (!parseUserSubmitCode.success) {
-			return res.status(401).json({ error: parseUserSubmitCode.error });
-		}
+		
 		const { problemId, languageId, code } = parseUserSubmitCode.data;
 		// here get the first three testcases and run it on jude0
 		const testcaseExamples = await getTestCaseExample(problemId);
 		// run these testcase exmaples
-		if (testcaseExamples !== undefined) {
-			const submissionsArray: {
-				language_id: number;
-				source_code: string;
-				stdin: string;
-				expected_output: string;
-			}[] = testcaseExamples.map((testcase: TestCaseReturnType) => {
-				const parser = new GenerateFullProblemDefinition();
-				parser.parseTestCase(testcase);
-				//getProblem() --> { fullBoilerplate code, stdin, stdout, }
-				const problem = parser.getProblem(languageId, code);
-
-				return {
-					language_id: languageId, // Java ID for Judge0
-					source_code: problem.fullBoilerplatecode,
-					stdin: problem.stdin,
-					expected_output: problem.stdout,
-				};
-			});
-			console.log("this is submission array: ", submissionsArray);
-
-			const CreateSubmissionsOptions = {
-				method: "POST",
-				url: JUDGE0_API_URL,
-				headers: {
-					"Content-Type": "application/json",
-					"x-rapidapi-host": "judge0-ce.p.rapidapi.com",
-					"x-rapidapi-key": JUDGE0_API_KEY,
-				},
+		if (testcaseExamples !== undefined){
+			const result = await evaluateCode(testcaseExamples, languageId, code);
+			if (!result?.success){
+				return res.status(200).json({ err: result?.msg})
+			}
+			return res.status(200).json({ 
+				success: true,
 				data: {
-					submissions: submissionsArray,
-				},
-			};
-
-			const response = await axios.request(CreateSubmissionsOptions);
-			console.log("create submission response: ", response.data);
-			const getSubmissionsOptions = {
-				method: "GET",
-				url: JUDGE0_API_URL,
-				headers: {
-					"x-rapidapi-host": "judge0-ce.p.rapidapi.com",
-					"x-rapidapi-key": JUDGE0_API_KEY,
-				},
-				params: {
-					tokens: `${response.data
-						.map((token: { token: string }) => token.token)
-						.join(",")}`,
-					base64_encoded: "false",
-				},
-			};
-			setTimeout(async () => {
-				const result = await axios.request(getSubmissionsOptions);
-				const { submissions } = result.data;
-				const ans = submissions.map((submission: any) =>
-					console.log(JSON.stringify(submission.status))
-				);
-				console.log(result.data);
-				return res.status(200).json({ result: result.data });
-			}, 5000);
+					overallStatus: "",  // Wrong Answer || Compilation Error || Accepted || Time Limit Exceed 
+					passed_testcases: 1,
+					submissions: result.data 
+				}
+			})
 		}
+		
 	} catch (error: any) {
 		console.log(error);
-		return res.json({ err: "error while running program" });
+		return res.json({
+			success: false,
+			message: (error as Error).message 
+		});
 	}
 });
 
-interface CreateSubmissionApiReponse {
-	token: string;
-}
+// router.post('/judge0-callback', async(req: Request, res: Response) => {
+// 	try {
+// 		const payload = req.body; // Parse the JSON payload sent by Judge0
+// 		console.log('Judge0 callback received:', payload);
+// 	}
+// 	catch(error: any){
+// 		console.error('Error handling Judge0 callback:', error);
+// 		res.status(500).send('Internal Server Error'); // Handle error appropriately
+// 	}
 
+// })
+
+// when you are going to submit the code
 interface SubmissionsResult {
-	time: string;
-	memory: number;
+	languageId: number;
+	time?: string;
+	memory?: number;
 	status: {
 		id: number;
 		description: string;
 	};
-	stdout: string;
+	stdin: string;
+	stdout: string; // user output
+	exptected_output: string;
 	compile_output: string | null;
+	source_code?: string
 }
 
 router.get(
@@ -339,41 +280,85 @@ router.get("/default-code", async (req: Request, res: Response) => {
 	}
 });
 
+async function evaluateCode(
+	testcaseExamples: TestCaseReturnType[],
+	languageId: number,
+	code: string
+) {
+	try {
+		const submissionsArray: {
+			language_id: number;
+			source_code: string;
+			stdin: string;
+			expected_output: string;
+		}[] = testcaseExamples.map((testcase: TestCaseReturnType) => {
+			const parser = new GenerateFullProblemDefinition();
+			parser.parseTestCase(testcase);
+			//getProblem() --> { fullBoilerplate code, stdin, stdout, }
+			const problem = parser.getProblem(languageId, code);
+
+			return {
+				language_id: languageId, // Java ID for Judge0
+				source_code: problem.fullBoilerplatecode,
+				stdin: problem.stdin,
+				expected_output: problem.stdout,
+			};
+		});
+
+		const CreateSubmissionsOptions = {
+			method: "POST",
+			url: JUDGE0_API_URL,
+			headers: {
+				"Content-Type": "application/json",
+				"x-rapidapi-host": "judge0-ce.p.rapidapi.com",
+				"x-rapidapi-key": JUDGE0_API_KEY,
+			},
+			data: {
+				submissions: submissionsArray,
+			},
+		};
+
+		const response = await axios.request(CreateSubmissionsOptions);
+
+		const getSubmissionsOptions = {
+			method: "GET",
+			url: JUDGE0_API_URL,
+			headers: {
+				"x-rapidapi-host": "judge0-ce.p.rapidapi.com",
+				"x-rapidapi-key": JUDGE0_API_KEY,
+			},
+			params: {
+				tokens: `${response.data
+					.map((token: { token: string }) => token.token)
+					.join(",")}`,
+				base64_encoded: "false",
+				fields: "language_id,stdin,stdout,expected_output,time,memory,stderr,compile_output,message,status,status_id,source_code",
+			},
+		};
+
+		setTimeout(async () => {
+			const result = await axios.request(getSubmissionsOptions);
+			const { submissions } = result.data;
+			// const ans = submissions.map((submission: any) =>
+			// 	console.log(JSON.stringify(submission.status))
+			// );
+			console.log(result.data);
+			return {
+				success: true,
+				data: submissions
+			}
+			
+		}, 5000);
+
+	} catch (error: any) {
+		console.error("Error: ", (error as Error).message);
+		return {
+			success: false,
+			msg: error.message,
+			data: []
+		}
+	}
+}
+
 export default router;
 
-/*
-	
-	Create multiple submissions at once
-	- POST
-	- https://judge0-ce.p.rapidapi.com/submissions/batch
-	- body: {
-		"submissions": [
-			{		
-				"language_id": 62,
-				"source_code": "public class Main{public static void main(String[] args){System.out.println(40);}}"
-			},
-			{
-				"language_id": 62,
-				"source_code": "public class Main{public static void main(String[] args){System.out.println(20);}}"
-			},
-			{
-				"language_id": 62,
-				"source_code": "public class Main{public static void main(String[] args){System.out.println(30);}}"
-			}  
-		],
-
-	} ,
-	params: {
-    	base64_encoded: 'false'
- 	 },
-
-
-	- Get multiple submissions at once.
-	- https://judge0-ce.p.rapidapi.com/submissions/batch
-	-params: {
-		tokens: 'dce7bbc5-a8c9-4159-a28f-ac264e48c371,1ed737ca-ee34-454d-a06f-bbc73836473e,9670af73-519f-4136-869c-340086d406db',
-		base64_encoded: 'true',
-		fields: '*'
-	},
-
-*/
