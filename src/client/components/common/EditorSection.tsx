@@ -10,6 +10,7 @@ import {
 	// IoChevronUpOutline,
 } from "react-icons/io5";
 import { TiArrowSortedDown, TiArrowSortedUp } from "react-icons/ti";
+
 import { GoScreenFull } from "react-icons/go";
 import { EditorSetting } from "./EditorSetting";
 import { useSelector } from "react-redux";
@@ -19,7 +20,7 @@ import {
 	toggleFullScreen,
 	getDefaultCode,
 	setLanguage,
-	runCode
+	runCode,
 } from "../../features/editorSlice";
 import Split from "react-split";
 import { setIsOpen } from "../../features/editorSettingSlice";
@@ -30,6 +31,7 @@ import {
 	TooltipTrigger,
 } from "../ui/tooltip";
 import { useParams } from "react-router-dom";
+import { SubmissionDetails } from "@/client/types";
 
 const LANGUAGES = ["java", "cpp", "typescript", "javascript", "go", "rust"];
 
@@ -40,7 +42,9 @@ export const EditorSection = () => {
 		(state: RootState) => state.dropdown
 	);
 	const { isOpen } = useSelector((state: RootState) => state.setting);
-	const { language, code } = useSelector((state: RootState) => state.editor);
+	const { language, code, loading } = useSelector(
+		(state: RootState) => state.editor
+	);
 
 	const handleOpenDropDown = () => {
 		if (isLanguageMenuOpen) {
@@ -111,7 +115,7 @@ export const EditorSection = () => {
 											disabled={isLogin ? false : true}
 											classname=" text-white justify-center flex items-center rounded-md w-20 border border-[#334155]"
 											onClick={() => {
-												if(!id){
+												if (!id) {
 													return;
 												}
 												dispatch(
@@ -162,9 +166,7 @@ export const EditorSection = () => {
 							</TooltipProvider>
 						</div>
 					</div>
-					<div>
-						<RenderResult />
-					</div>
+					<div>{!loading && <Console />}</div>
 				</div>
 			</Split>
 			{isOpen && <EditorSetting />}
@@ -264,24 +266,81 @@ function EditorTopBar() {
 	);
 }
 
-function RenderResult() {
+function Console() {
+	const { execution_result } = useSelector(
+		(state: RootState) => state.editor
+	);
+	const resultStatus = execution_result?.overallStatus;
+	const passed_testcases = execution_result?.passed_testcases;
+	const submissions = execution_result?.submissions;
+
 	return (
 		<div className="px-4 py-2 flex flex-col gap-4">
 			<div className="flex flex-row items-center justify-between">
-				<span className="text-xl font-semibold text-[#4ac3ab]">
-					Status
+				<span className={`text-xl font-semibold ${resultStatus === 'Accepted' ? 'text-[#4ac3ab]': 'text-RED'}`}>
+					{resultStatus}
 				</span>
-				<span>Passed test cases: 2/2</span>
+				<span>Passed test cases: {passed_testcases}/2</span>
 			</div>
-			{/* 
-				if status == Accepted then display the Accepted component 
-				if status == Wrong Answer display the wrong answer component
-				if status == Time limit exceeded , display the TimeLimti exceeded component
-			*/}
-			<div></div>
+			<div>
+				<RenderOutput resultStatus = {resultStatus}/>
+			</div>
 		</div>
 	);
 }
+
+function WrongAnswer() {
+	const { execution_result } = useSelector(
+		(state: RootState) => state.editor
+	);
+	const submissions  = execution_result.submissions;
+	const [selectedTab, setSelectedTab] = useState<SubmissionDetails>();
+
+	return (
+		<>
+			<div>
+				{
+					submissions.map((submission, index) => {
+						const { description } = submission.status;
+						return <Button classname="" key = {index} onClick={() => setSelectedTab(submission)}>
+							<span className= {`${description === 'Accepted' ? 'text-GREEN': 'text-RED'}`}>•</span>
+							Case{index + 1}
+						</Button>
+					})
+				}
+			</div>
+			{
+				selectedTab && (
+					<div>
+						
+
+					</div>
+				)
+			}
+			
+
+		</>
+		
+	);
+}
+
+function RenderOutput({resultStatus}: { resultStatus: string | undefined}) {
+	switch(resultStatus) {
+		case 'Accepted': 
+			return <Accepted /> 
+		case 'Wrong Answer': 
+			return <WrongAnswer /> 
+		case 'Time Limit Exceed': 
+			return <TimeLimitExceed /> 
+		case 'Compile Error': 
+			return <CompilationError /> 
+		default: 
+		 	return <div>unknown status {resultStatus} type</div>
+	}
+}
+
+
+
 
 // Wrong Answer! || Accepted! || Time Limit exceeded! || Compilation Error!
 
@@ -297,10 +356,10 @@ function CompilationError() {
 		<div>
 			<span>Compile Output: </span>
 			<div className="bg-red-300">
-				<p>
+				<code>
 					Main.java:23: error: incompatible types: missing return
 					value return ; ^ 1 error
-				</p>
+				</code>
 			</div>
 		</div>
 	);
@@ -314,25 +373,6 @@ function TimeLimitExceed() {
 		<div className="flex items-center gap-4 px-4 py-2 bg-gray-800">
 			<span>Last Executed Input: </span>
 			<span>input value</span>
-		</div>
-	);
-}
-
-function WrongAnswer() {
-	return (
-		<div>
-			<div className="flex items-center px-2 py-2 bg-gray-800">
-				<span>Input:</span>
-				<span>value</span>
-			</div>
-			<div className="flex items-center px-4 py-2 bg-gray-800">
-				<span>Your Output:</span>
-				<span className="text-RED">user output value</span>
-			</div>
-			<div className="flex items-center px-4 py-2 bg-gray-800">
-				<span>Exptected Output:</span>
-				<span className="text-GREEN">expted output value</span>
-			</div>
 		</div>
 	);
 }

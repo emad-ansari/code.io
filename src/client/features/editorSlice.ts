@@ -8,9 +8,13 @@ export const editorSliceInitialState: EditorState = {
 	language: "java",
 	boilerPlateCode: "",
 	code: "",
-	execution_result: null,
+	execution_result: {
+		overallStatus: "",
+		passed_testcases: 0,
+		submissions: []
+	},
 	error: null,
-	loading: false
+	loading: true
 };
 
 

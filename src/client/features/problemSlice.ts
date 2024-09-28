@@ -12,7 +12,6 @@ export const problemSliceInitialState: ProblemState = {
 	problems: [],
 	pageSize: 10,
 	numberOfPages: 1,
-	error: null,
 	problemDetail: {
 		status: "",
 		problem: {
@@ -23,7 +22,7 @@ export const problemSliceInitialState: ProblemState = {
 			problemNo: 0,
 		},
 		testcaseExamples: [
-			{
+			{	
 				title: "",
 				inputs: [{type: "",  name: "", value: "" }],
 				output: {
@@ -33,6 +32,7 @@ export const problemSliceInitialState: ProblemState = {
 			},
 		],
 	},
+	error: null,
 };
 
 export const getProblems = createAsyncThunk(
@@ -58,6 +58,7 @@ export const getProblems = createAsyncThunk(
 				}
 			);
 			const data = res.data;
+			console.log('filter problem: ', data)
 
 			return data;
 		} catch (error: any) {
@@ -104,6 +105,7 @@ export const problemSlice = createSlice({
 			const { message, data, totalPages } = action.payload;
 			state.problems = data;
 			state.numberOfPages = totalPages;
+			console.log('filter problem: ', message);
 		});
 		builder.addCase(getProblems.rejected, (_, action) => {
 			console.log(action.payload);

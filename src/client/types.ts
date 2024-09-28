@@ -23,7 +23,7 @@ export interface EditorState {
 	isFullScreen: boolean;
 	boilerPlateCode: string;
 	code: string;
-	execution_result: ExecutionResult | null
+	execution_result: ExecutionResult;
 	loading: boolean;
 	error: string | null | undefined
 }
