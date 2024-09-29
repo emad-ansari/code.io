@@ -1,9 +1,10 @@
-import { Button } from "../common/Button";
 import { MdOutlineFileUpload } from "react-icons/md";
 import { useState } from "react";
 import { CodeEditor } from "./CodeEditor";
 import { MdKeyboardArrowDown } from "react-icons/md";
 import { IoIosCheckmark } from "react-icons/io";
+import { MousePointerClickIcon, Play } from "lucide-react";
+import { Button } from "../ui/button";
 import {
 	IoSettings,
 	// IoChevronDownOutline,
@@ -85,7 +86,7 @@ export const EditorSection = () => {
 					<div className=" flex bg-darkGray rounded-tl-lg rounded-tr-lg px-2 py-1.5 items-center justify-between border border-b-[#334155] border-l-transparent border-r-transparent border-t-transparent">
 						<div className="flex gap-5">
 							<Button
-								classname="relative flex w-28 gap-1 hover:bg-gray-800 rounded-md"
+								className="relative flex w-28 gap-2 hover:bg-gray-800 rounded-md"
 								onClick={() => {
 									if (!isConsoleOpen) {
 										setSplitRatio([60, 40]);
@@ -100,9 +101,9 @@ export const EditorSection = () => {
 									Console
 								</span>
 								{!isConsoleOpen ? (
-									<TiArrowSortedDown className="absolute top-1/3 right-4 " />
+									<TiArrowSortedDown className="absolute top-1/3 right-3 " />
 								) : (
-									<TiArrowSortedUp className="absolute top-1/3 right-4 " />
+									<TiArrowSortedUp className="absolute top-1/3 right-3 " />
 								)}
 							</Button>
 						</div>
@@ -112,12 +113,17 @@ export const EditorSection = () => {
 								<Tooltip>
 									<TooltipTrigger asChild>
 										<Button
-											disabled={isLogin ? false : true}
-											classname=" text-white justify-center flex items-center rounded-md w-20 border border-[#334155]"
+											className=" text-white justify-center flex gap-2 items-center rounded-md w-20 border border-[#334155]"
 											onClick={() => {
-												if (!id) {
-													return;
+												if (!isLogin) return;
+												if (!id) return;
+
+												if (!isConsoleOpen) {
+													setSplitRatio([60, 40]);
 												}
+												setIsConsoleOpen(
+													(prevState) => !prevState
+												);
 												dispatch(
 													runCode({
 														problemId: id,
@@ -130,7 +136,12 @@ export const EditorSection = () => {
 												);
 											}}
 										>
-											Run
+											{!loading ? (
+												<Icons.spinner className="mr-0 h-4 w-4 animate-spin " />
+											) : (
+												<Play size={16} />
+											)}
+											<span>Run</span>
 										</Button>
 									</TooltipTrigger>
 									<TooltipContent>
@@ -146,10 +157,10 @@ export const EditorSection = () => {
 								<Tooltip>
 									<TooltipTrigger asChild>
 										<Button
-											disabled={isLogin ? false : true}
-											classname="bg-GREEN text-white flex gap-2 items-center rounded-md"
+										// variant={'outline'}
+											className=" text-white justify-center flex gap-2 items-center rounded-md  border border-[#334155]"
 										>
-											<span className="font-semibold">
+											<span className="font-semibold ">
 												Submit
 											</span>
 											<MdOutlineFileUpload />
@@ -166,7 +177,7 @@ export const EditorSection = () => {
 							</TooltipProvider>
 						</div>
 					</div>
-					<div>{ <Console />}</div>
+					<div className="overflow-y-scroll">{<Console />}</div>
 				</div>
 			</Split>
 			{isOpen && <EditorSetting />}
@@ -199,7 +210,7 @@ function EditorTopBar() {
 	return (
 		<div className="flex items-center px-2 py-1 bg-darkGray rounded-tl-lg rounded-tr-lg justify-between  gap-5 border border-b-[#334155] border-t-transparent border-l-transparent border-r-transparent">
 			<Button
-				classname="relative flex flex-row items-center gap-2 bg-gray-800 text-white z-30 rounded-md"
+				className="relative flex flex-row items-center gap-2 bg-gray-800 text-white z-30 rounded-md"
 				onClick={() =>
 					dispatch(setOpenDropDownMenu({ menu: "languages" }))
 				}
@@ -249,14 +260,14 @@ function EditorTopBar() {
 			</Button>
 			<div className="flex flex-row gap-2 items-center ">
 				<Button
-					classname={" hover:bg-gray-800 rounded-full "}
+					className={" hover:bg-gray-800 rounded-full "}
 					onClick={() => dispatch(setIsOpen(true))}
 				>
 					<IoSettings className="text-white" />
 				</Button>
 
 				<Button
-					classname={"hover:bg-gray-800 rounded-full"}
+					className={"hover:bg-gray-800 rounded-full"}
 					onClick={() => dispatch(toggleFullScreen(!isFullScreen))}
 				>
 					<GoScreenFull className="text-white" />
@@ -277,13 +288,19 @@ function Console() {
 	return (
 		<div className="px-4 py-2 flex flex-col gap-4">
 			<div className="flex flex-row items-center justify-between">
-				<span className={`text-2xl font-semibold ${resultStatus === 'Accepted' ? 'text-[#4ac3ab]': 'text-[#ea4545]'}`}>
+				<span
+					className={`text-2xl font-semibold ${
+						resultStatus === "Accepted"
+							? "text-[#4ac3ab]"
+							: "text-[#ea4545]"
+					}`}
+				>
 					{resultStatus}
 				</span>
 				<span>Passed test cases: {passed_testcases}/2</span>
 			</div>
 			<div>
-				<RenderOutput resultStatus = {resultStatus}/>
+				<RenderOutput resultStatus={resultStatus} />
 			</div>
 		</div>
 	);
@@ -293,63 +310,91 @@ function WrongAnswerOrAccepted() {
 	const { execution_result } = useSelector(
 		(state: RootState) => state.editor
 	);
-	const submissions  = execution_result.submissions;
-	const [selectedTab, setSelectedTab] = useState<SubmissionDetails>(submissions[0]);
+	const submissions = execution_result.submissions;
+	const [selectedTab, setSelectedTab] = useState<SubmissionDetails>(
+		submissions[0]
+	);
 
 	return (
 		<>
 			<div className="flex flex-row gap-3 mb-6">
-				{
-					submissions.map((submission, index) => {
-						const { description } = submission.status;
-						return <div className="bg-gray-800 rounded-lg px-4 py-1 flex flex-row gap-1 items-center cursor-pointer " key = {index} onClick={() => setSelectedTab(submission)}>
-							<span className= {`text-lg ${description === 'Accepted' ? 'text-GREEN': 'text-red-500'}`}>•</span>
+				{submissions.map((submission, index) => {
+					const { description } = submission.status;
+					return (
+						<div
+							className="bg-gray-800 rounded-lg px-4 py-1 flex flex-row gap-1 items-center cursor-pointer "
+							key={index}
+							onClick={() => setSelectedTab(submission)}
+						>
+							<span
+								className={`text-lg ${
+									description === "Accepted"
+										? "text-GREEN"
+										: "text-red-500"
+								}`}
+							>
+								•
+							</span>
 							Case
 							<span>{index + 1}</span>
 						</div>
-					})
-				}
+					);
+				})}
 			</div>
-			{
-				selectedTab && (
-					<div className="flex flex-col gap-4">
-						<div className="flex flex-col gap-2">
-							<label className = 'text-md text-gray-400 font-medium'htmlFor="">Input</label>
-							<code className="bg-gray-800 px-4 py-4 rounded-lg">input value</code>
-						</div>
-						<div className="flex flex-col gap-2">
-							<label htmlFor="" className = 'text-md text-gray-400 font-medium'>User Output</label>
-							<code className="bg-gray-800 px-4 py-4 rounded-lg">{selectedTab.stdout}</code>
-						</div>
-						<div className="flex flex-col gap-2">
-							<label htmlFor="" className = 'text-md text-gray-400 font-medium'>Expected Output</label>
-							<code className="bg-gray-800 px-4 py-4 rounded-lg">{selectedTab.expected_output}</code>
-						</div>
+			{selectedTab && (
+				<div className="flex flex-col gap-4">
+					<div className="flex flex-col gap-2">
+						<label
+							className="text-md text-gray-400 font-medium"
+							htmlFor=""
+						>
+							Input
+						</label>
+						<code className="bg-gray-800 px-4 py-4 rounded-lg">
+							input value
+						</code>
 					</div>
-				)
-			}
+					<div className="flex flex-col gap-2">
+						<label
+							htmlFor=""
+							className="text-md text-gray-400 font-medium"
+						>
+							User Output
+						</label>
+						<code className="bg-gray-800 px-4 py-4 rounded-lg">
+							{selectedTab.stdout}
+						</code>
+					</div>
+					<div className="flex flex-col gap-2">
+						<label
+							htmlFor=""
+							className="text-md text-gray-400 font-medium"
+						>
+							Expected Output
+						</label>
+						<code className="bg-gray-800 px-4 py-4 rounded-lg">
+							{selectedTab.expected_output}
+						</code>
+					</div>
+				</div>
+			)}
 		</>
-		
 	);
 }
 
-function RenderOutput({resultStatus}: { resultStatus: string }) {
-	
-	switch(resultStatus) {
-		case 'Accepted': 
-		case 'Wrong Answer': 
-			return <WrongAnswerOrAccepted /> 
-		case 'Time Limit Exceed': 
-			return <TimeLimitExceed /> 
-		case 'Compilation Error': 
-			return <CompilationError /> 
-		default: 
-		 	return <div>unknown status {resultStatus} type</div>
+function RenderOutput({ resultStatus }: { resultStatus: string }) {
+	switch (resultStatus) {
+		case "Accepted":
+		case "Wrong Answer":
+			return <WrongAnswerOrAccepted />;
+		case "Time Limit Exceed":
+			return <TimeLimitExceed />;
+		case "Compilation Error":
+			return <CompilationError />;
+		default:
+			return <div>unknown status {resultStatus} type</div>;
 	}
 }
-
-
-
 
 // Wrong Answer! || Accepted! || Time Limit exceeded! || Compilation Error!
 
@@ -363,10 +408,12 @@ function RenderOutput({resultStatus}: { resultStatus: string }) {
 function CompilationError() {
 	return (
 		<div className="flex flex-col gap-2">
-			<label className = 'text-md text-gray-400 font-medium'htmlFor="">Compile Output: </label>
+			<label className="text-md text-gray-400 font-medium" htmlFor="">
+				Compile Output:{" "}
+			</label>
 			<code className="bg-[#402d2d] text-[#d75151] px-4 py-4 rounded-lg">
-				Main.java:23: error: incompatible types: missing return
-				value return ; ^ 1 error
+				Main.java:23: error: incompatible types: missing return value
+				return ; ^ 1 error
 			</code>
 		</div>
 	);
@@ -374,9 +421,31 @@ function CompilationError() {
 
 function TimeLimitExceed() {
 	return (
-		<div className="flex items-center gap-4 px-4 py-2 bg-gray-800">
-			<span>Last Executed Input: </span>
-			<span>input value</span>
+		<div className="flex flex-col gap-1">
+			<label className="text-md text-gray-400 font-medium" htmlFor="">
+				Last Executed Input:{" "}
+			</label>
+			<code className="bg-gray-800 px-4 py-4 rounded-lg">n = 50000</code>
 		</div>
 	);
 }
+
+// This component is used for the loading spinner
+export const Icons = {
+	spinner: (props: React.SVGProps<SVGSVGElement>) => (
+		<svg
+			xmlns="http://www.w3.org/2000/svg"
+			width="30"
+			height="30"
+			viewBox="0 0 24 24"
+			fill="none"
+			stroke="currentColor"
+			strokeWidth="2"
+			strokeLinecap="round"
+			strokeLinejoin="round"
+			{...props}
+		>
+			<path d="M21 12a9 9 0 1 1-6.219-8.56" />
+		</svg>
+	),
+};

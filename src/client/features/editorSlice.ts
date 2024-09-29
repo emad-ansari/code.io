@@ -9,7 +9,7 @@ export const editorSliceInitialState: EditorState = {
 	boilerPlateCode: "",
 	code: "",
 	execution_result: {
-		overallStatus: "Accepted",
+		overallStatus: "Wrong Answer",
 		passed_testcases: 0,
 		submissions: [
 			{
@@ -19,7 +19,7 @@ export const editorSliceInitialState: EditorState = {
 				expected_output: "true",
 				status: {
 					id: 1,
-					description: "Accepted"
+					description: "Compilation Error"
 				},
 			},
 			{
@@ -29,7 +29,7 @@ export const editorSliceInitialState: EditorState = {
 				expected_output: "false",
 				status: {
 					id: 1,
-					description: "Accepted"
+					description: "Compilation Error"
 				},
 			}
 
