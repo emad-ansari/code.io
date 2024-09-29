@@ -140,5 +140,5 @@ export interface SubmissionDetails {
 		id: number;
 		description: string;
 	};
-	compile_output: string | null;
+	compile_output?: string | null;
 }

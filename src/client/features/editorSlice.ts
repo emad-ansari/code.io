@@ -9,9 +9,31 @@ export const editorSliceInitialState: EditorState = {
 	boilerPlateCode: "",
 	code: "",
 	execution_result: {
-		overallStatus: "",
+		overallStatus: "Accepted",
 		passed_testcases: 0,
-		submissions: []
+		submissions: [
+			{
+				languageId: 62,
+				stdin: "121",
+				stdout: "true",
+				expected_output: "true",
+				status: {
+					id: 1,
+					description: "Accepted"
+				},
+			},
+			{
+				languageId: 62,
+				stdin: "-121",
+				stdout: "false",
+				expected_output: "false",
+				status: {
+					id: 1,
+					description: "Accepted"
+				},
+			}
+
+		]
 	},
 	error: null,
 	loading: true

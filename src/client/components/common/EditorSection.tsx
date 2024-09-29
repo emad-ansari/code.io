@@ -166,7 +166,7 @@ export const EditorSection = () => {
 							</TooltipProvider>
 						</div>
 					</div>
-					<div>{!loading && <Console />}</div>
+					<div>{ <Console />}</div>
 				</div>
 			</Split>
 			{isOpen && <EditorSetting />}
@@ -277,7 +277,7 @@ function Console() {
 	return (
 		<div className="px-4 py-2 flex flex-col gap-4">
 			<div className="flex flex-row items-center justify-between">
-				<span className={`text-xl font-semibold ${resultStatus === 'Accepted' ? 'text-[#4ac3ab]': 'text-RED'}`}>
+				<span className={`text-2xl font-semibold ${resultStatus === 'Accepted' ? 'text-[#4ac3ab]': 'text-red-500'}`}>
 					{resultStatus}
 				</span>
 				<span>Passed test cases: {passed_testcases}/2</span>
@@ -289,52 +289,62 @@ function Console() {
 	);
 }
 
-function WrongAnswer() {
+function WrongAnswerOrAccepted() {
 	const { execution_result } = useSelector(
 		(state: RootState) => state.editor
 	);
 	const submissions  = execution_result.submissions;
-	const [selectedTab, setSelectedTab] = useState<SubmissionDetails>();
+	const [selectedTab, setSelectedTab] = useState<SubmissionDetails>(submissions[0]);
 
 	return (
 		<>
-			<div>
+			<div className="flex flex-row gap-3 mb-6">
 				{
 					submissions.map((submission, index) => {
 						const { description } = submission.status;
-						return <Button classname="" key = {index} onClick={() => setSelectedTab(submission)}>
-							<span className= {`${description === 'Accepted' ? 'text-GREEN': 'text-RED'}`}>•</span>
-							Case{index + 1}
-						</Button>
+						return <div className="bg-gray-800 rounded-lg px-4 py-1 flex flex-row gap-1 items-center cursor-pointer " key = {index} onClick={() => setSelectedTab(submission)}>
+							<span className= {`text-lg ${description === 'Accepted' ? 'text-GREEN': 'text-red-500'}`}>•</span>
+							Case
+							<span>{index + 1}</span>
+						</div>
 					})
 				}
 			</div>
 			{
 				selectedTab && (
-					<div>
-						
-
+					<div className="flex flex-col gap-4">
+						<div className="flex flex-col gap-2">
+							<label className = 'text-md text-gray-400 font-medium'htmlFor="">Input</label>
+							<code className="bg-gray-800 px-4 py-4 rounded-lg">input value</code>
+						</div>
+						<div className="flex flex-col gap-2">
+							<label htmlFor="" className = 'text-md text-gray-400 font-medium'>User Output</label>
+							<code className="bg-gray-800 px-4 py-4 rounded-lg">{selectedTab.stdout}</code>
+						</div>
+						<div className="flex flex-col gap-2">
+							<label htmlFor="" className = 'text-md text-gray-400 font-medium'>Expected Output</label>
+							<code className="bg-gray-800 px-4 py-4 rounded-lg">{selectedTab.expected_output}</code>
+						</div>
 					</div>
 				)
 			}
-			
-
 		</>
 		
 	);
 }
 
 function RenderOutput({resultStatus}: { resultStatus: string | undefined}) {
+	
 	switch(resultStatus) {
 		case 'Accepted': 
-			return <Accepted /> 
 		case 'Wrong Answer': 
-			return <WrongAnswer /> 
+			return <WrongAnswerOrAccepted /> 
 		case 'Time Limit Exceed': 
 			return <TimeLimitExceed /> 
 		case 'Compile Error': 
 			return <CompilationError /> 
 		default: 
+		console.log('this is result status', resultStatus)
 		 	return <div>unknown status {resultStatus} type</div>
 	}
 }
@@ -366,7 +376,14 @@ function CompilationError() {
 }
 
 function Accepted() {
-	return <div>your code has been successfully accepted.</div>;
+	return <div>
+		<div>
+			{
+
+			}
+		</div>
+		
+	</div>;
 }
 function TimeLimitExceed() {
 	return (
