@@ -270,14 +270,14 @@ function Console() {
 	const { execution_result } = useSelector(
 		(state: RootState) => state.editor
 	);
-	const resultStatus = execution_result?.overallStatus;
-	const passed_testcases = execution_result?.passed_testcases;
-	const submissions = execution_result?.submissions;
+	const resultStatus = execution_result.overallStatus;
+	const passed_testcases = execution_result.passed_testcases;
+	// const submissions = execution_result.submissions;
 
 	return (
 		<div className="px-4 py-2 flex flex-col gap-4">
 			<div className="flex flex-row items-center justify-between">
-				<span className={`text-2xl font-semibold ${resultStatus === 'Accepted' ? 'text-[#4ac3ab]': 'text-red-500'}`}>
+				<span className={`text-2xl font-semibold ${resultStatus === 'Accepted' ? 'text-[#4ac3ab]': 'text-[#ea4545]'}`}>
 					{resultStatus}
 				</span>
 				<span>Passed test cases: {passed_testcases}/2</span>
@@ -333,7 +333,7 @@ function WrongAnswerOrAccepted() {
 	);
 }
 
-function RenderOutput({resultStatus}: { resultStatus: string | undefined}) {
+function RenderOutput({resultStatus}: { resultStatus: string }) {
 	
 	switch(resultStatus) {
 		case 'Accepted': 
@@ -341,10 +341,9 @@ function RenderOutput({resultStatus}: { resultStatus: string | undefined}) {
 			return <WrongAnswerOrAccepted /> 
 		case 'Time Limit Exceed': 
 			return <TimeLimitExceed /> 
-		case 'Compile Error': 
+		case 'Compilation Error': 
 			return <CompilationError /> 
 		default: 
-		console.log('this is result status', resultStatus)
 		 	return <div>unknown status {resultStatus} type</div>
 	}
 }
@@ -363,28 +362,16 @@ function RenderOutput({resultStatus}: { resultStatus: string | undefined}) {
 */
 function CompilationError() {
 	return (
-		<div>
-			<span>Compile Output: </span>
-			<div className="bg-red-300">
-				<code>
-					Main.java:23: error: incompatible types: missing return
-					value return ; ^ 1 error
-				</code>
-			</div>
+		<div className="flex flex-col gap-2">
+			<label className = 'text-md text-gray-400 font-medium'htmlFor="">Compile Output: </label>
+			<code className="bg-[#402d2d] text-[#d75151] px-4 py-4 rounded-lg">
+				Main.java:23: error: incompatible types: missing return
+				value return ; ^ 1 error
+			</code>
 		</div>
 	);
 }
 
-function Accepted() {
-	return <div>
-		<div>
-			{
-
-			}
-		</div>
-		
-	</div>;
-}
 function TimeLimitExceed() {
 	return (
 		<div className="flex items-center gap-4 px-4 py-2 bg-gray-800">
