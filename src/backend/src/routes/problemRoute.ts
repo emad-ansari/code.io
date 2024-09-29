@@ -163,17 +163,37 @@ router.post("/evaluate-code", auth, async (req: Request, res: Response) => {
 		const testcaseExamples = await getTestCaseExample(problemId);
 		// run these testcase exmaples
 		if (testcaseExamples !== undefined){
+			// evaluate the code
 			const result = await evaluateCode(testcaseExamples, languageId, code);
 			if (!result?.success){
 				return res.status(200).json({ err: result?.msg})
 			}
+			// add the input array to submision array to render the testcase value on frontend
+			const submissions: Modifiedsubmission[] = result.data.map((v: SubmissionsResult, i) => ({...v, inputs: testcaseExamples[i].inputs}))
+			let passed_testcases = 0;
+			const { data } = result;
+			let resultStatus = "";
+			data.forEach(v => {
+				if (v.status.description === "Accepted") passed_testcases++;
+				else if (v.status.description === "Compilation Error"){
+					resultStatus = "Compilation Error";
+				} 
+				else if (v.status.description === "Wrong Answer"){
+					resultStatus = "Wrong Answer";
+				}
+				else if (v.status.description === "Time Limit exceeded"){
+					resultStatus = "Time Limit exceeded";
+				}
+			})
+
 			return res.status(200).json({ 
 				success: true,
 				data: {
-					overallStatus: "",  // Wrong Answer || Compilation Error || Accepted || Time Limit Exceed 
-					passed_testcases: 1,
-					submissions: result.data 
-				}
+					overallStatus: resultStatus,  
+					passed_testcases: passed_testcases,
+					submissions: submissions ,
+				},
+				message: "code evaluated successfully"
 			})
 		}
 		
@@ -185,6 +205,14 @@ router.post("/evaluate-code", auth, async (req: Request, res: Response) => {
 		});
 	}
 });
+
+interface Modifiedsubmission extends SubmissionsResult{
+	inputs: {
+		type: string;
+		name: string;
+		value: string;
+	}[]
+}
 
 // router.post('/judge0-callback', async(req: Request, res: Response) => {
 // 	try {
@@ -284,7 +312,7 @@ async function evaluateCode(
 	testcaseExamples: TestCaseReturnType[],
 	languageId: number,
 	code: string
-) {
+): Promise<{success: boolean, msg: any, data: SubmissionsResult[]}> {
 	try {
 		const submissionsArray: {
 			language_id: number;
@@ -339,16 +367,20 @@ async function evaluateCode(
 		setTimeout(async () => {
 			const result = await axios.request(getSubmissionsOptions);
 			const { submissions } = result.data;
-			// const ans = submissions.map((submission: any) =>
-			// 	console.log(JSON.stringify(submission.status))
-			// );
 			console.log(result.data);
 			return {
 				success: true,
-				data: submissions
+				data: submissions as SubmissionsResult[],
+				msg: ""
+
 			}
 			
 		}, 5000);
+		return { // remove this return statement or remove the setTime out becaues this return statement will create unexpected behaviour
+			success: false,
+			msg: "",
+			data: []
+		}
 
 	} catch (error: any) {
 		console.error("Error: ", (error as Error).message);
