@@ -25,7 +25,7 @@ export interface EditorState {
 	code: string;
 	execution_result: ExecutionResult;
 	loading: boolean;
-	error: string | null | undefined
+	error: string | null | undefined;
 }
 
 export interface ServerProblem {
@@ -42,11 +42,12 @@ export interface ProblemDetail extends ServerProblem {
 	problem: ServerProblem["problem"] & {
 		description: string;
 	};
-	testcaseExamples: {
-		title: string;
-		inputs: Input[];
-		output: Output | null;
-	}[];
+	testcaseExamples: TestCaseExample[];
+}
+export interface TestCaseExample {
+	title: string;
+	inputs: Input[];
+	output: Output | null;
 }
 export interface Input {
 	type: string;
@@ -123,13 +124,13 @@ export const typeOptions: string[] = [
 export interface CodeExecutionResponse {
 	success: boolean;
 	data: ExecutionResult;
-	message?: string
+	message?: string;
 }
 export interface ExecutionResult {
 	overallStatus: string; // Wrong Answer || Compilation Error || Accepted || Time Limit Exceed
 	passed_testcases: number;
 	submissions: SubmissionDetails[];
-} 
+}
 
 export interface SubmissionDetails {
 	languageId: number;
@@ -141,4 +142,7 @@ export interface SubmissionDetails {
 		description: string;
 	};
 	compile_output?: string | null;
+	testcaseExamples?: TestCaseExample[],
+	inputs: Input[]
 }
+

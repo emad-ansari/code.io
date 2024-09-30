@@ -3,7 +3,7 @@ import { useState } from "react";
 import { CodeEditor } from "./CodeEditor";
 import { MdKeyboardArrowDown } from "react-icons/md";
 import { IoIosCheckmark } from "react-icons/io";
-import { MousePointerClickIcon, Play } from "lucide-react";
+import { Play } from "lucide-react";
 import { Button } from "../ui/button";
 import {
 	IoSettings,
@@ -11,6 +11,7 @@ import {
 	// IoChevronUpOutline,
 } from "react-icons/io5";
 import { TiArrowSortedDown, TiArrowSortedUp } from "react-icons/ti";
+import { ConsoleSkeleton } from "../skeletons/ConsoleSkeleton";
 
 import { GoScreenFull } from "react-icons/go";
 import { EditorSetting } from "./EditorSetting";
@@ -46,7 +47,7 @@ export const EditorSection = () => {
 	const { language, code, loading } = useSelector(
 		(state: RootState) => state.editor
 	);
-
+	console.log("is loading: ", loading);
 	const handleOpenDropDown = () => {
 		if (isLanguageMenuOpen) {
 			dispatch(setOpenDropDownMenu({ menu: "languages" }));
@@ -136,7 +137,7 @@ export const EditorSection = () => {
 												);
 											}}
 										>
-											{!loading ? (
+											{loading ? (
 												<Icons.spinner className="mr-0 h-4 w-4 animate-spin " />
 											) : (
 												<Play size={16} />
@@ -144,20 +145,21 @@ export const EditorSection = () => {
 											<span>Run</span>
 										</Button>
 									</TooltipTrigger>
-									<TooltipContent>
-										<p>
-											{isLogin
-												? ""
-												: "You are not logged in, please login "}
-										</p>
-									</TooltipContent>
+									{!isLogin && (
+										<TooltipContent>
+											<p>
+												You are not logged in, please
+												login{" "}
+											</p>
+										</TooltipContent>
+									)}
 								</Tooltip>
 							</TooltipProvider>
 							<TooltipProvider>
 								<Tooltip>
 									<TooltipTrigger asChild>
 										<Button
-										// variant={'outline'}
+											// variant={'outline'}
 											className=" text-white justify-center flex gap-2 items-center rounded-md  border border-[#334155]"
 										>
 											<span className="font-semibold ">
@@ -166,18 +168,19 @@ export const EditorSection = () => {
 											<MdOutlineFileUpload />
 										</Button>
 									</TooltipTrigger>
-									<TooltipContent>
-										<p>
-											{isLogin
-												? ""
-												: "You are not logged in, please login "}
-										</p>
-									</TooltipContent>
+									{!isLogin && (
+										<TooltipContent>
+											<p>
+												You are not logged in, please
+												login{" "}
+											</p>
+										</TooltipContent>
+									)}
 								</Tooltip>
 							</TooltipProvider>
 						</div>
 					</div>
-					<div className="overflow-y-scroll">{<Console />}</div>
+					<div className="overflow-y-scroll">{ loading ? <ConsoleSkeleton /> : <Console />}</div>
 				</div>
 			</Split>
 			{isOpen && <EditorSetting />}
@@ -283,7 +286,6 @@ function Console() {
 	);
 	const resultStatus = execution_result.overallStatus;
 	const passed_testcases = execution_result.passed_testcases;
-	// const submissions = execution_result.submissions;
 
 	return (
 		<div className="px-4 py-2 flex flex-col gap-4">
@@ -311,9 +313,8 @@ function WrongAnswerOrAccepted() {
 		(state: RootState) => state.editor
 	);
 	const submissions = execution_result.submissions;
-	const [selectedTab, setSelectedTab] = useState<SubmissionDetails>(
-		submissions[0]
-	);
+	const [selectedTestCaseTab, setSelectedTestCaseTab] =
+		useState<SubmissionDetails>(submissions[0]);
 
 	return (
 		<>
@@ -324,7 +325,7 @@ function WrongAnswerOrAccepted() {
 						<div
 							className="bg-gray-800 rounded-lg px-4 py-1 flex flex-row gap-1 items-center cursor-pointer "
 							key={index}
-							onClick={() => setSelectedTab(submission)}
+							onClick={() => setSelectedTestCaseTab(submission)}
 						>
 							<span
 								className={`text-lg ${
@@ -341,7 +342,7 @@ function WrongAnswerOrAccepted() {
 					);
 				})}
 			</div>
-			{selectedTab && (
+			{selectedTestCaseTab && (
 				<div className="flex flex-col gap-4">
 					<div className="flex flex-col gap-2">
 						<label
@@ -351,7 +352,11 @@ function WrongAnswerOrAccepted() {
 							Input
 						</label>
 						<code className="bg-gray-800 px-4 py-4 rounded-lg">
-							input value
+							{`${selectedTestCaseTab.inputs
+								.map(
+									(input) => `${input.name} = ${input.value}`
+								)
+								.join(", ")}`}
 						</code>
 					</div>
 					<div className="flex flex-col gap-2">
@@ -362,7 +367,7 @@ function WrongAnswerOrAccepted() {
 							User Output
 						</label>
 						<code className="bg-gray-800 px-4 py-4 rounded-lg">
-							{selectedTab.stdout}
+							{selectedTestCaseTab.stdout}
 						</code>
 					</div>
 					<div className="flex flex-col gap-2">
@@ -373,7 +378,7 @@ function WrongAnswerOrAccepted() {
 							Expected Output
 						</label>
 						<code className="bg-gray-800 px-4 py-4 rounded-lg">
-							{selectedTab.expected_output}
+							{selectedTestCaseTab.expected_output}
 						</code>
 					</div>
 				</div>
@@ -386,13 +391,13 @@ function RenderOutput({ resultStatus }: { resultStatus: string }) {
 	switch (resultStatus) {
 		case "Accepted":
 		case "Wrong Answer":
-			return <WrongAnswerOrAccepted />;
+			return  <WrongAnswerOrAccepted />  
 		case "Time Limit Exceed":
 			return <TimeLimitExceed />;
 		case "Compilation Error":
 			return <CompilationError />;
 		default:
-			return <div>unknown status {resultStatus} type</div>;
+			return <div></div>;
 	}
 }
 
@@ -406,14 +411,17 @@ function RenderOutput({ resultStatus }: { resultStatus: string }) {
 
 */
 function CompilationError() {
+	const { execution_result } = useSelector(
+		(state: RootState) => state.editor
+	);
+	const submissions = execution_result.submissions;
 	return (
 		<div className="flex flex-col gap-2">
 			<label className="text-md text-gray-400 font-medium" htmlFor="">
-				Compile Output:{" "}
+				Compile Output:
 			</label>
 			<code className="bg-[#402d2d] text-[#d75151] px-4 py-4 rounded-lg">
-				Main.java:23: error: incompatible types: missing return value
-				return ; ^ 1 error
+				{submissions[0].compile_output}
 			</code>
 		</div>
 	);
