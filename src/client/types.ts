@@ -4,6 +4,7 @@ export interface ProblemState {
 	numberOfPages: number;
 	problemDetail: ProblemDetail;
 	error: any;
+	loading: boolean
 }
 export interface SettingState {
 	isOpen: boolean;

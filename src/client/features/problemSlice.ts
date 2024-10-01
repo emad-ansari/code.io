@@ -21,18 +21,10 @@ export const problemSliceInitialState: ProblemState = {
 			difficulty: "",
 			problemNo: 0,
 		},
-		testcaseExamples: [
-			{	
-				title: "",
-				inputs: [{type: "",  name: "", value: "" }],
-				output: {
-					type: "",
-					value: "",
-				},
-			},
-		],
+		testcaseExamples: [],
 	},
 	error: null,
+	loading: false
 };
 
 export const getProblems = createAsyncThunk(
@@ -77,7 +69,6 @@ export const getSpecificProblemDetails = createAsyncThunk(
 			return;
 		}
 		try {
-			console.log("problem id is before request:  ", problemId);
 			const res = await client.get(
 				`/problem/get-problem-details/${problemId}`
 			);
@@ -110,7 +101,8 @@ export const problemSlice = createSlice({
 		builder.addCase(getProblems.rejected, (_, action) => {
 			console.log(action.payload);
 		});
-		builder.addCase(getSpecificProblemDetails.pending, (_, action) => {
+		builder.addCase(getSpecificProblemDetails.pending, (state, action) => {
+			state.loading = true;
 			console.log(action.payload);
 		});
 		builder.addCase(
@@ -119,10 +111,12 @@ export const problemSlice = createSlice({
 				const { message } = action.payload;
 				if (message === "success") {
 					state.problemDetail = action.payload.problemDetails;
+					state.loading = false;
 				}
 			}
 		);
-		builder.addCase(getSpecificProblemDetails.rejected, (_, action) => {
+		builder.addCase(getSpecificProblemDetails.rejected, (state, action) => {
+			state.loading = false;
 			console.log(action.payload);
 		});
 	},

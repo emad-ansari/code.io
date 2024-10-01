@@ -10,54 +10,7 @@ export const editorSliceInitialState: EditorState = {
 	execution_result: {
 		overallStatus: "",
 		passed_testcases: 0,
-		submissions: [
-			// {
-			// 	languageId: 62,
-			// 	stdin: "121",
-			// 	stdout: "true",
-			// 	expected_output: "true",
-			// 	status: {
-			// 		id: 1,
-			// 		description: "Compilation Error"
-			// 	},
-			// 	inputs: [
-			// 		{
-			// 			type: "",
-			// 			name: "nums",
-			// 			value: "[1, 3, 4, 5 ]"
-			// 		},
-			// 		{
-			// 			type: "",
-			// 			name: "target",
-			// 			value: "9"
-			// 		},
-			// 	]
-			
-			// },
-			// {
-			// 	languageId: 62,
-			// 	stdin: "-121",
-			// 	stdout: "false",
-			// 	expected_output: "false",
-			// 	status: {
-			// 		id: 1,
-			// 		description: "Compilation Error"
-			// 	},
-			// 	inputs: [
-			// 		{
-			// 			type: "",
-			// 			name: "nums",
-			// 			value: "[10, 20, 30, 40 ]"
-			// 		},
-			// 		{
-			// 			type: "",
-			// 			name: "target",
-			// 			value: "10"
-			// 		},
-			// 	]
-			// }
-
-		],
+		submissions: [],
 	},
 	error: null,
 	loading: false
