@@ -1,4 +1,5 @@
 import CodeInLogo from "../../../assets/websiteLogo.svg";
+import { startTransition } from "react";
 import { NavLink } from "react-router-dom";
 import { FaUserCircle } from "react-icons/fa";
 import { MdOutlineNightlightRound } from "react-icons/md";
@@ -6,7 +7,12 @@ import { useNavigate, useLocation } from "react-router-dom";
 import { useSelector } from "react-redux";
 import { RootState } from "@/client/app/store";
 import { Button } from "../ui/button";
-import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuTrigger } from "../ui/dropdown-menu";
+import {
+	DropdownMenu,
+	DropdownMenuContent,
+	DropdownMenuItem,
+	DropdownMenuTrigger,
+} from "../ui/dropdown-menu";
 
 export const ProblemNavBar = ({
 	isProbleDescriptioPage,
@@ -25,11 +31,15 @@ export const ProblemNavBar = ({
 					src={CodeInLogo}
 					alt="Logo"
 					className="w-40 h-16 object-cover cursor-pointer"
-					onClick={() => navigate("/")}
+					onClick={() => {
+						startTransition(() => {
+							navigate("/");
+						})
+					}}
 				/>
 			</div>
 			<div className="flex flex-1 flex-row items-center  text-white">
-				{!isProbleDescriptioPage &&  (
+				{!isProbleDescriptioPage && (
 					<div className="bg-darkGray flex items-center h-11 rounded-full  shadow-md border border-[#334155] text-sm gap-5 px-5">
 						<NavLink
 							to={"/problemset/"}
@@ -82,7 +92,11 @@ export const ProblemNavBar = ({
 							<Button
 								variant="ghost"
 								className=" hover:bg-darkGray  hover:text-white  border border-[#334155]"
-								onClick={() => navigate("/login",  { state: { from: location } })}
+								onClick={() =>
+									navigate("/login", {
+										state: { from: location },
+									})
+								}
 							>
 								LogIn
 							</Button>
