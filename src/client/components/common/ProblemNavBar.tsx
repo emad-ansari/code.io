@@ -1,6 +1,5 @@
 import CodeInLogo from "../../../assets/websiteLogo.svg";
 import { startTransition } from "react";
-import { NavLink } from "react-router-dom";
 import { FaUserCircle } from "react-icons/fa";
 import { MdOutlineNightlightRound } from "react-icons/md";
 import { useNavigate, useLocation } from "react-router-dom";
@@ -22,6 +21,19 @@ export const ProblemNavBar = ({
 	const navigate = useNavigate();
 	const location = useLocation();
 
+  
+	const handleNavigation = (event: React.MouseEvent<HTMLAnchorElement>, path: string) => {
+	  event.preventDefault(); // Prevent default link behavior
+	  startTransition(() => {
+		navigate(path); // Navigate to the path
+	  })
+	  
+	};
+  
+	const isActiveLink = (path: string) => {
+	  return location.pathname === path ? "bg-gray-800" : ""; // Return active class if the link matches the current path
+	};
+
 	const { isLogin } = useSelector((state: RootState) => state.user);
 
 	return (
@@ -34,55 +46,54 @@ export const ProblemNavBar = ({
 					onClick={() => {
 						startTransition(() => {
 							navigate("/");
-						})
+						});
 					}}
 				/>
 			</div>
 			<div className="flex flex-1 flex-row items-center  text-white">
 				{!isProbleDescriptioPage && (
 					<div className="bg-darkGray flex items-center h-11 rounded-full  shadow-md border border-[#334155] text-sm gap-5 px-5">
-						<NavLink
-							to={"/problemset/"}
-							className={({ isActive }) =>
-								`text-sm font-dmMono  px-4 py-2 rounded-full  hover:bg-gray-800 ${
-									isActive ? "bg-hover" : ""
-								}`
-							}
+						<a
+							href="/problemset/"
+							onClick={(e) => handleNavigation(e, "/problemset/")}
+							className={`text-sm font-dmMono px-4 py-2 rounded-full hover:bg-gray-800 ${isActiveLink(
+								"/problemset/"
+							)}`}
 						>
 							Problems
-						</NavLink>
+						</a>
 
-						<NavLink
-							to={"contests"}
-							className={({ isActive }) =>
-								`text-sm font-dmMono  px-4 py-2 rounded-full  hover:bg-gray-800 ${
-									isActive ? "bg-hover" : ""
-								}`
-							}
+						<a
+							href="/contests"
+							onClick={(e) => handleNavigation(e, "/contests")}
+							className={`text-sm font-dmMono px-4 py-2 rounded-full hover:bg-gray-800 ${isActiveLink(
+								"/contests"
+							)}`}
 						>
 							Contests
-						</NavLink>
+						</a>
 
-						<NavLink
-							to={"standings"}
-							className={({ isActive }) =>
-								`text-sm font-dmMono  px-4 py-2 rounded-full  hover:bg-gray-800 ${
-									isActive ? "bg-hover" : ""
-								}`
-							}
+						<a
+							href="/standings"
+							onClick={(e) => handleNavigation(e, "/standings")}
+							className={`text-sm font-dmMono px-4 py-2 rounded-full hover:bg-gray-800 ${isActiveLink(
+								"/standings"
+							)}`}
 						>
 							Standings
-						</NavLink>
-						<NavLink
-							to={"/contribution"}
-							className={({ isActive }) =>
-								`text-sm font-dmMono  px-4 py-2 rounded-full  hover:bg-gray-800 ${
-									isActive ? "bg-hover" : ""
-								}`
+						</a>
+
+						<a
+							href="/contribution"
+							onClick={(e) =>
+								handleNavigation(e, "/contribution")
 							}
+							className={`text-sm font-dmMono px-4 py-2 rounded-full hover:bg-gray-800 ${isActiveLink(
+								"/contribution"
+							)}`}
 						>
 							Contribution
-						</NavLink>
+						</a>
 					</div>
 				)}
 				{!isLogin ? (

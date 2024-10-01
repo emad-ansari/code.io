@@ -3,7 +3,7 @@ import { useSelector } from "react-redux";
 import { RootState } from "../../app/store";
 import { memo } from "react";
 
-export const ProblemList = memo(() => {
+const ProblemList = memo(() => {
 	const { problems } = useSelector((state: RootState) => state.problem);
 	
 	return (
@@ -24,3 +24,5 @@ export const ProblemList = memo(() => {
     </div>
 	);
 });
+
+export default ProblemList;

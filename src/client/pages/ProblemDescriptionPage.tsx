@@ -5,10 +5,8 @@ import Split from "react-split";
 import { useSelector } from "react-redux";
 import { RootState } from "../app/store";
 
-export const ProblemDescriptionPage = () => {
+const ProblemDescriptionPage = () => {
 	const { isFullScreen } = useSelector((state: RootState) => state.editor);
-
-	// get the problem detials along with  testcases with given problem title
 
 	return (
 		<>
@@ -28,3 +26,4 @@ export const ProblemDescriptionPage = () => {
 		</>
 	);
 };
+export default  ProblemDescriptionPage;

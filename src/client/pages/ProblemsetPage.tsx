@@ -2,12 +2,13 @@ import { FilterSection } from "../components/common/FilterSection";
 import Pagination from "@mui/material/Pagination";
 import { useSelector } from "react-redux";
 import { RootState, useAppDispatch } from "../app/store";
-import { memo, useEffect } from "react";
+import { memo, useEffect, Suspense } from "react";
 import { setOpenDropDownMenu } from "../features/dropDownSlice";
 import { getProblems } from "../features/problemSlice";
 import { Outlet, useSearchParams } from "react-router-dom";
+import { ProblemListSkeleton } from '../components/skeletons/ProblemListSkeleton'
 
-export const ProblemsetPage = () => {
+const ProblemsetPage = () => {
 	const dispatch = useAppDispatch();
 	const [searchParams] = useSearchParams();
 
@@ -64,8 +65,9 @@ export const ProblemsetPage = () => {
 							Difficulty
 						</span>
 					</div>
-					<Outlet />	
-					
+					<Suspense fallback = { <ProblemListSkeleton /> } >
+						<Outlet />	
+					</Suspense>
 				</div>
 				<CustomPagination />
 			</div>
@@ -148,3 +150,5 @@ const CustomPagination = memo(() => {
 		/>
 	);
 });
+
+export default ProblemsetPage;
