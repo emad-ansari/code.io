@@ -38,7 +38,7 @@ model Problem {
   id           String @id @default(cuid())
   title        String @unique
   description  String
-  difficulty   String
+  difficulty   Difficulty @default(EASY)
   problemNo    Int @unique
   createdAt    DateTime @default(now())
   updatedAt    DateTime @updatedAt
@@ -61,7 +61,7 @@ model DefaultCode {
 
 model ProblemStatus {
   id          String @id @default(cuid())
-  status      String @default("todo")
+  status      Status @default(TODO)
   userId      String
   user        User @relation(fields: [userId], references: [id], onDelete: Cascade)
   problemId   String
@@ -96,28 +96,17 @@ model TestCaseOutput {
   testcase   TestCase @relation(fields: [testcaseId], references: [id], onDelete: Cascade)
 }
 
-
-
-
-
-// if the input is = [1, 2, 3, 4] it will store as "[1, 2, 3, 4]"
-// make a ProblemStaus model having (userid, problemId, status)
-// if user is not login then (disable the status button)/(navigate on sigin page) because he is not authorizes to filter based on status.
-// if user is not signin in then problem status is not display when user is signin then display the problem staus (solved, attempted, todo)
-// Disable the run and Submit button if user is not logedin and display the message(you need to login)
-
-// when a user go on problemset page it will fetch all the problem, how my backend will know that this user is authorized or not in order to send the problem status
-
-// How will you handle the Admin (to create and put problems in database)
-// 
-
-// [Todo]: give the instruction to admin to add the descripition in .md format
-
-
-// UserSignup Details: 
-
-// while creating a user you will set the isAdmin and userId property 
-// set isAdmin property along with userId when creating jwt token.
-// user: {userId: string, isAdmin: boolean}
-
-// 
+enum Status {
+  TODO
+  SOLVED
+  ATTEMPTED
+}
+enum Role {
+  USER
+  ADMIN
+}
+enum Difficulty {
+  EASY
+  MEDIUM
+  HARD
+}
