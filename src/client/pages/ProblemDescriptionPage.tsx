@@ -7,7 +7,7 @@ import { RootState } from "../app/store";
 
 const ProblemDescriptionPage = () => {
 	const { isFullScreen } = useSelector((state: RootState) => state.editor);
-
+	
 	return (
 		<>
 			<ProblemNavBar isProbleDescriptioPage={true} />

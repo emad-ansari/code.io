@@ -5,11 +5,7 @@ import { MdKeyboardArrowDown } from "react-icons/md";
 import { IoIosCheckmark } from "react-icons/io";
 import { Play } from "lucide-react";
 import { Button } from "../ui/button";
-import {
-	IoSettings,
-	// IoChevronDownOutline,
-	// IoChevronUpOutline,
-} from "react-icons/io5";
+import {IoSettings } from "react-icons/io5";
 import { TiArrowSortedDown, TiArrowSortedUp } from "react-icons/ti";
 import { ConsoleSkeleton } from "../skeletons/ConsoleSkeleton";
 
@@ -32,14 +28,17 @@ import {
 	TooltipProvider,
 	TooltipTrigger,
 } from "../ui/tooltip";
-import { useParams } from "react-router-dom";
+import { useLocation, useParams } from "react-router-dom";
 import { SubmissionDetails } from "@/client/types";
 
 const LANGUAGES = ["java", "cpp", "typescript", "javascript", "go", "rust"];
 
 export const EditorSection = () => {
 	const dispatch = useAppDispatch();
-	const { id } = useParams();
+	const location = useLocation();
+	const id = location.state?.id; 
+	console.log('problem id :	',id)
+
 	const { isLanguageMenuOpen, isThemeMenuOpen } = useSelector(
 		(state: RootState) => state.dropdown
 	);
