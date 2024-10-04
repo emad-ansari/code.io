@@ -42,7 +42,7 @@ export const Problem = ({
 				className="flex flex-1 justify-start items-center text-white gap-2"
 				onClick={() => {
 					startTransition(() => {
-						navigate(`../../problem/${id}/description`);
+						navigate(`../../problem/${title}/description`);
 					});
 				}}
 			>

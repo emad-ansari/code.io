@@ -60,16 +60,16 @@ export const getProblems = createAsyncThunk(
 
 export const fetchProblemDetail = createAsyncThunk<
 	ProblemDetailApiResponse,
-	{ problemId: string }
+	{ title: string }
 >(
 	"/problem/fetchProblemDetai",
-	async ({ problemId }: { problemId: string }) => {
-		if (!problemId) {
+	async ({ title }: { title: string }) => {
+		if (!title) {
 			return;
 		}
 		try {
 			const res = await api.get(
-				`/problem/get-problem-details/${problemId}`
+				`/problem/get-problem-details/${title}`
 			);
 			const data = res.data;
 			console.log("problem details data: ", data);

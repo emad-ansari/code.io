@@ -40,7 +40,7 @@ router.get("/filter-problem", auth, async (req: Request, res: Response) => {
 
 		const problems = await getAllProblems(page, problemPerPage, filterQuery);
 		console.log('problems : ', problems);
-		const totalPages = await getTotalPages(filterQuery);
+		const totalPages = await getTotalPages(problemPerPage, filterQuery);
 		if (userAuthorized){
 			return res.status(200).json({
 				success: true,
@@ -226,18 +226,15 @@ interface SubmissionsResult {
 	source_code?: string;
 }
 
-router.get(
-	"/get-problem-details/:title",
-	auth,
-	async (req: Request, res: Response) => {
+router.get("/get-problem-details/:title", auth, async (req: Request, res: Response) => {
 		const { title } = req.params;
 		const { userAuthorized } = req as CustomRequestObject;
-		if (title === undefined) {
-			return res.json({
-				success: false,
-				message: "Problem id is undefined",
-			});
-		}
+		// if (title === undefined) {
+		// 	return res.json({
+		// 		success: false,
+		// 		message: "Problem id is undefined",
+		// 	});
+		// }
 
 		try {
 			// get the problem detail along with testcase examples
@@ -258,7 +255,7 @@ router.get(
 				}
 
 				const problemDetailWithStatusOnUser: ProblemDetailWithStatusOnUser =
-					{ ...result.problemDetail, status: response.status };
+					{ ...result.problemDetail, problemStatus: { status: response.status } };
 
 				return res.json({
 					success: true,
