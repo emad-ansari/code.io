@@ -98,7 +98,7 @@ export async function getAllProblems(page: number, problemPerPage: number, filte
 	}
 }
 
-export async function getTotalPages ( filterQuery: { difficulty?: string | undefined, status?: string | undefined } ){
+export async function getTotalPages ( problemPerPage: number, filterQuery: { difficulty?: string | undefined, status?: string | undefined } ){
 	try {
 		const totalPages = await prisma.problem.aggregate({
 			where: filterQuery,
@@ -106,7 +106,7 @@ export async function getTotalPages ( filterQuery: { difficulty?: string | undef
 				id: true
 			}
 		})
-		return totalPages._count.id;
+		return Math.ceil(totalPages._count.id / problemPerPage);
 
 	}
 	catch(e: any){
