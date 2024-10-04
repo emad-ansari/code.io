@@ -1,5 +1,6 @@
 import * as fs from "fs";
 
+
 interface Parameter {
 	parameterId: string;
 	type: string;
@@ -24,7 +25,7 @@ export class ParseProblemDetails {
 	testcaseId: string = "";
 	title: string = "";
 	description: string = "";
-	difficulty: string = "";
+	difficulty: string = ""
 	functionName: string = "";
 	returnType: string = "";
 	userId: string = "";
@@ -38,7 +39,7 @@ export class ParseProblemDetails {
 		this.id = data.id;
 		this.title = data.title || "";
 		this.description = data.description || "";
-		this.difficulty = data.difficulty || "";
+		this.difficulty = data.difficulty;
 		
 		this.returnType = data.returnType || "";
 		this.userId = data.userId;
@@ -105,7 +106,8 @@ export class ParseProblemDetails {
 				return "bool";
 			case "char":
 				return "char";
-			case "char[]" || "String[]":
+			case "String[]":
+			case "char[]":
 				return "vector<string>";
 			case "char[][]":
 				return "vector<vector<string>>";
@@ -113,9 +115,11 @@ export class ParseProblemDetails {
 				return "vector<int>";
 			case "List<String>":
 				return "vector<string>";
-			case "List<List<Integer>>" || "int[][]":
+			case "int[][]":
+			case "List<List<Integer>>" :
 				return "vector<vector<int>>";
-			case "List<List<String>>" || "int[][]":
+			case "int[][]":
+			case "List<List<String>>" :
 				return "vector<vector<string>>";
 			default:
 				return "";
@@ -126,15 +130,21 @@ export class ParseProblemDetails {
 		switch (returnType) {
 			case "int":
 				return "number";
-			case "int[]" || "List<Integer>":
+			case "List<Integer>":
+			case "int[]" :
 				return "number[]";
-			case "String" || "string" || "char":
+			case  "char":
+			case "string" :
+			case "String" :
 				return "string";
-			case "Boolean" || "boolean":
+			case "Boolean" :
+			case "boolean":
 				return "boolean";
-			case "String[]" || "string[]":
+			case "string[]":
+			case "String[]" :
 				return "string[]";
-			case "List<List<Integer>>" || "int[][]":
+			case "int[][]":
+			case "List<List<Integer>>":
 				return "number[][]";
 			default:
 				return "number";
