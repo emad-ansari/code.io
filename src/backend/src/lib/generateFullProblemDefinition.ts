@@ -1,7 +1,5 @@
 import { TestCaseReturnType } from "../@utils/types";
 
-
-
 export class GenerateFullProblemDefinition {
     functionName: string = "";
     inputs: {type: string, name: string, value: string}[] = [];
