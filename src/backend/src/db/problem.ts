@@ -1,12 +1,11 @@
 import prisma from "./index";
-import { DifficultyType, Problem, ProblemStatus, ProblemWithDescription, ProblemDetail} from "../@utils/types";
-import { Status } from "@prisma/client";
+import { ProblemDetail} from "../@utils/types";
 
 
 export async function createProblem(
 	title: string,
 	description: string,
-	difficulty: DifficultyType,
+	difficulty: string,
 	userId: string
 ): Promise<{ success: boolean; msg: string; id: string }> {
 	try {
@@ -73,14 +72,22 @@ export async function createProblem(
 	}
 }
 
-export async function getAllProblems() {
+export async function getAllProblems(page: number, problemPerPage: number, filterQuery: { difficulty?: string | undefined, status?: string | undefined } ) {
 	try {
 		const problems = await prisma.problem.findMany({
+			where: filterQuery,
+			skip: (page - 1) * problemPerPage,
+			take: problemPerPage,
 			select: {
 				id: true,
 				title: true,
 				difficulty: true,
-				problemNo: true
+				problemNo: true,
+				problemStatus: {
+					select: {
+						status: true
+					}
+				}
 			}
 		})
 		return problems
@@ -90,102 +97,22 @@ export async function getAllProblems() {
 
 	}
 }
-export async function getAllProblemStatusOnUser(userId : string) {
+
+export async function getTotalPages ( filterQuery: { difficulty?: string | undefined, status?: string | undefined } ){
 	try {
-		const allProblemStateOnUser = await prisma.problemStatus.findMany({
-			where: {
-				userId
-			},
-			select: {
-				status: true,
-				problem: {
-					select:{
-						id: true,
-						
-					}
-				}
+		const totalPages = await prisma.problem.aggregate({
+			where: filterQuery,
+			_count: {
+				id: true
 			}
 		})
-		return allProblemStateOnUser
+		return totalPages._count.id;
 
 	}
-	catch(error: any){
-		console.log("Erorr: ", error.message)
+	catch(e: any){
+		console.error(e.message);
 	}
 }
-
-// export async function getProblemsWithStatus(userId: string): Promise<{success: boolean, problems: Problem[]}> {
-// 	// there is no filter options [ title, difficulty, problemNo, status with each problem]
-// 	try {
-// 		const problems = await prisma.problemStatus.findMany({
-// 			where: {
-// 				userId,
-// 			},
-// 			select: {
-// 				status: true,
-// 				problem: {
-// 					select: {
-// 						id: true,
-// 						title: true,
-// 						difficulty: true,
-// 						problemNo: true,
-// 					},
-// 				},
-// 			},
-// 		});
-// 		if (problems){
-// 			return {
-// 				success: true,
-// 				problems
-// 			}
-// 		}
-// 		return {
-// 			success: false,
-// 			problems: []
-// 		}
-		
-		
-// 	} catch (error: any) {
-// 		return {
-// 			success: false,
-// 			problems: []
-// 		}
-// 	}
-// }
-
-
-// export async function getProblemsWithoutStatus(): Promise<{success: boolean, problems: Problem[]}>{
-// 	try {
-// 		const problems = await prisma.problem.findMany({
-// 			select: {
-// 				id: true,
-// 				title: true,
-// 				difficulty: true,
-// 				problemNo: true
-// 			}
-// 		});
-// 		if (problems){
-// 			const updatedProblems: Problem[] = problems.map(p => {
-// 				return {  problem: { ...p }};
-// 			})
-// 			return {
-// 				success: true,
-// 				problems: updatedProblems
-// 			}
-// 		}
-// 		return {
-// 			success: false,
-// 			problems: []
-// 		}
-		
-		
-// 	} catch (error: any) {
-// 		return {
-// 			success: false,
-// 			problems: []
-// 		}
-// 	}
-// }
 
 export async function createProblemStatus(problemId: string) {
 	try {
@@ -198,7 +125,7 @@ export async function createProblemStatus(problemId: string) {
 			data: users.map((user) => ({
 				userId: user.id,
 				problemId: problemId,
-				status: Status.TODO, // You can omit this as it defaults to 'todo'
+				status: "Todo", // You can omit this as it defaults to 'todo'
 			})),
 		});
 		console.log('Problem status created')
@@ -207,8 +134,6 @@ export async function createProblemStatus(problemId: string) {
 		console.log('Error', (error as Error).message)
 	}
 }
-
-
 
 
 export async function getProblemDetail(title: string): Promise<{ success: boolean, msg: string, problemDetail?: ProblemDetail }> {
@@ -254,7 +179,7 @@ export async function getProblemDetail(title: string): Promise<{ success: boolea
 	}
 }
 
-export async function getOneProblemStatusOnUser(userId: string, problemId: string): Promise<{ success: boolean , msg: string, status?: Status  }> {
+export async function getOneProblemStatusOnUser(userId: string, problemId: string): Promise<{ success: boolean , msg: string, status?: string  }> {
 	try{
 		const problemStatusOnUser = await prisma.problemStatus.findFirst({
 			where: {
