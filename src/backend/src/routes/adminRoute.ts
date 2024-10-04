@@ -102,7 +102,9 @@ const LNAGUAGE_MAPPING: {
 router.post("/save-problem", auth, async (req: Request, res: Response) => {
 	const { userAuthorized } = req as CustomRequestObject;
 	const { problemId } = req.body.data;
+	console.log('request on server')
 	if (!userAuthorized){
+		console.log('not authorized');
 		return res.status(401).json({ err: "You are not authorize, please login "})
 	}
 	const { role } = req as CustomRequestObject;
@@ -328,7 +330,6 @@ async function saveProblemAndTestCase(problemId: string):Promise<{success: boole
 
 	for (let file of files) {
 		// Only process JSON files
-		console.log('this is a file : ', file)
 		if (path.extname(file) === ".json") {
 			const filePath = path.join(folderPath, file);
 
@@ -339,7 +340,7 @@ async function saveProblemAndTestCase(problemId: string):Promise<{success: boole
 				const problem = parser.extractProblemDetails(filePath);
 				if (problem.id === problemId) {
 					// read the details and save it into database
-					
+				
 					const newProblem = await createProblem(
 						problem.title,
 						problem.description,

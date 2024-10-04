@@ -8,12 +8,12 @@ import { NewTestCaseFormat, ProblemInput } from "../@utils/types";
 
 router.post("/create-problem", auth, async (req: Request, res: Response) => {
 	const { userAuthorized } = req as CustomRequestObject;
+
 	if (!userAuthorized){
-		return res.status(401).json({ err: "You are not authorize, please login "})
+		return res.status(401).json({ success: false, message: "Unauthorized!"})
 	}
 	const { userId } = req as CustomRequestObject;
-	console.log('user id is here: ', userId);
-	
+
 	try {
 		const parsedInput = ProblemInput.safeParse(req.body);
 		if (parsedInput.success) {
@@ -32,26 +32,26 @@ router.post("/create-problem", auth, async (req: Request, res: Response) => {
 			fs.writeFile(filePath, jsonString, (err) => {
 				if (err) {
 					console.log("Error writing file", err);
-					return res.status(500).json({err: "server is not able to save you problem please try again!!"});
+					return res.status(500).json({success: false, message: "server is not able to save you problem please try again!!"});
 
 				} else {
 					console.log("Successfully wrote file");
-					return res.status(200).json({ msg: "Problem has been saved for review, thank for contribution!"});
+					return res.status(201).json({ success: true, message: "Problem has been saved for review, thank for contribution!"});
 				}
 			});
 		} else {
-			return res.status(400).json({ error: parsedInput.error });
+			return res.status(400).json({ success: false, message: parsedInput.error });
 		}
 	} catch (error: any) {
 		console.error("Error: ", (error as Error).message);
-		return res.status(400).json({ error: "Not able to create problem!!" });
+		return res.status(400).json({ success: false,  msessage: (error as Error).message });
 	}
 });
 
 router.post("/testcase", auth, async (req: Request, res: Response) => {
 	const { userAuthorized } = req as CustomRequestObject;
 	if (!userAuthorized){
-		return res.status(401).json({ err: "You are not authorize, please login "})
+		return res.status(401).json({ success: false, message: "Unauthorized!!"})
 	}
 	const { userId } = req as CustomRequestObject;
 
@@ -73,21 +73,24 @@ router.post("/testcase", auth, async (req: Request, res: Response) => {
 				if (err) {
 					console.error("Error while writing testcase file:", err);
 					return res.status(500).json({
-						error: "Not able to save the problem please try after some time",
+						success: false, 
+						message: "Not able to save the problem please try after some time",
 					});
 				} else {
 					// [Todo] - send an email to user as a response
-					return res.status(200).json({
+					return res.status(201).json({
+						success: true,
 						message:
 							"Your testcase has been saved for review, thankyou for contribution",
 					});
 				}
 			});
 		} else {
-			return res.status(400).json({ error: parsedTestcaseInput.error });
+			return res.status(400).json({ success: false,  message: parsedTestcaseInput.error });
 		}
 	} catch (error: any) {
 		console.error("Error: ", (error as Error).message);
+		return res.status(400).json({ success: false,  msessage: (error as Error).message });
 	}
 });
 
