@@ -20,6 +20,7 @@ export default {
   			GREEN: '#0FA958',
   			YELLOW: '#dadd32',
   			RED: '#D91111',
+			BORDER: '#334155',
   			background: 'hsl(var(--background))',
   			foreground: 'hsl(var(--foreground))',
   			card: {
