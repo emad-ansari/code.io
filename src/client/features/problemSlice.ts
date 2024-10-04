@@ -3,9 +3,10 @@ import {
 	ProblemState,
 	ApiResponse,
 	getProblemParameter,
-	ServerProblem,
+	ProblemDetailApiResponse,
+	Problem
 } from "../types";
-import { client } from "../api/client";
+import { api } from "../api/client";
 import { RootState } from "../app/store";
 
 export const problemSliceInitialState: ProblemState = {
@@ -13,18 +14,15 @@ export const problemSliceInitialState: ProblemState = {
 	pageSize: 10,
 	numberOfPages: 1,
 	problemDetail: {
-		status: "",
-		problem: {
-			id: "",
-			title: "",
-			description: "",
-			difficulty: "",
-			problemNo: 0,
-		},
+		id: "",
+		title: "",
+		description: "",
+		difficulty: "",
+		problemNo: 0,
 		testcaseExamples: [],
 	},
 	error: null,
-	loading: false
+	loading: false,
 };
 
 export const getProblems = createAsyncThunk(
@@ -35,10 +33,9 @@ export const getProblems = createAsyncThunk(
 	) => {
 		const store = ThunkAPI.getState() as RootState;
 		const { pageSize } = store.problem;
-		
 
 		try {
-			const res = await client.get<ApiResponse<ServerProblem[]>>(
+			const res = await api.get<ApiResponse<Problem[]>>(
 				`/problem/filter-problem`,
 				{
 					params: {
@@ -50,7 +47,7 @@ export const getProblems = createAsyncThunk(
 				}
 			);
 			const data = res.data;
-			console.log('filter problem: ', data)
+			console.log("filter problem: ", data);
 
 			return data;
 		} catch (error: any) {
@@ -61,18 +58,21 @@ export const getProblems = createAsyncThunk(
 	}
 );
 
-export const getSpecificProblemDetails = createAsyncThunk(
-	"/problem/getSpecificProblemDetails",
-	async (problemId: string) => {
+export const fetchProblemDetail = createAsyncThunk<
+	ProblemDetailApiResponse,
+	{ problemId: string }
+>(
+	"/problem/fetchProblemDetai",
+	async ({ problemId }: { problemId: string }) => {
 		if (!problemId) {
-			alert("problem id is null");
 			return;
 		}
 		try {
-			const res = await client.get(
+			const res = await api.get(
 				`/problem/get-problem-details/${problemId}`
 			);
 			const data = res.data;
+			console.log("problem details data: ", data);
 			return data;
 		} catch (error: any) {
 			console.log(error);
@@ -93,29 +93,30 @@ export const problemSlice = createSlice({
 			console.log(action.payload);
 		});
 		builder.addCase(getProblems.fulfilled, (state, action) => {
-			const { message, data, totalPages } = action.payload;
-			state.problems = data;
-			state.numberOfPages = totalPages;
-			console.log('filter problem: ', message);
+			const { success } = action.payload;
+			if (success) {
+				const { data, totalPages } = action.payload;
+				state.problems = data;
+				state.numberOfPages = totalPages;
+			}
 		});
 		builder.addCase(getProblems.rejected, (_, action) => {
 			console.log(action.payload);
 		});
-		builder.addCase(getSpecificProblemDetails.pending, (state, action) => {
+		builder.addCase(fetchProblemDetail.pending, (state, action) => {
 			state.loading = true;
 			console.log(action.payload);
 		});
-		builder.addCase(
-			getSpecificProblemDetails.fulfilled,
-			(state, action) => {
-				const { message } = action.payload;
-				if (message === "success") {
-					state.problemDetail = action.payload.problemDetails;
-					state.loading = false;
-				}
+		builder.addCase(fetchProblemDetail.fulfilled, (state, action) => {
+			const { success, message } = action.payload;
+			const problemDetails = action.payload.problemDetails;
+			if (success && problemDetails) {
+				state.problemDetail = problemDetails;
+				state.loading = false;
 			}
-		);
-		builder.addCase(getSpecificProblemDetails.rejected, (state, action) => {
+			console.log(" problem details api response message", message);
+		});
+		builder.addCase(fetchProblemDetail.rejected, (state, action) => {
 			state.loading = false;
 			console.log(action.payload);
 		});
