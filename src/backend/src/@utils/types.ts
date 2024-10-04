@@ -37,12 +37,6 @@ export const ProblemInput = z.object({
 	parameters: Parameters,
 	testcases: TestCaseArray,
 });
-export const ProblemFilterSchema = z.object({
-	pageNumber: z.string(),
-	pageSize: z.string(),
-	difficulty: z.string(),  // Allow empty string or undefined
-	status: z.string(),
-})
 
 
 
@@ -116,24 +110,7 @@ export interface ProblemDetail {
 	problemNo: number;
 	testcaseExamples: TestCaseReturnType[]
 }
-export interface ProblemDetailWithStatusOnUser extends ProblemDetail {
+export interface ProblemDetailWithStatusOnUser extends ProblemDetail { // check if used or not
 	status: string
 }
 
-export const ProblemsWithStatusSchema = z.object({
-	id: z.string(),
-	title: z.string(),
-	difficulty: z.string(),
-	problemNo: z.number(),
-	status: z.string()
-})
-
-export const ProblemWithoutStatusSchema = z.object({
-	id: z.string(),
-	title: z.string(),
-	difficulty: z.string(),
-	problemNo: z.number(),
-})
-
-export type ProblemWithStatus = z.infer<typeof ProblemsWithStatusSchema>
-export type ProblemWithoutStatus = z.infer<typeof ProblemWithoutStatusSchema>
