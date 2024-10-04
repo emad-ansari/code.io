@@ -1,12 +1,20 @@
 import { FilterSection } from "../components/common/FilterSection";
-import Pagination from "@mui/material/Pagination";
+import {
+	Pagination,
+	PaginationContent,
+	PaginationEllipsis,
+	PaginationItem,
+	PaginationLink,
+	PaginationNext,
+	PaginationPrevious,
+} from "../components/ui/pagination";
 import { useSelector } from "react-redux";
 import { RootState, useAppDispatch } from "../app/store";
 import { memo, useEffect, Suspense } from "react";
 import { setOpenDropDownMenu } from "../features/dropDownSlice";
 import { getProblems } from "../features/problemSlice";
 import { Outlet, useSearchParams } from "react-router-dom";
-import { ProblemListSkeleton } from '../components/skeletons/ProblemListSkeleton'
+import { ProblemListSkeleton } from "../components/skeletons/ProblemListSkeleton";
 
 const ProblemsetPage = () => {
 	const dispatch = useAppDispatch();
@@ -21,7 +29,7 @@ const ProblemsetPage = () => {
 			getProblems({
 				pageNumber: Number(searchParams.get("page")) || 1,
 				difficulty: searchParams.get("difficulty") || "",
-				status: searchParams.get("status") || ""
+				status: searchParams.get("status") || "",
 			})
 		);
 	}, []);
@@ -65,8 +73,8 @@ const ProblemsetPage = () => {
 							Difficulty
 						</span>
 					</div>
-					<Suspense fallback = { <ProblemListSkeleton /> } >
-						<Outlet />	
+					<Suspense fallback={<ProblemListSkeleton />}>
+						<Outlet />
 					</Suspense>
 				</div>
 				<CustomPagination />
@@ -76,78 +84,39 @@ const ProblemsetPage = () => {
 };
 
 const CustomPagination = memo(() => {
-	const dispatch = useAppDispatch();
-	const { numberOfPages } = useSelector((state: RootState) => state.problem);
-	const [searchParams, setSearchParams] = useSearchParams();
-
-	const changeProblemSetPage = (value: number) => {
-		searchParams.set("page", value.toString());
-		setSearchParams(searchParams);
-		const difficulty = searchParams.get("difficulty");
-		const status  =  searchParams.get("status");
-
-		if (difficulty == null && status == null) {
-			dispatch(
-				getProblems({
-					pageNumber: value,
-					difficulty: "",
-					status: ""
-				})
-			);
-		} 
-		else if (difficulty == null && status !== null){
-			dispatch(
-				getProblems({
-					pageNumber: value,
-					difficulty:  "",
-					status: status
-				})
-			);
-		}
-		else if (difficulty !== null && status == null){
-			dispatch(
-				getProblems({
-					pageNumber: value,
-					difficulty:  difficulty,
-					status: ""
-				})
-			);
-		}
-		else {
-			//  meanse both are not null
-			dispatch(
-				getProblems({
-					pageNumber: value,
-					difficulty:  difficulty || "",
-					status: status || ""
-				})
-			);
-		}
-	};
+	const { totalPages } = useSelector((state: RootState) => state.problem);
 
 	return (
-		<Pagination
-			count={numberOfPages}
-			variant="outlined"
-			page={Number(searchParams.get("page")) || 1}
-			sx={{
-				"& .MuiPaginationItem-root": {
-					backgroundColor: "#0D1621",
-					color: "#fff", // Change the text color if needed
-					"&:hover": {
-						backgroundColor: "#334155", // Change the background color on hover
-					},
-					"&.Mui-selected": {
-						backgroundColor: "#334155", // Change the background color of the selected item
-						color: "#fff",
-						"&:hover": {
-							backgroundColor: "#334155", // Change the background color on hover for the selected item
-						},
-					},
-				},
-			}}
-			onChange={(_, value) => changeProblemSetPage(value)}
-		/>
+		<Pagination>
+			<PaginationContent>
+				<PaginationItem>
+					<PaginationPrevious
+						href="#"
+						className="bg-darkGray text-white "
+					/>
+				</PaginationItem>
+				{Array.from({ length: totalPages }).map((_, index) => (
+					<PaginationItem key = {index}>
+						<PaginationLink
+							href={`/problemset/?page=${index + 1}`}
+							className="bg-darkGray text-white "
+							// isActive
+						>
+							{index + 1}
+						</PaginationLink>
+					</PaginationItem>
+				))}
+				<PaginationItem>
+					<PaginationEllipsis className=" text-white " />
+				</PaginationItem>
+				<PaginationItem>
+					<PaginationNext
+						href="#"
+						className="bg-darkGray text-white "
+					/>
+				</PaginationItem>
+			</PaginationContent>
+		</Pagination>
 	);
 });
 

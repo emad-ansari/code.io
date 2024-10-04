@@ -11,8 +11,8 @@ import { RootState } from "../app/store";
 
 export const problemSliceInitialState: ProblemState = {
 	problems: [],
-	pageSize: 10,
-	numberOfPages: 1,
+	pageSize: 2,
+	totalPages: 1,
 	problemDetail: {
 		id: "",
 		title: "",
@@ -97,7 +97,7 @@ export const problemSlice = createSlice({
 			if (success) {
 				const { data, totalPages } = action.payload;
 				state.problems = data;
-				state.numberOfPages = totalPages;
+				state.totalPages = totalPages;
 			}
 		});
 		builder.addCase(getProblems.rejected, (_, action) => {
