@@ -1,3 +1,4 @@
+// import {  Status } from "@prisma/client";
 import { z } from "zod";
 
 export const SingleTestCase = z.object({
@@ -25,6 +26,8 @@ const Parameters = z.array(
 	})
 );
 
+
+
 export const ProblemInput = z.object({
 	id: z.string(),
 	title: z.string(),
@@ -34,6 +37,14 @@ export const ProblemInput = z.object({
 	parameters: Parameters,
 	testcases: TestCaseArray,
 });
+export const ProblemFilterSchema = z.object({
+	pageNumber: z.string(),
+	pageSize: z.string(),
+	difficulty: z.string(),  // Allow empty string or undefined
+	status: z.string(),
+})
+
+
 
 export const NewTestCaseFormat = z.object({
 	problemTitle: z.string(),
@@ -82,7 +93,7 @@ export interface TestCaseReturnType {
 }
 
 
-export interface Problem {
+export interface Problem { // check if not use remove it
 	status: string;
 	problem: {
 		id: string;
@@ -91,9 +102,38 @@ export interface Problem {
 		problemNo: number;
 	}
 }
-export interface ProblemWithDescription extends Problem {
+export interface ProblemWithDescription extends Problem {  // check and if not use remove it 
 	problem: Problem['problem'] & { 
 		description: string; 
 	};
 	testcaseExamples: TestCaseReturnType[]
 }
+
+export interface ProblemDetail {
+	id: string;
+	title: string;
+	difficulty: string;
+	problemNo: number;
+	testcaseExamples: TestCaseReturnType[]
+}
+export interface ProblemDetailWithStatusOnUser extends ProblemDetail {
+	status: string
+}
+
+export const ProblemsWithStatusSchema = z.object({
+	id: z.string(),
+	title: z.string(),
+	difficulty: z.string(),
+	problemNo: z.number(),
+	status: z.string()
+})
+
+export const ProblemWithoutStatusSchema = z.object({
+	id: z.string(),
+	title: z.string(),
+	difficulty: z.string(),
+	problemNo: z.number(),
+})
+
+export type ProblemWithStatus = z.infer<typeof ProblemsWithStatusSchema>
+export type ProblemWithoutStatus = z.infer<typeof ProblemWithoutStatusSchema>
