@@ -23,7 +23,7 @@ import prisma from "../db";
 
 router.get("/filter-problem", auth, async (req: Request, res: Response) => {
 	const { userAuthorized } = req as CustomRequestObject;
-
+	
 	const page = Number(req.query.pageNumber) || 1;
 	const problemPerPage = Number(req.query.pageSize);
 	const difficulty = req.query.difficulty as string | undefined;
@@ -37,9 +37,9 @@ router.get("/filter-problem", auth, async (req: Request, res: Response) => {
 
 		if (difficulty) filterQuery.difficulty = difficulty;
 		if (status ) filterQuery.status = status;
-
+		
 		const problems = await getAllProblems(page, problemPerPage, filterQuery);
-		console.log('problems : ', problems);
+
 		const totalPages = await getTotalPages(problemPerPage, filterQuery);
 		if (userAuthorized){
 			return res.status(200).json({

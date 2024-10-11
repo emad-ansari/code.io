@@ -1,16 +1,11 @@
 import { BrowserRouter, Route, Routes } from "react-router-dom";
-import { HomePage } from "./client/pages/HomePage";
+import { lazy } from "react";
 import { LoginPage } from "./client/pages/LoginPage";
 import { SignupPage } from "./client/pages/SignupPage";
 import { EmailAuthenticaiton } from "./client/pages/EmailAuthenticaiton";
-import { ProblemsetPage } from "./client/pages/ProblemsetPage";
 import { ContestPage } from "./client/pages/ContestPage";
 import { StandingPage } from "./client/pages/StandingPage";
-import { ProblemDescriptionPage } from "./client/pages/ProblemDescriptionPage";
-import { ProblemList } from "./client/components/common/ProblemList";
-import { AboutUs } from "./client/pages/AboutUsPage";
-import { ProblemStatement }  from "./client/components/common/ProblemDescription";
-import { ProblemSubmissions }  from "./client/components/common/ProblemSubmissions";
+import { ProblemSubmissions } from "./client/components/common/ProblemSubmissions";
 import { Contribution } from "./client/pages/Contribution";
 import { TestCaseForm } from "./client/pages/TestCaseForm";
 import { ProblemForm } from "./client/pages/ProblemForm";
@@ -20,8 +15,13 @@ import { useEffect } from "react";
 import { rehydrateAuth } from "./client/features/authSlice";
 import { useAppDispatch } from "./client/app/store";
 
-const App = () => {
+const HomePage = lazy(() => import("./client/pages/HomePage"))
+const ProblemStatement = lazy(() => wait(2000).then(() => import("./client/components/common/ProblemStatement")))
+const ProblemsetPage = lazy(() => import( "./client/pages/ProblemsetPage"))
+const ProblemList = lazy(() => wait(2000).then(() => import("./client/components/common/ProblemList")));
+const ProblemDescriptionPage = lazy(() => import ( "./client/pages/ProblemDescriptionPage"))
 
+const App = () => {
 	const dispatch = useAppDispatch();
 	useEffect(() => {
 		// On app load, rehydrate the login state
@@ -45,19 +45,31 @@ const App = () => {
 					</Route>
 					<Route path="/contests" element={<ContestPage />} />
 					<Route path="/standings" element={<StandingPage />} />
-					<Route path="/contribution" element={<Contribution />} >
-						<Route index  element = {<ProblemForm />} />
-						<Route path = 'testcase' element = {<TestCaseForm />} />
+					<Route path="/contribution" element={<Contribution />}>
+						<Route index element={<ProblemForm />} />
+						<Route path="testcase" element={<TestCaseForm />} />
 					</Route>
-					<Route path="problem/:id/" element={<ProblemDescriptionPage />}>
-						<Route  path = 'description' element={<ProblemStatement />} />
-						<Route  path = 'submissions' element={< ProblemSubmissions />} />	
+					<Route
+						path="problem/:title/"
+						element={<ProblemDescriptionPage />}
+					>
+						<Route
+							path="description"
+							element={<ProblemStatement />}
+						/>
+
+						<Route
+							path="submissions"
+							element={<ProblemSubmissions />}
+						/>
 					</Route>
-					<Route path="/about-us" element={<AboutUs />} />
 				</Routes>
 			</BrowserRouter>
 		</>
 	);
-}
+};
 
+function wait (time: number){
+	return new Promise(resolve => setTimeout(resolve, time));
+}
 export default App;

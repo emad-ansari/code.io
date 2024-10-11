@@ -1,7 +1,8 @@
 import { createSlice, PayloadAction, createAsyncThunk } from "@reduxjs/toolkit";
-import { client } from "../api/client";
+import { api } from "../api/client";
 import { RootState } from "../app/store";
 import { v4 as uuidv4 } from 'uuid'
+
 
 export interface Parameter {
 	parameterId: string;
@@ -22,7 +23,7 @@ export const ProblemFormInitailState: ProblemFormState = {
 	id: "",
 	title: "",
 	description: "",
-	difficulty: "Easy",
+	difficulty: "",
 	returnType: "",
 	parameters: [],
 };
@@ -40,7 +41,7 @@ export const createProblem = createAsyncThunk(
 				return;
 			}
 
-			const res = await client.post("/contribute/create-problem", {
+			const res = await api.post("/contribute/create-problem", {
 				id: uuidv4(),
 				title,
 				description,
@@ -75,7 +76,6 @@ export const problemFormSlice = createSlice({
 			state.description = action.payload;
 		},
 		setDifficulty: (state, action: PayloadAction<string>) => {
-			console.log("difficulty: ", action.payload);
 			state.difficulty = action.payload;
 		},
 		addParameter: (state, action: PayloadAction<Parameter>) => {

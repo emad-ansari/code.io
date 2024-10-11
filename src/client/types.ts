@@ -1,7 +1,7 @@
 export interface ProblemState {
-	problems: ServerProblem[];
+	problems: Problem[];
 	pageSize: number;
-	numberOfPages: number;
+	totalPages: number;
 	problemDetail: ProblemDetail;
 	error: any;
 	loading: boolean
@@ -29,20 +29,17 @@ export interface EditorState {
 	error: string | null | undefined;
 }
 
-export interface ServerProblem {
-	status: string;
-	problem: Problem;
-}
 export interface Problem {
 	id: string;
 	title: string;
 	difficulty: string;
 	problemNo: number;
+	problemStatus?: {
+		status: string
+	}
 }
-export interface ProblemDetail extends ServerProblem {
-	problem: ServerProblem["problem"] & {
-		description: string;
-	};
+export interface ProblemDetail extends Problem {
+	description: string;
 	testcaseExamples: TestCaseExample[];
 }
 export interface TestCaseExample {
@@ -61,6 +58,7 @@ export interface Output {
 }
 
 export interface ApiResponse<T> {
+	success: boolean;
 	data: T;
 	totalPages: number;
 	message: string;
@@ -89,14 +87,14 @@ export interface CustomMuiMenuProps {
 	ITEMS_ARRAY: string[];
 }
 
-export interface SubmissionResult {
-	status: string;
-	testCasesPassed: number;
-	userOutput?: string | "";
-	expectedOutput?: string;
-	compilationError?: string | "";
-	failedTestCase?: string | "";
-}
+// export interface SubmissionResult {
+// 	status: string;
+// 	testCasesPassed: number;
+// 	userOutput?: string | "";
+// 	expectedOutput?: string;
+// 	compilationError?: string | "";
+// 	failedTestCase?: string | "";
+// }
 
 export const typeOptions: string[] = [
 	"void",
@@ -146,4 +144,21 @@ export interface SubmissionDetails {
 	testcaseExamples?: TestCaseExample[],
 	inputs: Input[]
 }
+export type UserApiResponse = {
+	success: boolean;
+	message: string;
+	token?: string;
+}
 
+export type ProblemDetailApiResponse = {
+	success: boolean;
+	message: string;
+	problemDetails?: ProblemDetail
+}
+
+
+export interface RefreshTokenApiResponse {
+	success: boolean,
+	message: string;
+	accessToken?: string
+}

@@ -36,16 +36,13 @@ import { typeOptions } from "../types";
 import { v4 as uuidv4 } from "uuid";
 
 export const ProblemForm = () => {
-
-
-
 	const dispatch = useAppDispatch();
 	const { title, description, parameters } = useSelector(
 		(state: RootState) => state.problemform
 	);
 	const { testcases } = useSelector((state: RootState) => state.TestCaseForm);
 	const { isLogin } = useSelector((state: RootState) => state.user);
-	
+
 	const difficultyOption: string[] = ["Easy", "Medium", "Hard"];
 
 	const handleParameters = () => {
@@ -75,7 +72,6 @@ export const ProblemForm = () => {
 		};
 		dispatch(addNewTestCase(newTestCase));
 	};
-
 
 	return (
 		<div className="bg-PRIMARY  flex flex-row justify-between gap-5 pl-4 pr-4 pb-4 fixed top-32 left-0 right-0 bottom-0">
@@ -142,19 +138,24 @@ export const ProblemForm = () => {
 							</SelectTrigger>
 							<SelectContent className="bg-darkGray text-white">
 								<SelectGroup className="">
-									{difficultyOption.map(
-										(difficulty, index) => {
-											return (
-												<SelectItem
-													key={index}
-													value={difficulty}
-													className="hover:bg-[#334155] !important cursor-pointer"
-												>
-													{difficulty}
-												</SelectItem>
-											);
-										}
-									)}
+									<SelectItem
+										value={"Easy"}
+										className="hover:bg-[#334155] !important cursor-pointer"
+									>
+										Easy
+									</SelectItem>
+									<SelectItem
+										value={"Medium"}
+										className="hover:bg-[#334155] !important cursor-pointer"
+									>
+										Medium
+									</SelectItem>
+									<SelectItem
+										value={"Hard"}
+										className="hover:bg-[#334155] !important cursor-pointer"
+									>
+										Hard
+									</SelectItem>
 								</SelectGroup>
 							</SelectContent>
 						</Select>
@@ -251,16 +252,22 @@ export const ProblemForm = () => {
 							<Tooltip>
 								<TooltipTrigger asChild>
 									<button
-										disabled={ isLogin? false: true }
+										disabled={isLogin ? false : true}
 										type="submit"
 										className="bg-cyan text-black font-medium px-4 py-2 rounded-md hover:bg-[#a5f3fc] focus:outline-none "
-										onClick={() => dispatch(createProblem())}
+										onClick={() =>
+											dispatch(createProblem())
+										}
 									>
 										Submit Problem
 									</button>
 								</TooltipTrigger>
 								<TooltipContent>
-									<p className="text-white">{isLogin ? "" : "You are not logged in, please login "}</p>
+									<p className="text-white">
+										{isLogin
+											? ""
+											: "You are not logged in, please login "}
+									</p>
 								</TooltipContent>
 							</Tooltip>
 						</TooltipProvider>

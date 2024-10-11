@@ -6,13 +6,18 @@ import problemRoute from "./src/routes/problemRoute";
 import contributionRoute from './src/routes/contributionRoute';
 import adminRoute from './src/routes/adminRoute'
 import userRoute from './src/routes/userRoute';
-
-
 import cors from "cors";
+import cookieParser from 'cookie-parser';
 
 
+const allowedOrigins = ['http://localhost:5173']; // Add your frontend URL here
 
-app.use(cors());
+app.use(cors({
+    origin: allowedOrigins,
+    credentials: true, // Allow credentials (cookies, headers, etc.) to be sent
+}));
+
+app.use(cookieParser());
 app.use(express.json());
 
 app.get("/", (req: Request, res: Response) => {

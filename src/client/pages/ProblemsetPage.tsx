@@ -92,14 +92,14 @@ const CustomPagination = memo(() => {
 				<PaginationItem>
 					<PaginationPrevious
 						href="#"
-						className="bg-darkGray text-white "
+						className="bg-darkGray text-white hover:bg-gray-800 hover:text-white"
 					/>
 				</PaginationItem>
 				{Array.from({ length: totalPages }).map((_, index) => (
 					<PaginationItem key = {index}>
 						<PaginationLink
 							href={`/problemset/?page=${index + 1}`}
-							className="bg-darkGray text-white "
+							className="bg-darkGray text-white hover:bg-gray-800 hover:text-white"
 							// isActive
 						>
 							{index + 1}
@@ -112,7 +112,7 @@ const CustomPagination = memo(() => {
 				<PaginationItem>
 					<PaginationNext
 						href="#"
-						className="bg-darkGray text-white "
+						className="bg-darkGray text-white hover:bg-gray-800 hover:text-white"
 					/>
 				</PaginationItem>
 			</PaginationContent>

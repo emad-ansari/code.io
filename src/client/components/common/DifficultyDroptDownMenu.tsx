@@ -18,7 +18,6 @@ export const DifficultyDropDownMenu = () => {
 	
 
 	const filterProblems = ( difficultyLevel: string) => {		
-		console.log('re-computing......')
 
 		if (searchParams.get('difficulty') === difficultyLevel){
 			searchParams.delete('difficulty'); // remove it from url
@@ -39,7 +38,7 @@ export const DifficultyDropDownMenu = () => {
 
 	return (
 		<div
-			className={`flex flex-col bg-darkGray absolute bottom-0 left-0 right-0 top-[110%] h-[125px] items-center rounded-lg py-2 z-10 shadow-md text-sm ${
+			className={`flex flex-col bg-darkGray absolute bottom-0 left-0 right-0 top-[110%] h-[125px] items-center rounded-lg py-2 z-10 shadow-md text-sm  ${
 				isDifficultyMenuOpen ? "block" : "hidden"
 			}`}
 		>
@@ -56,7 +55,7 @@ export function DropDownItem({value, filterProblems, isFilterApply}: DropDownIte
 	
 	return (
 		<span
-			className="font-normal hover:bg-hover flex items-center px-2 py-2 w-[90%] rounded-md justify-between"
+			className="font-normal hover:bg-gray-800 flex items-center px-2 py-2 w-[90%] rounded-md justify-between"
 			onClick={() => {
 				dispatch(setFilterOptions({option: value.toLocaleLowerCase()}));	
 				filterProblems(value)

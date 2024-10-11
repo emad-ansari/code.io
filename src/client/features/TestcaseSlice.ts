@@ -1,5 +1,5 @@
 import { createSlice, PayloadAction, createAsyncThunk } from "@reduxjs/toolkit";
-import { client } from "../api/client";
+import { api } from "../api/client";
 import { RootState } from "../app/store";
 
 export interface TestCaseInputType {

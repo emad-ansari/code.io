@@ -1,6 +1,6 @@
 import jwt from "jsonwebtoken";
 import { Request, Response, NextFunction} from "express";
-// import { CustomRequestObject } from "../..";
+
 
 
 export interface CustomRequestObject extends Request{
@@ -9,35 +9,45 @@ export interface CustomRequestObject extends Request{
     role: string
 }
 
-
-const auth = async(req: Request, res: Response, next: NextFunction) =>  {
+const auth = async (req: Request, res: Response, next: NextFunction) => {
     try {
-        const token = req.headers["authorization"];
+        const authHeader = req.headers["authorization"];
+        const token = authHeader && authHeader.startsWith("Bearer ") ? authHeader.split(" ")[1] : null;
+
         if (!token) {
             (req as CustomRequestObject).userAuthorized = false;
-            next();
+            console.log('token not found')
+            return next();
         }
-        // now decode the token
-        else {
-            jwt.verify(token, process.env.JWT_SECRET!, (err, payload) => {
-                if (err || !payload){
-                    return res.status(404).json({ error: err})
-                }
-                // here reason why you are checking the type of payload that payload may be string in case of if toke is (expired or tempered or any other error)
-                if (typeof payload === 'string'){
-                    return res.status(402).json({message: "payload type is string"})
-                }
-                (req as CustomRequestObject).userAuthorized = true;
-                (req as CustomRequestObject).userId = payload.userId;
-                (req as CustomRequestObject).role = payload.role;
-                console.log('hi there.....')
-                next();
-            });
-        }
+
+        // Verify the token
+        jwt.verify(token, process.env.JWT_ACCESS_SECRET!, (err, payload) => {
+
+            if (err) {
+                // Handle token verification errors
+                console.log('this is token error: ', err );
+                return res.status(401).json({ message: "Invalid token", err: err.message });
+            }
+
+            // If the token is valid, set the user information in the request object
+            (req as CustomRequestObject).userAuthorized = true;
+            (req as CustomRequestObject).userId = (payload as any).userId; // Cast payload to any to access userId
+            (req as CustomRequestObject).role = (payload as any).role; // Cast payload to any to access role
+            return next();
+        });
+    } catch (error: any) {
+        return res.status(500).json({ message: (error as Error).message });
     }
-    catch (error: any) {
-        return res.status(500).json({ error: (error as Error).message});
-    }
-}
+};
+
+
+// Function to generate tokens
+export const generateAccessToken = (userId: string, role: string) => {
+    return  jwt.sign({ userId: userId, role: role } , process.env.JWT_ACCESS_SECRET!, { expiresIn: '1m'} )
+};
+
+export const generateRefreshToken = (userId: string, role: string) => {
+    return  jwt.sign({ userId: userId, role: role } , process.env.JWT_REFRESH_SECRET!, { expiresIn: '1d'} )
+};
 
 export default auth;

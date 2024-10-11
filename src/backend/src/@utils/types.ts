@@ -111,6 +111,8 @@ export interface ProblemDetail {
 	testcaseExamples: TestCaseReturnType[]
 }
 export interface ProblemDetailWithStatusOnUser extends ProblemDetail { // check if used or not
-	status: string
+	problemStatus?: {
+		status: string
+	}
 }
 

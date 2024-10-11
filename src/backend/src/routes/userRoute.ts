@@ -1,10 +1,11 @@
 import { Request, Response, Router } from "express";
+const router = Router();
 import jwt from "jsonwebtoken";
 import prisma from "../db";
 import { createUser, findUser } from "../db/user";
 import { LoginInput, SignUpInput } from "../@utils/types";
 import { generateAccessToken, generateRefreshToken } from "../middleware/auth";
-const router = Router();
+
 
 router.post("/signup", async (req: Request, res: Response) => {
 	const parsedInput = SignUpInput.safeParse(req.body.data);
@@ -62,7 +63,7 @@ router.post("/login", async (req: Request, res: Response) => {
 			httpOnly: true,
 			secure: process.env.NODE_ENV === "production", // Set to true in production
 			sameSite: "strict",
-			path: "/refresh-token", // This endpoint only
+			path: "/api/user/refresh-token", // This endpoint only
 		});
 
 		return res.status(201).json({
@@ -77,11 +78,16 @@ router.post("/login", async (req: Request, res: Response) => {
 });
 
 // Refresh token endpoint
-router.post("/refresh-token", (req: Request, res: Response) => {
-	const refreshToken = req.cookies.refreshToken; // Get refresh token from the cookie
+router.get("/refresh-token", (req: Request, res: Response) => {
+	const cookie = req.cookies; // Get refresh token from the cookie
+	const obj = JSON.stringify(cookie);
+	console.log('this is refresh token : ', obj);
+	
+	const refreshToken = cookie.refreshToken;	
+	
 
 	if (!refreshToken) {
-		return res.status(401).json({ message: "No refresh token found" });
+		return res.status(401).json({ success: false,  message: "No refresh token found" });
 	}
 
 	try {
@@ -89,30 +95,35 @@ router.post("/refresh-token", (req: Request, res: Response) => {
 			refreshToken,
 			process.env.JWT_REFRESH_SECRET!
 		) as { userId: string; role: string };
+		console.log('this is payload after verifying refresh token', payload);
 		const newAccessToken = generateAccessToken(
 			payload.userId,
 			payload.role
 		);
-
+		// verify the refresh token here if refresh token does not verify correctly then logout the user
+		console.log("new access token", newAccessToken);
 		// Send a new access token
-		return res.json({ accessToken: newAccessToken });
+		return res.json({ success: true,  accessToken: newAccessToken });
 	} catch (error: any) {
 		// Handle different error scenarios
 		if (error.name === "TokenExpiredError") {
 			return res.status(401).json({
+				success: false,
 				message: "Refresh token has expired, please log in again.",
 			});
 		} else if (error.name === "JsonWebTokenError") {
 			return res
 				.status(403)
-				.json({ message: "Invalid token, authorization denied." });
+				.json({ success: false, message: "Invalid token, authorization denied." });
 		} else {
 			return res.status(500).json({
+				success: false,
 				message: "Something went wrong with token verification.",
 			});
 		}
 	}
 });
+
 
 router.post('/logout', (req: Request, res: Response) => {
   res.clearCookie('refreshToken', { path: 'api/user/refresh-token' });

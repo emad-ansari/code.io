@@ -108,13 +108,13 @@ export const problemSlice = createSlice({
 			console.log(action.payload);
 		});
 		builder.addCase(fetchProblemDetail.fulfilled, (state, action) => {
-			const { success, message } = action.payload;
+			const { success } = action.payload;
 			const problemDetails = action.payload.problemDetails;
 			if (success && problemDetails) {
 				state.problemDetail = problemDetails;
 				state.loading = false;
 			}
-			console.log(" problem details api response message", message);
+			
 		});
 		builder.addCase(fetchProblemDetail.rejected, (state, action) => {
 			state.loading = false;

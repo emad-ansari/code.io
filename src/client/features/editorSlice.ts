@@ -1,6 +1,6 @@
 import { createAsyncThunk, createSlice, PayloadAction } from "@reduxjs/toolkit";
 import { EditorState, CodeExecutionResponse } from "../types";
-import { client } from "../api/client";
+import { api } from "../api/client";
 
 export const editorSliceInitialState: EditorState = {
 	isFullScreen: false,
@@ -24,7 +24,7 @@ interface DefaultCodeProps {
 }
 export const getDefaultCode = createAsyncThunk("/editor/getDefaultCode", async ({problemId, languageId}: DefaultCodeProps, _) => {
 	try {
-		const res = await client.get('/problem/default-code', {
+		const res = await api.get('/problem/default-code', {
 			params: {
 				problemId,
 				languageId
@@ -40,7 +40,8 @@ export const getDefaultCode = createAsyncThunk("/editor/getDefaultCode", async (
 
 export const runCode = createAsyncThunk<CodeExecutionResponse, DefaultCodeProps>("/editor/runCode", async ({problemId, languageId, code}: DefaultCodeProps, thunkAPI) => {
 	try {
-		const res = await client.post('/problem/evaluate-code', {
+		console.log('check run code ', problemId)
+		const res = await api.post('/problem/evaluate-code', {
 			data: {
 				problemId,
 				languageId,
