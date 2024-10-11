@@ -169,6 +169,7 @@ router.post("/evaluate-code", auth, async (req: Request, res: Response) => {
 					resultStatus = "Time Limit exceeded";
 				}
 			});
+			if (passed_testcases === data.length) resultStatus = "Accepted"
 			console.log("going to send the response....");
 
 			return res.status(200).json({
