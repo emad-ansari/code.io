@@ -5,9 +5,17 @@ import { MdKeyboardArrowDown } from "react-icons/md";
 import { IoIosCheckmark } from "react-icons/io";
 import { Play } from "lucide-react";
 import { Button } from "../ui/button";
-import {IoSettings } from "react-icons/io5";
+import { IoSettings } from "react-icons/io5";
 import { TiArrowSortedDown, TiArrowSortedUp } from "react-icons/ti";
 import { ConsoleSkeleton } from "../skeletons/ConsoleSkeleton";
+import {
+	Select,
+	SelectContent,
+	SelectGroup,
+	SelectItem,
+	SelectTrigger,
+	SelectValue,
+} from "../ui/select";
 
 import { GoScreenFull } from "react-icons/go";
 import { EditorSetting } from "./EditorSetting";
@@ -36,8 +44,8 @@ const LANGUAGES = ["java", "cpp", "typescript", "javascript", "go", "rust"];
 export const EditorSection = () => {
 	const dispatch = useAppDispatch();
 	const location = useLocation();
-	const id = location.state?.id; 
-	console.log('problem id :	',id)
+	const id = location.state?.id;
+	console.log("problem id :	", id);
 
 	const { isLanguageMenuOpen, isThemeMenuOpen } = useSelector(
 		(state: RootState) => state.dropdown
@@ -179,7 +187,9 @@ export const EditorSection = () => {
 							</TooltipProvider>
 						</div>
 					</div>
-					<div className="overflow-y-scroll">{ loading ? <ConsoleSkeleton /> : <Console />}</div>
+					<div className="overflow-y-scroll">
+						{loading ? <ConsoleSkeleton /> : <Console />}
+					</div>
 				</div>
 			</Split>
 			{isOpen && <EditorSetting />}
@@ -209,9 +219,44 @@ function EditorTopBar() {
 		(state: RootState) => state.editor
 	);
 
+	const handleLanguageChange = (item: string) => {
+		if (id) {
+			dispatch(setLanguage(item));
+			dispatch(
+				getDefaultCode({
+					problemId: id,
+					languageId: LNAGUAGE_MAPPING[`${item}`].languageId,
+				})
+			);
+		}
+	};
+
 	return (
 		<div className="flex items-center px-2 py-1 bg-darkGray rounded-tl-lg rounded-tr-lg justify-between  gap-5 border border-b-[#334155] border-t-transparent border-l-transparent border-r-transparent">
-			<Button
+			<Select onValueChange={(value) => handleLanguageChange(value)} >
+				<SelectTrigger className="w-28 text-[#9ca3af] border border-none bg-gray-800" >
+					<SelectValue
+						placeholder="Java"
+						className="text-white"
+					/>
+				</SelectTrigger>
+				<SelectContent className="bg-darkGray text-white border border-BORDER">
+					<SelectGroup className="">
+						{LANGUAGES.map((item, index) => {
+							return (
+								<SelectItem
+									value={item}
+									key={index}
+									className="cursor-pointer "
+								>
+									{item}
+								</SelectItem>
+							);
+						})}
+					</SelectGroup>
+				</SelectContent>
+			</Select>
+			{/* <Button
 				className="relative flex flex-row items-center gap-2 bg-gray-800 text-white z-30 rounded-md"
 				onClick={() =>
 					dispatch(setOpenDropDownMenu({ menu: "languages" }))
@@ -259,7 +304,7 @@ function EditorTopBar() {
 						);
 					})}
 				</div>
-			</Button>
+			</Button> */}
 			<div className="flex flex-row gap-2 items-center ">
 				<Button
 					className={" hover:bg-gray-800 rounded-full "}
@@ -283,6 +328,7 @@ function Console() {
 	const { execution_result } = useSelector(
 		(state: RootState) => state.editor
 	);
+	console.log("executtion result: ", execution_result);
 	const resultStatus = execution_result.overallStatus;
 	const passed_testcases = execution_result.passed_testcases;
 
@@ -390,7 +436,7 @@ function RenderOutput({ resultStatus }: { resultStatus: string }) {
 	switch (resultStatus) {
 		case "Accepted":
 		case "Wrong Answer":
-			return  <WrongAnswerOrAccepted />  
+			return <WrongAnswerOrAccepted />;
 		case "Time Limit Exceed":
 			return <TimeLimitExceed />;
 		case "Compilation Error":
