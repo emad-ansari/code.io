@@ -1,11 +1,7 @@
-import { MdOutlineFileUpload } from "react-icons/md";
 import { useState } from "react";
 import { CodeEditor } from "./CodeEditor";
-
-import { Maximize, Minimize, Play, Settings } from "lucide-react";
+import { ChevronDown, ChevronUp, CloudUpload, Maximize, Minimize, Play, Settings } from "lucide-react";
 import { Button } from "../ui/button";
-
-import { TiArrowSortedDown, TiArrowSortedUp } from "react-icons/ti";
 import { ConsoleSkeleton } from "../skeletons/ConsoleSkeleton";
 import {
 	Select,
@@ -92,7 +88,7 @@ export const EditorSection = () => {
 					<div className=" flex bg-darkGray rounded-tl-lg rounded-tr-lg px-2 py-1.5 items-center justify-between border border-b-[#334155] border-l-transparent border-r-transparent border-t-transparent">
 						<div className="flex gap-5">
 							<Button
-								className="relative flex w-28 gap-2 hover:bg-gray-800 rounded-md"
+								className="flex w-28 gap-2 hover:bg-gray-800 rounded-md items-center"
 								onClick={() => {
 									if (!isConsoleOpen) {
 										setSplitRatio([60, 40]);
@@ -107,9 +103,9 @@ export const EditorSection = () => {
 									Console
 								</span>
 								{!isConsoleOpen ? (
-									<TiArrowSortedDown className="absolute top-1/3 right-3 " />
+									<ChevronDown size={15} strokeWidth={2.5} absoluteStrokeWidth />
 								) : (
-									<TiArrowSortedUp className="absolute top-1/3 right-3 " />
+									<ChevronUp size={15} strokeWidth={2.5} absoluteStrokeWidth />
 								)}
 							</Button>
 						</div>
@@ -170,7 +166,7 @@ export const EditorSection = () => {
 											<span className="font-semibold ">
 												Submit
 											</span>
-											<MdOutlineFileUpload />
+											<CloudUpload size={16} />
 										</Button>
 									</TooltipTrigger>
 									{!isLogin && (
@@ -226,8 +222,8 @@ function EditorTopBar() {
 	return (
 		<div className="flex items-center px-2 py-1 bg-darkGray rounded-tl-lg rounded-tr-lg justify-between  gap-5 border border-b-[#334155] border-t-transparent border-l-transparent border-r-transparent">
 			<Select onValueChange={(value) => handleLanguageChange(value)}>
-				<SelectTrigger className="w-28 text-[#9ca3af] border border-none bg-gray-800">
-					<SelectValue placeholder="Java" className="text-white" />
+				<SelectTrigger className="w-28 text-white border border-none bg-gray-800">
+					<SelectValue placeholder="Java" className="texxt-white" />
 				</SelectTrigger>
 				<SelectContent className="bg-darkGray text-white border border-BORDER">
 					<SelectGroup className="">
