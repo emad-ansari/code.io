@@ -17,8 +17,7 @@ export class GenerateFullProblemDefinition {
         const fullBoilerplatecode: string =  this.getBoilerplateCode(languageId);
         const stdin = this.inputs.map(input => {
             const stdInput = `${input.value.replace(/[\[\],\s]+/g, ' ')}`;
-            return stdInput.replace(",", "");
-
+            return stdInput.replace(",", "").trim();
         }).join('\n')
         const stdout = this.output.value;
         return {
@@ -26,7 +25,6 @@ export class GenerateFullProblemDefinition {
             stdin,
             stdout
         }
-
     }
 
     generateJava(){
@@ -43,7 +41,15 @@ export class GenerateFullProblemDefinition {
         }
         else {
             functionCall = `${this.output.type} result =  ${this.functionName}(${argument});`
-            outputWrite = "System.out.print(result);"
+            if (this.output.type === 'int[]'){
+                outputWrite = "System.out.print(Arrays.toString(result));"
+            }
+            else if(this.output.type === 'int[][]'){
+                outputWrite = "System.out.print(Arrays.deepToString(result));"
+            }
+            else {
+                outputWrite = "System.out.print(result);"
+            }
         }
 
         const inputRead = `
@@ -52,8 +58,6 @@ export class GenerateFullProblemDefinition {
             let javaType = this.extractJavaWrapperClass(input.type);
 
             if (this.hasSquareBrackets(input.type)) {
-
-
                 if (input.type.includes('[][]')) {
                     // 2D Arrays
                     if (input.type.startsWith('int')) {
@@ -122,7 +126,7 @@ export class GenerateFullProblemDefinition {
         }
         `
     }
-     hasSquareBrackets(str: string): boolean {
+    hasSquareBrackets(str: string): boolean {
         // Regular expression to match [] or [][]
         const regex = /\[\](\[\])?/;
       
@@ -178,26 +182,3 @@ export class GenerateFullProblemDefinition {
         }
     }
 }
-
-// 
-/*
-int target = input.value
-- ['a', 'b', 'c', 'd'] 
-- String[] stream = {1, 2, 3, 4};
-- String[] stream = {}
-- List<Integer> nums = new ArrayList<>();
-for (char value: stream){
-    //get the right type of input here and convert the string '1' to right type
-
-    nums.add(value);
-}
-
-
-For 1D array => 
-Input.value: [1, 2, 3, 4] <- Number
-
-Input.value = ['a', 'b', 'c']
-    
-
-
-*/
