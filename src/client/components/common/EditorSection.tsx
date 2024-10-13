@@ -1,11 +1,10 @@
 import { MdOutlineFileUpload } from "react-icons/md";
 import { useState } from "react";
 import { CodeEditor } from "./CodeEditor";
-import { MdKeyboardArrowDown } from "react-icons/md";
-import { IoIosCheckmark } from "react-icons/io";
-import { Play } from "lucide-react";
+
+import { Maximize, Minimize, Play, Settings } from "lucide-react";
 import { Button } from "../ui/button";
-import { IoSettings } from "react-icons/io5";
+
 import { TiArrowSortedDown, TiArrowSortedUp } from "react-icons/ti";
 import { ConsoleSkeleton } from "../skeletons/ConsoleSkeleton";
 import {
@@ -17,16 +16,15 @@ import {
 	SelectValue,
 } from "../ui/select";
 
-import { GoScreenFull } from "react-icons/go";
 import { EditorSetting } from "./EditorSetting";
 import { useSelector } from "react-redux";
 import { RootState, useAppDispatch } from "../../app/store";
 import { setOpenDropDownMenu } from "../../features/dropDownSlice";
 import {
-	toggleFullScreen,
 	getDefaultCode,
 	setLanguage,
 	runCode,
+	toggleFullScreen
 } from "../../features/editorSlice";
 import Split from "react-split";
 import { setIsOpen } from "../../features/editorSettingSlice";
@@ -209,15 +207,9 @@ export const LNAGUAGE_MAPPING: {
 
 function EditorTopBar() {
 	const dispatch = useAppDispatch();
-	const { isLanguageMenuOpen } = useSelector(
-		(state: RootState) => state.dropdown
-	);
-
 	const { id } = useParams();
 
-	const { isFullScreen, language } = useSelector(
-		(state: RootState) => state.editor
-	);
+	const { isFullScreen } = useSelector((state: RootState) => state.editor);
 
 	const handleLanguageChange = (item: string) => {
 		if (id) {
@@ -233,12 +225,9 @@ function EditorTopBar() {
 
 	return (
 		<div className="flex items-center px-2 py-1 bg-darkGray rounded-tl-lg rounded-tr-lg justify-between  gap-5 border border-b-[#334155] border-t-transparent border-l-transparent border-r-transparent">
-			<Select onValueChange={(value) => handleLanguageChange(value)} >
-				<SelectTrigger className="w-28 text-[#9ca3af] border border-none bg-gray-800" >
-					<SelectValue
-						placeholder="Java"
-						className="text-white"
-					/>
+			<Select onValueChange={(value) => handleLanguageChange(value)}>
+				<SelectTrigger className="w-28 text-[#9ca3af] border border-none bg-gray-800">
+					<SelectValue placeholder="Java" className="text-white" />
 				</SelectTrigger>
 				<SelectContent className="bg-darkGray text-white border border-BORDER">
 					<SelectGroup className="">
@@ -247,7 +236,7 @@ function EditorTopBar() {
 								<SelectItem
 									value={item}
 									key={index}
-									className="cursor-pointer "
+									className="cursor-pointer"
 								>
 									{item}
 								</SelectItem>
@@ -256,68 +245,23 @@ function EditorTopBar() {
 					</SelectGroup>
 				</SelectContent>
 			</Select>
-			{/* <Button
-				className="relative flex flex-row items-center gap-2 bg-gray-800 text-white z-30 rounded-md"
-				onClick={() =>
-					dispatch(setOpenDropDownMenu({ menu: "languages" }))
-				}
-			>
-				<span className="text-sm">{language}</span>
-				<MdKeyboardArrowDown
-					className={`text-2xl pt-1 ${
-						isLanguageMenuOpen
-							? " transform duration-200  rotate-180 pt-1"
-							: "transform duration-200  -rotate-0 pt-1"
-					}`}
-				/>
-				<div
-					className={`flex flex-col bg-darkGray absolute bottom-0 left-0 right-[-20%] top-[111%] h-[196px] items-center rounded-lg py-2 z-10 shadow-md text-sm border border-[#334155] ${
-						isLanguageMenuOpen
-							? "transform translate-y-0 opacity-100 block"
-							: "translate-y-[-50%] opacity-0 hidden"
-					} ease-in-out duration-300`}
-				>
-					{LANGUAGES.map((item, index) => {
-						return (
-							<span
-								key={index}
-								className="text-white font-normal hover:bg-gray-800 flex  items-center px-2 py-2 w-[90%] rounded-md h-full justify-between"
-								onClick={() => {
-									if (id) {
-										dispatch(setLanguage(item));
-										dispatch(
-											getDefaultCode({
-												problemId: id,
-												languageId:
-													LNAGUAGE_MAPPING[`${item}`]
-														.languageId,
-											})
-										);
-									}
-								}}
-							>
-								{item}
-								{item === language && (
-									<IoIosCheckmark className="text-2xl font-medium" />
-								)}
-							</span>
-						);
-					})}
-				</div>
-			</Button> */}
 			<div className="flex flex-row gap-2 items-center ">
 				<Button
 					className={" hover:bg-gray-800 rounded-full "}
 					onClick={() => dispatch(setIsOpen(true))}
 				>
-					<IoSettings className="text-white" />
+					<Settings size = {16}  className="text-white" />
 				</Button>
 
 				<Button
 					className={"hover:bg-gray-800 rounded-full"}
 					onClick={() => dispatch(toggleFullScreen(!isFullScreen))}
 				>
-					<GoScreenFull className="text-white" />
+					{isFullScreen ? (
+						<Minimize size = {16} className="text-white" />
+					) : (
+						<Maximize size = {16}  className="text-white" />
+					)}
 				</Button>
 			</div>
 		</div>
