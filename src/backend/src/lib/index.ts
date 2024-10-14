@@ -45,9 +45,8 @@ export class ParseProblemDetails {
 		this.userId = data.userId;
 		this.parameters = data.parameters;
 		this.testcases = data.testcases;
-		const name: string  = data.title.replaceAll(" ", "").trim() || ""; 
-		this.functionName = name.charAt(0).toLowerCase() + name.slice(1);
-
+		const name: string  = data.title.split(" ");
+		this.functionName = name[0].charAt(0).toLowerCase() + name[0].slice(1) + name[1]; // only take two word
 
 		return {
 			id: this.id,
