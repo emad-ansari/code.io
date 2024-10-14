@@ -284,7 +284,7 @@ router.get("/default-code", async (req: Request, res: Response) => {
 		const query = req.query;
 		const problemId = String(query.problemId);
 		const langId = Number(query.languageId);
-
+		console.log('request come inside default code');
 		const result = await prisma.defaultCode.findFirst({
 			where: {
 				problemId,

@@ -58,6 +58,7 @@ router.post("/login", async (req: Request, res: Response) => {
 		}
 		// else create jwt token 
 		const token = jwt.sign({ userId: admin.adminId, role: "admin" } , process.env.JWT_ACCESS_SECRET!, { expiresIn: '1d'} )
+		console.log('generated token', token);
 		return res.status(201).json({ msg: 'login successfully' ,  adminToken: token })
 	}
 	catch(error: any){
@@ -102,7 +103,7 @@ const LNAGUAGE_MAPPING: {
 router.post("/save-problem", auth, async (req: Request, res: Response) => {
 	const { userAuthorized } = req as CustomRequestObject;
 	const { problemId } = req.body.data;
-	console.log('request on server')
+	
 	if (!userAuthorized){
 		console.log('not authorized');
 		return res.status(401).json({ err: "You are not authorize, please login "})
@@ -325,8 +326,7 @@ function getAllNewTestcases(): TestCaseType[] {
 async function saveProblemAndTestCase(problemId: string):Promise<{success: boolean, err: string}> {
 	const folderPath = `src/contribution/newproblem`
 	const files = fs.readdirSync(folderPath);
-	console.log('these are files', files);
-	console.log('problemId: ', problemId)
+	
 
 	for (let file of files) {
 		// Only process JSON files
