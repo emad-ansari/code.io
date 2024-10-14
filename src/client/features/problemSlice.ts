@@ -11,7 +11,7 @@ import { RootState } from "../app/store";
 
 export const problemSliceInitialState: ProblemState = {
 	problems: [],
-	pageSize: 2,
+	pageSize: 4,
 	totalPages: 1,
 	problemDetail: {
 		id: "",
@@ -72,7 +72,6 @@ export const fetchProblemDetail = createAsyncThunk<
 				`/problem/get-problem-details/${title}`
 			);
 			const data = res.data;
-			console.log("problem details data: ", data);
 			return data;
 		} catch (error: any) {
 			console.log(error);
