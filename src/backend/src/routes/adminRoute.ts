@@ -57,7 +57,7 @@ router.post("/login", async (req: Request, res: Response) => {
 			return res.json({ err: admin.msg});
 		}
 		// else create jwt token 
-		const token = jwt.sign({ userId: admin.adminId, role: "admin" } , process.env.JWT_SECRET!, { expiresIn: '1d'} )
+		const token = jwt.sign({ userId: admin.adminId, role: "admin" } , process.env.JWT_ACCESS_SECRET!, { expiresIn: '1d'} )
 		return res.status(201).json({ msg: 'login successfully' ,  adminToken: token })
 	}
 	catch(error: any){
