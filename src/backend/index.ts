@@ -10,7 +10,7 @@ import cors from "cors";
 import cookieParser from 'cookie-parser';
 
 
-const allowedOrigins = ['http://localhost:5173']; // Add your frontend URL here
+const allowedOrigins = ['http://localhost:5173', 'http://localhost:5174']; // Add your frontend URL here
 
 app.use(cors({
     origin: allowedOrigins,
