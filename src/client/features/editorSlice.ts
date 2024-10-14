@@ -23,6 +23,7 @@ interface DefaultCodeProps {
 	code?: string;
 }
 export const getDefaultCode = createAsyncThunk("/editor/getDefaultCode", async ({problemId, languageId}: DefaultCodeProps, _) => {
+	console.log('problem id and language id : ', problemId, languageId);
 	try {
 		const res = await api.get('/problem/default-code', {
 			params: {
@@ -30,6 +31,7 @@ export const getDefaultCode = createAsyncThunk("/editor/getDefaultCode", async (
 				languageId
 			}
 		})
+		console.log('default code: ', res.data);
 		return res.data;
 	}
 	catch(error: any){
@@ -48,7 +50,6 @@ export const runCode = createAsyncThunk<CodeExecutionResponse, DefaultCodeProps>
 				code: code
 			}
 		})
-		console.log('Result of evaluation: ', res.data);
 		return res.data;
 	}
 	catch(error: any){
@@ -77,7 +78,6 @@ export const editorSlice = createSlice({
 			console.log(action.payload);
 		})
 		builder.addCase(getDefaultCode.fulfilled , (state, action: PayloadAction<{message: string, defaultCode: string}>) => {
-			console.log(action.payload);
 			const { message } = action.payload;
 			if (message == 'success' ){
 				const { defaultCode } = action.payload;

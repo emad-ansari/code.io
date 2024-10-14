@@ -1,6 +1,14 @@
 import { useState } from "react";
 import { CodeEditor } from "./CodeEditor";
-import { ChevronDown, ChevronUp, CloudUpload, Maximize, Minimize, Play, Settings } from "lucide-react";
+import {
+	ChevronDown,
+	ChevronUp,
+	CloudUpload,
+	Maximize,
+	Minimize,
+	Play,
+	Settings,
+} from "lucide-react";
 import { Button } from "../ui/button";
 import { ConsoleSkeleton } from "../skeletons/ConsoleSkeleton";
 import {
@@ -11,7 +19,12 @@ import {
 	SelectTrigger,
 	SelectValue,
 } from "../ui/select";
-
+import {
+	Tooltip,
+	TooltipContent,
+	TooltipProvider,
+	TooltipTrigger,
+} from "../ui/tooltip";
 import { EditorSetting } from "./EditorSetting";
 import { useSelector } from "react-redux";
 import { RootState, useAppDispatch } from "../../app/store";
@@ -20,18 +33,12 @@ import {
 	getDefaultCode,
 	setLanguage,
 	runCode,
-	toggleFullScreen
+	toggleFullScreen,
 } from "../../features/editorSlice";
-import Split from "react-split";
 import { setIsOpen } from "../../features/editorSettingSlice";
-import {
-	Tooltip,
-	TooltipContent,
-	TooltipProvider,
-	TooltipTrigger,
-} from "../ui/tooltip";
-import { useLocation, useParams } from "react-router-dom";
+import { useLocation } from "react-router-dom";
 import { SubmissionDetails } from "@/client/types";
+import Split from "react-split";
 
 const LANGUAGES = ["java", "cpp", "typescript", "javascript", "go", "rust"];
 
@@ -39,7 +46,6 @@ export const EditorSection = () => {
 	const dispatch = useAppDispatch();
 	const location = useLocation();
 	const id = location.state?.id;
-	console.log("problem id :	", id);
 
 	const { isLanguageMenuOpen, isThemeMenuOpen } = useSelector(
 		(state: RootState) => state.dropdown
@@ -48,7 +54,7 @@ export const EditorSection = () => {
 	const { language, code, loading } = useSelector(
 		(state: RootState) => state.editor
 	);
-	console.log("is loading: ", loading);
+
 	const handleOpenDropDown = () => {
 		if (isLanguageMenuOpen) {
 			dispatch(setOpenDropDownMenu({ menu: "languages" }));
@@ -103,9 +109,17 @@ export const EditorSection = () => {
 									Console
 								</span>
 								{!isConsoleOpen ? (
-									<ChevronDown size={15} strokeWidth={2.5} absoluteStrokeWidth />
+									<ChevronDown
+										size={15}
+										strokeWidth={2.5}
+										absoluteStrokeWidth
+									/>
 								) : (
-									<ChevronUp size={15} strokeWidth={2.5} absoluteStrokeWidth />
+									<ChevronUp
+										size={15}
+										strokeWidth={2.5}
+										absoluteStrokeWidth
+									/>
 								)}
 							</Button>
 						</div>
@@ -203,8 +217,8 @@ export const LNAGUAGE_MAPPING: {
 
 function EditorTopBar() {
 	const dispatch = useAppDispatch();
-	const { id } = useParams();
-
+	const location = useLocation();
+	const id = location.state?.id; 
 	const { isFullScreen } = useSelector((state: RootState) => state.editor);
 
 	const handleLanguageChange = (item: string) => {
@@ -246,7 +260,7 @@ function EditorTopBar() {
 					className={" hover:bg-gray-800 rounded-full "}
 					onClick={() => dispatch(setIsOpen(true))}
 				>
-					<Settings size = {16}  className="text-white" />
+					<Settings size={16} className="text-white" />
 				</Button>
 
 				<Button
@@ -254,9 +268,9 @@ function EditorTopBar() {
 					onClick={() => dispatch(toggleFullScreen(!isFullScreen))}
 				>
 					{isFullScreen ? (
-						<Minimize size = {16} className="text-white" />
+						<Minimize size={16} className="text-white" />
 					) : (
-						<Maximize size = {16}  className="text-white" />
+						<Maximize size={16} className="text-white" />
 					)}
 				</Button>
 			</div>
@@ -268,7 +282,7 @@ function Console() {
 	const { execution_result } = useSelector(
 		(state: RootState) => state.editor
 	);
-	console.log("executtion result: ", execution_result);
+
 	const resultStatus = execution_result.overallStatus;
 	const passed_testcases = execution_result.passed_testcases;
 
