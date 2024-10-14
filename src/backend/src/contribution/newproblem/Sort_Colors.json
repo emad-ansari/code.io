@@ -1,0 +1,45 @@
+{
+  "id": "837a675b-2ac2-4e65-a53c-7a292019ffee",
+  "title": "Sort Colors",
+  "description": "Given an array nums with n objects colored red, white, or blue, sort them in-place so that objects of the same color are adjacent, with the colors in the order red, white, and blue.\n\nWe will use the integers 0, 1, and 2 to represent the color red, white, and blue, respectively.\n\nYou must solve this problem without using the library's sort function.",
+  "difficulty": "Medium",
+  "returnType": "void",
+  "parameters": [
+    {
+      "parameterId": "9f180a39-38ec-4062-85dc-5e6f10ade577",
+      "type": "int[]",
+      "name": "nums"
+    }
+  ],
+  "testcases": [
+    {
+      "testcaseId": "2",
+      "inputs": [
+        {
+          "name": "",
+          "type": "",
+          "value": "[2,0,2,1,1,0]"
+        }
+      ],
+      "output": {
+        "type": "void",
+        "value": "[0,0,1,1,2,2]"
+      }
+    },
+    {
+      "testcaseId": "1b268d43-119c-4682-b853-211f70f1ad8d",
+      "inputs": [
+        {
+          "name": "nums",
+          "type": "int[]",
+          "value": "[2,0,1]"
+        }
+      ],
+      "output": {
+        "type": "void",
+        "value": "[0,1,2]"
+      }
+    }
+  ],
+  "userId": "cm16fq3px0000xpubw9vf8f3q"
+}
