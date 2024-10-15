@@ -41,8 +41,9 @@ export const Problem = ({
 			<div
 				className="flex flex-1 justify-start items-center text-white gap-2"
 				onClick={() => {
+					const formattedTitle = title.replace(/ /g, "-");
 					startTransition(() => {
-						navigate(`../../problem/${title}/description`, { state: {id: id}});
+						navigate(`../../problem/${formattedTitle}/description`, { state: {id: id}});
 					});
 				}}
 			>

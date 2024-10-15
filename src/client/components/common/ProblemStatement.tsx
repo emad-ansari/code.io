@@ -5,11 +5,10 @@ import { useSelector } from "react-redux";
 import { useParams } from "react-router-dom";
 import { TestCaseExample } from "./TestCaseExample";
 import { CircleCheckBig, Contrast } from "lucide-react";
-import { problems } from "@/client/pages/problems";
 
 export default function ProblemStatement() {
 	const { title } = useParams();
-
+	
 	const { isLogin } = useSelector((state: RootState) => state.user);
 	const { problemDetail, loading } = useSelector(
 		(state: RootState) => state.problem
@@ -25,7 +24,8 @@ export default function ProblemStatement() {
 	const dispatch = useAppDispatch();
 	useEffect(() => {
 		if (title) {
-			dispatch(fetchProblemDetail({ title: title }));
+			const formattedTitle = title.replace(/-/g, " ");
+			dispatch(fetchProblemDetail({ title: formattedTitle }));
 		} else {
 			console.log("problem id is not undefined");
 		}
@@ -54,29 +54,31 @@ export default function ProblemStatement() {
 							</span>
 						)}
 
-						{isLogin && !loading && problemStatus?.status !== "Todo" &&  (
-							<div className="flex flex-row gap-1 items-center  bg-gray-800 rounded-full px-3 py-1">
-								<span className="text-sm">
-									{problemStatus?.status}
-								</span>
-								<span className="flex items-center">
-									{problemStatus?.status === "Solved" ? (
-										<CircleCheckBig
-											size={16}
-											absoluteStrokeWidth
-											className="text-[#4ac3ab]"
-										/>
-									) : problemStatus?.status ===
-									  "Attempted" ? (
-										<Contrast
-											size={16}
-											absoluteStrokeWidth
-											className="text-YELLOW"
-										/>
-									) : null}
-								</span>
-							</div>	
-						)}
+						{isLogin &&
+							!loading &&
+							problemStatus?.status !== "Todo" && (
+								<div className="flex flex-row gap-1 items-center  bg-gray-800 rounded-full px-3 py-1">
+									<span className="text-sm">
+										{problemStatus?.status}
+									</span>
+									<span className="flex items-center">
+										{problemStatus?.status === "Solved" ? (
+											<CircleCheckBig
+												size={16}
+												absoluteStrokeWidth
+												className="text-[#4ac3ab]"
+											/>
+										) : problemStatus?.status ===
+										  "Attempted" ? (
+											<Contrast
+												size={16}
+												absoluteStrokeWidth
+												className="text-YELLOW"
+											/>
+										) : null}
+									</span>
+								</div>
+							)}
 					</div>
 				</div>
 				<span className="text-justify text-gray-400">
