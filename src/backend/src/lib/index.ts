@@ -57,9 +57,7 @@ export class ParseProblemDetails {
 			testcases: this.testcases
 		};
 	}
-
 	
-
 	getJavaBoilerplateCode() {
 		// since return type is already standard to java type .
 		// need to format parameters
@@ -95,6 +93,8 @@ export class ParseProblemDetails {
 
 	mapTypeToCpp(returnType: string) {
 		switch (returnType) {
+			case 'void':
+				return 'void';
 			case "int":
 				return "int";
 			case "int[]":
@@ -127,6 +127,8 @@ export class ParseProblemDetails {
 
 	mapTypeToTypescript(returnType: string) {
 		switch (returnType) {
+			case 'void':
+				return 'void';
 			case "int":
 				return "number";
 			case "List<Integer>":
