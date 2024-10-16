@@ -25,8 +25,7 @@ export const CodeEditor = () => {
 		});
 	};
 	const dispatch = useAppDispatch();
-
-	
+	console.log('problemid: ', id)
 	useEffect(() => {
 		if (id){
 			dispatch(getDefaultCode({problemId: id, languageId: LNAGUAGE_MAPPING[`${language}`].languageId}));

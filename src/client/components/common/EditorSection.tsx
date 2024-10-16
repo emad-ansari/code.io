@@ -46,7 +46,7 @@ export const EditorSection = () => {
 	const dispatch = useAppDispatch();
 	const location = useLocation();
 	const id = location.state?.id;
-
+	
 	const { isLanguageMenuOpen, isThemeMenuOpen } = useSelector(
 		(state: RootState) => state.dropdown
 	);
@@ -161,7 +161,7 @@ export const EditorSection = () => {
 										</Button>
 									</TooltipTrigger>
 									{!isLogin && (
-										<TooltipContent>
+										<TooltipContent className="bg-gray-800">
 											<p>
 												You are not logged in, please
 												login{" "}
@@ -184,7 +184,7 @@ export const EditorSection = () => {
 										</Button>
 									</TooltipTrigger>
 									{!isLogin && (
-										<TooltipContent>
+										<TooltipContent className="bg-gray-800">
 											<p>
 												You are not logged in, please
 												login{" "}
