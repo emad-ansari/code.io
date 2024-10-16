@@ -6,7 +6,6 @@ import { createUser, findUser } from "../db/user";
 import { LoginInput, SignUpInput } from "../@utils/types";
 import { generateAccessToken, generateRefreshToken } from "../middleware/auth";
 
-
 router.post("/signup", async (req: Request, res: Response) => {
 	const parsedInput = SignUpInput.safeParse(req.body.data);
 
@@ -81,53 +80,38 @@ router.post("/login", async (req: Request, res: Response) => {
 router.get("/refresh-token", (req: Request, res: Response) => {
 	const cookie = req.cookies; // Get refresh token from the cookie
 	const obj = JSON.stringify(cookie);
-	console.log('this is refresh token : ', obj);
-	
-	const refreshToken = cookie.refreshToken;	
-	
+	console.log("this is refresh token : ", obj);
+
+	const refreshToken = cookie.refreshToken;
 
 	if (!refreshToken) {
-		return res.status(401).json({ success: false,  message: "No refresh token found" });
+		return res
+			.status(401)
+			.json({ success: false, message: "No refresh token found" });
 	}
 
-	try {
-		const payload = jwt.verify(
-			refreshToken,
-			process.env.JWT_REFRESH_SECRET!
-		) as { userId: string; role: string };
-		console.log('this is payload after verifying refresh token', payload);
-		const newAccessToken = generateAccessToken(
-			payload.userId,
-			payload.role
-		);
-		// verify the refresh token here if refresh token does not verify correctly then logout the user
-		console.log("new access token", newAccessToken);
-		// Send a new access token
-		return res.json({ success: true,  accessToken: newAccessToken });
-	} catch (error: any) {
-		// Handle different error scenarios
-		if (error.name === "TokenExpiredError") {
-			return res.status(401).json({
-				success: false,
-				message: "Refresh token has expired, please log in again.",
-			});
-		} else if (error.name === "JsonWebTokenError") {
-			return res
-				.status(403)
-				.json({ success: false, message: "Invalid token, authorization denied." });
-		} else {
-			return res.status(500).json({
-				success: false,
-				message: "Something went wrong with token verification.",
-			});
+	// try {
+	jwt.verify(
+		refreshToken,
+		process.env.JWT_REFRESH_SECRET!,
+		(err: any, payload: any) => {
+			if (err) {
+				return res
+					.status(401)
+					.json({ message: "Invalid token", err: err.message });
+			}
+			const newAccessToken = generateAccessToken(
+				payload.userId,
+				payload.role
+			)
+			return res.status(200).json({ success: true, accessToken: newAccessToken});
 		}
-	}
+	);
 });
 
-
-router.post('/logout', (req: Request, res: Response) => {
-  res.clearCookie('refreshToken', { path: 'api/user/refresh-token' });
-  res.json({ message: 'Logged out successfully' });
+router.post("/logout", (req: Request, res: Response) => {
+	res.clearCookie("refreshToken", { path: "api/user/refresh-token" });
+	res.json({ message: "Logged out successfully" });
 });
 
 export default router;
