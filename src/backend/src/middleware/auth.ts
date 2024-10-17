@@ -1,8 +1,6 @@
 import jwt from "jsonwebtoken";
 import { Request, Response, NextFunction} from "express";
 
-
-
 export interface CustomRequestObject extends Request{
     userAuthorized: boolean;
     userId: string;
@@ -16,7 +14,6 @@ const auth = async (req: Request, res: Response, next: NextFunction) => {
 
         if (!token) {
             (req as CustomRequestObject).userAuthorized = false;
-            console.log('token not found')
             return next();
         }
 
@@ -25,8 +22,8 @@ const auth = async (req: Request, res: Response, next: NextFunction) => {
 
             if (err) {
                 // Handle token verification errors
-                console.log('this is token error: ', err );
-                return res.status(401).json({ message: "Invalid token", err: err.message });
+                console.log('this is token error: ', err.message );
+                return res.status(403).json({ message: "Invalid token", err: err.message });
             }
 
             // If the token is valid, set the user information in the request object
@@ -43,11 +40,11 @@ const auth = async (req: Request, res: Response, next: NextFunction) => {
 
 // Function to generate tokens
 export const generateAccessToken = (userId: string, role: string) => {
-    return  jwt.sign({ userId: userId, role: role } , process.env.JWT_ACCESS_SECRET!, { expiresIn: '1m'} )
+    return  jwt.sign({ userId: userId, role: role } , process.env.JWT_ACCESS_SECRET!, { expiresIn: '30m'} )
 };
 
 export const generateRefreshToken = (userId: string, role: string) => {
-    return  jwt.sign({ userId: userId, role: role } , process.env.JWT_REFRESH_SECRET!, { expiresIn: '1d'} )
+    return  jwt.sign({ userId: userId, role: role } , process.env.JWT_REFRESH_SECRET!, { expiresIn: '7d'} )
 };
 
 export default auth;
