@@ -85,22 +85,24 @@ const ProblemsetPage = () => {
 
 const CustomPagination = memo(() => {
 	const { totalPages } = useSelector((state: RootState) => state.problem);
+	const [searchParams] = useSearchParams();
+	const page = Number(searchParams.get('page')) || 1;
 
 	return (
 		<Pagination>
 			<PaginationContent>
 				<PaginationItem>
 					<PaginationPrevious
-						href="#"
+						href={page > 1 ? `/problemset/?page=${page - 1}` : ""}
 						className="bg-darkGray text-white hover:bg-gray-800 hover:text-white"
+						
 					/>
 				</PaginationItem>
 				{Array.from({ length: totalPages }).map((_, index) => (
 					<PaginationItem key = {index}>
 						<PaginationLink
 							href={`/problemset/?page=${index + 1}`}
-							className="bg-darkGray text-white hover:bg-gray-800 hover:text-white"
-							// isActive
+							className={`text-white hover:bg-gray-800 hover:text-white ${page === index + 1 ? 'bg-gray-800' : 'bg-darkGray'}`}
 						>
 							{index + 1}
 						</PaginationLink>
@@ -111,7 +113,7 @@ const CustomPagination = memo(() => {
 				</PaginationItem>
 				<PaginationItem>
 					<PaginationNext
-						href="#"
+						href={page > totalPages - 1 ? "" : `/problemset/?page=${page + 1}`}
 						className="bg-darkGray text-white hover:bg-gray-800 hover:text-white"
 					/>
 				</PaginationItem>
