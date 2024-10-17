@@ -59,7 +59,7 @@ router.post("/login", async (req: Request, res: Response) => {
 
 		// Set refresh token in an HTTP-only cookie
 		res.cookie("refreshToken", refreshToken, {
-			maxAge: 1000 * 60 * 60 * 24 * 7, // max age 7days  [putting cookie expiration is necessary]
+			maxAge: 1000 * 60 * 60 * 24 * 7, // max age 7days  [putting cookie expiration is neccessary]
 			httpOnly: true,
 			secure: true, // Set to true in production
 			sameSite: "none",
@@ -79,12 +79,7 @@ router.post("/login", async (req: Request, res: Response) => {
 
 // Refresh token endpoint
 router.post("/refresh-token", (req: Request, res: Response) => {
-	console.log('refresh token route hit');
 	const cookie = req.cookies; // Get refresh token from the cookie
-	console.log("this is cookie : ", cookie);
-	const obj = JSON.stringify(cookie);
-	
-	console.log("this is refresh token : ", obj);
 
 	const refreshToken = cookie.refreshToken;
 
