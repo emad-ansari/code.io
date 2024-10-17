@@ -162,3 +162,8 @@ export interface RefreshTokenApiResponse {
 	message: string;
 	accessToken?: string
 }
+export interface DefaultCodeApiResponse {
+	success: boolean;
+	message: string;
+	defaultCode?: string
+}
