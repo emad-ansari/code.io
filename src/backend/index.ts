@@ -9,16 +9,14 @@ import userRoute from './src/routes/userRoute';
 import cors from "cors";
 import cookieParser from 'cookie-parser';
 
-
 const allowedOrigins = ['http://localhost:5173', 'http://localhost:5174']; // Add your frontend URL here
 
+app.use(express.json());
+app.use(cookieParser());
 app.use(cors({
     origin: allowedOrigins,
     credentials: true, // Allow credentials (cookies, headers, etc.) to be sent
 }));
-
-app.use(cookieParser());
-app.use(express.json());
 
 app.get("/", (req: Request, res: Response) => {
 	return res.json("hello there!");

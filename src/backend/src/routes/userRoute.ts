@@ -59,9 +59,10 @@ router.post("/login", async (req: Request, res: Response) => {
 
 		// Set refresh token in an HTTP-only cookie
 		res.cookie("refreshToken", refreshToken, {
+			maxAge: 1000 * 60 * 60 * 24 * 7, // max age 7days  [putting cookie expiration is necessary]
 			httpOnly: true,
-			secure: process.env.NODE_ENV === "production", // Set to true in production
-			sameSite: "strict",
+			secure: true, // Set to true in production
+			sameSite: "none",
 			path: "/api/user/refresh-token", // This endpoint only
 		});
 
@@ -77,9 +78,12 @@ router.post("/login", async (req: Request, res: Response) => {
 });
 
 // Refresh token endpoint
-router.get("/refresh-token", (req: Request, res: Response) => {
+router.post("/refresh-token", (req: Request, res: Response) => {
+	console.log('refresh token route hit');
 	const cookie = req.cookies; // Get refresh token from the cookie
+	console.log("this is cookie : ", cookie);
 	const obj = JSON.stringify(cookie);
+	
 	console.log("this is refresh token : ", obj);
 
 	const refreshToken = cookie.refreshToken;
@@ -90,7 +94,6 @@ router.get("/refresh-token", (req: Request, res: Response) => {
 			.json({ success: false, message: "No refresh token found" });
 	}
 
-	// try {
 	jwt.verify(
 		refreshToken,
 		process.env.JWT_REFRESH_SECRET!,
@@ -110,7 +113,7 @@ router.get("/refresh-token", (req: Request, res: Response) => {
 });
 
 router.post("/logout", (req: Request, res: Response) => {
-	res.clearCookie("refreshToken", { path: "api/user/refresh-token" });
+	res.clearCookie("refreshToken", { path: "/api/user/refresh-token" });
 	res.json({ message: "Logged out successfully" });
 });
 
