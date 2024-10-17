@@ -10,6 +10,7 @@ import { Contribution } from "./client/pages/Contribution";
 import { TestCaseForm } from "./client/pages/TestCaseForm";
 import { ProblemForm } from "./client/pages/ProblemForm";
 import { ProblemNavBar } from "./client/components/common/ProblemNavBar";
+import { LoadingPage } from "./client/pages/LoadingPage";
 import "./index.css";
 
 const HomePage = lazy(() => import("./client/pages/HomePage"));
@@ -37,8 +38,8 @@ const App = () => {
 	return (
 		<>
 			<BrowserRouter>
-				<ProblemNavBar isProbleDescriptioPage={false} />
-				<Suspense>
+				<Suspense fallback = {<LoadingPage />}>
+					<ProblemNavBar isProbleDescriptioPage={false} />
 					<Routes>
 						<Route index element={<HomePage />} />
 						<Route path="/login" element={<LoginPage />} />
