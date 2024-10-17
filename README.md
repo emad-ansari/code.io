@@ -10,8 +10,9 @@
 [x] fix the bug when usr click on chrome back button to go back -> application get break
 [x] fix the bug in compilation error when executing code.
 [x] add some loader to /problemset page and /problme/problem-title/description page so that clicking back button should render loader rather than nothing for a small amount of time
-[] fix the bug in calling getDefualtCode inside useEffect in CodeEditor component 
+[] fix the active button backgorund color in shadcn pagination component and should also fix next and previous button to work properly
 [] After the login, User should automatically redirect to the page where it  was before login
+[] fix the bug in calling getDefualtCode inside useEffect in CodeEditor component 
 [] add the getJavaScriptBoilerplateCode() 
 [] add feature to run cpp code
 
