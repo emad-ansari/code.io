@@ -11,7 +11,7 @@ import { RootState } from "../app/store";
 
 export const problemSliceInitialState: ProblemState = {
 	problems: [],
-	pageSize: 4,
+	pageSize: 10,
 	totalPages: 1,
 	problemDetail: {
 		id: "",
@@ -28,26 +28,25 @@ export const problemSliceInitialState: ProblemState = {
 export const getProblems = createAsyncThunk(
 	"/problem/getProblems",
 	async (
-		{ pageNumber, difficulty, status }: getProblemParameter,
+		{ pageNumber, difficulty, status, searchKeywords }: getProblemParameter,
 		ThunkAPI
 	) => {
 		const store = ThunkAPI.getState() as RootState;
-		const { pageSize } = store.problem;
-
+		const { pageSize } = store.problem;		
 		try {
 			const res = await api.get<ApiResponse<Problem[]>>(
 				`/problem/filter-problem`,
 				{
 					params: {
-						pageNumber,
+						pageNumber: pageNumber < 1 ? 1: pageNumber,
 						pageSize,
 						difficulty,
 						status,
+						searchKeywords
 					},
 				}
 			);
 			const data = res.data;
-			console.log("filter problem: ", data);
 
 			return data;
 		} catch (error: any) {
@@ -86,6 +85,10 @@ export const problemSlice = createSlice({
 		setPageSize: (state, action: PayloadAction<number>) => {
 			state.pageSize = action.payload;
 		},
+		setProblems: (state, action: PayloadAction<{problems: Problem[]}>) => {
+			const { problems } = action.payload;
+			state.problems = problems;
+		},
 	},
 	extraReducers: (builder) => {
 		builder.addCase(getProblems.pending, (_, action) => {
@@ -102,9 +105,9 @@ export const problemSlice = createSlice({
 		builder.addCase(getProblems.rejected, (_, action) => {
 			console.log(action.payload);
 		});
-		builder.addCase(fetchProblemDetail.pending, (state, action) => {
+		builder.addCase(fetchProblemDetail.pending, (state, _) => {
 			state.loading = true;
-			console.log(action.payload);
+			// console.log(action.payload);
 		});
 		builder.addCase(fetchProblemDetail.fulfilled, (state, action) => {
 			const { success } = action.payload;
@@ -123,4 +126,4 @@ export const problemSlice = createSlice({
 });
 
 export default problemSlice.reducer;
-export const { setPageSize } = problemSlice.actions;
+export const { setPageSize, setProblems } = problemSlice.actions;

@@ -1,3 +1,7 @@
+import { memo, useEffect, Suspense } from "react";
+import { RootState, useAppDispatch } from "../app/store";
+import { Outlet, useSearchParams } from "react-router-dom";
+import { useSelector } from "react-redux";
 import { FilterSection } from "../components/common/FilterSection";
 import {
 	Pagination,
@@ -8,13 +12,20 @@ import {
 	PaginationNext,
 	PaginationPrevious,
 } from "../components/ui/pagination";
-import { useSelector } from "react-redux";
-import { RootState, useAppDispatch } from "../app/store";
-import { memo, useEffect, Suspense } from "react";
+
+import {
+	Select,
+	SelectContent,
+	SelectGroup,
+	SelectItem,
+	SelectTrigger,
+	SelectValue,
+} from "../components/ui/select";
+
 import { setOpenDropDownMenu } from "../features/dropDownSlice";
-import { getProblems } from "../features/problemSlice";
-import { Outlet, useSearchParams } from "react-router-dom";
+import { getProblems, setPageSize } from "../features/problemSlice";
 import { ProblemListSkeleton } from "../components/skeletons/ProblemListSkeleton";
+import { problems_per_page } from "../types";
 
 const ProblemsetPage = () => {
 	const dispatch = useAppDispatch();
@@ -30,6 +41,7 @@ const ProblemsetPage = () => {
 				pageNumber: Number(searchParams.get("page")) || 1,
 				difficulty: searchParams.get("difficulty") || "",
 				status: searchParams.get("status") || "",
+				searchKeywords: searchParams.get("search") || "",
 			})
 		);
 	}, []);
@@ -59,8 +71,8 @@ const ProblemsetPage = () => {
 				handleDropDown(e)
 			}
 		>
-			<div className="flex flex-col gap-8 items-center pt-10 pb-10 w-full  overflow-y-scroll fixed top-0  left-0 right-0 bottom-0 mt-[64px] ">
-				<div className="flex flex-col gap-8 w-[900px]">
+			<div className="flex flex-col gap-8 items-center pt-10 pb-10 w-full  overflow-y-scroll fixed top-0  left-0 right-0 bottom-0 mt-[64px]">
+				<div className="flex flex-col gap-8 w-[900px] ">
 					<FilterSection />
 					<div className="flex items-center ">
 						<span className="flex-none [font-family: Inter] font-mono text-white w-36 px-3 ">
@@ -77,7 +89,39 @@ const ProblemsetPage = () => {
 						<Outlet />
 					</Suspense>
 				</div>
-				<CustomPagination />
+				<div className="flex items-center w-[900px] justify-between">
+					<Select
+						onValueChange={(value) => {
+							const problemPerPage = Number(value.split(' ')[0]);
+							dispatch(setPageSize(problemPerPage));
+						}}
+					>
+						<SelectTrigger className="w-28 text-white border border-none bg-darkGray">
+							<SelectValue
+								placeholder="10 / page"
+								className="text-white"
+							/>
+						</SelectTrigger>
+						<SelectContent className="bg-darkGray text-white border border-BORDER">
+							<SelectGroup className="">
+								{problems_per_page.map((item, index) => {
+									return (
+										<SelectItem
+											value={item}
+											key={index}
+											className="cursor-pointer"
+										>
+											{item}
+										</SelectItem>
+									);
+								})}
+							</SelectGroup>
+						</SelectContent>
+					</Select>
+					<div className="flex flex-row justify-end">
+						<CustomPagination />
+					</div>
+				</div>
 			</div>
 		</div>
 	);
@@ -86,7 +130,7 @@ const ProblemsetPage = () => {
 const CustomPagination = memo(() => {
 	const { totalPages } = useSelector((state: RootState) => state.problem);
 	const [searchParams] = useSearchParams();
-	const page = Number(searchParams.get('page')) || 1;
+	const page = Number(searchParams.get("page")) || 1;
 
 	return (
 		<Pagination>
@@ -95,14 +139,17 @@ const CustomPagination = memo(() => {
 					<PaginationPrevious
 						href={page > 1 ? `/problemset/?page=${page - 1}` : ""}
 						className="bg-darkGray text-white hover:bg-gray-800 hover:text-white"
-						
 					/>
 				</PaginationItem>
 				{Array.from({ length: totalPages }).map((_, index) => (
-					<PaginationItem key = {index}>
+					<PaginationItem key={index}>
 						<PaginationLink
 							href={`/problemset/?page=${index + 1}`}
-							className={`text-white hover:bg-gray-800 hover:text-white ${page === index + 1 ? 'bg-gray-800' : 'bg-darkGray'}`}
+							className={`text-white hover:bg-gray-800 hover:text-white ${
+								page === index + 1
+									? "bg-gray-800"
+									: "bg-darkGray"
+							}`}
 						>
 							{index + 1}
 						</PaginationLink>
@@ -113,7 +160,11 @@ const CustomPagination = memo(() => {
 				</PaginationItem>
 				<PaginationItem>
 					<PaginationNext
-						href={page > totalPages - 1 ? "" : `/problemset/?page=${page + 1}`}
+						href={
+							page > totalPages - 1
+								? ""
+								: `/problemset/?page=${page + 1}`
+						}
 						className="bg-darkGray text-white hover:bg-gray-800 hover:text-white"
 					/>
 				</PaginationItem>
