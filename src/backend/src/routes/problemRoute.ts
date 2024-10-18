@@ -28,6 +28,7 @@ router.get("/filter-problem", auth, async (req: Request, res: Response) => {
 	const problemPerPage = Number(req.query.pageSize);
 	const difficulty = req.query.difficulty as string | undefined;
 	const status = req.query.status as string | undefined;
+	console.log('this is status filter option : ', status);
 
 	try {
 		const  filterQuery: {
@@ -119,11 +120,11 @@ router.post("/submit-problem", auth, async (req: Request, res: Response) => {
 	} catch (error: any) {}
 });
 
-router.post("/evaluate-code", auth, async (req: Request, res: Response) => {
+router.post("/run-code", auth, async (req: Request, res: Response) => {
 	const { userAuthorized } = req as CustomRequestObject;
 	const parseUserSubmitCode = ProblemSubmissionData.safeParse(req.body.data);
 	if (!parseUserSubmitCode.success) {
-		return res.status(401).json({ error: parseUserSubmitCode.error });
+		return res.json({ error: parseUserSubmitCode.error });
 	}
 
 	try {
@@ -134,7 +135,7 @@ router.post("/evaluate-code", auth, async (req: Request, res: Response) => {
 		}
 
 		const { problemId, languageId, code } = parseUserSubmitCode.data;
-		console.log("this is detials: ", problemId, languageId, code);
+		
 		// here get the first three testcases and run it on jude0
 		const testcaseExamples = await getTestCaseExample(problemId);
 		// run these testcase exmaples
@@ -157,7 +158,7 @@ router.post("/evaluate-code", auth, async (req: Request, res: Response) => {
 			);
 			let passed_testcases = 0;
 			const { data } = result;
-			console.log("this is response submission : ", data);
+			
 			let resultStatus = "";
 			data.forEach((v) => {
 				if (v.status.description === "Accepted") passed_testcases++;
@@ -170,7 +171,7 @@ router.post("/evaluate-code", auth, async (req: Request, res: Response) => {
 				}
 			});
 			if (passed_testcases === data.length) resultStatus = "Accepted"
-			console.log("going to send the response....");
+			
 
 			return res.status(200).json({
 				success: true,
@@ -225,18 +226,12 @@ interface SubmissionsResult {
 	exptected_output: string;
 	compile_output: string | null;
 	source_code?: string;
+	stderr?: null
 }
 
 router.get("/get-problem-details/:title", auth, async (req: Request, res: Response) => {
 		const { title } = req.params;
 		const { userAuthorized } = req as CustomRequestObject;
-		// if (title === undefined) {
-		// 	return res.json({
-		// 		success: false,
-		// 		message: "Problem id is undefined",
-		// 	});
-		// }
-
 		try {
 			// get the problem detail along with testcase examples
 			const result = await getProblemDetail(title);
@@ -284,7 +279,7 @@ router.get("/default-code", async (req: Request, res: Response) => {
 		const query = req.query;
 		const problemId = String(query.problemId);
 		const langId = Number(query.languageId);
-		console.log('request come inside default code');
+		
 		const result = await prisma.defaultCode.findFirst({
 			where: {
 				problemId,
@@ -294,10 +289,10 @@ router.get("/default-code", async (req: Request, res: Response) => {
 				code: true,
 			},
 		});
-		return res.json({ message: "success", defaultCode: result?.code });
+		return res.json({ success: true, message: "success", defaultCode: result?.code });
 	} catch (error: any) {
 		console.log(error);
-		return res.json({ message: "error" });
+		return res.json({ success: false, message: "error" });
 	}
 });
 
@@ -306,6 +301,7 @@ async function evaluateCode(
 	languageId: number,
 	code: string
 ): Promise<{ success: boolean; msg: any; data: SubmissionsResult[] }> {
+	console.log('this is user code ,', code);
 	try {
 		const submissionsArray: {
 			language_id: number;
@@ -361,7 +357,7 @@ async function evaluateCode(
 
 		const result = await axios.request(getSubmissionsOptions);
 		const { submissions } = result.data;
-		console.log(result.data);
+		console.log('this is submission resullt: ', submissions)
 		return {
 			success: true,
 			data: submissions as SubmissionsResult[],

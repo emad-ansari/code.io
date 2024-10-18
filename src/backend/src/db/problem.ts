@@ -1,6 +1,5 @@
 import prisma from "./index";
-import { ProblemDetail} from "../@utils/types";
-
+import { ProblemDetail } from "../@utils/types";
 
 export async function createProblem(
 	title: string,
@@ -53,7 +52,7 @@ export async function createProblem(
 			},
 		});
 		// before return create problemstatus field for all user
-        createProblemStatus(newProblem.id);
+		createProblemStatus(newProblem.id);
 		return {
 			success: true,
 			msg: "problem created successfully",
@@ -72,10 +71,30 @@ export async function createProblem(
 	}
 }
 
-export async function getAllProblems(page: number, problemPerPage: number, filterQuery: { difficulty?: string | undefined, status?: string | undefined } ) {
+export async function getAllProblems(
+	page: number,
+	problemPerPage: number,
+	filterQuery: {
+		difficulty?: string | undefined;
+		status?: string | undefined;
+	}
+) {
 	try {
+		console.log("status in getAll problems", filterQuery);
 		const problems = await prisma.problem.findMany({
-			where: filterQuery,
+			where: {
+				// Filter by difficulty if it's provided
+				difficulty: filterQuery.difficulty
+					? filterQuery.difficulty
+					: undefined,
+
+				// Nested query to filter by status if provided
+				problemStatus: filterQuery.status
+					? {
+							some: { status: filterQuery.status }, // Assuming ProblemStatus is a one-to-many relation
+					  }
+					: undefined,
+			},
 			skip: (page - 1) * problemPerPage,
 			take: problemPerPage,
 			select: {
@@ -85,31 +104,46 @@ export async function getAllProblems(page: number, problemPerPage: number, filte
 				problemNo: true,
 				problemStatus: {
 					select: {
-						status: true
-					}
-				}
-			}
-		})
-		return problems
-	}
-	catch(error: any){
-		console.log('Error while fetching all problem');
-
+						status: true,
+					},
+				},
+			},
+		});
+		return problems;
+	} catch (error: any) {
+		console.log("Error while fetching all problem");
 	}
 }
 
-export async function getTotalPages ( problemPerPage: number, filterQuery: { difficulty?: string | undefined, status?: string | undefined } ){
-	try {
-		const totalPages = await prisma.problem.aggregate({
-			where: filterQuery,
-			_count: {
-				id: true
-			}
-		})
-		return Math.ceil(totalPages._count.id / problemPerPage);
-
+export async function getTotalPages(
+	problemPerPage: number,
+	filterQuery: {
+		difficulty?: string | undefined;
+		status?: string | undefined;
 	}
-	catch(e: any){
+) {
+	try {
+		console.log("filter query in get total pages ", filterQuery);
+		const totalPages = await prisma.problem.aggregate({
+			where: {
+				// Filter by difficulty if it's provided
+				difficulty: filterQuery.difficulty
+					? filterQuery.difficulty
+					: undefined,
+
+				// Nested query to filter by status if provided
+				problemStatus: filterQuery.status
+					? {
+							some: { status: filterQuery.status }, // Assuming ProblemStatus is a one-to-many relation
+					  }
+					: undefined,
+			},
+			_count: {
+				id: true,
+			},
+		});
+		return Math.ceil(totalPages._count.id / problemPerPage);
+	} catch (e: any) {
 		console.error(e.message);
 	}
 }
@@ -128,94 +162,96 @@ export async function createProblemStatus(problemId: string) {
 				status: "Todo", // You can omit this as it defaults to 'todo'
 			})),
 		});
-		console.log('Problem status created')
-
+		console.log("Problem status created");
 	} catch (error: any) {
-		console.log('Error', (error as Error).message)
+		console.log("Error", (error as Error).message);
 	}
 }
 
-
-export async function getProblemDetail(title: string): Promise<{ success: boolean, msg: string, problemDetail?: ProblemDetail }> {
+export async function getProblemDetail(
+	title: string
+): Promise<{ success: boolean; msg: string; problemDetail?: ProblemDetail }> {
 	try {
 		const problem = await prisma.problem.findUnique({
 			where: {
-				title
+				title,
 			},
 			select: {
 				id: true,
 				title: true,
 				description: true,
 				difficulty: true,
-				problemNo: true
-			}
-		})
-		if (problem){
+				problemNo: true,
+			},
+		});
+		if (problem) {
 			const testcaseExamples = await getTestCaseExample(problem.id);
-			if (!testcaseExamples){
+			if (!testcaseExamples) {
 				return {
 					success: false,
-					msg: "Test case not found"
-				}
+					msg: "Test case not found",
+				};
 			}
-			const problemDetails: ProblemDetail = { ...problem, testcaseExamples}
+			const problemDetails: ProblemDetail = {
+				...problem,
+				testcaseExamples,
+			};
 			return {
 				success: true,
 				problemDetail: problemDetails,
-				msg: "problem detail with status"
-			}
+				msg: "problem detail with status",
+			};
 		}
 		return {
 			success: false,
-			msg: "Problem not found!"
-		}
-
-	}
-	catch(error: any){
+			msg: "Problem not found!",
+		};
+	} catch (error: any) {
 		return {
 			success: false,
-			msg: error.message
-		}
+			msg: error.message,
+		};
 	}
 }
 
-export async function getOneProblemStatusOnUser(userId: string, problemId: string): Promise<{ success: boolean , msg: string, status?: string  }> {
-	try{
+export async function getOneProblemStatusOnUser(
+	userId: string,
+	problemId: string
+): Promise<{ success: boolean; msg: string; status?: string }> {
+	try {
 		const problemStatusOnUser = await prisma.problemStatus.findFirst({
 			where: {
 				userId,
-				problemId
+				problemId,
 			},
 			select: {
-				status: true
-			}
-		})
-		if (problemStatusOnUser ){
+				status: true,
+			},
+		});
+		if (problemStatusOnUser) {
 			return {
 				success: true,
 				msg: "Problem status on user",
-				status: problemStatusOnUser.status
-			}
+				status: problemStatusOnUser.status,
+			};
 		}
 		return {
 			success: false,
 			msg: "Problem status not found for user",
-		}
-
-	}
-	catch(error: any){
+		};
+	} catch (error: any) {
 		return {
 			success: false,
-			msg: error.message
-		}
+			msg: error.message,
+		};
 	}
 }
 
-export async function getTestCaseExample(problemId: string){
+export async function getTestCaseExample(problemId: string) {
 	try {
 		const testcaseExamples = await prisma.testCase.findMany({
 			where: {
-				problemId
+				problemId,
 			},
 			take: 3,
 			select: {
@@ -224,20 +260,19 @@ export async function getTestCaseExample(problemId: string){
 					select: {
 						type: true,
 						name: true,
-						value: true
-					}
+						value: true,
+					},
 				},
 				output: {
 					select: {
 						type: true,
-						value: true
-					}
-				}
-			}
-		})
+						value: true,
+					},
+				},
+			},
+		});
 		return testcaseExamples;
-	}
-	catch(error: any){
+	} catch (error: any) {
 		console.log("Error: ", error.message);
 	}
 }
