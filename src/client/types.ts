@@ -74,6 +74,7 @@ export interface getProblemParameter {
 	pageNumber: number;
 	difficulty: string;
 	status: string;
+	searchKeywords: string
 }
 export interface DropDownItemProps {
 	value: string;
@@ -167,3 +168,5 @@ export interface DefaultCodeApiResponse {
 	message: string;
 	defaultCode?: string
 }
+
+export const problems_per_page = ["10 / page", "20 / page", "50 / page"]
