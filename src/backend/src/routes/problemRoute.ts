@@ -28,16 +28,20 @@ router.get("/filter-problem", auth, async (req: Request, res: Response) => {
 	const problemPerPage = Number(req.query.pageSize);
 	const difficulty = req.query.difficulty as string | undefined;
 	const status = req.query.status as string | undefined;
+	const searchKeywords = req.query. searchKeywords as string | undefined
+
 	console.log('this is status filter option : ', status);
 
 	try {
 		const  filterQuery: {
 			difficulty?: string,
-			status?: string
+			status?: string,
+			searchKeywords?: string
 		} = {};
 
 		if (difficulty) filterQuery.difficulty = difficulty;
-		if (status ) filterQuery.status = status;
+		if ( status ) filterQuery.status = status;
+		if ( searchKeywords ) filterQuery.searchKeywords = searchKeywords;
 		
 		const problems = await getAllProblems(page, problemPerPage, filterQuery);
 

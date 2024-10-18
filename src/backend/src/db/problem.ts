@@ -77,10 +77,10 @@ export async function getAllProblems(
 	filterQuery: {
 		difficulty?: string | undefined;
 		status?: string | undefined;
+		searchKeywords?: string | undefined;
 	}
 ) {
 	try {
-		console.log("status in getAll problems", filterQuery);
 		const problems = await prisma.problem.findMany({
 			where: {
 				// Filter by difficulty if it's provided
@@ -92,6 +92,13 @@ export async function getAllProblems(
 				problemStatus: filterQuery.status
 					? {
 							some: { status: filterQuery.status }, // Assuming ProblemStatus is a one-to-many relation
+					  }
+					: undefined,
+				// Filter by title if provided
+				title: filterQuery.searchKeywords
+					? {
+							contains: String(filterQuery.searchKeywords), // Case-insensitive search for title
+							mode: "insensitive", // Ignore case sensitivity
 					  }
 					: undefined,
 			},
@@ -120,10 +127,11 @@ export async function getTotalPages(
 	filterQuery: {
 		difficulty?: string | undefined;
 		status?: string | undefined;
+		searchKeywords?: string | undefined;
 	}
 ) {
 	try {
-		console.log("filter query in get total pages ", filterQuery);
+
 		const totalPages = await prisma.problem.aggregate({
 			where: {
 				// Filter by difficulty if it's provided
@@ -135,6 +143,12 @@ export async function getTotalPages(
 				problemStatus: filterQuery.status
 					? {
 							some: { status: filterQuery.status }, // Assuming ProblemStatus is a one-to-many relation
+					  }
+					: undefined,
+				title: filterQuery.searchKeywords
+					? {
+							contains: String(filterQuery.searchKeywords), // Case-insensitive search for title
+							mode: "insensitive", // Ignore case sensitivity
 					  }
 					: undefined,
 			},
