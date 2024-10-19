@@ -65,7 +65,7 @@ router.post("/login", async (req: Request, res: Response) => {
 			sameSite: "none",
 			path: "/api/user/", // This end point only
 		});
-		console.log('going to send login response')
+	
 		return res.status(201).json({
 			success: true,
 			message: "login successfully",
@@ -80,9 +80,8 @@ router.post("/login", async (req: Request, res: Response) => {
 // Refresh token endpoint
 router.post("/refresh-token", (req: Request, res: Response) => {
 	const cookie = req.cookies; // Get refresh token from the cookie
-	console.log('refresh tokens', cookie);
+
 	const refreshToken = cookie.refreshToken;
-	console.log('refresh token', refreshToken);
 
 	if (!refreshToken) {
 		return res
@@ -90,7 +89,6 @@ router.post("/refresh-token", (req: Request, res: Response) => {
 			.json({ success: false, message: "No refresh token found" });
 	}
 
-	console.log('refrehs key in refresh route:  ',  process.env.JWT_REFRESH_SECRET);
 	jwt.verify(
 		refreshToken,
 		process.env.JWT_REFRESH_SECRET!,
@@ -104,23 +102,23 @@ router.post("/refresh-token", (req: Request, res: Response) => {
 			const newAccessToken = generateAccessToken(
 				payload.userId,
 				payload.role
-			)
-			return res.status(200).json({ success: true, accessToken: newAccessToken});
+			);
+			return res
+				.status(200)
+				.json({ success: true, accessToken: newAccessToken });
 		}
 	);
 });
 
 router.post("/logout", (req: Request, res: Response) => {
-
+	if (!req.cookies?.refreshToken) return res.status(204).json({ success: false, message:  "No refresh token found" });
+	
 	res.clearCookie("refreshToken", {
 		httpOnly: true,
 		secure: true, // Set to true in production
 		sameSite: "none",
 		path: "/api/user/", // This endpoint only
-	 });
-	const cookie = req.cookies;
-	const value = JSON.stringify(cookie);
-	console.log('this is cookei', value)
+	});
 	res.json({ success: true, message: "Logged out successfully" });
 });
 

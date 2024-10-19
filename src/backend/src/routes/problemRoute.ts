@@ -28,7 +28,7 @@ router.get("/filter-problem", auth, async (req: Request, res: Response) => {
 	const status = req.query.status as string | undefined;
 	const searchKeywords = req.query.searchKeywords as string | undefined;
 
-	console.log("this is status filter option : ", status);
+	
 
 	try {
 		const filterQuery: {
@@ -306,7 +306,6 @@ router.get("/default-code", async (req: Request, res: Response) => {
 					code: true,
 				},
 			});
-			console.log(result);
 			return res.json({ success: true, message: "success", defaultCode: result?.code });
 		}
 		return res.status(204).json({ success: false, message:  "problem not found" });
@@ -321,7 +320,6 @@ async function evaluateCode(
 	languageId: number,
 	code: string
 ): Promise<{ success: boolean; msg: any; data: SubmissionsResult[] }> {
-	console.log("this is user code ,", code);
 	try {
 		const submissionsArray: {
 			language_id: number;
@@ -377,7 +375,7 @@ async function evaluateCode(
 
 		const result = await axios.request(getSubmissionsOptions);
 		const { submissions } = result.data;
-		console.log("this is submission resullt: ", submissions);
+		
 		return {
 			success: true,
 			data: submissions as SubmissionsResult[],
