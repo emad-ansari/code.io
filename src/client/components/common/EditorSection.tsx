@@ -7,7 +7,6 @@ import {
 	Maximize,
 	Minimize,
 	Play,
-	Settings,
 } from "lucide-react";
 import { Button } from "../ui/button";
 import { ConsoleSkeleton } from "../skeletons/ConsoleSkeleton";
@@ -25,7 +24,7 @@ import {
 	TooltipProvider,
 	TooltipTrigger,
 } from "../ui/tooltip";
-import { EditorSetting } from "./EditorSetting";
+
 import { useSelector } from "react-redux";
 import { RootState, useAppDispatch } from "../../app/store";
 import { setOpenDropDownMenu } from "../../features/dropDownSlice";
@@ -35,7 +34,7 @@ import {
 	runCode,
 	toggleFullScreen,
 } from "../../features/editorSlice";
-import { setIsOpen } from "../../features/editorSettingSlice";
+import SettingDialogBox from '../common/SettingDialogBox'
 import { useLocation, useParams } from "react-router-dom";
 import { SubmissionDetails } from "@/client/types";
 import Split from "react-split";
@@ -50,7 +49,6 @@ export const EditorSection = () => {
 	const { isLanguageMenuOpen, isThemeMenuOpen } = useSelector(
 		(state: RootState) => state.dropdown
 	);
-	const { isOpen } = useSelector((state: RootState) => state.setting);
 	const { language, code, loading } = useSelector(
 		(state: RootState) => state.editor
 	);
@@ -200,7 +198,6 @@ export const EditorSection = () => {
 					</div>
 				</div>
 			</Split>
-			{isOpen && <EditorSetting />}
 		</section>
 	);
 };
@@ -257,15 +254,10 @@ function EditorTopBar() {
 				</SelectContent>
 			</Select>
 			<div className="flex flex-row gap-2 items-center ">
+				<SettingDialogBox />  {/* editor setting */}
 				<Button
-					className={" hover:bg-gray-800 rounded-full "}
-					onClick={() => dispatch(setIsOpen(true))}
-				>
-					<Settings size={16} className="text-white" />
-				</Button>
-
-				<Button
-					className={"hover:bg-gray-800 rounded-full"}
+					size={'icon'}
+					className={"hover:bg-gray-800  rounded-full"}
 					onClick={() => dispatch(toggleFullScreen(!isFullScreen))}
 				>
 					{isFullScreen ? (
