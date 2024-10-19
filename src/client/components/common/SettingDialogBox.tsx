@@ -26,9 +26,7 @@ import {
 	SelectTrigger,
 	SelectValue,
 } from "../ui/select";
-
-const EDITOR_THEMES = ["vs-dark", "vs", "hc-light", "OneDarkPro"];
-const FONT_SIZES = ["12px", "14px", "16px", "18px", "20px", "22px"];
+import { EDITOR_THEMES, FONT_SIZES} from '../../types'
 
 export default function SettingDialogBox() {
 	const dispatch = useAppDispatch();

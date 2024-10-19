@@ -4,7 +4,7 @@ export interface ProblemState {
 	totalPages: number;
 	problemDetail: ProblemDetail;
 	error: any;
-	loading: boolean
+	loading: boolean;
 }
 export interface SettingState {
 	theme: string;
@@ -34,8 +34,8 @@ export interface Problem {
 	difficulty: string;
 	problemNo: number;
 	problemStatus?: {
-		status: string
-	}
+		status: string;
+	};
 }
 export interface ProblemDetail extends Problem {
 	description: string;
@@ -73,7 +73,7 @@ export interface getProblemParameter {
 	pageNumber: number;
 	difficulty: string;
 	status: string;
-	searchKeywords: string
+	searchKeywords: string;
 }
 export interface DropDownItemProps {
 	value: string;
@@ -95,6 +95,53 @@ export interface CustomMuiMenuProps {
 // 	compilationError?: string | "";
 // 	failedTestCase?: string | "";
 // }
+
+export interface CodeExecutionResponse {
+	success: boolean;
+	data: ExecutionResult;
+	message?: string;
+}
+export interface ExecutionResult {
+	overallStatus: string; // Wrong Answer || Compilation Error || Accepted || Time Limit Exceed
+	passed_testcases: number;
+	submissions: SubmissionDetails[];
+}
+
+export interface SubmissionDetails {
+	languageId: number;
+	stdin: string;
+	stdout: string;
+	expected_output: string;
+	status: {
+		id: number;
+		description: string;
+	};
+	compile_output?: string | null;
+	testcaseExamples?: TestCaseExample[];
+	inputs: Input[];
+}
+export type UserApiResponse = {
+	success: boolean;
+	message: string;
+	token?: string;
+};
+
+export type ProblemDetailApiResponse = {
+	success: boolean;
+	message: string;
+	problemDetails?: ProblemDetail;
+};
+
+export interface RefreshTokenApiResponse {
+	success: boolean;
+	message: string;
+	accessToken?: string;
+}
+export interface DefaultCodeApiResponse {
+	success: boolean;
+	message: string;
+	defaultCode?: string;
+}
 
 export const typeOptions: string[] = [
 	"void",
@@ -120,52 +167,7 @@ export const typeOptions: string[] = [
 	"List<List<String>>",
 ];
 
-export interface CodeExecutionResponse {
-	success: boolean;
-	data: ExecutionResult;
-	message?: string;
-}
-export interface ExecutionResult {
-	overallStatus: string; // Wrong Answer || Compilation Error || Accepted || Time Limit Exceed
-	passed_testcases: number;
-	submissions: SubmissionDetails[];
-}
+export const EDITOR_THEMES: string[] = ["vs-dark", "vs", "hc-light", "OneDarkPro"];
+export const FONT_SIZES: string[] = ["12px", "14px", "16px", "18px", "20px", "22px"];
 
-export interface SubmissionDetails {
-	languageId: number;
-	stdin: string;
-	stdout: string;
-	expected_output: string;
-	status: {
-		id: number;
-		description: string;
-	};
-	compile_output?: string | null;
-	testcaseExamples?: TestCaseExample[],
-	inputs: Input[]
-}
-export type UserApiResponse = {
-	success: boolean;
-	message: string;
-	token?: string;
-}
-
-export type ProblemDetailApiResponse = {
-	success: boolean;
-	message: string;
-	problemDetails?: ProblemDetail
-}
-
-
-export interface RefreshTokenApiResponse {
-	success: boolean,
-	message: string;
-	accessToken?: string
-}
-export interface DefaultCodeApiResponse {
-	success: boolean;
-	message: string;
-	defaultCode?: string
-}
-
-export const problems_per_page = ["10 / page", "20 / page", "50 / page"]
+export const problems_per_page = ["10 / page", "20 / page", "50 / page"];
