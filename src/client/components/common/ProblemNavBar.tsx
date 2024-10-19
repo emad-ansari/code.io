@@ -1,7 +1,5 @@
 import CodeInLogo from "../../../assets/websiteLogo.svg";
 import { startTransition } from "react";
-import { FaUserCircle } from "react-icons/fa";
-import { MdOutlineNightlightRound } from "react-icons/md";
 import { useNavigate, useLocation } from "react-router-dom";
 import { useSelector } from "react-redux";
 import { RootState } from "@/client/app/store";
@@ -12,6 +10,10 @@ import {
 	DropdownMenuItem,
 	DropdownMenuTrigger,
 } from "../ui/dropdown-menu";
+// import { Separator } from "../ui/separator"
+import { CircleUserRound } from "lucide-react";
+import { logOut } from "@/client/features/authSlice";
+import { useAppDispatch } from "@/client/app/store";
 
 export const ProblemNavBar = ({
 	isProbleDescriptioPage,
@@ -20,6 +22,7 @@ export const ProblemNavBar = ({
 }) => {
 	const navigate = useNavigate();
 	const location = useLocation();
+	const dispatch = useAppDispatch();
 
   
 	const handleNavigation = (event: React.MouseEvent<HTMLAnchorElement>, path: string) => {
@@ -99,7 +102,7 @@ export const ProblemNavBar = ({
 				{!isLogin ? (
 					<div className="flex flex-1 justify-end pr-5">
 						<div className="flex gap-3 items-center">
-							<MdOutlineNightlightRound className="hover:bg-gray-800 w-10 h-10 rounded-full px-3 py-3 cursor-pointer border border-[#334155]" />
+							{/* <MdOutlineNightlightRound className="hover:bg-gray-800 w-10 h-10 rounded-full px-3 py-3 cursor-pointer border border-[#334155]" /> */}
 							<Button
 								variant="ghost"
 								className=" hover:bg-darkGray  hover:text-white  border border-[#334155]"
@@ -124,17 +127,15 @@ export const ProblemNavBar = ({
 					<div className="flex flex-1 justify-end pr-5">
 						<DropdownMenu>
 							<DropdownMenuTrigger asChild>
-								<FaUserCircle className="cursor-pointer w-9 h-9" />
+								<CircleUserRound size={40} strokeWidth={1} className="cursor-pointer"/>
 							</DropdownMenuTrigger>
 							<DropdownMenuContent
 								align="end"
-								className="bg-gray-900 text-white"
+								className="bg-gray-900 text-white border border-BORDER"
 							>
-								<DropdownMenuItem className="bg-gray-900">
-									Profile
-								</DropdownMenuItem>
+								<DropdownMenuItem >Profile</DropdownMenuItem>
 								<DropdownMenuItem>Settings</DropdownMenuItem>
-								<DropdownMenuItem>Logout</DropdownMenuItem>
+								<DropdownMenuItem onClick={() => dispatch(logOut())}>Logout</DropdownMenuItem>
 							</DropdownMenuContent>
 						</DropdownMenu>
 					</div>
