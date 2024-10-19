@@ -7,7 +7,6 @@ export interface ProblemState {
 	loading: boolean
 }
 export interface SettingState {
-	isOpen: boolean;
 	theme: string;
 	fontSize: number;
 	isFullScreen: boolean;
