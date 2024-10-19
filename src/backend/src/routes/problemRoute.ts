@@ -15,70 +15,68 @@ import {
 	getOneProblemStatusOnUser,
 	getTestCaseExample,
 	getAllProblems,
-	getTotalPages
+	getTotalPages,
 } from "../db/problem";
 import prisma from "../db";
 
-
-
 router.get("/filter-problem", auth, async (req: Request, res: Response) => {
 	const { userAuthorized } = req as CustomRequestObject;
-	
+
 	const page = Number(req.query.pageNumber) || 1;
 	const problemPerPage = Number(req.query.pageSize);
 	const difficulty = req.query.difficulty as string | undefined;
 	const status = req.query.status as string | undefined;
-	const searchKeywords = req.query. searchKeywords as string | undefined
+	const searchKeywords = req.query.searchKeywords as string | undefined;
 
-	console.log('this is status filter option : ', status);
+	console.log("this is status filter option : ", status);
 
 	try {
-		const  filterQuery: {
-			difficulty?: string,
-			status?: string,
-			searchKeywords?: string
+		const filterQuery: {
+			difficulty?: string;
+			status?: string;
+			searchKeywords?: string;
 		} = {};
 
 		if (difficulty) filterQuery.difficulty = difficulty;
-		if ( status ) filterQuery.status = status;
-		if ( searchKeywords ) filterQuery.searchKeywords = searchKeywords;
-		
-		const problems = await getAllProblems(page, problemPerPage, filterQuery);
+		if (status) filterQuery.status = status;
+		if (searchKeywords) filterQuery.searchKeywords = searchKeywords;
+
+		const problems = await getAllProblems(
+			page,
+			problemPerPage,
+			filterQuery
+		);
 
 		const totalPages = await getTotalPages(problemPerPage, filterQuery);
-		if (userAuthorized){
+		if (userAuthorized) {
 			return res.status(200).json({
 				success: true,
 				message: "Filtered problems",
 				data: problems,
-				totalPages: totalPages
+				totalPages: totalPages,
 			});
-		}
-		else {
+		} else {
 			// if user is not authorize then remove the status property from problems
-			const problemsWithoutStatus = problems?.map(p => {
+			const problemsWithoutStatus = problems?.map((p) => {
 				return {
 					id: p.id,
 					title: p.title,
 					problemNo: p.problemNo,
 					difficulty: p.difficulty,
-				}
-			})
+				};
+			});
 			return res.status(200).json({
 				success: true,
 				message: "filtered problem without status",
 				data: problemsWithoutStatus,
-				totalPages: totalPages
-
-			})
+				totalPages: totalPages,
+			});
 		}
-	}
-	catch(e: any){
+	} catch (e: any) {
 		console.error(e.message);
-		return res.status(500).json({success: false, message: e.message });
+		return res.status(500).json({ success: false, message: e.message });
 	}
 });
-
 
 const JUDGE0_API_URL = process.env.JUDGE0_API_URL;
 const JUDGE0_API_KEY = process.env.JUDGE0_API_KEY;
@@ -139,7 +137,7 @@ router.post("/run-code", auth, async (req: Request, res: Response) => {
 		}
 
 		const { problemId, languageId, code } = parseUserSubmitCode.data;
-		
+
 		// here get the first three testcases and run it on jude0
 		const testcaseExamples = await getTestCaseExample(problemId);
 		// run these testcase exmaples
@@ -162,7 +160,7 @@ router.post("/run-code", auth, async (req: Request, res: Response) => {
 			);
 			let passed_testcases = 0;
 			const { data } = result;
-			
+
 			let resultStatus = "";
 			data.forEach((v) => {
 				if (v.status.description === "Accepted") passed_testcases++;
@@ -174,8 +172,7 @@ router.post("/run-code", auth, async (req: Request, res: Response) => {
 					resultStatus = "Time Limit exceeded";
 				}
 			});
-			if (passed_testcases === data.length) resultStatus = "Accepted"
-			
+			if (passed_testcases === data.length) resultStatus = "Accepted";
 
 			return res.status(200).json({
 				success: true,
@@ -230,10 +227,13 @@ interface SubmissionsResult {
 	exptected_output: string;
 	compile_output: string | null;
 	source_code?: string;
-	stderr?: null
+	stderr?: null;
 }
 
-router.get("/get-problem-details/:title", auth, async (req: Request, res: Response) => {
+router.get(
+	"/get-problem-details/:title",
+	auth,
+	async (req: Request, res: Response) => {
 		const { title } = req.params;
 		const { userAuthorized } = req as CustomRequestObject;
 		try {
@@ -255,7 +255,10 @@ router.get("/get-problem-details/:title", auth, async (req: Request, res: Respon
 				}
 
 				const problemDetailWithStatusOnUser: ProblemDetailWithStatusOnUser =
-					{ ...result.problemDetail, problemStatus: { status: response.status } };
+					{
+						...result.problemDetail,
+						problemStatus: { status: response.status },
+					};
 
 				return res.json({
 					success: true,
@@ -281,19 +284,32 @@ router.get("/get-problem-details/:title", auth, async (req: Request, res: Respon
 router.get("/default-code", async (req: Request, res: Response) => {
 	try {
 		const query = req.query;
-		const problemId = String(query.problemId);
+		const problemTitle = String(query.problemTitle);
 		const langId = Number(query.languageId);
-		
-		const result = await prisma.defaultCode.findFirst({
+
+		const problem = await prisma.problem.findFirst({
 			where: {
-				problemId,
-				languageId: langId,
+				title: problemTitle,
 			},
 			select: {
-				code: true,
+				id: true,
+				title: true,
 			},
 		});
-		return res.json({ success: true, message: "success", defaultCode: result?.code });
+		if (problem && problem.title === problemTitle) {
+			const result = await prisma.defaultCode.findFirst({
+				where: {
+					problemId: problem.id ,
+					languageId: langId,
+				},
+				select: {
+					code: true,
+				},
+			});
+			console.log(result);
+			return res.json({ success: true, message: "success", defaultCode: result?.code });
+		}
+		return res.status(204).json({ success: false, message:  "problem not found" });
 	} catch (error: any) {
 		console.log(error);
 		return res.json({ success: false, message: "error" });
@@ -305,7 +321,7 @@ async function evaluateCode(
 	languageId: number,
 	code: string
 ): Promise<{ success: boolean; msg: any; data: SubmissionsResult[] }> {
-	console.log('this is user code ,', code);
+	console.log("this is user code ,", code);
 	try {
 		const submissionsArray: {
 			language_id: number;
@@ -361,7 +377,7 @@ async function evaluateCode(
 
 		const result = await axios.request(getSubmissionsOptions);
 		const { submissions } = result.data;
-		console.log('this is submission resullt: ', submissions)
+		console.log("this is submission resullt: ", submissions);
 		return {
 			success: true,
 			data: submissions as SubmissionsResult[],

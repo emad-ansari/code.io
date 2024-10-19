@@ -30,13 +30,13 @@ import { useSelector } from "react-redux";
 import { RootState, useAppDispatch } from "../../app/store";
 import { setOpenDropDownMenu } from "../../features/dropDownSlice";
 import {
-	getDefaultCode,
+	fetchDefaultCode,
 	setLanguage,
 	runCode,
 	toggleFullScreen,
 } from "../../features/editorSlice";
 import { setIsOpen } from "../../features/editorSettingSlice";
-import { useLocation } from "react-router-dom";
+import { useLocation, useParams } from "react-router-dom";
 import { SubmissionDetails } from "@/client/types";
 import Split from "react-split";
 
@@ -46,7 +46,7 @@ export const EditorSection = () => {
 	const dispatch = useAppDispatch();
 	const location = useLocation();
 	const id = location.state?.id;
-	
+
 	const { isLanguageMenuOpen, isThemeMenuOpen } = useSelector(
 		(state: RootState) => state.dropdown
 	);
@@ -69,7 +69,7 @@ export const EditorSection = () => {
 	const { isLogin } = useSelector((state: RootState) => state.user);
 
 	return (
-		<section className="">
+		<section >
 			<Split
 				sizes={splitRatio}
 				className="h-full rounded-lg "
@@ -80,7 +80,7 @@ export const EditorSection = () => {
 			>
 				<div
 					id="editor-container "
-					className="  bg-darkGray rounded-lg   flex flex-1 flex-col overflow-hidden border border-[#334155] transition-all duration-500 ease-in-out"
+					className="  bg-darkGray rounded-lg   flex flex-1 flex-col overflow-hidden border border-BORDER transition-all duration-500 ease-in-out"
 				>
 					<EditorTopBar />
 					<div
@@ -196,7 +196,7 @@ export const EditorSection = () => {
 						</div>
 					</div>
 					<div className="overflow-y-scroll">
-						{loading ? <ConsoleSkeleton /> : <Console />}
+						{loading ? <ConsoleSkeleton /> : <OutputConsole />}
 					</div>
 				</div>
 			</Split>
@@ -217,16 +217,17 @@ export const LNAGUAGE_MAPPING: {
 
 function EditorTopBar() {
 	const dispatch = useAppDispatch();
-	const location = useLocation();
-	const id = location.state?.id; 
+	const { title } = useParams();
 	const { isFullScreen } = useSelector((state: RootState) => state.editor);
 
 	const handleLanguageChange = (item: string) => {
-		if (id) {
+		
+		if (title) {
+			const formattedTitle = title.replace(/-/g, " ");
 			dispatch(setLanguage(item));
 			dispatch(
-				getDefaultCode({
-					problemId: id,
+				fetchDefaultCode({
+					problemTitle: formattedTitle,
 					languageId: LNAGUAGE_MAPPING[`${item}`].languageId,
 				})
 			);
@@ -278,7 +279,7 @@ function EditorTopBar() {
 	);
 }
 
-function Console() {
+function OutputConsole() {
 	const { execution_result } = useSelector(
 		(state: RootState) => state.editor
 	);
@@ -298,7 +299,9 @@ function Console() {
 				>
 					{resultStatus}
 				</span>
-				<span>Passed test cases: {passed_testcases}/2</span>
+				{passed_testcases >= 0 && (
+					<span>Passed test cases: {passed_testcases}/2</span>
+				)}
 			</div>
 			<div>
 				<RenderOutput resultStatus={resultStatus} />

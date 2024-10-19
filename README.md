@@ -15,7 +15,8 @@
 [x] add button to set page size.
 [x] After the login, User should automatically redirect to the page where it  was before login
 [x] add logout functionality
-[] fix the bug in calling getDefualtCode inside useEffect in CodeEditor component 
+[x] fix the bug in calling getDefualtCode inside useEffect in CodeEditor component 
+[] change the setting dialog to shadcn ui dialog
 [] add the getJavaScriptBoilerplateCode() 
 [] add feature to run cpp code
 

@@ -22,21 +22,23 @@ interface DefaultCodeProps {
 	languageId: number;
 	code?: string;
 }
-export const getDefaultCode = createAsyncThunk<DefaultCodeApiResponse, DefaultCodeProps>("/editor/getDefaultCode", async ({problemId, languageId}: DefaultCodeProps, thunkAPI ) => {
-	console.log('problem id and language id : ', problemId, languageId);
+type fetchDefaultCodeProps = Pick<DefaultCodeProps, "languageId"> & {problemTitle: string};
+
+
+export const fetchDefaultCode = createAsyncThunk<DefaultCodeApiResponse, fetchDefaultCodeProps>("/editor/getDefaultCode", async ({problemTitle, languageId}: fetchDefaultCodeProps, thunkAPI ) => {
 	try {
+		console.log('problem title and langid:  ', problemTitle, languageId);
+
 		const res = await api.get('/problem/default-code', {
 			params: {
-				problemId,
+				problemTitle,
 				languageId
 			}
 		})
-		console.log('default code: ', res.data);
 		if (res.data.success && res.data.defaultCode){
-			console.log('going to set the code as default code: ')			
 			thunkAPI.dispatch(setCode(res.data.defaultCode));
 		}
-		
+		console.log('default code api response: ', res.data)
 		return res.data;
 	}
 	catch(error: any){
@@ -80,10 +82,10 @@ export const editorSlice = createSlice({
 		
 	},
 	extraReducers: (builder) => {
-		builder.addCase(getDefaultCode.pending , (_, action) => {
+		builder.addCase(fetchDefaultCode.pending , (_, action) => {
 			console.log(action.payload);
 		})
-		builder.addCase(getDefaultCode.fulfilled , (state, action) => {
+		builder.addCase(fetchDefaultCode.fulfilled , (state, action) => {
 			const { success, message } = action.payload;
 			console.log('message of deffault code: ', message)
 			if ( success ){
@@ -91,7 +93,7 @@ export const editorSlice = createSlice({
 				state.boilerPlateCode = defaultCode;
 			}
 		})
-		builder.addCase(getDefaultCode.rejected , (_, action) => {
+		builder.addCase(fetchDefaultCode.rejected , (_, action) => {
 			console.log(action.payload);
 		})
 		builder.addCase(runCode.pending , (state) => {

@@ -4,13 +4,12 @@ import { LNAGUAGE_MAPPING } from "./EditorSection";
 import { RootState, useAppDispatch } from "../../app/store";
 import OneDarkPro from "../../theme/oneDarkPro.json";
 import { useEffect } from "react";
-import { getDefaultCode, setCode } from "@/client/features/editorSlice";
-import { useLocation } from "react-router-dom";
+import { fetchDefaultCode, setCode } from "@/client/features/editorSlice";
+import { useParams } from "react-router-dom";
 
 export const CodeEditor = () => {
-	const location = useLocation();
-	const id = location.state?.id; 
-
+	const { title } = useParams();
+	const dispatch = useAppDispatch();
 	const { language, boilerPlateCode } = useSelector(
 		(state: RootState) => state.editor
 	);
@@ -24,14 +23,21 @@ export const CodeEditor = () => {
 			...OneDarkPro,
 		});
 	};
-	const dispatch = useAppDispatch();
-	console.log('problemid: ', id)
+	
+	
 	useEffect(() => {
-		if (id){
-			dispatch(getDefaultCode({problemId: id, languageId: LNAGUAGE_MAPPING[`${language}`].languageId}));
+		if (title) {
+			const formattedTitle = title.replace(/-/g, " ");
+			console.log('current selected language: ', language);
+			dispatch(
+				fetchDefaultCode({
+					problemTitle: formattedTitle,
+					languageId: LNAGUAGE_MAPPING["java"].languageId,
+				})
+			);
 		}
-	}, []);
-
+	}, [title]);
+	console.log('current langauge: ',language)
 	return (
 		<Editor
 			height="100%"
@@ -68,4 +74,3 @@ export const CodeEditor = () => {
 		/>
 	);
 };
-
