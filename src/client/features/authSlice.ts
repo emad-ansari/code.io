@@ -2,6 +2,7 @@ import { createSlice, PayloadAction, createAsyncThunk } from "@reduxjs/toolkit";
 import { api } from "../api/client";
 import { RootState } from "../app/store";
 import { UserApiResponse, RefreshTokenApiResponse } from "../types";
+import axios from "axios";
 
 export interface User {
 	isLogin: boolean;
@@ -9,7 +10,6 @@ export interface User {
 	username: string;
 	email: string;
 	password: string;
-
 }
 export const initialState: User = {
 	isLogin: false,
@@ -17,7 +17,6 @@ export const initialState: User = {
 	username: "",
 	email: "",
 	password: "",
-
 };
 
 export const signup = createAsyncThunk("/user/signup", async (_, ThunkAPI) => {
@@ -25,7 +24,8 @@ export const signup = createAsyncThunk("/user/signup", async (_, ThunkAPI) => {
 		const store = ThunkAPI.getState() as RootState;
 		const { username, email, password } = store.user;
 
-		const res = await api.post("/user/signup",
+		const res = await api.post(
+			"/user/signup",
 			{
 				data: {
 					username,
@@ -48,50 +48,60 @@ export const signup = createAsyncThunk("/user/signup", async (_, ThunkAPI) => {
 	}
 });
 
-export const login = createAsyncThunk<UserApiResponse>("/user/login", async (_, ThunkAPI) => {
-	try {
-		const store = ThunkAPI.getState() as RootState;
-		const { email, password } = store.user;
+export const login = createAsyncThunk<UserApiResponse>(
+	"/user/login",
+	async (_, ThunkAPI) => {
+		try {
+			const store = ThunkAPI.getState() as RootState;
+			const { email, password } = store.user;
 
-		const res = await api.post("/user/login",
-			{
-				data: {
-					email,
-					password,
+			const res = await api.post(
+				"/user/login",
+				{
+					data: {
+						email,
+						password,
+					},
 				},
-			},
-			{
-				headers: {
-					"Content-Type": "application/json",
-				},
-			}
-		);
+				{
+					withCredentials: true,
+					headers: {
+						"Content-Type": "application/json",
+					},
+				}
+			);
 
-		console.log("user Login response: ", res);
-		return res.data;
-	} catch (error: any) {
-		console.error(
-			"Error occured during signup : ",
-			(error as Error).message
-		);
+			console.log("user Login response: ", res);
+			return res.data;
+		} catch (error: any) {
+			console.error(
+				"Error occured during signup : ",
+				(error as Error).message
+			);
+		}
 	}
-});
+);
 
+export const logOut = createAsyncThunk<UserApiResponse>(
+	"/user/logOut",
+	async () => {
+		try {
+			const res = await api.post(
+				"/user/logout",
+				{},
+				{ withCredentials: true }
+			);
+			console.log("user logout response: ", res);
+			return res.data;
+		} catch (error: any) {
+			console.error(
+				"Error occured during signup : ",
+				(error as Error).message
+			);
+		}
+	}
+);
 
-export const refreshToken = createAsyncThunk<RefreshTokenApiResponse>(
-    'auth/refreshToken',
-    async (_, { rejectWithValue }) => {
-      try {
-        const response = await api.get('/user/refresh-token', {
-			withCredentials: true
-		});
-        return response.data;
-		
-      } catch (error: any) {
-        return rejectWithValue(error.response?.data || 'Refresh failed');
-      }
-    }
-  );
 export const userSlice = createSlice({
 	name: "user",
 	initialState,
@@ -112,20 +122,15 @@ export const userSlice = createSlice({
 				state.isLogin = true;
 			}
 		},
-		// setCredentials: (state, action: PayloadAction<{accessToken: string}>) => {
-        //     const { accessToken } = action.payload;
-        //     // state.accessToken = accessToken;
-        // },
-        setLogout: () => {
-            localStorage.removeItem("CToken");
-        }
 	},
 	extraReducers: (builder) => {
 		builder.addCase(signup.pending, (state, _) => {
 			state.isLogin = false;
 			state.isSignup = false;
 		});
-		builder.addCase(signup.fulfilled, (state, action: PayloadAction<{ success: boolean; msg: any }>) => {
+		builder.addCase(
+			signup.fulfilled,
+			(state, action: PayloadAction<{ success: boolean; msg: any }>) => {
 				const { success, msg } = action.payload;
 				if (success) {
 					state.isSignup = true;
@@ -142,33 +147,32 @@ export const userSlice = createSlice({
 			state.isLogin = false;
 			state.isSignup = false;
 		});
-		builder.addCase(login.fulfilled,(state, action)	=> {
-				const { success, message } = action.payload;
-				const token = action.payload.token
-				if (success && token) {
-					state.isLogin = true;
-					localStorage.setItem("CToken", token);
-					// state.accessToken = token;
-				}
-				console.log("Login response msg : ", message);
-				state.isSignup = false;
+		builder.addCase(login.fulfilled, (state, action) => {
+			const { success, message } = action.payload;
+			const token = action.payload.token;
+			if (success && token) {
+				state.isLogin = true;
+				localStorage.setItem("CToken", token);
 			}
-		);
+			console.log("Login response msg : ", message);
+			state.isSignup = false;
+		});
 		builder.addCase(login.rejected, (state, _) => {
 			state.isSignup = false;
 		});
-		builder.addCase(refreshToken.fulfilled, (_, action) => {
-			const { success, message } = action.payload;
+		builder.addCase(logOut.fulfilled, (state, action) => {
+			const { success , message} = action.payload;
 			if (success){
-				const accessToken = action.payload.accessToken;
-				localStorage.setItem("CToken", accessToken!);
+				state.isLogin = false;
+				localStorage.removeItem("CToken");
 			}
-			console.log('Refresh token message: ', message);
-
+			state.isSignup = false;
+			console.log('Logout message: ', message)
+			
 		});
 	},
 });
 
 export default userSlice.reducer;
-export const { setUsername, setEmail, setPassword, rehydrateAuth, setLogout } =
+export const { setUsername, setEmail, setPassword, rehydrateAuth } =
 	userSlice.actions;

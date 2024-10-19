@@ -61,11 +61,11 @@ router.post("/login", async (req: Request, res: Response) => {
 		res.cookie("refreshToken", refreshToken, {
 			maxAge: 1000 * 60 * 60 * 24 * 7, // max age 7days  [putting cookie expiration is neccessary]
 			httpOnly: true,
-			secure: true, // Set to true in production
+			secure: true,
 			sameSite: "none",
-			path: "/api/user/refresh-token", // This endpoint only
+			path: "/api/user/", // This end point only
 		});
-
+		console.log('going to send login response')
 		return res.status(201).json({
 			success: true,
 			message: "login successfully",
@@ -80,8 +80,9 @@ router.post("/login", async (req: Request, res: Response) => {
 // Refresh token endpoint
 router.post("/refresh-token", (req: Request, res: Response) => {
 	const cookie = req.cookies; // Get refresh token from the cookie
-
+	console.log('refresh tokens', cookie);
 	const refreshToken = cookie.refreshToken;
+	console.log('refresh token', refreshToken);
 
 	if (!refreshToken) {
 		return res
@@ -89,6 +90,7 @@ router.post("/refresh-token", (req: Request, res: Response) => {
 			.json({ success: false, message: "No refresh token found" });
 	}
 
+	console.log('refrehs key in refresh route:  ',  process.env.JWT_REFRESH_SECRET);
 	jwt.verify(
 		refreshToken,
 		process.env.JWT_REFRESH_SECRET!,
@@ -98,6 +100,7 @@ router.post("/refresh-token", (req: Request, res: Response) => {
 					.status(401)
 					.json({ message: "Invalid token", err: err.message });
 			}
+			// add another security level -> that check whether the user exist in database or not other wise just send 401 resposnse.
 			const newAccessToken = generateAccessToken(
 				payload.userId,
 				payload.role
@@ -108,8 +111,17 @@ router.post("/refresh-token", (req: Request, res: Response) => {
 });
 
 router.post("/logout", (req: Request, res: Response) => {
-	res.clearCookie("refreshToken", { path: "/api/user/refresh-token" });
-	res.json({ message: "Logged out successfully" });
+
+	res.clearCookie("refreshToken", {
+		httpOnly: true,
+		secure: true, // Set to true in production
+		sameSite: "none",
+		path: "/api/user/", // This endpoint only
+	 });
+	const cookie = req.cookies;
+	const value = JSON.stringify(cookie);
+	console.log('this is cookei', value)
+	res.json({ success: true, message: "Logged out successfully" });
 });
 
 export default router;

@@ -5,18 +5,24 @@ import { FcGoogle } from "react-icons/fc";
 import { useAppDispatch, RootState } from "../app/store";
 import { useSelector } from "react-redux";
 import { setEmail, login } from "../features/authSlice";
-// import { useEffect } from "react";
-// import { useNavigate } from "react-router-dom";
+import { useEffect } from "react";
+import { useLocation, useNavigate } from "react-router-dom";
 
 export const LoginPage = () => {
-	const { email } = useSelector((state: RootState) => state.user);
+	const { email, isLogin } = useSelector((state: RootState) => state.user);
 	const dispatch = useAppDispatch();
-	// const navigate = useNavigate();
-	// useEffect(() => {
-	//     if (isLogin){
-	//         navigate('/p/problemset')
-	//     }
-	// }, [dispatch, isLogin ])
+	
+	const navigate = useNavigate();
+	const location = useLocation();
+	const  from = location.state?.from?.pathname || "/";
+	
+	// navigate user to the page,  where it was before login.
+	useEffect(() => {
+	    if (isLogin){
+			navigate(from, { replace: true });
+	    }
+	}, [dispatch, isLogin ])
+
 	return (
 		<main className="bg-[#030303]  fixed top-0 right-0 left-0 bottom-0 flex justify-center pt-32 ">
 			<div className="w-[350px] h-[400px] md:w-[450px] md:h-[500px]  bg-[#0D1621] rounded-lg flex flex-col items-center border border-[#334155]">
