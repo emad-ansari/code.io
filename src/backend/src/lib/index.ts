@@ -79,7 +79,7 @@ export class ParseProblemDetails {
 
 		return  `${this.mapTypeToCpp(this.returnType)} ${
 			this.functionName
-		}(${inputs}){\n\t //write your code here. \n}`;
+		}(${inputs}){\n\t//write your code here.\n}`;
 	}
 
 	getTypescriptBoilerplateCode(){
@@ -87,8 +87,16 @@ export class ParseProblemDetails {
 			return `${params.name}: ${this.mapTypeToTypescript(params.type)}`
 		}).join(', ');
 
-		return  `function ${this.functionName}(${inputs}): ${this.mapTypeToTypescript(this.returnType)}{\n\t // write your code here.\n}`
+		return  `function ${this.functionName}(${inputs}): ${this.mapTypeToTypescript(this.returnType)}{\n\t// write your code here.\n}`
 
+	}
+	getJavascriptBoilerplateCode () {
+		const inputs = this.parameters.map(params => {
+			return `${params.name}`
+		}).join(', ');
+		
+		const templateCode  = `/*\n\t${this.parameters.map(params => `@param{${this.mapTypeToTypescript(params.type)}} ${params.name}`).join('\n\t')}\n\t@return{${this.mapTypeToTypescript(this.returnType)}}\n*/\n\nvar ${this.functionName} = function(${inputs}) {\n\t//write your code here.\n};`
+		return templateCode;
 	}
 
 	mapTypeToCpp(returnType: string) {
