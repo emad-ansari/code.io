@@ -1,14 +1,10 @@
 ## Todo
 
-- [ ] add the getJavaScriptBoilerplateCode()
-
-- [ ] add tooltip to setting and full screen icon
+- [x] add the getJavaScriptBoilerplateCode()
 
 - [ ] add feature to run cpp code
 
-
-
-
+- [ ] add tooltip to setting and full screen icon
 
 
 
