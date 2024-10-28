@@ -1,7 +1,5 @@
 ## Todo
 
-- [x] add the getJavaScriptBoilerplateCode()
-
 - [ ] Clean and remove the unnecessary types and interfaces in types.ts file
 
 - [ ] add feature to run cpp code
@@ -15,6 +13,9 @@
 
 
 ## Completed
+
+- [x] add the getJavaScriptBoilerplateCode()
+
 - [x] add the condition of void return type in other langauge boilerplate code generation function
 
 - [x] Learn and fix the refresh token problem
