@@ -1,6 +1,5 @@
 import * as fs from "fs";
 
-
 interface Parameter {
 	parameterId: string;
 	type: string;

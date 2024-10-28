@@ -3,7 +3,7 @@ const router = Router();
 import * as fs from "fs";
 import auth from "../middleware/auth";
 import { CustomRequestObject } from "../middleware/auth";
-import { NewTestCaseFormat, ProblemInput } from "../@utils/types";
+import { NewTestCaseFormat, ProblemSchema } from "../@utils/types";
 
 
 router.post("/create-problem", auth, async (req: Request, res: Response) => {
@@ -15,9 +15,9 @@ router.post("/create-problem", auth, async (req: Request, res: Response) => {
 	const { userId } = req as CustomRequestObject;
 
 	try {
-		const parsedInput = ProblemInput.safeParse(req.body);
-		if (parsedInput.success) {
-			const { title } = parsedInput.data;
+		const parsedProblem = ProblemSchema.safeParse(req.body);
+		if (parsedProblem.success) {
+			const { title } = parsedProblem.data;
 
 			const filePath = `src/contribution/newproblem/${title.replace(
 				/\s+/g,
@@ -25,7 +25,7 @@ router.post("/create-problem", auth, async (req: Request, res: Response) => {
 			)}.json`;
 
 			// attach user id to problem to identify which user create this problem
-			const problemInfo = { ...parsedInput.data, userId };
+			const problemInfo = { ...parsedProblem.data, userId };
 			console.log('new problem info, ', problemInfo)
 			const jsonString = JSON.stringify(problemInfo, null, 2);
 
@@ -40,7 +40,7 @@ router.post("/create-problem", auth, async (req: Request, res: Response) => {
 				}
 			});
 		} else {
-			return res.status(400).json({ success: false, message: parsedInput.error });
+			return res.status(400).json({ success: false, message: parsedProblem.error });
 		}
 	} catch (error: any) {
 		console.error("Error: ", (error as Error).message);

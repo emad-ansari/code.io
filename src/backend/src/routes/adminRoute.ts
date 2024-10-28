@@ -2,7 +2,7 @@ import { Request, Response, Router } from "express";
 const router = Router();
 import * as fs from "fs";
 import path from "path";
-import { ProblemType, TestCaseType, SignUpInput, LoginInput } from "../@utils/types";
+import { Problem, TestCaseType, SignUpInputSchema, LoginInputSchema } from "../@utils/types";
 import { createProblem } from "../db/problem";
 import { ParseProblemDetails } from "../lib";
 import { addTestCases, createTestCases } from "../db/testcase";
@@ -17,7 +17,7 @@ import { TestCase } from "../db/testcase";
 
 
 router.post("/signup", async (req: Request, res: Response) => {
-	const parsedSingUpInput = SignUpInput.safeParse(req.body.data);
+	const parsedSingUpInput = SignUpInputSchema.safeParse(req.body.data);
 	if (!parsedSingUpInput.success) {
 		return res.status(400).json({ err: parsedSingUpInput.error });
 	}
@@ -45,7 +45,7 @@ router.post("/signup", async (req: Request, res: Response) => {
 });
 
 router.post("/login", async (req: Request, res: Response) => {
-	const parsedLoginInput = LoginInput.safeParse(req.body.data);
+	const parsedLoginInput = LoginInputSchema.safeParse(req.body.data);
 	if (!parsedLoginInput.success){
 		return res.status(400).json({ err: parsedLoginInput.error});
 	}
@@ -253,8 +253,8 @@ router.get("/update-tesctcase", auth,  async (req: Request, res: Response) => {
 
 
 
-function getAllNewProblem(): ProblemType[] {
-	let problems: ProblemType[] = [];
+function getAllNewProblem(): Problem[] {
+	let problems: Problem[] = [];
 	const folderPath = `src/contribution/newproblem`
 	const files = fs.readdirSync(folderPath);
 	

@@ -3,11 +3,11 @@ const router = Router();
 import jwt from "jsonwebtoken";
 import prisma from "../db";
 import { createUser, findUser } from "../db/user";
-import { LoginInput, SignUpInput } from "../@utils/types";
+import { LoginInputSchema, SignUpInputSchema } from "../@utils/types";
 import { generateAccessToken, generateRefreshToken } from "../middleware/auth";
 
 router.post("/signup", async (req: Request, res: Response) => {
-	const parsedInput = SignUpInput.safeParse(req.body.data);
+	const parsedInput = SignUpInputSchema.safeParse(req.body.data);
 
 	if (!parsedInput.success) {
 		return res
@@ -41,7 +41,7 @@ router.post("/signup", async (req: Request, res: Response) => {
 });
 
 router.post("/login", async (req: Request, res: Response) => {
-	const parsedInput = LoginInput.safeParse(req.body.data);
+	const parsedInput = LoginInputSchema.safeParse(req.body.data);
 	if (!parsedInput.success) {
 		return res
 			.status(400)
