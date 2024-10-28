@@ -2,9 +2,15 @@
 
 - [x] add the getJavaScriptBoilerplateCode()
 
+- [ ] Clean and remove the unnecessary types and interfaces in types.ts file
+
 - [ ] add feature to run cpp code
 
 - [ ] add tooltip to setting and full screen icon
+
+- [ ] Design landing page
+
+- [ ] Design user profile page
 
 
 
