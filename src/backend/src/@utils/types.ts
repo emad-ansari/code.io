@@ -1,24 +1,27 @@
-// import {  Status } from "@prisma/client";
 import { z } from "zod";
 
-export const SingleTestCase = z.object({
-	testcaseId: z.string(),
-	inputs: z.array(
-		z.object({
-			name: z.string(),
-			type: z.string(),
-			value: z.string(),
-		})
-	),
-	output: z.object({
+export const ProblemInputSchema = z.array(
+	z.object({
+		name: z.string(),
 		type: z.string(),
 		value: z.string(),
-	}),
+	})
+)
+
+export const problemOutputSchema = z.object({
+	type: z.string(),
+	value: z.string(),
+})
+
+export const TestCaseSchema = z.object({
+	testcaseId: z.string(),
+	inputs: ProblemInputSchema,
+	output: problemOutputSchema,
 });
 
-export const TestCaseArray = z.array(SingleTestCase);
+// export const TestCaseArray = z.array(TestCaseSchema);
 
-const Parameters = z.array(
+const ParameterSchema = z.array(
 	z.object({
 		parameterId: z.string(),
 		type: z.string(),
@@ -26,34 +29,34 @@ const Parameters = z.array(
 	})
 );
 
-
-
-export const ProblemInput = z.object({
+export const ProblemSchema = z.object({
 	id: z.string(),
 	title: z.string(),
 	description: z.string(),
 	difficulty: z.string(),
 	returnType: z.string(),
-	parameters: Parameters,
-	testcases: TestCaseArray,
+	parameters: ParameterSchema,
+	testcases: TestCaseSchema.array(),
 });
 
 
 
 export const NewTestCaseFormat = z.object({
 	problemTitle: z.string(),
-	testcases: TestCaseArray,
+	testcases: TestCaseSchema.array(),
 });
-export type ProblemType = z.infer<typeof ProblemInput>;
+
+export type ProblemType = z.infer<typeof ProblemSchema>;
+
 export type TestCaseType = z.infer<typeof NewTestCaseFormat>; // with title
 
-export const SignUpInput = z.object({
+export const SignUpInputSchema = z.object({
 	username: z.string().min(4).max(20),
 	email: z.string().email(),
 	password: z.string().min(4).max(20),
 });
 
-export const LoginInput = z.object({
+export const LoginInputSchema = z.object({
 	email: z.string().email(),
 	password: z.string().min(5).max(20),
 });
