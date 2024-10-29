@@ -3,7 +3,7 @@ const router = Router();
 import * as fs from "fs";
 import auth from "../middleware/auth";
 import { CustomRequestObject } from "../middleware/auth";
-import { NewTestCaseFormat, ProblemSchema } from "../@utils/types";
+import { NewTestCaseSchema, ProblemSchema } from "../@utils/types";
 
 
 router.post("/create-problem", auth, async (req: Request, res: Response) => {
@@ -57,7 +57,7 @@ router.post("/testcase", auth, async (req: Request, res: Response) => {
 
 	try {
 
-		const parsedTestcaseInput = NewTestCaseFormat.safeParse(req.body);
+		const parsedTestcaseInput = NewTestCaseSchema.safeParse(req.body);
 		if (parsedTestcaseInput.success) {
 			const { problemTitle } = parsedTestcaseInput.data;
 			const filePath = `src/contribution/newtestcase/${problemTitle.replace(

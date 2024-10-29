@@ -5,7 +5,7 @@ import auth, { CustomRequestObject } from "../middleware/auth";
 import { GenerateFullProblemDefinition } from "../lib/generateFullProblemDefinition";
 import { getAllTestcases } from "../db/testcase";
 import {
-	ProblemSubmissionData,
+	ProblemSubmissionDataSchema,
 	TestCaseReturnType,
 	ProblemDetailWithStatusOnUser,
 } from "../@utils/types";
@@ -78,8 +78,8 @@ router.get("/filter-problem", auth, async (req: Request, res: Response) => {
 	}
 });
 
-const JUDGE0_API_URL = process.env.JUDGE0_API_URL;
-const JUDGE0_API_KEY = process.env.JUDGE0_API_KEY;
+const JUDGE0_API_URL = process.env.JUDGE0_API_URL; // move into types.ts file 
+const JUDGE0_API_KEY = process.env.JUDGE0_API_KEY; // mmove into types.ts file
 
 router.post("/submit-problem", auth, async (req: Request, res: Response) => {
 	const { userAuthorized } = req as CustomRequestObject;
@@ -90,7 +90,7 @@ router.post("/submit-problem", auth, async (req: Request, res: Response) => {
 				.status(400)
 				.json({ message: "your are not authorized, please login" });
 		}
-		const parseUserSubmitCode = ProblemSubmissionData.safeParse(req.body);
+		const parseUserSubmitCode = ProblemSubmissionDataSchema.safeParse(req.body);
 		if (!parseUserSubmitCode.success) {
 			return res.status(401).json({ error: parseUserSubmitCode.error });
 		}
@@ -124,7 +124,7 @@ router.post("/submit-problem", auth, async (req: Request, res: Response) => {
 
 router.post("/run-code", auth, async (req: Request, res: Response) => {
 	const { userAuthorized } = req as CustomRequestObject;
-	const parseUserSubmitCode = ProblemSubmissionData.safeParse(req.body.data);
+	const parseUserSubmitCode = ProblemSubmissionDataSchema.safeParse(req.body.data);
 	if (!parseUserSubmitCode.success) {
 		return res.json({ error: parseUserSubmitCode.error });
 	}

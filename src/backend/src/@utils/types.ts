@@ -1,6 +1,6 @@
 import { z } from "zod";
 
-export const ProblemInputSchema = z.array(
+export const TestCaseInputSchema = z.array(
 	z.object({
 		name: z.string(),
 		type: z.string(),
@@ -8,15 +8,15 @@ export const ProblemInputSchema = z.array(
 	})
 )
 
-export const problemOutputSchema = z.object({
+export const TestCaseOutputSchema = z.object({
 	type: z.string(),
 	value: z.string(),
 })
 
 export const TestCaseSchema = z.object({
 	testcaseId: z.string(),
-	inputs: ProblemInputSchema,
-	output: problemOutputSchema,
+	inputs: TestCaseInputSchema,
+	output: TestCaseOutputSchema,
 });
 
 // export const TestCaseArray = z.array(TestCaseSchema);
@@ -39,16 +39,15 @@ export const ProblemSchema = z.object({
 	testcases: TestCaseSchema.array(),
 });
 
+export type Problem = z.infer<typeof ProblemSchema>;
 
-
-export const NewTestCaseFormat = z.object({
+export const  NewTestCaseSchema = z.object({
 	problemTitle: z.string(),
 	testcases: TestCaseSchema.array(),
 });
 
-export type ProblemType = z.infer<typeof ProblemSchema>;
 
-export type TestCaseType = z.infer<typeof NewTestCaseFormat>; // with title
+export type NewTestCase = z.infer<typeof NewTestCaseSchema>; // with title
 
 export const SignUpInputSchema = z.object({
 	username: z.string().min(4).max(20),
@@ -61,7 +60,7 @@ export const LoginInputSchema = z.object({
 	password: z.string().min(5).max(20),
 });
 
-export const ProblemSubmissionData = z.object({
+export const ProblemSubmissionDataSchema = z.object({
 	problemId: z.string(),
 	languageId: z.number(),
 	code: z.string(),
@@ -87,23 +86,6 @@ export interface TestCaseReturnType {
 		type: string;
 		value: string;
 	} | null;
-}
-
-
-export interface Problem { // check if not use remove it
-	status: string;
-	problem: {
-		id: string;
-		title: string;
-		difficulty: string;
-		problemNo: number;
-	}
-}
-export interface ProblemWithDescription extends Problem {  // check and if not use remove it 
-	problem: Problem['problem'] & { 
-		description: string; 
-	};
-	testcaseExamples: TestCaseReturnType[]
 }
 
 export interface ProblemDetail {

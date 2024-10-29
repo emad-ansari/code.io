@@ -1,8 +1,8 @@
 import prisma from "../db/index";
-import { SingleTestCase, TestCaseReturnType } from "../@utils/types";
+import { TestCaseSchema, TestCaseReturnType } from "../@utils/types";
 import { z } from "zod";
 
-export type TestCase = z.infer<typeof SingleTestCase>; // without title
+export type TestCase = z.infer<typeof TestCaseSchema>; // without title
 
 interface TestCaseProps {
 	problemId: string;

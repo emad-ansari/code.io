@@ -2,7 +2,7 @@ import { Request, Response, Router } from "express";
 const router = Router();
 import * as fs from "fs";
 import path from "path";
-import { Problem, TestCaseType, SignUpInputSchema, LoginInputSchema } from "../@utils/types";
+import { Problem, NewTestCase, SignUpInputSchema, LoginInputSchema } from "../@utils/types";
 import { createProblem } from "../db/problem";
 import { ParseProblemDetails } from "../lib";
 import { addTestCases, createTestCases } from "../db/testcase";
@@ -289,8 +289,8 @@ function getAllNewProblem(): Problem[] {
 
 
 
-function getAllNewTestcases(): TestCaseType[] {
-	let testcases: TestCaseType[] = [];
+function getAllNewTestcases(): NewTestCase[] {
+	let testcases: NewTestCase[] = [];
 	const folderPath = `src/contribution/newtestcase`
 	const files = fs.readdirSync(folderPath);
 	files.forEach((file) => {
@@ -304,7 +304,7 @@ function getAllNewTestcases(): TestCaseType[] {
 			try {
 				// Parse the JSON content
 				const jsonData = JSON.parse(fileContents);
-				const newTestcase: TestCaseType = {
+				const newTestcase: NewTestCase = {
 					problemTitle: jsonData.problemTitle,
 					testcases: jsonData.testcases,
 				};
