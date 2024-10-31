@@ -37,23 +37,24 @@ export interface Problem {
 		status: string;
 	};
 }
-export interface ProblemDetail extends Problem {
-	description: string;
-	testcaseExamples: TestCaseExample[];
-}
-export interface TestCaseExample {
-	title: string;
-	inputs: Input[];
-	output: Output | null;
-}
-export interface Input {
+export interface TestCaseInput {
 	type: string;
 	name: string;
 	value: string;
 }
-export interface Output {
+export interface TestCaseExample {
+	title: string;
+	inputs: TestCaseInput[];
+	output: TestCaseOutput | null;
+}
+
+export interface TestCaseOutput {
 	value: string;
 	type: string;
+}
+export interface ProblemDetail extends Problem {
+	description: string;
+	testcaseExamples: TestCaseExample[];
 }
 
 export interface ApiResponse<T> {
@@ -69,12 +70,13 @@ export interface FilterState {
 	hard: boolean;
 }
 
-export interface getProblemParameter {
+export interface FetchProblemProps {
 	pageNumber: number;
 	difficulty: string;
 	status: string;
 	searchKeywords: string;
 }
+
 export interface DropDownItemProps {
 	value: string;
 	isFilterApply: boolean;
@@ -86,15 +88,6 @@ export interface CustomMuiMenuProps {
 	labelValue: string;
 	ITEMS_ARRAY: string[];
 }
-
-// export interface SubmissionResult {
-// 	status: string;
-// 	testCasesPassed: number;
-// 	userOutput?: string | "";
-// 	expectedOutput?: string;
-// 	compilationError?: string | "";
-// 	failedTestCase?: string | "";
-// }
 
 export interface CodeExecutionResponse {
 	success: boolean;
@@ -118,29 +111,13 @@ export interface SubmissionDetails {
 	};
 	compile_output?: string | null;
 	testcaseExamples?: TestCaseExample[];
-	inputs: Input[];
+	inputs: TestCaseInput[];
 }
-export type UserApiResponse = {
-	success: boolean;
-	message: string;
-	token?: string;
-};
 
-export type ProblemDetailApiResponse = {
+export interface APIResponse<T> {
 	success: boolean;
-	message: string;
-	problemDetails?: ProblemDetail;
-};
-
-export interface RefreshTokenApiResponse {
-	success: boolean;
-	message: string;
-	accessToken?: string;
-}
-export interface DefaultCodeApiResponse {
-	success: boolean;
-	message: string;
-	defaultCode?: string;
+	data?: T;	
+	message: string | null
 }
 
 export const typeOptions: string[] = [

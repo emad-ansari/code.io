@@ -1,8 +1,7 @@
 import { createSlice, PayloadAction, createAsyncThunk } from "@reduxjs/toolkit";
 import { api } from "../api/client";
 import { RootState } from "../app/store";
-import { UserApiResponse, RefreshTokenApiResponse } from "../types";
-import axios from "axios";
+import { APIResponse } from "../types";
 
 export interface User {
 	isLogin: boolean;
@@ -48,7 +47,7 @@ export const signup = createAsyncThunk("/user/signup", async (_, ThunkAPI) => {
 	}
 });
 
-export const login = createAsyncThunk<UserApiResponse>(
+export const login = createAsyncThunk<APIResponse<{token: string}>>(
 	"/user/login",
 	async (_, ThunkAPI) => {
 		try {
@@ -82,7 +81,7 @@ export const login = createAsyncThunk<UserApiResponse>(
 	}
 );
 
-export const logOut = createAsyncThunk<UserApiResponse>(
+export const logOut = createAsyncThunk<APIResponse<null>>(
 	"/user/logOut",
 	async () => {
 		try {
@@ -148,11 +147,10 @@ export const userSlice = createSlice({
 			state.isSignup = false;
 		});
 		builder.addCase(login.fulfilled, (state, action) => {
-			const { success, message } = action.payload;
-			const token = action.payload.token;
-			if (success && token) {
+			const { success, message, data} = action.payload;
+			if (success && data ) {
 				state.isLogin = true;
-				localStorage.setItem("CToken", token);
+				localStorage.setItem("CToken", data.token);
 			}
 			console.log("Login response msg : ", message);
 			state.isSignup = false;

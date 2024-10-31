@@ -2,16 +2,18 @@ import { useState } from "react";
 import { CircleCheckBig, Contrast, Check, ListTodo } from "lucide-react";
 import { useSelector } from "react-redux";
 import { RootState, useAppDispatch } from "../../app/store";
-import { getProblems } from "@/client/features/problemSlice";
+import { fetchProblem } from "@/client/features/problemSlice";
 import { useSearchParams } from "react-router-dom";
 
 export const StatusDropDownMenu = () => {
 	const dispatch = useAppDispatch();
 	const [searchParams, setSearchParams] = useSearchParams();
+	const [currentStatusOption, setCurrentStatusOption] = useState<string>("");
+
 	const { isStatusMenuOpen } = useSelector(
 		(state: RootState) => state.dropdown
 	);
-	const [currentStatusOption, setCurrentStatusOption] = useState<string>("");
+	
 	const handleStatusFilter = (currentFilterOption: string) => {
 		setCurrentStatusOption(currentFilterOption);
 
@@ -23,10 +25,11 @@ export const StatusDropDownMenu = () => {
 		setSearchParams(searchParams);
 
 		dispatch(
-			getProblems({
+			fetchProblem({
 				pageNumber: Number(searchParams.get("page")) || 1,
 				difficulty: searchParams.get("difficulty") || "",
 				status: searchParams.get("status") || "",
+				searchKeywords: searchParams.get("search") || "",
 			})
 		);
 	};

@@ -1,5 +1,5 @@
 import { createAsyncThunk, createSlice, PayloadAction } from "@reduxjs/toolkit";
-import { EditorState, CodeExecutionResponse, DefaultCodeApiResponse } from "../types";
+import { EditorState, CodeExecutionResponse, APIResponse } from "../types";
 import { api } from "../api/client";
 
 export const editorSliceInitialState: EditorState = {
@@ -22,10 +22,11 @@ interface DefaultCodeProps {
 	languageId: number;
 	code?: string;
 }
+
 type fetchDefaultCodeProps = Pick<DefaultCodeProps, "languageId"> & {problemTitle: string};
 
 
-export const fetchDefaultCode = createAsyncThunk<DefaultCodeApiResponse, fetchDefaultCodeProps>("/editor/getDefaultCode", async ({problemTitle, languageId}: fetchDefaultCodeProps, thunkAPI ) => {
+export const fetchDefaultCode = createAsyncThunk<APIResponse<{defaultCode: string}>, fetchDefaultCodeProps>("/editor/getDefaultCode", async ({problemTitle, languageId}: fetchDefaultCodeProps, thunkAPI ) => {
 	try {
 		console.log('problem title and langid:  ', problemTitle, languageId);
 
@@ -86,10 +87,10 @@ export const editorSlice = createSlice({
 			console.log(action.payload);
 		})
 		builder.addCase(fetchDefaultCode.fulfilled , (state, action) => {
-			const { success, message } = action.payload;
+			const { success, message, data } = action.payload;
 			console.log('message of deffault code: ', message)
-			if ( success ){
-				const defaultCode  = action.payload.defaultCode ? action.payload.defaultCode : "";
+			if ( success && data){
+				const { defaultCode } = data;
 				state.boilerPlateCode = defaultCode;
 			}
 		})

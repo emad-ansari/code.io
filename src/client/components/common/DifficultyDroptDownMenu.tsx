@@ -3,7 +3,7 @@ import { useSelector } from "react-redux";
 import { RootState, useAppDispatch } from "../../app/store";
 import { setFilterOptions } from "../../features/filterSlice";
 import { useSearchParams } from "react-router-dom";
-import { getProblems } from "../../features/problemSlice";
+import { fetchProblem } from "../../features/problemSlice";
 import { DropDownItemProps } from '../../types'
 
 
@@ -15,7 +15,6 @@ export const DifficultyDropDownMenu = () => {
 	const { easy, medium, hard} = useSelector((state: RootState) => state.filter);
 
 	const [searchParams, setSearchParams] = useSearchParams();
-	
 
 	const filterProblems = ( difficultyLevel: string) => {		
 
@@ -26,12 +25,12 @@ export const DifficultyDropDownMenu = () => {
 			searchParams.set('difficulty', difficultyLevel); // add it
 		}
 		setSearchParams(searchParams);
-
 		dispatch(
-			getProblems({
+			fetchProblem({
 				pageNumber:  Number(searchParams.get('page')) ||  1,
 				difficulty: searchParams.get('difficulty') || "",
-				status: ""
+				status: searchParams.get('status') || "",
+				searchKeywords: searchParams.get('search') || "",
 			})
 		);		
 	};

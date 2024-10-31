@@ -2,9 +2,10 @@ import { createSlice, PayloadAction, createAsyncThunk } from "@reduxjs/toolkit";
 import {
 	ProblemState,
 	ApiResponse,
-	getProblemParameter,
-	ProblemDetailApiResponse,
-	Problem
+	FetchProblemProps,
+	Problem,
+	APIResponse,
+	ProblemDetail
 } from "../types";
 import { api } from "../api/client";
 import { RootState } from "../app/store";
@@ -25,10 +26,10 @@ export const problemSliceInitialState: ProblemState = {
 	loading: false,
 };
 
-export const getProblems = createAsyncThunk(
+export const fetchProblem = createAsyncThunk(
 	"/problem/getProblems",
 	async (
-		{ pageNumber, difficulty, status, searchKeywords }: getProblemParameter,
+		{ pageNumber, difficulty, status, searchKeywords }: FetchProblemProps,
 		ThunkAPI
 	) => {
 		const store = ThunkAPI.getState() as RootState;
@@ -57,11 +58,7 @@ export const getProblems = createAsyncThunk(
 	}
 );
 
-export const fetchProblemDetail = createAsyncThunk<
-	ProblemDetailApiResponse,
-	{ title: string }
->(
-	"/problem/fetchProblemDetai",
+export const fetchProblemDetail = createAsyncThunk<APIResponse<ProblemDetail>,{ title: string }>("/problem/fetchProblemDetail",
 	async ({ title }: { title: string }) => {
 		if (!title) {
 			return;
@@ -91,10 +88,10 @@ export const problemSlice = createSlice({
 		},
 	},
 	extraReducers: (builder) => {
-		builder.addCase(getProblems.pending, (_, action) => {
+		builder.addCase(fetchProblem.pending, (_, action) => {
 			console.log(action.payload);
 		});
-		builder.addCase(getProblems.fulfilled, (state, action) => {
+		builder.addCase(fetchProblem.fulfilled, (state, action) => {
 			const { success } = action.payload;
 			if (success) {
 				const { data, totalPages } = action.payload;
@@ -102,7 +99,7 @@ export const problemSlice = createSlice({
 				state.totalPages = totalPages;
 			}
 		});
-		builder.addCase(getProblems.rejected, (_, action) => {
+		builder.addCase(fetchProblem.rejected, (_, action) => {
 			console.log(action.payload);
 		});
 		builder.addCase(fetchProblemDetail.pending, (state, _) => {
@@ -110,13 +107,11 @@ export const problemSlice = createSlice({
 			// console.log(action.payload);
 		});
 		builder.addCase(fetchProblemDetail.fulfilled, (state, action) => {
-			const { success } = action.payload;
-			const problemDetails = action.payload.problemDetails;
-			if (success && problemDetails) {
-				state.problemDetail = problemDetails;
+			const { success, data } = action.payload;
+			if (success  && data) {
+				state.problemDetail = data;
 				state.loading = false;
 			}
-			
 		});
 		builder.addCase(fetchProblemDetail.rejected, (state, action) => {
 			state.loading = false;

@@ -1,6 +1,6 @@
 import axios from "axios";
 import { logOut } from "../features/authSlice";
-import { RefreshTokenApiResponse } from "../types";
+import { APIResponse } from "../types";
 import { store } from "../app/store";
 
 export const api = axios.create({
@@ -30,22 +30,22 @@ api.interceptors.response.use(
 		if (error.response.status === 403 && !originalRequest._retry) {
 			originalRequest._retry = true; // Mark the request as retried to avoid infinite loops.
 			try {
-				const response = await api.post<RefreshTokenApiResponse>(
+				const response = await api.post<APIResponse<{accessToken: string}>>(
 					"http://localhost:3000/api/user/refresh-token",
 					{},
 					{
 						withCredentials: true,
 					}
 				);
-				const { success, accessToken } = response.data;
-
+				const { success, data, message } = response.data;
+				console.log(message);
 				// Store the new access.
-				if (success) {
-					localStorage.setItem("CToken", accessToken!);
+				if (success && data) {
+					localStorage.setItem("CToken", data.accessToken!);
 					// Update the authorization header with the new access token.
 					api.defaults.headers.common[
 						"authorization"
-					] = `Bearer ${accessToken}`;
+					] = `Bearer ${data.accessToken}`;
 					return api(originalRequest); // Retry the original request with the new access token.
 				}
 			} catch (refreshError) {
