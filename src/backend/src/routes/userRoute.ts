@@ -65,11 +65,11 @@ router.post("/login", async (req: Request, res: Response) => {
 			sameSite: "none",
 			path: "/api/user/", // This end point only
 		});
-	
+
 		return res.status(201).json({
 			success: true,
 			message: "login successfully",
-			token: accessToken,
+			data: { token: accessToken },
 		});
 	} catch (error: any) {
 		console.error(error.message);
@@ -96,23 +96,28 @@ router.post("/refresh-token", (req: Request, res: Response) => {
 			if (err) {
 				return res
 					.status(401)
-					.json({ message: "Invalid token", err: err.message });
+					.json({ success: false, message: err.message });
 			}
 			// add another security level -> that check whether the user exist in database or not other wise just send 401 resposnse.
 			const newAccessToken = generateAccessToken(
 				payload.userId,
 				payload.role
 			);
-			return res
-				.status(200)
-				.json({ success: true, accessToken: newAccessToken });
+			return res.status(200).json({
+				success: true,
+				data: { accessToken: newAccessToken },
+				message: "token refresh successfully",
+			});
 		}
 	);
 });
 
 router.post("/logout", (req: Request, res: Response) => {
-	if (!req.cookies?.refreshToken) return res.status(204).json({ success: false, message:  "No refresh token found" });
-	
+	if (!req.cookies?.refreshToken)
+		return res
+			.status(204)
+			.json({ success: false, message: "No refresh token found" });
+
 	res.clearCookie("refreshToken", {
 		httpOnly: true,
 		secure: true, // Set to true in production

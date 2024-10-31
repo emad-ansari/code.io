@@ -306,7 +306,11 @@ router.get("/default-code", async (req: Request, res: Response) => {
 					code: true,
 				},
 			});
-			return res.json({ success: true, message: "success", defaultCode: result?.code });
+			return res.json({ 
+				success: true, 
+				message: "success", 
+				data: { defaultCode: result?.code} 
+			});
 		}
 		return res.status(204).json({ success: false, message:  "problem not found" });
 	} catch (error: any) {
