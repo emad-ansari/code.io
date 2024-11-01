@@ -1,7 +1,6 @@
 import { createSlice, PayloadAction, createAsyncThunk } from "@reduxjs/toolkit";
 import {
 	ProblemState,
-	ApiResponse,
 	FetchProblemProps,
 	Problem,
 	APIResponse,
@@ -35,7 +34,7 @@ export const fetchProblem = createAsyncThunk(
 		const store = ThunkAPI.getState() as RootState;
 		const { pageSize } = store.problem;		
 		try {
-			const res = await api.get<ApiResponse<Problem[]>>(
+			const res = await api.get<APIResponse<{problems: Problem[], totalPages: number }>>(
 				`/problem/filter-problem`,
 				{
 					params: {
@@ -92,22 +91,23 @@ export const problemSlice = createSlice({
 			console.log(action.payload);
 		});
 		builder.addCase(fetchProblem.fulfilled, (state, action) => {
-			const { success } = action.payload;
-			if (success) {
-				const { data, totalPages } = action.payload;
-				state.problems = data;
+			const { success, data, message } = action.payload;
+			if (success && data) {
+				const { problems, totalPages } = data;
+				state.problems = problems;
 				state.totalPages = totalPages;
 			}
+			console.log('fetch problem message: ', message);
 		});
 		builder.addCase(fetchProblem.rejected, (_, action) => {
 			console.log(action.payload);
 		});
 		builder.addCase(fetchProblemDetail.pending, (state, _) => {
 			state.loading = true;
-			// console.log(action.payload);
 		});
 		builder.addCase(fetchProblemDetail.fulfilled, (state, action) => {
 			const { success, data } = action.payload;
+			console.log('one problem detail: ', data)
 			if (success  && data) {
 				state.problemDetail = data;
 				state.loading = false;

@@ -18,15 +18,14 @@ export const editorSliceInitialState: EditorState = {
 
 
 interface DefaultCodeProps {
-	problemId: string;
+	problemTitle: string;
 	languageId: number;
 	code?: string;
 }
 
-type fetchDefaultCodeProps = Pick<DefaultCodeProps, "languageId"> & {problemTitle: string};
 
 
-export const fetchDefaultCode = createAsyncThunk<APIResponse<{defaultCode: string}>, fetchDefaultCodeProps>("/editor/getDefaultCode", async ({problemTitle, languageId}: fetchDefaultCodeProps, thunkAPI ) => {
+export const fetchDefaultCode = createAsyncThunk<APIResponse<{defaultCode: string}>, DefaultCodeProps>("/editor/getDefaultCode", async ({problemTitle, languageId}: DefaultCodeProps, thunkAPI ) => {
 	try {
 		console.log('problem title and langid:  ', problemTitle, languageId);
 
@@ -48,13 +47,14 @@ export const fetchDefaultCode = createAsyncThunk<APIResponse<{defaultCode: strin
 })
 
 
-export const runCode = createAsyncThunk<CodeExecutionResponse, DefaultCodeProps>("/editor/runCode", async ({problemId, languageId, code}: DefaultCodeProps, thunkAPI) => {
+export const runCode = createAsyncThunk("/editor/runCode", async ({problemTitle, languageId, code}: DefaultCodeProps, thunkAPI) => {
 	try {
-		console.log('check run code ', problemId)
+		console.log('title:  ', problemTitle)
 		console.log('user code: ',code)
-		const res = await api.post('/problem/run-code', {
+		console.log('language id: ', languageId);
+		const res = await api.post<CodeExecutionResponse>('/problem/run-code', {
 			data: {
-				problemId,
+				problemTitle,
 				languageId,
 				code: code
 			}
@@ -66,6 +66,7 @@ export const runCode = createAsyncThunk<CodeExecutionResponse, DefaultCodeProps>
 		return thunkAPI.rejectWithValue(error.message);
 	}
 })
+
 
 export const editorSlice = createSlice({
 	name: "editor",
