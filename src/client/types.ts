@@ -57,13 +57,6 @@ export interface ProblemDetail extends Problem {
 	testcaseExamples: TestCaseExample[];
 }
 
-export interface ApiResponse<T> {
-	success: boolean;
-	data: T;
-	totalPages: number;
-	message: string;
-}
-
 export interface FilterState {
 	easy: boolean;
 	medium: boolean;
@@ -83,7 +76,7 @@ export interface DropDownItemProps {
 	filterProblems: (difficultyLevel: string) => void;
 }
 
-export interface CustomMuiMenuProps {
+export interface CustomMuiMenuProps {  // check whether its used or not
 	labelName: string;
 	labelValue: string;
 	ITEMS_ARRAY: string[];

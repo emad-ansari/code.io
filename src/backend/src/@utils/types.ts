@@ -1,17 +1,21 @@
 import { z } from "zod";
 
-export const TestCaseInputSchema = z.array(
-	z.object({
-		name: z.string(),
-		type: z.string(),
-		value: z.string(),
-	})
-)
+
+
+const TestCaseInputOjectSchema = z.object({
+	name: z.string(),
+	type: z.string(),
+	value: z.string(),
+})
+
+export const TestCaseInputSchema = z.array(TestCaseInputOjectSchema)
 
 export const TestCaseOutputSchema = z.object({
 	type: z.string(),
 	value: z.string(),
 })
+export type TestCaseInput = z.infer<typeof TestCaseInputOjectSchema >
+export type TestCaseOutput = z.infer<typeof TestCaseOutputSchema>
 
 export const TestCaseSchema = z.object({
 	testcaseId: z.string(),
@@ -61,7 +65,7 @@ export const LoginInputSchema = z.object({
 });
 
 export const ProblemSubmissionDataSchema = z.object({
-	problemId: z.string(),
+	problemTitle: z.string(),
 	languageId: z.number(),
 	code: z.string(),
 });
@@ -100,4 +104,22 @@ export interface ProblemDetailWithStatusOnUser extends ProblemDetail { // check 
 		status: string
 	}
 }
+export interface SubmissionsResult {
+	languageId: number;
+	time?: string;
+	memory?: number;
+	status: {
+		id: number;
+		description: string;
+	};
+	stdin: string;
+	stdout: string; // user output
+	exptected_output: string;
+	compile_output: string | null;
+	source_code?: string;
+	stderr?: null;
+}
 
+export interface Modifiedsubmission extends SubmissionsResult {
+	inputs: TestCaseInput[]
+}
