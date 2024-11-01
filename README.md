@@ -1,10 +1,20 @@
 ## Todo
 
-- [ ] Clean and remove the unnecessary types and interfaces in types.ts file
+- [ ] Fix the problemId bug in runCode function in EditorSection component
+
+- [ ] Fix the bug in loading booiler plate code when navigating on page problem/problemTitle/description
 
 - [ ] add feature to run cpp code
 
+- [ ] Test CppCodeGenerator library
+
 - [ ] add tooltip to setting and full screen icon
+
+- [ ] correct the implementation of role based authentication
+
+- [ ] Add functionality to submit the code
+
+- [ ] Replace user icon with profile image option in navbar
 
 - [ ] Design landing page
 
@@ -16,9 +26,9 @@
 
 ## Completed
 
-- [x] add the getJavaScriptBoilerplateCode()
+- [x] add getJavaScriptBoilerplateCode()
 
-- [x] add the condition of void return type in other langauge boilerplate code generation function
+- [x] add condition of void return type in other langauge boilerplate code generation function
 
 - [x] Learn and fix the refresh token problem
     - https://www.saurabhmisra.dev/store-jwt-token-http-only-cookie/
