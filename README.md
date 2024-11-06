@@ -4,6 +4,8 @@
 
 - [ ] add feature to run cpp code
 
+- [ ] User written code must persist across  page reloads.
+
 - [ ] Test CppCodeGenerator library
 
 - [ ] add tooltip to setting and full screen icon
