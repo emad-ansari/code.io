@@ -19,5 +19,4 @@ export class TestCaseParser {
 			testcases: this.testcases,
 		};
 	}
-
 }

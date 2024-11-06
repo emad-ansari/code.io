@@ -4,8 +4,8 @@ import {
 	FetchProblemProps,
 	Problem,
 	APIResponse,
-	ProblemDetail
-} from "../types";
+	ProblemDetail,
+} from "../lib/types";
 import { api } from "../api/client";
 import { RootState } from "../app/store";
 
@@ -26,26 +26,25 @@ export const problemSliceInitialState: ProblemState = {
 };
 
 export const fetchProblem = createAsyncThunk(
-	"/problem/getProblems",
+	"/problem/fetchProblem",
 	async (
 		{ pageNumber, difficulty, status, searchKeywords }: FetchProblemProps,
 		ThunkAPI
 	) => {
 		const store = ThunkAPI.getState() as RootState;
-		const { pageSize } = store.problem;		
+		const { pageSize } = store.problem;
 		try {
-			const res = await api.get<APIResponse<{problems: Problem[], totalPages: number }>>(
-				`/problem/filter-problem`,
-				{
-					params: {
-						pageNumber: pageNumber < 1 ? 1: pageNumber,
-						pageSize,
-						difficulty,
-						status,
-						searchKeywords
-					},
-				}
-			);
+			const res = await api.get<
+				APIResponse<{ problems: Problem[]; totalPages: number }>
+			>(`/problem/filter-problem`, {
+				params: {
+					pageNumber: pageNumber < 1 ? 1 : pageNumber,
+					pageSize,
+					difficulty,
+					status,
+					searchKeywords,
+				},
+			});
 			const data = res.data;
 
 			return data;
@@ -57,22 +56,21 @@ export const fetchProblem = createAsyncThunk(
 	}
 );
 
-export const fetchProblemDetail = createAsyncThunk<APIResponse<ProblemDetail>,{ title: string }>("/problem/fetchProblemDetail",
-	async ({ title }: { title: string }) => {
-		if (!title) {
-			return;
-		}
-		try {
-			const res = await api.get(
-				`/problem/get-problem-details/${title}`
-			);
-			const data = res.data;
-			return data;
-		} catch (error: any) {
-			console.log(error);
-		}
+export const fetchProblemDetail = createAsyncThunk<
+	APIResponse<ProblemDetail>,
+	{ title: string }
+>("/problem/fetchProblemDetail", async ({ title }: { title: string }) => {
+	if (!title) {
+		return;
 	}
-);
+	try {
+		const res = await api.get(`/problem/get-problem-details/${title}`);
+		const data = res.data;
+		return data;
+	} catch (error: any) {
+		console.log(error);
+	}
+});
 
 export const problemSlice = createSlice({
 	name: "problem",
@@ -81,7 +79,10 @@ export const problemSlice = createSlice({
 		setPageSize: (state, action: PayloadAction<number>) => {
 			state.pageSize = action.payload;
 		},
-		setProblems: (state, action: PayloadAction<{problems: Problem[]}>) => {
+		setProblems: (
+			state,
+			action: PayloadAction<{ problems: Problem[] }>
+		) => {
 			const { problems } = action.payload;
 			state.problems = problems;
 		},
@@ -97,7 +98,7 @@ export const problemSlice = createSlice({
 				state.problems = problems;
 				state.totalPages = totalPages;
 			}
-			console.log('fetch problem message: ', message);
+			console.log("fetch problem message: ", message);
 		});
 		builder.addCase(fetchProblem.rejected, (_, action) => {
 			console.log(action.payload);
@@ -107,8 +108,8 @@ export const problemSlice = createSlice({
 		});
 		builder.addCase(fetchProblemDetail.fulfilled, (state, action) => {
 			const { success, data } = action.payload;
-			console.log('one problem detail: ', data)
-			if (success  && data) {
+			console.log("one problem detail: ", data);
+			if (success && data) {
 				state.problemDetail = data;
 				state.loading = false;
 			}

@@ -27,7 +27,7 @@ export default function ProblemStatement() {
 			const formattedTitle = title.replace(/-/g, " ");
 			dispatch(fetchProblemDetail({ title: formattedTitle }));
 		} else {
-			console.log("problem id is not undefined");
+			console.log("problem title is undefined");
 		}
 	}, []);
 

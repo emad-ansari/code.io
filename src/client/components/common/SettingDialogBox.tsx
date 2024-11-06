@@ -13,10 +13,7 @@ import { Label } from "../ui/label";
 
 import { useSelector } from "react-redux";
 import { RootState, useAppDispatch } from "@/client/app/store";
-import {
-	setFontSize,
-	setTheme,
-} from "../../features/editorSettingSlice";
+import { setFontSize, setTheme } from "../../features/editorSettingSlice";
 import { Settings } from "lucide-react";
 import {
 	Select,
@@ -26,18 +23,15 @@ import {
 	SelectTrigger,
 	SelectValue,
 } from "../ui/select";
-import { EDITOR_THEMES, FONT_SIZES} from '../../types'
+import { EDITOR_THEMES, FONT_SIZES } from "../../lib/types";
 
 export default function SettingDialogBox() {
 	const dispatch = useAppDispatch();
-    const { fontSize } = useSelector((state: RootState) => state.setting)
+	const { fontSize } = useSelector((state: RootState) => state.setting);
 	return (
 		<Dialog>
 			<DialogTrigger asChild>
-				<Button
-					size="icon"
-					className="rounded-full hover:bg-gray-800"
-				>
+				<Button size="icon" className="rounded-full hover:bg-gray-800">
 					<Settings size={16} className="text-white" />
 				</Button>
 			</DialogTrigger>

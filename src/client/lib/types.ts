@@ -9,23 +9,24 @@ export interface ProblemState {
 export interface SettingState {
 	theme: string;
 	fontSize: number;
-	isFullScreen: boolean;
 }
 export interface DropDownType {
 	isStatusMenuOpen: boolean;
 	isDifficultyMenuOpen: boolean;
-	isLanguageMenuOpen: boolean;
-	isThemeMenuOpen: boolean;
 }
 
 export interface EditorState {
 	language: string;
 	isFullScreen: boolean;
-	boilerPlateCode: string;
 	code: string;
 	execution_result: ExecutionResult;
 	loading: boolean;
 	error: string | null | undefined;
+}
+export interface DefaultCodeProps {
+	problemTitle: string;
+	languageId: number;
+	code?: string;
 }
 
 export interface Problem {
@@ -136,8 +137,17 @@ export const typeOptions: string[] = [
 	"List<String>",
 	"List<List<String>>",
 ];
+export const LNAGUAGE_MAPPING: {
+	[key: string]: { name: string; languageId: number };
+} = {
+	javascript: { name: "javascript", languageId: 63 },
+	cpp: { name: "cpp", languageId: 10 },
+	typescript: { name: "typescript", languageId: 74 },
+	java: { name: "java", languageId: 62 },
+	python: { name: "python", languageId: 71 },
+};
 
 export const EDITOR_THEMES: string[] = ["vs-dark", "vs", "hc-light", "OneDarkPro"];
 export const FONT_SIZES: string[] = ["12px", "14px", "16px", "18px", "20px", "22px"];
-
+export const LANGUAGES = ["java", "cpp", "typescript", "javascript", "go", "rust"];
 export const problems_per_page = ["10 / page", "20 / page", "50 / page"];

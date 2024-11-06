@@ -1,6 +1,6 @@
 import { Button } from "../common/Button";
 import { DifficultyDropDownMenu } from "../common/DifficultyDroptDownMenu";
-import { MdKeyboardArrowDown } from "react-icons/md";
+import { ChevronDown } from "lucide-react";
 import { useSelector } from "react-redux";
 import { RootState, useAppDispatch } from "../../app/store";
 import { setOpenDropDownMenu } from "../../features/dropDownSlice";
@@ -8,7 +8,9 @@ import { memo } from "react";
 
 export const DifficultyFitlerButton = memo(() => {
 	const dispatch = useAppDispatch();
-	const { isDifficultyMenuOpen } = useSelector((state: RootState) => state.dropdown);
+	const { isDifficultyMenuOpen } = useSelector(
+		(state: RootState) => state.dropdown
+	);
 
 	return (
 		<Button
@@ -18,7 +20,7 @@ export const DifficultyFitlerButton = memo(() => {
 			}}
 		>
 			<span>Difficulty</span>
-			<MdKeyboardArrowDown
+			<ChevronDown
 				className={`text-2xl pt-1 ${
 					isDifficultyMenuOpen
 						? " transform duration-200  rotate-180 pt-1"

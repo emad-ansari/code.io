@@ -1,12 +1,13 @@
-import logo from "../../assets/siginLogo.svg";
-import { PasswordInputField } from "../components/common/PasswordInputField";
-import { Button } from "../components/common/Button";
-import { FcGoogle } from "react-icons/fc";
-import { useAppDispatch, RootState } from "../app/store";
-import { useSelector } from "react-redux";
-import { setEmail, login } from "../features/authSlice";
 import { useEffect } from "react";
+import { useSelector } from "react-redux";
 import { useLocation, useNavigate } from "react-router-dom";
+import { FcGoogle } from "react-icons/fc";
+
+import { useAppDispatch, RootState } from "@/client/app/store";
+import { setEmail, login } from "@/client/features/authSlice";
+import { PasswordInputField } from "@/client/components/common/PasswordInputField";
+import { Button } from "@/client/components/common/Button";
+import logo from "@/assets/siginLogo.svg";
 
 export const LoginPage = () => {
 	const { email, isLogin } = useSelector((state: RootState) => state.user);

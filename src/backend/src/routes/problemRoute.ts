@@ -8,6 +8,8 @@ import {
 	ProblemSubmissionDataSchema,
 	TestCaseReturnType,
 	ProblemDetailWithStatusOnUser,
+	SubmissionsResult,
+	Modifiedsubmission
 } from "../@utils/types";
 
 import {
@@ -27,8 +29,6 @@ router.get("/filter-problem", auth, async (req: Request, res: Response) => {
 	const difficulty = req.query.difficulty as string | undefined;
 	const status = req.query.status as string | undefined;
 	const searchKeywords = req.query.searchKeywords as string | undefined;
-
-	
 
 	try {
 		const filterQuery: {
@@ -52,8 +52,10 @@ router.get("/filter-problem", auth, async (req: Request, res: Response) => {
 			return res.status(200).json({
 				success: true,
 				message: "Filtered problems",
-				data: problems,
-				totalPages: totalPages,
+				data: {
+					problems,
+					totalPages,
+				},
 			});
 		} else {
 			// if user is not authorize then remove the status property from problems
@@ -68,8 +70,10 @@ router.get("/filter-problem", auth, async (req: Request, res: Response) => {
 			return res.status(200).json({
 				success: true,
 				message: "filtered problem without status",
-				data: problemsWithoutStatus,
-				totalPages: totalPages,
+				data: {
+					problems: problemsWithoutStatus,
+					totalPages,
+				},
 			});
 		}
 	} catch (e: any) {
@@ -78,7 +82,7 @@ router.get("/filter-problem", auth, async (req: Request, res: Response) => {
 	}
 });
 
-const JUDGE0_API_URL = process.env.JUDGE0_API_URL; // move into types.ts file 
+const JUDGE0_API_URL = process.env.JUDGE0_API_URL; // move into types.ts file
 const JUDGE0_API_KEY = process.env.JUDGE0_API_KEY; // mmove into types.ts file
 
 router.post("/submit-problem", auth, async (req: Request, res: Response) => {
@@ -90,13 +94,27 @@ router.post("/submit-problem", auth, async (req: Request, res: Response) => {
 				.status(400)
 				.json({ message: "your are not authorized, please login" });
 		}
-		const parseUserSubmitCode = ProblemSubmissionDataSchema.safeParse(req.body);
+		const parseUserSubmitCode = ProblemSubmissionDataSchema.safeParse(
+			req.body
+		);
 		if (!parseUserSubmitCode.success) {
 			return res.status(401).json({ error: parseUserSubmitCode.error });
 		}
-		const { problemId, languageId, code } = parseUserSubmitCode.data;
+		const { problemTitle, languageId, code } = parseUserSubmitCode.data;
+		const problem = await prisma.problem.findUnique({
+			where: {
+				title: problemTitle
+			},
+			select: {
+				id: true
+			}
+		})
+		if (!problem) return res.json({
+			success: false,
+			message: "Problem with title not found"
+		})
 
-		const testcases = await getAllTestcases(problemId);
+		const testcases = await getAllTestcases(problem.id);
 
 		if (testcases.data === undefined || !testcases.success) {
 			return res.status(500).json({
@@ -124,7 +142,9 @@ router.post("/submit-problem", auth, async (req: Request, res: Response) => {
 
 router.post("/run-code", auth, async (req: Request, res: Response) => {
 	const { userAuthorized } = req as CustomRequestObject;
-	const parseUserSubmitCode = ProblemSubmissionDataSchema.safeParse(req.body.data);
+	const parseUserSubmitCode = ProblemSubmissionDataSchema.safeParse(
+		req.body.data
+	);
 	if (!parseUserSubmitCode.success) {
 		return res.json({ error: parseUserSubmitCode.error });
 	}
@@ -133,13 +153,26 @@ router.post("/run-code", auth, async (req: Request, res: Response) => {
 		if (!userAuthorized) {
 			return res
 				.status(400)
-				.json({ message: "your are not authorized, please login" });
+				.json({ success: false,  message: "your are not authorized, please login" });
 		}
 
-		const { problemId, languageId, code } = parseUserSubmitCode.data;
+		const { problemTitle, languageId, code } = parseUserSubmitCode.data;
+		const problem = await prisma.problem.findUnique({
+			where: {
+				title: problemTitle
+			},
+			select: {
+				id: true
+			}
+		})
+		if (!problem) return res.json({
+			success: false,
+			message: "Problem with title not found"
+		})
+		console.log('control reaches here...');
 
 		// here get the first three testcases and run it on jude0
-		const testcaseExamples = await getTestCaseExample(problemId);
+		const testcaseExamples = await getTestCaseExample(problem.id);
 		// run these testcase exmaples
 		if (testcaseExamples !== undefined) {
 			// evaluate the code
@@ -193,13 +226,7 @@ router.post("/run-code", auth, async (req: Request, res: Response) => {
 	}
 });
 
-interface Modifiedsubmission extends SubmissionsResult {
-	inputs: {
-		type: string;
-		name: string;
-		value: string;
-	}[];
-}
+
 
 // router.post('/judge0-callback', async(req: Request, res: Response) => {
 // 	try {
@@ -214,21 +241,6 @@ interface Modifiedsubmission extends SubmissionsResult {
 // })
 
 // when you are going to submit the code
-interface SubmissionsResult {
-	languageId: number;
-	time?: string;
-	memory?: number;
-	status: {
-		id: number;
-		description: string;
-	};
-	stdin: string;
-	stdout: string; // user output
-	exptected_output: string;
-	compile_output: string | null;
-	source_code?: string;
-	stderr?: null;
-}
 
 router.get(
 	"/get-problem-details/:title",
@@ -263,7 +275,7 @@ router.get(
 				return res.json({
 					success: true,
 					message: result.msg,
-					problemDetails: problemDetailWithStatusOnUser,
+					data: problemDetailWithStatusOnUser ,
 				});
 			} else {
 				// if user is not authorized then only send the problemDetail to guest user
@@ -271,7 +283,7 @@ router.get(
 				return res.json({
 					success: true,
 					message: result.msg,
-					problemDetails: result.problemDetail,
+					data: result.problemDetail,
 				});
 			}
 		} catch (error: any) {
@@ -299,20 +311,22 @@ router.get("/default-code", async (req: Request, res: Response) => {
 		if (problem && problem.title === problemTitle) {
 			const result = await prisma.defaultCode.findFirst({
 				where: {
-					problemId: problem.id ,
+					problemId: problem.id,
 					languageId: langId,
 				},
 				select: {
 					code: true,
 				},
 			});
-			return res.json({ 
-				success: true, 
-				message: "success", 
-				data: { defaultCode: result?.code} 
+			return res.json({
+				success: true,
+				message: "success",
+				data: { defaultCode: result?.code },
 			});
 		}
-		return res.status(204).json({ success: false, message:  "problem not found" });
+		return res
+			.status(204)
+			.json({ success: false, message: "problem not found" });
 	} catch (error: any) {
 		console.log(error);
 		return res.json({ success: false, message: "error" });
@@ -343,6 +357,8 @@ async function evaluateCode(
 				expected_output: problem.stdout,
 			};
 		});
+		console.log('submission array :',  submissionsArray);
+
 
 		const CreateSubmissionsOptions = {
 			method: "POST",
@@ -358,7 +374,7 @@ async function evaluateCode(
 		};
 
 		const response = await axios.request(CreateSubmissionsOptions);
-
+		console.log('submission token response: ', response);
 		const getSubmissionsOptions = {
 			method: "GET",
 			url: JUDGE0_API_URL,
@@ -379,7 +395,8 @@ async function evaluateCode(
 
 		const result = await axios.request(getSubmissionsOptions);
 		const { submissions } = result.data;
-		
+		console.log('submission result: ', submissions);
+
 		return {
 			success: true,
 			data: submissions as SubmissionsResult[],

@@ -1,8 +1,9 @@
 import { Suspense } from "react";
-import { FaArrowRightLong } from "react-icons/fa6";
-import { Button } from "../components/common/Button";
 import { useNavigate } from "react-router-dom";
-import NQueen from "../../assets/NQueen.png";
+import { FaArrowRightLong } from "react-icons/fa6";
+
+import { Button } from "../components/common/Button";
+import NQueen from "@/assets/NQueen.png";
 
 const HomePage = () => {
 	const navigate = useNavigate();

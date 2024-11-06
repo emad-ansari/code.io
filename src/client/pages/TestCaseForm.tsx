@@ -1,15 +1,16 @@
-import { useAppDispatch, RootState } from "../app/store";
 import { useSelector } from "react-redux";
-import { TestCaseContainer } from "../components/common/TestCaseContainer";
-import { Button } from "../components/common/Button";
-import { addNewTestCase, setProblemTitle } from "../features/TestcaseSlice";
-import { IoAdd } from "react-icons/io5";
 import { v4 as uuidv4 } from 'uuid';
+import { IoAdd } from "react-icons/io5";
+
+import { useAppDispatch, RootState } from "@/client/app/store";
+import { TestCaseContainer } from "@/client/components/common/TestCaseContainer";
+import { Button } from "@/client/components/common/Button";
+import { addNewTestCase, setProblemTitle } from "@/client/features/TestcaseSlice";
 
 export const TestCaseForm = () => {
 	const dispatch = useAppDispatch();
 	const { problemTitle, testcases} = useSelector((state: RootState) => state.TestCaseForm);
-
+	
 
   const handleNewTestCase = () => {
 		const newTestCase = {

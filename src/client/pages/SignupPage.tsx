@@ -1,23 +1,24 @@
-import { Button } from "../components/common/Button";
-import logo from "../../assets/siginLogo.svg";
-import { PasswordInputField } from "../components/common/PasswordInputField";
-import { FcGoogle } from "react-icons/fc";
-import { setUsername, setEmail, signup } from "../features/authSlice";
-import { useSelector } from "react-redux";
-import { useAppDispatch, RootState } from "../app/store";
 import { useEffect } from "react";
 import { useNavigate } from "react-router-dom";
+import { useSelector } from "react-redux";
+import { FcGoogle } from "react-icons/fc";
+
+import { useAppDispatch, RootState } from "@/client/app/store";
+import { setUsername, setEmail, signup } from "@/client/features/authSlice";
+import { Button } from "@/client/components/common/Button";
+import { PasswordInputField } from "@/client/components/common/PasswordInputField";
+import logo from "@/assets/siginLogo.svg";
+
 export const SignupPage = () => {
 	const navigate = useNavigate();
 	const dispatch = useAppDispatch();
 	const { username, email, isSignup } = useSelector(
 		(state: RootState) => state.user
 	);
-	console.log("user form: ", username, email);
+
 	useEffect(() => {
 		if (isSignup) {
 			navigate("/login");
-			// make isSignup false over here
 		}
 	}, [dispatch, isSignup]);
 

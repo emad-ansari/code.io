@@ -1,7 +1,5 @@
 ## Todo
 
-- [ ] Fix the problemId bug in runCode function in EditorSection component
-
 - [ ] Fix the bug in loading booiler plate code when navigating on page problem/problemTitle/description
 
 - [ ] add feature to run cpp code
@@ -25,6 +23,7 @@
 
 
 ## Completed
+- [x] Fix the problemId bug in runCode function in EditorSection component
 
 - [x] add getJavaScriptBoilerplateCode()
 

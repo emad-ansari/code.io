@@ -1,28 +1,21 @@
 import { createSlice, PayloadAction } from "@reduxjs/toolkit";
-import { DropDownType } from "../types";
+import { DropDownType } from "../lib/types";
 
-
-export const dropDownInitialState: DropDownType = {
+export const dropDownState: DropDownType = {
 	isDifficultyMenuOpen: false,
 	isStatusMenuOpen: false,
-	isLanguageMenuOpen: false,
-	isThemeMenuOpen: false,
 };
 
 export const dropDownSlice = createSlice({
 	name: "dropdown",
-	initialState: dropDownInitialState,
+	initialState: dropDownState,
 	reducers: {
 		setOpenDropDownMenu: (
 			state,
 			action: PayloadAction<{ menu: string }>
 		) => {
 			const { menu } = action.payload;
-			const {
-				isDifficultyMenuOpen,
-				isStatusMenuOpen,
-				isLanguageMenuOpen,
-			} = state;
+			const { isDifficultyMenuOpen, isStatusMenuOpen } = state;
 			let updatedValue: DropDownType = { ...state };
 
 			if (menu === "difficulty") {
@@ -39,21 +32,10 @@ export const dropDownSlice = createSlice({
 						isDifficultyMenuOpen && !isDifficultyMenuOpen,
 					isStatusMenuOpen: !isStatusMenuOpen,
 				};
-				
-			}
-			if (menu == "languages") {
-				updatedValue = {
-					...state,
-					isLanguageMenuOpen: !isLanguageMenuOpen,
-				};
-				
 			}
 
 			return updatedValue;
 		},
-		
-		
-
 	},
 });
 

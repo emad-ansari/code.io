@@ -1,19 +1,19 @@
-import CodeInLogo from "../../../assets/websiteLogo.svg";
 import { startTransition } from "react";
 import { useNavigate, useLocation } from "react-router-dom";
 import { useSelector } from "react-redux";
-import { RootState } from "@/client/app/store";
-import { Button } from "../ui/button";
+import { CircleUserRound } from "lucide-react";
+
+import { useAppDispatch, RootState } from "@/client/app/store";
+import { logOut } from "@/client/features/authSlice";
+import { Button } from "@/client/components/ui/button";
 import {
 	DropdownMenu,
 	DropdownMenuContent,
 	DropdownMenuItem,
 	DropdownMenuTrigger,
 } from "../ui/dropdown-menu";
-// import { Separator } from "../ui/separator"
-import { CircleUserRound } from "lucide-react";
-import { logOut } from "@/client/features/authSlice";
-import { useAppDispatch } from "@/client/app/store";
+import CodeInLogo from "@/assets/websiteLogo.svg";
+
 
 export const ProblemNavBar = ({
 	isProbleDescriptioPage,
@@ -23,21 +23,40 @@ export const ProblemNavBar = ({
 	const navigate = useNavigate();
 	const location = useLocation();
 	const dispatch = useAppDispatch();
-
-  
-	const handleNavigation = (event: React.MouseEvent<HTMLAnchorElement>, path: string) => {
-	  event.preventDefault(); // Prevent default link behavior
-	  startTransition(() => {
-		navigate(path); // Navigate to the path
-	  })
-	  
-	};
-  
-	const isActiveLink = (path: string) => {
-	  return location.pathname === path ? "bg-gray-800" : ""; // Return active class if the link matches the current path
-	};
-
 	const { isLogin } = useSelector((state: RootState) => state.user);
+
+	const onNavigation = (
+		event: React.MouseEvent<HTMLAnchorElement>,
+		path: string
+	) => {
+		event.preventDefault(); // Prevent default link behavior
+		startTransition(() => {
+			navigate(path); // Navigate to the path
+		});
+	};
+
+	const navItems = [
+		{
+			label: "Problems",
+			href: "/problemset",
+			active: location.pathname === "/problemset",
+		},
+		{
+			label: "Contests",
+			href: "/contests",
+			active: location.pathname === "/contests",
+		},
+		{
+			label: "Standings",
+			href: "/standings",
+			active: location.pathname === "/standings",
+		},
+		{
+			label: "Contribution",
+			href: "/contribution",
+			active: location.pathname === "/contribution",
+		},
+	];
 
 	return (
 		<nav className="flex flex-row justify-between items-center bg-PRIMARY fixed top-0 left-0 right-0 z-50 ">
@@ -56,47 +75,15 @@ export const ProblemNavBar = ({
 			<div className="flex flex-1 flex-row items-center  text-white">
 				{!isProbleDescriptioPage && (
 					<div className="bg-darkGray flex items-center h-11 rounded-full  shadow-md border border-[#334155] text-sm gap-5 px-5">
-						<a
-							href="/problemset/"
-							onClick={(e) => handleNavigation(e, "/problemset/")}
-							className={`text-sm font-dmMono px-4 py-2 rounded-full hover:bg-gray-800 ${isActiveLink(
-								"/problemset/"
-							)}`}
-						>
-							Problems
-						</a>
-
-						<a
-							href="/contests"
-							onClick={(e) => handleNavigation(e, "/contests")}
-							className={`text-sm font-dmMono px-4 py-2 rounded-full hover:bg-gray-800 ${isActiveLink(
-								"/contests"
-							)}`}
-						>
-							Contests
-						</a>
-
-						<a
-							href="/standings"
-							onClick={(e) => handleNavigation(e, "/standings")}
-							className={`text-sm font-dmMono px-4 py-2 rounded-full hover:bg-gray-800 ${isActiveLink(
-								"/standings"
-							)}`}
-						>
-							Standings
-						</a>
-
-						<a
-							href="/contribution"
-							onClick={(e) =>
-								handleNavigation(e, "/contribution")
-							}
-							className={`text-sm font-dmMono px-4 py-2 rounded-full hover:bg-gray-800 ${isActiveLink(
-								"/contribution"
-							)}`}
-						>
-							Contribution
-						</a>
+						{navItems.map((item) => (
+							<a
+								href={item.href}
+								onClick={(e) => onNavigation(e, item.href)}
+								className={`text-sm font-dmMono px-4 py-2 rounded-full hover:bg-gray-800 ${item.active && "bg-gray-800"}`}
+							>
+								{item.label}
+							</a>
+						))}
 					</div>
 				)}
 				{!isLogin ? (
@@ -127,15 +114,23 @@ export const ProblemNavBar = ({
 					<div className="flex flex-1 justify-end pr-5">
 						<DropdownMenu>
 							<DropdownMenuTrigger asChild>
-								<CircleUserRound size={40} strokeWidth={1} className="cursor-pointer"/>
+								<CircleUserRound
+									size={40}
+									strokeWidth={1}
+									className="cursor-pointer"
+								/>
 							</DropdownMenuTrigger>
 							<DropdownMenuContent
 								align="end"
 								className="bg-gray-900 text-white border border-BORDER"
 							>
-								<DropdownMenuItem >Profile</DropdownMenuItem>
+								<DropdownMenuItem>Profile</DropdownMenuItem>
 								<DropdownMenuItem>Settings</DropdownMenuItem>
-								<DropdownMenuItem onClick={() => dispatch(logOut())}>Logout</DropdownMenuItem>
+								<DropdownMenuItem
+									onClick={() => dispatch(logOut())}
+								>
+									Logout
+								</DropdownMenuItem>
 							</DropdownMenuContent>
 						</DropdownMenu>
 					</div>

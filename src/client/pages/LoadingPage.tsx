@@ -1,4 +1,4 @@
-import { Icons } from "../components/common/EditorSection"
+import { Icons } from "@/client/components/common/EditorSection"
 
 export const LoadingPage = () => {
     return (

@@ -1,14 +1,15 @@
 import { configureStore } from "@reduxjs/toolkit";
-import problemReducer from "../features/problemSlice";
-import dropDownReducer from "../features/dropDownSlice";
-import filterReducer from "../features/filterSlice";
-import settingReducer from "../features/editorSettingSlice";
-import editorReducer from "../features/editorSlice";
-import problemFormSlice from "../features/problemFormSlice";
-import TestcaseFormSlice from "../features/TestcaseSlice";
-import userSlice from "../features/authSlice";
-
 import { useDispatch } from "react-redux";
+
+import problemReducer from "@/client/features/problemSlice";
+import dropDownReducer from "@/client/features/dropDownSlice";
+import filterReducer from "@/client/features/filterSlice";
+import settingReducer from "@/client/features/editorSettingSlice";
+import editorReducer from "@/client/features/codeEditorSlice";
+import problemFormSlice from "@/client/features/problemFormSlice";
+import TestcaseFormSlice from "@/client/features/TestcaseSlice";
+import userSlice from "@/client/features/authSlice";
+
 
 export const store = configureStore({
 	reducer: {

@@ -1,6 +1,6 @@
 import axios from "axios";
 import { logOut } from "../features/authSlice";
-import { APIResponse } from "../types";
+import { APIResponse } from "../lib/types";
 import { store } from "../app/store";
 
 export const api = axios.create({
@@ -30,7 +30,9 @@ api.interceptors.response.use(
 		if (error.response.status === 403 && !originalRequest._retry) {
 			originalRequest._retry = true; // Mark the request as retried to avoid infinite loops.
 			try {
-				const response = await api.post<APIResponse<{accessToken: string}>>(
+				const response = await api.post<
+					APIResponse<{ accessToken: string }>
+				>(
 					"http://localhost:3000/api/user/refresh-token",
 					{},
 					{
@@ -54,7 +56,7 @@ api.interceptors.response.use(
 				localStorage.removeItem("CToken");
 				// logout the user if
 				store.dispatch(logOut()); // to remove the refresh token from http  only cookie.
-				window.location.href = '/login';
+				window.location.href = "/login";
 				return Promise.reject(refreshError);
 			}
 		}

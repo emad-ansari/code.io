@@ -1,5 +1,9 @@
 import { useState } from "react";
-import { CodeEditor } from "./CodeEditor";
+import { useSelector } from "react-redux";
+import { useParams } from "react-router-dom";
+import Split from "react-split";
+import { RootState, useAppDispatch } from "@/client/app/store";
+
 import {
 	ChevronDown,
 	ChevronUp,
@@ -25,49 +29,54 @@ import {
 	TooltipTrigger,
 } from "../ui/tooltip";
 
-import { useSelector } from "react-redux";
-import { RootState, useAppDispatch } from "../../app/store";
-import { setOpenDropDownMenu } from "../../features/dropDownSlice";
 import {
 	fetchDefaultCode,
 	setLanguage,
 	runCode,
 	toggleFullScreen,
-} from "../../features/editorSlice";
-import SettingDialogBox from '../common/SettingDialogBox'
-import { useLocation, useParams } from "react-router-dom";
-import { SubmissionDetails } from "@/client/types";
-import Split from "react-split";
+} from "@/client/features/codeEditorSlice";
+import { CodeEditor } from "./CodeEditor";
+import SettingDialogBox from "@/client/components/common/SettingDialogBox";
+import { SubmissionDetails , LNAGUAGE_MAPPING, LANGUAGES} from "@/client/lib/types";
 
-const LANGUAGES = ["java", "cpp", "typescript", "javascript", "go", "rust"];
+
 
 export const EditorSection = () => {
 	const dispatch = useAppDispatch();
-	const location = useLocation();
-	const id = location.state?.id;
-
-	const { isLanguageMenuOpen, isThemeMenuOpen } = useSelector(
-		(state: RootState) => state.dropdown
-	);
-	const { language, code, loading } = useSelector(
-		(state: RootState) => state.editor
-	);
-
-	const handleOpenDropDown = () => {
-		if (isLanguageMenuOpen) {
-			dispatch(setOpenDropDownMenu({ menu: "languages" }));
-		}
-		if (isThemeMenuOpen) {
-			dispatch(setOpenDropDownMenu({ menu: "theme" }));
-		}
-	};
+	const { title } = useParams();
 
 	const [splitRatio, setSplitRatio] = useState<[number, number]>([100, 0]);
 	const [isConsoleOpen, setIsConsoleOpen] = useState<boolean>(false);
 	const { isLogin } = useSelector((state: RootState) => state.user);
 
+	const { language, code, loading } = useSelector(
+		(state: RootState) => state.editor
+	);
+
+	const onRunCode = () => {
+		if (!isLogin) return;
+
+		if (!title) return;
+
+		if (!isConsoleOpen) {
+			setSplitRatio([60, 40]);
+		}
+
+		setIsConsoleOpen((prevState) => !prevState);
+
+		const formattedTitle = title.replace(/-/g, " ");
+
+		dispatch(
+			runCode({
+				problemTitle: formattedTitle,
+				languageId: LNAGUAGE_MAPPING[`${language}`].languageId,
+				code: code,
+			})
+		);
+	};
+
 	return (
-		<section >
+		<section>
 			<Split
 				sizes={splitRatio}
 				className="h-full rounded-lg "
@@ -78,17 +87,14 @@ export const EditorSection = () => {
 			>
 				<div
 					id="editor-container "
-					className="  bg-darkGray rounded-lg   flex flex-1 flex-col overflow-hidden border border-BORDER transition-all duration-500 ease-in-out"
+					className="  bg-darkGray rounded-lg  flex flex-1 flex-col overflow-hidden border-[1.5px] border-[#334155] transition-all duration-500 ease-in-out"
 				>
 					<EditorTopBar />
-					<div
-						className=" h-full"
-						onClick={() => handleOpenDropDown()}
-					>
+					<div className=" h-full">
 						<CodeEditor />
 					</div>
 				</div>
-				<div className="flex-col text-white w-full bg-darkGray rounded-lg border border-[#334155] flex flex-1 overflow-hidden transition-all duration-500 ease-in-out">
+				<div className="flex-col text-white w-full bg-darkGray rounded-lg border-[1.5px] border-[#334155] flex flex-1 overflow-hidden transition-all duration-500 ease-in-out">
 					<div className=" flex bg-darkGray rounded-tl-lg rounded-tr-lg px-2 py-1.5 items-center justify-between border border-b-[#334155] border-l-transparent border-r-transparent border-t-transparent">
 						<div className="flex gap-5">
 							<Button
@@ -128,27 +134,7 @@ export const EditorSection = () => {
 									<TooltipTrigger asChild>
 										<Button
 											className=" text-white justify-center flex gap-2 items-center rounded-md w-20 border border-[#334155]"
-											onClick={() => {
-												if (!isLogin) return;
-												if (!id) return;
-
-												if (!isConsoleOpen) {
-													setSplitRatio([60, 40]);
-												}
-												setIsConsoleOpen(
-													(prevState) => !prevState
-												);
-												dispatch(
-													runCode({
-														problemId: id,
-														languageId:
-															LNAGUAGE_MAPPING[
-																`${language}`
-															].languageId,
-														code: code,
-													})
-												);
-											}}
+											onClick={onRunCode}
 										>
 											{loading ? (
 												<Icons.spinner className="mr-0 h-4 w-4 animate-spin " />
@@ -175,10 +161,10 @@ export const EditorSection = () => {
 											// variant={'outline'}
 											className=" text-white justify-center flex gap-2 items-center rounded-md  border border-[#334155]"
 										>
+											<CloudUpload size={16} />
 											<span className="font-semibold ">
 												Submit
 											</span>
-											<CloudUpload size={16} />
 										</Button>
 									</TooltipTrigger>
 									{!isLogin && (
@@ -202,15 +188,7 @@ export const EditorSection = () => {
 	);
 };
 
-export const LNAGUAGE_MAPPING: {
-	[key: string]: { name: string; languageId: number };
-} = {
-	javascript: { name: "javascript", languageId: 63 },
-	cpp: { name: "cpp", languageId: 10 },
-	typescript: { name: "typescript", languageId: 74 },
-	java: { name: "java", languageId: 62 },
-	python: { name: "python", languageId: 71 },
-};
+
 
 function EditorTopBar() {
 	const dispatch = useAppDispatch();
@@ -218,7 +196,6 @@ function EditorTopBar() {
 	const { isFullScreen } = useSelector((state: RootState) => state.editor);
 
 	const handleLanguageChange = (item: string) => {
-		
 		if (title) {
 			const formattedTitle = title.replace(/-/g, " ");
 			dispatch(setLanguage(item));
@@ -254,9 +231,9 @@ function EditorTopBar() {
 				</SelectContent>
 			</Select>
 			<div className="flex flex-row gap-2 items-center ">
-				<SettingDialogBox />  {/* editor setting */}
+				<SettingDialogBox /> {/* editor setting */}
 				<Button
-					size={'icon'}
+					size={"icon"}
 					className={"hover:bg-gray-800  rounded-full"}
 					onClick={() => dispatch(toggleFullScreen(!isFullScreen))}
 				>

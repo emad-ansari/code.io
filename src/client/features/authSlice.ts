@@ -1,7 +1,7 @@
 import { createSlice, PayloadAction, createAsyncThunk } from "@reduxjs/toolkit";
-import { api } from "../api/client";
-import { RootState } from "../app/store";
-import { APIResponse } from "../types";
+import { api } from "@/client/api/client";
+import { RootState } from "@/client/app/store";
+import { APIResponse } from "@/client/lib/types";
 
 export interface User {
 	isLogin: boolean;
@@ -40,14 +40,11 @@ export const signup = createAsyncThunk("/user/signup", async (_, ThunkAPI) => {
 		);
 		return res.data;
 	} catch (error: any) {
-		console.error(
-			"Error occured during signup : ",
-			(error as Error).message
-		);
+		ThunkAPI.rejectWithValue(error.message || "Error while  signing up");
 	}
 });
 
-export const login = createAsyncThunk<APIResponse<{token: string}>>(
+export const login = createAsyncThunk<APIResponse<{ token: string }>>(
 	"/user/login",
 	async (_, ThunkAPI) => {
 		try {
@@ -73,17 +70,14 @@ export const login = createAsyncThunk<APIResponse<{token: string}>>(
 			console.log("user Login response: ", res);
 			return res.data;
 		} catch (error: any) {
-			console.error(
-				"Error occured during signup : ",
-				(error as Error).message
-			);
+			ThunkAPI.rejectWithValue(error.message || "Error occurred while login");
 		}
 	}
 );
 
 export const logOut = createAsyncThunk<APIResponse<null>>(
 	"/user/logOut",
-	async () => {
+	async (_,ThunkAPI ) => {
 		try {
 			const res = await api.post(
 				"/user/logout",
@@ -93,10 +87,7 @@ export const logOut = createAsyncThunk<APIResponse<null>>(
 			console.log("user logout response: ", res);
 			return res.data;
 		} catch (error: any) {
-			console.error(
-				"Error occured during signup : ",
-				(error as Error).message
-			);
+			ThunkAPI.rejectWithValue(error.message || "Error while  signing up");
 		}
 	}
 );
@@ -116,7 +107,6 @@ export const userSlice = createSlice({
 		},
 		rehydrateAuth: (state) => {
 			const token = localStorage.getItem("CToken");
-			// const token = state.accessToken;
 			if (token) {
 				state.isLogin = true;
 			}
@@ -147,8 +137,8 @@ export const userSlice = createSlice({
 			state.isSignup = false;
 		});
 		builder.addCase(login.fulfilled, (state, action) => {
-			const { success, message, data} = action.payload;
-			if (success && data ) {
+			const { success, message, data } = action.payload;
+			if (success && data) {
 				state.isLogin = true;
 				localStorage.setItem("CToken", data.token);
 			}
@@ -159,14 +149,13 @@ export const userSlice = createSlice({
 			state.isSignup = false;
 		});
 		builder.addCase(logOut.fulfilled, (state, action) => {
-			const { success , message} = action.payload;
-			if (success){
+			const { success, message } = action.payload;
+			if (success) {
 				state.isLogin = false;
 				localStorage.removeItem("CToken");
 			}
 			state.isSignup = false;
-			console.log('Logout message: ', message)
-			
+			console.log("Logout message: ", message);
 		});
 	},
 });

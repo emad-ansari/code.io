@@ -1,3 +1,6 @@
+import { useSelector } from "react-redux";
+import { v4 as uuidv4 } from "uuid";
+
 import { useAppDispatch, RootState } from "../app/store";
 import { Button } from "../components/common/Button";
 import { IoAdd } from "react-icons/io5";
@@ -23,7 +26,6 @@ import {
 	createProblem,
 } from "../features/problemFormSlice";
 import { addNewTestCase } from "../features/TestcaseSlice";
-import { useSelector } from "react-redux";
 import {
 	Select,
 	SelectContent,
@@ -32,8 +34,7 @@ import {
 	SelectTrigger,
 	SelectValue,
 } from "../components/ui/select";
-import { typeOptions } from "../types";
-import { v4 as uuidv4 } from "uuid";
+import { typeOptions } from "../lib/types";
 
 export const ProblemForm = () => {
 	const dispatch = useAppDispatch();

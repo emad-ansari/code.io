@@ -1,6 +1,17 @@
 import { useAppDispatch } from "@/client/app/store";
-import { addTestCaseInput, removeTestCase, removeTestCaseInput, setTestCaseInputName, setTestCaseInputType, setTestCaseInputValue, setTestCaseOutputType, setTestCaseOutputValue, TestCaseInputType, TestCaseOutput } from "@/client/features/TestcaseSlice";
-import { typeOptions } from "@/client/types";
+import {
+	addTestCaseInput,
+	removeTestCase,
+	removeTestCaseInput,
+	setTestCaseInputName,
+	setTestCaseInputType,
+	setTestCaseInputValue,
+	setTestCaseOutputType,
+	setTestCaseOutputValue,
+	TestCaseInputType,
+	TestCaseOutput,
+} from "@/client/features/TestcaseSlice";
+import { typeOptions } from "@/client/lib/types";
 import {
 	Select,
 	SelectContent,
@@ -17,12 +28,12 @@ export function TestCaseContainer({
 	id,
 	testcaseNo,
 	inputs,
-	output
+	output,
 }: {
 	id: string;
 	testcaseNo: number;
 	inputs: TestCaseInputType[];
-	output: TestCaseOutput
+	output: TestCaseOutput;
 }) {
 	const dispatch = useAppDispatch();
 
@@ -69,8 +80,8 @@ export function TestCaseContainer({
 								key={index}
 								inputId={input.inputId}
 								testcaseId={id}
-								name = {input.name}
-								value = {input.value}
+								name={input.name}
+								value={input.value}
 							/>
 						);
 					})}
@@ -134,20 +145,19 @@ export function TestCaseContainer({
 	);
 }
 
-
 export function TestCaseInput({
 	testcaseId,
 	inputId,
 	name,
-	value
+	value,
 }: {
 	testcaseId: string;
 	inputId: string;
-	name: string,
-	value: string
+	name: string;
+	value: string;
 }) {
 	const dispatch = useAppDispatch();
-	
+
 	return (
 		<div className="flex flex-row gap-2 bg-[#1f2937] px-3 py-3 rounded-md">
 			<input
@@ -156,12 +166,28 @@ export function TestCaseInput({
 				className="text-white w-full px-3  border rounded-md focus:outline-none  focus:ring focus:ring-offset-[#81E291] bg-darkGray"
 				value={name}
 				onChange={(e) =>
-					dispatch(setTestCaseInputName({ testcaseId, inputId,  name: e.target.value }))
+					dispatch(
+						setTestCaseInputName({
+							testcaseId,
+							inputId,
+							name: e.target.value,
+						})
+					)
 				}
 				placeholder="Input name"
 				required
 			/>
-			<Select onValueChange={(value) => dispatch(setTestCaseInputType({ testcaseId, inputId, type: value}))}>
+			<Select
+				onValueChange={(value) =>
+					dispatch(
+						setTestCaseInputType({
+							testcaseId,
+							inputId,
+							type: value,
+						})
+					)
+				}
+			>
 				<SelectTrigger className="w-full text-[#9ca3af] bg-darkGray">
 					<SelectValue placeholder="Type" className="text-white" />
 				</SelectTrigger>
@@ -187,7 +213,13 @@ export function TestCaseInput({
 				className="text-white w-full px-3  border rounded-md focus:outline-none  focus:ring focus:ring-offset-[#81E291] bg-darkGray"
 				value={value}
 				onChange={(e) =>
-					dispatch(setTestCaseInputValue({ testcaseId, inputId, value: e.target.value }))
+					dispatch(
+						setTestCaseInputValue({
+							testcaseId,
+							inputId,
+							value: e.target.value,
+						})
+					)
 				}
 				placeholder="Value"
 				required

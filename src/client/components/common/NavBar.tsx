@@ -1,6 +1,5 @@
-import CodeInLogo from '../../../assets/websiteLogo.svg'
 import { Link } from "react-router-dom";
-
+import CodeInLogo from '@/assets/websiteLogo.svg'
 
 export const NavBar = () => {
 	return (

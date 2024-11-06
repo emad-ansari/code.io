@@ -19,7 +19,7 @@ const ProblemStatement = lazy(() =>
 );
 const ProblemsetPage = lazy(() => import("./client/pages/ProblemsetPage"));
 const ProblemList = lazy(() =>
-	wait(1000).then(() => import("./client/components/common/ProblemList"))
+	wait(2000).then(() => import("./client/components/common/ProblemList"))
 );
 const ProblemDescriptionPage = lazy(
 	() => import("./client/pages/ProblemDescriptionPage")

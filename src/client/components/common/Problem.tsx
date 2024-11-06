@@ -1,8 +1,10 @@
+import { startTransition } from "react";
+import { useNavigate } from "react-router-dom";
+
 import { IoCheckmarkCircleOutline } from "react-icons/io5";
 import { BsCalendarCheckFill } from "react-icons/bs";
 import { BiAdjust } from "react-icons/bi";
-import { useNavigate } from "react-router-dom";
-import { startTransition } from "react";
+
 
 interface ProblemProps {
 	id: string;
@@ -20,6 +22,7 @@ export const Problem = ({
 	problemNo,
 }: ProblemProps) => {
 	const navigate = useNavigate();
+	console.log('this is problem id', id)
 
 	return (
 		<div className="flex flex-row bg-darkGray h-14 rounded-md cursor-pointer">
@@ -43,6 +46,7 @@ export const Problem = ({
 				onClick={() => {
 					const formattedTitle = title.replace(/ /g, "-");
 					startTransition(() => {
+						
 						navigate(`../../problem/${formattedTitle}/description`, { state: {id: id}});
 					});
 				}}

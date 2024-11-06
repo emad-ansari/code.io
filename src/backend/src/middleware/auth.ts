@@ -44,6 +44,8 @@ export const generateAccessToken = (userId: string, role: string) => {
 };
 
 export const generateRefreshToken = (userId: string, role: string) => {
+    console.log('refrehs key ',  process.env.JWT_REFRESH_SECRET);
+
     return  jwt.sign({ userId: userId, role: role } , process.env.JWT_REFRESH_SECRET!, { expiresIn: '7d'} )
 };
 

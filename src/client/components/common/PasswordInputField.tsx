@@ -1,6 +1,7 @@
-import { MdVisibility, MdVisibilityOff } from "react-icons/md";
 import { useState } from "react";
 import { useSelector } from "react-redux";
+import { EyeOff, Eye } from 'lucide-react'
+
 import { useAppDispatch, RootState } from "@/client/app/store";
 import { setPassword } from "@/client/features/authSlice";
 
@@ -22,12 +23,12 @@ export const PasswordInputField = () => {
           onChange={(e) => dispatch(setPassword(e.target.value))}
         />
         {showPassword ? (
-          <MdVisibility 
+          <Eye 
             className={style} 
             onClick={() => setShowPassword(prevShow => !prevShow)}
           />
         ) : (
-          <MdVisibilityOff 
+          <EyeOff 
             className={style}
             onClick={() => setShowPassword(prevShow => !prevShow)}
           />

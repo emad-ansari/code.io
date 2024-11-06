@@ -1,9 +1,10 @@
-import { ProblemDescriptionSection } from "../components/common/ProblemDescriptionSection";
-import { EditorSection } from "../components/common/EditorSection";
-import { ProblemNavBar } from "../components/common/ProblemNavBar";
-import Split from "react-split";
 import { useSelector } from "react-redux";
-import { RootState } from "../app/store";
+import Split from "react-split";
+
+import { RootState } from "@/client/app/store";
+import { ProblemDescriptionSection } from "@/client/components/common/ProblemDescriptionSection";
+import { EditorSection } from "@/client/components/common/EditorSection";
+import { ProblemNavBar } from "@/client/components/common/ProblemNavBar";
 
 const ProblemDescriptionPage = () => {
 	const { isFullScreen } = useSelector((state: RootState) => state.editor);

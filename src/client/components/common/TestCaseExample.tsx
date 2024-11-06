@@ -1,12 +1,16 @@
-import { Input, Output } from "@/client/types";
+import { Input, Output } from "@/client/lib/types";
 
 interface TestCaseProps {
 	testCaseNumber: number;
-	inputs: Input[]
-	output: Output | null
+	inputs: Input[];
+	output: Output | null;
 }
 
-export const TestCaseExample = ({ testCaseNumber, inputs, output }: TestCaseProps) => {
+export const TestCaseExample = ({
+	testCaseNumber,
+	inputs,
+	output,
+}: TestCaseProps) => {
 	return (
 		<div className="flex flex-col  gap-3 w-full">
 			<h1 className="text-lg font-semibold text-white">
@@ -20,18 +24,18 @@ export const TestCaseExample = ({ testCaseNumber, inputs, output }: TestCaseProp
 							Input:
 						</span>
 						<span>
-							{
-								`${inputs.map(input => {
-									return `${input.name} = ${input.value}`
-								}).join(', ')}`
-							}
+							{`${inputs
+								.map((input) => {
+									return `${input.name} = ${input.value}`;
+								})
+								.join(", ")}`}
 						</span>
 					</div>
 					<div className="flex flex-row gap-5">
 						<span className="font-semibold text-[#4ac3ab]">
 							Output:
 						</span>
-						<span>{ `${output?.value}`}</span>
+						<span>{`${output?.value}`}</span>
 					</div>
 				</div>
 			</code>

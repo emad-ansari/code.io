@@ -1,8 +1,12 @@
 import { memo, useEffect, Suspense } from "react";
-import { RootState, useAppDispatch } from "../app/store";
 import { Outlet, useSearchParams } from "react-router-dom";
 import { useSelector } from "react-redux";
-import { FilterSection } from "../components/common/FilterSection";
+
+import { RootState, useAppDispatch } from "@/client/app/store";
+import { setOpenDropDownMenu } from "@/client/features/dropDownSlice";
+import { fetchProblem, setPageSize } from "@/client/features/problemSlice";
+import { FilterSection } from "@/client/components/common/FilterSection";
+import { ProblemListSkeleton } from "@/client/components/skeletons/ProblemListSkeleton";
 import {
 	Pagination,
 	PaginationContent,
@@ -11,7 +15,7 @@ import {
 	PaginationLink,
 	PaginationNext,
 	PaginationPrevious,
-} from "../components/ui/pagination";
+} from "@/client/components/ui/pagination";
 
 import {
 	Select,
@@ -20,12 +24,9 @@ import {
 	SelectItem,
 	SelectTrigger,
 	SelectValue,
-} from "../components/ui/select";
+} from "@/client/components/ui/select";
 
-import { setOpenDropDownMenu } from "../features/dropDownSlice";
-import { getProblems, setPageSize } from "../features/problemSlice";
-import { ProblemListSkeleton } from "../components/skeletons/ProblemListSkeleton";
-import { problems_per_page } from "../types";
+import { problems_per_page } from "@/client/lib/types";
 
 const ProblemsetPage = () => {
 	const dispatch = useAppDispatch();
@@ -37,7 +38,7 @@ const ProblemsetPage = () => {
 
 	useEffect(() => {
 		dispatch(
-			getProblems({
+			fetchProblem({
 				pageNumber: Number(searchParams.get("page")) || 1,
 				difficulty: searchParams.get("difficulty") || "",
 				status: searchParams.get("status") || "",
@@ -92,7 +93,7 @@ const ProblemsetPage = () => {
 				<div className="flex items-center w-[900px] justify-between">
 					<Select
 						onValueChange={(value) => {
-							const problemPerPage = Number(value.split(' ')[0]);
+							const problemPerPage = Number(value.split(" ")[0]);
 							dispatch(setPageSize(problemPerPage));
 						}}
 					>

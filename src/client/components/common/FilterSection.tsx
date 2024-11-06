@@ -2,7 +2,7 @@ import { StatusFilterButton } from "./StatusFilterButton";
 import { DifficultyFitlerButton } from "./DifficultyFilterButton";
 import { IoSearchOutline } from "react-icons/io5";
 import { memo, useEffect, useState } from "react";
-import { getProblems } from "@/client/features/problemSlice";
+import { fetchProblem } from "@/client/features/problemSlice";
 import { useAppDispatch } from "@/client/app/store";
 import { useSearchParams } from "react-router-dom";
 
@@ -19,7 +19,7 @@ export const FilterSection = memo(() => {
 		}
 		setSearchParams(searchParams);
 		dispatch(
-			getProblems({
+			fetchProblem({
 				pageNumber: Number(searchParams.get("page")) || 1,
 				difficulty: searchParams.get("difficulty") || "",
 				status: searchParams.get("status") || "",

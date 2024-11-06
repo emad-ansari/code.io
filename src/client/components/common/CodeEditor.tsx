@@ -1,18 +1,18 @@
-import { Editor, Monaco } from "@monaco-editor/react";
-import { useSelector } from "react-redux";
-import { LNAGUAGE_MAPPING } from "./EditorSection";
-import { RootState, useAppDispatch } from "../../app/store";
-import OneDarkPro from "../../theme/oneDarkPro.json";
 import { useEffect } from "react";
-import { fetchDefaultCode, setCode } from "@/client/features/editorSlice";
+import { useSelector } from "react-redux";
 import { useParams } from "react-router-dom";
+import { Editor, Monaco } from "@monaco-editor/react";
+
+import { RootState, useAppDispatch } from "@/client/app/store";
+import { fetchDefaultCode, setCode } from "@/client/features/codeEditorSlice";
+import OneDarkPro from "@/client/theme/oneDarkPro.json";
+
+import { LNAGUAGE_MAPPING } from "@/client/lib/types";
 
 export const CodeEditor = () => {
 	const { title } = useParams();
 	const dispatch = useAppDispatch();
-	const { language, boilerPlateCode } = useSelector(
-		(state: RootState) => state.editor
-	);
+	const { language, code } = useSelector((state: RootState) => state.editor);
 
 	const { fontSize } = useSelector((state: RootState) => state.setting);
 
@@ -23,12 +23,10 @@ export const CodeEditor = () => {
 			...OneDarkPro,
 		});
 	};
-	
-	
+
 	useEffect(() => {
 		if (title) {
 			const formattedTitle = title.replace(/-/g, " ");
-			console.log('current selected language: ', language);
 			dispatch(
 				fetchDefaultCode({
 					problemTitle: formattedTitle,
@@ -37,15 +35,15 @@ export const CodeEditor = () => {
 			);
 		}
 	}, [title]);
-	console.log('current langauge: ',language)
+
 	return (
 		<Editor
 			height="100%"
 			defaultLanguage="java"
-			defaultValue={boilerPlateCode}
+			defaultValue={code}
 			theme={"OneDarkPro"}
 			language={language}
-			value={boilerPlateCode}
+			value={code}
 			onMount={() => {}}
 			options={{
 				fontSize: fontSize,

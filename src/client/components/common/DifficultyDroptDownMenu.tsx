@@ -4,35 +4,34 @@ import { RootState, useAppDispatch } from "../../app/store";
 import { setFilterOptions } from "../../features/filterSlice";
 import { useSearchParams } from "react-router-dom";
 import { fetchProblem } from "../../features/problemSlice";
-import { DropDownItemProps } from '../../types'
-
+import { DropDownItemProps } from "../../lib/types";
 
 export const DifficultyDropDownMenu = () => {
 	const dispatch = useAppDispatch();
 	const { isDifficultyMenuOpen } = useSelector(
 		(state: RootState) => state.dropdown
 	);
-	const { easy, medium, hard} = useSelector((state: RootState) => state.filter);
+	const { easy, medium, hard } = useSelector(
+		(state: RootState) => state.filter
+	);
 
 	const [searchParams, setSearchParams] = useSearchParams();
 
-	const filterProblems = ( difficultyLevel: string) => {		
-
-		if (searchParams.get('difficulty') === difficultyLevel){
-			searchParams.delete('difficulty'); // remove it from url
-		}
-		else {
-			searchParams.set('difficulty', difficultyLevel); // add it
+	const filterProblems = (difficultyLevel: string) => {
+		if (searchParams.get("difficulty") === difficultyLevel) {
+			searchParams.delete("difficulty"); // remove it from url
+		} else {
+			searchParams.set("difficulty", difficultyLevel); // add it
 		}
 		setSearchParams(searchParams);
 		dispatch(
 			fetchProblem({
-				pageNumber:  Number(searchParams.get('page')) ||  1,
-				difficulty: searchParams.get('difficulty') || "",
-				status: searchParams.get('status') || "",
-				searchKeywords: searchParams.get('search') || "",
+				pageNumber: Number(searchParams.get("page")) || 1,
+				difficulty: searchParams.get("difficulty") || "",
+				status: searchParams.get("status") || "",
+				searchKeywords: searchParams.get("search") || "",
 			})
-		);		
+		);
 	};
 
 	return (
@@ -41,27 +40,54 @@ export const DifficultyDropDownMenu = () => {
 				isDifficultyMenuOpen ? "block" : "hidden"
 			}`}
 		>
-			<DropDownItem value = {"Easy"} filterProblems={filterProblems} isFilterApply = {easy}/> 
-			<DropDownItem value = {"Medium"} filterProblems={filterProblems} isFilterApply = {medium}/> 
-			<DropDownItem value = {"Hard"} filterProblems={filterProblems} isFilterApply = {hard}/> 
+			<DropDownItem
+				value={"Easy"}
+				filterProblems={filterProblems}
+				isFilterApply={easy}
+			/>
+			<DropDownItem
+				value={"Medium"}
+				filterProblems={filterProblems}
+				isFilterApply={medium}
+			/>
+			<DropDownItem
+				value={"Hard"}
+				filterProblems={filterProblems}
+				isFilterApply={hard}
+			/>
 		</div>
 	);
 };
 
-
-export function DropDownItem({value, filterProblems, isFilterApply}: DropDownItemProps) {
+export function DropDownItem({
+	value,
+	filterProblems,
+	isFilterApply,
+}: DropDownItemProps) {
 	const dispatch = useAppDispatch();
-	
+
 	return (
 		<span
 			className="font-normal hover:bg-gray-800 flex items-center px-2 py-2 w-[90%] rounded-md justify-between"
 			onClick={() => {
-				dispatch(setFilterOptions({option: value.toLocaleLowerCase()}));	
-				filterProblems(value)
+				dispatch(
+					setFilterOptions({ option: value.toLocaleLowerCase() })
+				);
+				filterProblems(value);
 			}}
 		>
-			<span className= {`${value === "Easy" ? 'text-GREEN' : value === "Medium" ? 'text-YELLOW': "text-RED"}`}>{value}</span>
-			{ isFilterApply ? <IoIosCheckmark /> : null } 
+			<span
+				className={`${
+					value === "Easy"
+						? "text-GREEN"
+						: value === "Medium"
+						? "text-YELLOW"
+						: "text-RED"
+				}`}
+			>
+				{value}
+			</span>
+			{isFilterApply ? <IoIosCheckmark /> : null}
 		</span>
 	);
 }
