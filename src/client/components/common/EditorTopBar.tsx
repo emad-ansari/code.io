@@ -5,20 +5,15 @@ import { Maximize, Minimize } from "lucide-react";
 import { RootState, useAppDispatch } from "@/client/app/store";
 import SettingDialogBox from "@/client/components/common/SettingDialogBox";
 import { Button } from "@/client/components/ui/button";
+import { DropDownMenu } from "@/client/components/ui/DropDownMenu";
+
 import {
 	fetchDefaultCode,
 	setLanguage,
 	toggleFullScreen,
 	setCode,
 } from "@/client/features/codeEditorSlice";
-import {
-	Select,
-	SelectContent,
-	SelectGroup,
-	SelectItem,
-	SelectTrigger,
-	SelectValue,
-} from "@/client/components/ui/select";
+
 import {
 	LNAGUAGE_MAPPING,
 	LANGUAGES,
@@ -53,29 +48,12 @@ export function EditorTopBar() {
 
 	return (
 		<div className="flex items-center px-2 py-1 bg-darkGray rounded-tl-lg rounded-tr-lg justify-between  gap-5 border border-b-[#334155] border-t-transparent border-l-transparent border-r-transparent">
-			<Select onValueChange={(value) => onLanguageChange(value)}>
-				<SelectTrigger className="w-28 text-white border border-none bg-gray-800">
-					<SelectValue
-						placeholder={language}
-						className="texxt-white"
-					/>
-				</SelectTrigger>
-				<SelectContent className="bg-darkGray text-white border border-BORDER">
-					<SelectGroup className="">
-						{LANGUAGES.map((item, index) => {
-							return (
-								<SelectItem
-									value={item}
-									key={index}
-									className="cursor-pointer"
-								>
-									{item}
-								</SelectItem>
-							);
-						})}
-					</SelectGroup>
-				</SelectContent>
-			</Select>
+			<DropDownMenu 
+				items={LANGUAGES}
+				placeholder= {language}
+				className="bg-gray-800 w-28 h-9"
+				onValueChange={onLanguageChange}
+			/>
 			<div className="flex flex-row gap-2 items-center ">
 				<SettingDialogBox /> {/* editor setting */}
 				<Button
