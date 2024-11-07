@@ -29,7 +29,7 @@ const ProblemList = memo(() => {
 
 	return (
 		<div className="flex flex-col gap-2">
-			<Table className="rounded-lg overflow-hidden border border-code-border bg-code-bg-secondary">
+			<Table className=" overflow-hidden rounded-lg bg-code-bg-secondary ">
 				<TableHeader>
 					<TableRow className="border-b border-code-border  hover:bg-gray-750">
 						<TableHead className="text-gray-300">Status</TableHead>
@@ -106,18 +106,6 @@ const ProblemList = memo(() => {
 					))}
 				</TableBody>
 			</Table>
-			{/* {problems.map((p) => {
-				return (
-					<Problem
-						key={p.id}
-						id={p.id}
-						title={p.title}
-						status={p.problemStatus ? p.problemStatus.status : ""}
-						difficulty={p.difficulty}
-						problemNo={p.problemNo}
-					/>
-				);
-			})} */}
 		</div>
 	);
 });
