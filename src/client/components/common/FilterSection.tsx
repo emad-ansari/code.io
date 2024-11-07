@@ -1,15 +1,11 @@
 import { memo, useEffect, useState } from "react";
 import { useSearchParams } from "react-router-dom";
+import { Search } from 'lucide-react'
 
 import { useAppDispatch } from "@/client/app/store";
 import { fetchProblem } from "@/client/features/problemSlice";
-import { StatusFilterButton } from "./StatusFilterButton";
-import { DifficultyFitlerButton } from "./DifficultyFilterButton";
 import { DropDownMenu } from "@/client/components/ui/DropDownMenu";
-import { IoSearchOutline } from "react-icons/io5";
-import { DIFFICULTY, STATUS} from '@/client/lib/types'
-
-
+import { DIFFICULTY, STATUS } from "@/client/lib/types";
 
 export const FilterSection = memo(() => {
 	const dispatch = useAppDispatch();
@@ -33,7 +29,6 @@ export const FilterSection = memo(() => {
 		);
 	}, [searchQuery, dispatch]);
 
-
 	const filterProblems = (difficultyLevel: string) => {
 		if (searchParams.get("difficulty") === difficultyLevel) {
 			searchParams.delete("difficulty"); // remove it from url
@@ -52,8 +47,6 @@ export const FilterSection = memo(() => {
 	};
 
 	const handleStatusFilter = (currentFilterOption: string) => {
-		// setCurrentStatusOption(currentFilterOption);
-
 		if (searchParams.get("status") === currentFilterOption) {
 			searchParams.delete("status"); // remove it from url
 		} else {
@@ -72,28 +65,36 @@ export const FilterSection = memo(() => {
 	};
 
 	return (
-		<nav className="flex flex-row gap-10 w-full z-0 ">
-			<DropDownMenu 
-				className="bg-darkGray"
-				placeholder="Difficulty"
-				items={DIFFICULTY}
-				onValueChange = {filterProblems}
-			/>
-			<DropDownMenu 
-				className="bg-darkGray"
-				placeholder="Status"
-				items={STATUS}
-				onValueChange = {handleStatusFilter}
-			/>
+		<nav className="flex-col w-full z-0 ">
+			<div className="flex w-full items-center justify-between">
+				<h2 className="text-4xl font-bold text-white">
+					Coding Challenges
+				</h2>
+				<div className="flex space-x-5">
+					<DropDownMenu
+						className="bg-darkGray w-32 h-10 text-md "
+						placeholder="Difficulty"
+						items={DIFFICULTY}
+						onValueChange={filterProblems}
+					/>
+					<DropDownMenu
+						className="bg-darkGray w-32 h-10 text-md"
+						placeholder="Status"
+						items={STATUS}
+						onValueChange={handleStatusFilter}
+					/>
+				</div>
+			</div>
+
 			{/* <StatusFilterButton /> */}
-			<div className="relative flex flex-1 text-white shadow-inner ">
+			<div className="relative flex-1 text-white shadow-inner mt-8 ">
+				<Search strokeWidth={1.25} className="absolute top-1/4 left-3 w-5 h-5"/>
 				<input
 					type="text"
-					className="bg-darkGray rounded-md outline-none px-10 text-sm w-full placeholder-[#484848] focus:ring ring-slate-800 border border-[#334155] "
-					placeholder="Search by title..."
+					className="bg-darkGray rounded-md outline-none px-10 py-2.5 text-sm w-full placeholder-[#484848] focus:ring ring-slate-800 border border-[#334155] "
+					placeholder="Filter problems..."
 					onChange={(e) => setSearchQuery(e.target.value)}
 				/>
-				<IoSearchOutline className="absolute top-1/3 left-3" />
 			</div>
 		</nav>
 	);
