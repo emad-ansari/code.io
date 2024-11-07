@@ -27,6 +27,7 @@ import {
 } from "@/client/components/ui/select";
 
 import { problems_per_page } from "@/client/lib/types";
+import { DropDownMenu } from "../components/ui/DropDownMenu";
 
 const ProblemsetPage = () => {
 	const dispatch = useAppDispatch();
@@ -65,6 +66,12 @@ const ProblemsetPage = () => {
 		}
 	};
 
+	const onProblemPerPageChange = (value: string) => {
+		const problemPerPage = Number(value.split(" ")[0]);
+		dispatch(setPageSize(problemPerPage));
+	}
+	
+
 	return (
 		<div
 			className=" flex flex-col gap-8  bg-PRIMARY items-center pb-20 mt-[63px] fixed top-0 bottom-0 left-0 right-0"
@@ -91,34 +98,12 @@ const ProblemsetPage = () => {
 					</Suspense>
 				</div>
 				<div className="flex items-center w-[900px] justify-between">
-					<Select
-						onValueChange={(value) => {
-							const problemPerPage = Number(value.split(" ")[0]);
-							dispatch(setPageSize(problemPerPage));
-						}}
-					>
-						<SelectTrigger className="w-28 text-white border border-none bg-darkGray">
-							<SelectValue
-								placeholder="10 / page"
-								className="text-white"
-							/>
-						</SelectTrigger>
-						<SelectContent className="bg-darkGray text-white border border-BORDER">
-							<SelectGroup className="">
-								{problems_per_page.map((item, index) => {
-									return (
-										<SelectItem
-											value={item}
-											key={index}
-											className="cursor-pointer"
-										>
-											{item}
-										</SelectItem>
-									);
-								})}
-							</SelectGroup>
-						</SelectContent>
-					</Select>
+					<DropDownMenu 
+						items={problems_per_page}
+						placeholder="10 / page"
+						className="bg-darkGray"
+						onValueChange={onProblemPerPageChange}
+					/>
 					<div className="flex flex-row justify-end">
 						<CustomPagination />
 					</div>

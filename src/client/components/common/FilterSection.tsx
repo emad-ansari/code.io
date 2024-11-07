@@ -1,10 +1,15 @@
+import { memo, useEffect, useState } from "react";
+import { useSearchParams } from "react-router-dom";
+
+import { useAppDispatch } from "@/client/app/store";
+import { fetchProblem } from "@/client/features/problemSlice";
 import { StatusFilterButton } from "./StatusFilterButton";
 import { DifficultyFitlerButton } from "./DifficultyFilterButton";
+import { DropDownMenu } from "@/client/components/ui/DropDownMenu";
 import { IoSearchOutline } from "react-icons/io5";
-import { memo, useEffect, useState } from "react";
-import { fetchProblem } from "@/client/features/problemSlice";
-import { useAppDispatch } from "@/client/app/store";
-import { useSearchParams } from "react-router-dom";
+import { DIFFICULTY, STATUS} from '@/client/lib/types'
+
+
 
 export const FilterSection = memo(() => {
 	const dispatch = useAppDispatch();
@@ -28,10 +33,59 @@ export const FilterSection = memo(() => {
 		);
 	}, [searchQuery, dispatch]);
 
+
+	const filterProblems = (difficultyLevel: string) => {
+		if (searchParams.get("difficulty") === difficultyLevel) {
+			searchParams.delete("difficulty"); // remove it from url
+		} else {
+			searchParams.set("difficulty", difficultyLevel); // add it
+		}
+		setSearchParams(searchParams);
+		dispatch(
+			fetchProblem({
+				pageNumber: Number(searchParams.get("page")) || 1,
+				difficulty: searchParams.get("difficulty") || "",
+				status: searchParams.get("status") || "",
+				searchKeywords: searchParams.get("search") || "",
+			})
+		);
+	};
+
+	const handleStatusFilter = (currentFilterOption: string) => {
+		// setCurrentStatusOption(currentFilterOption);
+
+		if (searchParams.get("status") === currentFilterOption) {
+			searchParams.delete("status"); // remove it from url
+		} else {
+			searchParams.set("status", currentFilterOption); // add it
+		}
+		setSearchParams(searchParams);
+
+		dispatch(
+			fetchProblem({
+				pageNumber: Number(searchParams.get("page")) || 1,
+				difficulty: searchParams.get("difficulty") || "",
+				status: searchParams.get("status") || "",
+				searchKeywords: searchParams.get("search") || "",
+			})
+		);
+	};
+
 	return (
 		<nav className="flex flex-row gap-10 w-full z-0 ">
-			<DifficultyFitlerButton />
-			<StatusFilterButton />
+			<DropDownMenu 
+				className="bg-darkGray"
+				placeholder="Difficulty"
+				items={DIFFICULTY}
+				onValueChange = {filterProblems}
+			/>
+			<DropDownMenu 
+				className="bg-darkGray"
+				placeholder="Status"
+				items={STATUS}
+				onValueChange = {handleStatusFilter}
+			/>
+			{/* <StatusFilterButton /> */}
 			<div className="relative flex flex-1 text-white shadow-inner ">
 				<input
 					type="text"

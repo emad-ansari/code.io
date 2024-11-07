@@ -4,46 +4,27 @@ import { useParams } from "react-router-dom";
 import Split from "react-split";
 import { RootState, useAppDispatch } from "@/client/app/store";
 
-import {
-	ChevronDown,
-	ChevronUp,
-	CloudUpload,
-	Maximize,
-	Minimize,
-	Play,
-} from "lucide-react";
-import { Button } from "../ui/button";
-import { ConsoleSkeleton } from "../skeletons/ConsoleSkeleton";
-import {
-	Select,
-	SelectContent,
-	SelectGroup,
-	SelectItem,
-	SelectTrigger,
-	SelectValue,
-} from "../ui/select";
+import { ChevronDown, ChevronUp, CloudUpload, Play } from "lucide-react";
+import { Button } from "@/client/components/ui/button";
+import { ConsoleSkeleton } from "@/client/components/skeletons/ConsoleSkeleton";
+
 import {
 	Tooltip,
 	TooltipContent,
 	TooltipProvider,
 	TooltipTrigger,
-} from "../ui/tooltip";
+} from "@/client/components/ui/tooltip";
 
-import {
-	fetchDefaultCode,
-	setLanguage,
-	runCode,
-	toggleFullScreen,
-} from "@/client/features/codeEditorSlice";
+import { runCode } from "@/client/features/codeEditorSlice";
 import { CodeEditor } from "./CodeEditor";
-import SettingDialogBox from "@/client/components/common/SettingDialogBox";
-import { SubmissionDetails , LNAGUAGE_MAPPING, LANGUAGES} from "@/client/lib/types";
-
-
+import { LNAGUAGE_MAPPING } from "@/client/lib/types";
+import { EditorTopBar } from "./EditorTopBar";
+import { RenderExecutionResult } from "./RenderExecutionResult";
 
 export const EditorSection = () => {
 	const dispatch = useAppDispatch();
 	const { title } = useParams();
+	const formattedTitle = title?.replace(/-/g, " ") || "";
 
 	const [splitRatio, setSplitRatio] = useState<[number, number]>([100, 0]);
 	const [isConsoleOpen, setIsConsoleOpen] = useState<boolean>(false);
@@ -63,8 +44,6 @@ export const EditorSection = () => {
 		}
 
 		setIsConsoleOpen((prevState) => !prevState);
-
-		const formattedTitle = title.replace(/-/g, " ");
 
 		dispatch(
 			runCode({
@@ -188,66 +167,6 @@ export const EditorSection = () => {
 	);
 };
 
-
-
-function EditorTopBar() {
-	const dispatch = useAppDispatch();
-	const { title } = useParams();
-	const { isFullScreen } = useSelector((state: RootState) => state.editor);
-
-	const handleLanguageChange = (item: string) => {
-		if (title) {
-			const formattedTitle = title.replace(/-/g, " ");
-			dispatch(setLanguage(item));
-			dispatch(
-				fetchDefaultCode({
-					problemTitle: formattedTitle,
-					languageId: LNAGUAGE_MAPPING[`${item}`].languageId,
-				})
-			);
-		}
-	};
-
-	return (
-		<div className="flex items-center px-2 py-1 bg-darkGray rounded-tl-lg rounded-tr-lg justify-between  gap-5 border border-b-[#334155] border-t-transparent border-l-transparent border-r-transparent">
-			<Select onValueChange={(value) => handleLanguageChange(value)}>
-				<SelectTrigger className="w-28 text-white border border-none bg-gray-800">
-					<SelectValue placeholder="Java" className="texxt-white" />
-				</SelectTrigger>
-				<SelectContent className="bg-darkGray text-white border border-BORDER">
-					<SelectGroup className="">
-						{LANGUAGES.map((item, index) => {
-							return (
-								<SelectItem
-									value={item}
-									key={index}
-									className="cursor-pointer"
-								>
-									{item}
-								</SelectItem>
-							);
-						})}
-					</SelectGroup>
-				</SelectContent>
-			</Select>
-			<div className="flex flex-row gap-2 items-center ">
-				<SettingDialogBox /> {/* editor setting */}
-				<Button
-					size={"icon"}
-					className={"hover:bg-gray-800  rounded-full"}
-					onClick={() => dispatch(toggleFullScreen(!isFullScreen))}
-				>
-					{isFullScreen ? (
-						<Minimize size={16} className="text-white" />
-					) : (
-						<Maximize size={16} className="text-white" />
-					)}
-				</Button>
-			</div>
-		</div>
-	);
-}
-
 function OutputConsole() {
 	const { execution_result } = useSelector(
 		(state: RootState) => state.editor
@@ -273,141 +192,13 @@ function OutputConsole() {
 				)}
 			</div>
 			<div>
-				<RenderOutput resultStatus={resultStatus} />
+				<RenderExecutionResult resultStatus={resultStatus} />
 			</div>
 		</div>
 	);
 }
 
-function WrongAnswerOrAccepted() {
-	const { execution_result } = useSelector(
-		(state: RootState) => state.editor
-	);
-	const submissions = execution_result.submissions;
-	const [selectedTestCaseTab, setSelectedTestCaseTab] =
-		useState<SubmissionDetails>(submissions[0]);
 
-	return (
-		<>
-			<div className="flex flex-row gap-3 mb-6">
-				{submissions.map((submission, index) => {
-					const { description } = submission.status;
-					return (
-						<div
-							className="bg-gray-800 rounded-lg px-4 py-1 flex flex-row gap-1 items-center cursor-pointer "
-							key={index}
-							onClick={() => setSelectedTestCaseTab(submission)}
-						>
-							<span
-								className={`text-lg ${
-									description === "Accepted"
-										? "text-GREEN"
-										: "text-red-500"
-								}`}
-							>
-								•
-							</span>
-							Case
-							<span>{index + 1}</span>
-						</div>
-					);
-				})}
-			</div>
-			{selectedTestCaseTab && (
-				<div className="flex flex-col gap-4">
-					<div className="flex flex-col gap-2">
-						<label
-							className="text-md text-gray-400 font-medium"
-							htmlFor=""
-						>
-							Input
-						</label>
-						<code className="bg-gray-800 px-4 py-4 rounded-lg">
-							{`${selectedTestCaseTab.inputs
-								.map(
-									(input) => `${input.name} = ${input.value}`
-								)
-								.join(", ")}`}
-						</code>
-					</div>
-					<div className="flex flex-col gap-2">
-						<label
-							htmlFor=""
-							className="text-md text-gray-400 font-medium"
-						>
-							User Output
-						</label>
-						<code className="bg-gray-800 px-4 py-4 rounded-lg">
-							{selectedTestCaseTab.stdout}
-						</code>
-					</div>
-					<div className="flex flex-col gap-2">
-						<label
-							htmlFor=""
-							className="text-md text-gray-400 font-medium"
-						>
-							Expected Output
-						</label>
-						<code className="bg-gray-800 px-4 py-4 rounded-lg">
-							{selectedTestCaseTab.expected_output}
-						</code>
-					</div>
-				</div>
-			)}
-		</>
-	);
-}
-
-function RenderOutput({ resultStatus }: { resultStatus: string }) {
-	switch (resultStatus) {
-		case "Accepted":
-		case "Wrong Answer":
-			return <WrongAnswerOrAccepted />;
-		case "Time Limit Exceed":
-			return <TimeLimitExceed />;
-		case "Compilation Error":
-			return <CompilationError />;
-		default:
-			return <div></div>;
-	}
-}
-
-// Wrong Answer! || Accepted! || Time Limit exceeded! || Compilation Error!
-
-/*
-	1. Wrong Answer: Input, Your Output, Expected Output
-	2. Time Limit Exceeded : Last executed Input
-	3. Accepted: 
-	4. Compilation Error: display the error
-
-*/
-function CompilationError() {
-	const { execution_result } = useSelector(
-		(state: RootState) => state.editor
-	);
-	const submissions = execution_result.submissions;
-	return (
-		<div className="flex flex-col gap-2">
-			<label className="text-md text-gray-400 font-medium" htmlFor="">
-				Compile Output:
-			</label>
-			<code className="bg-[#402d2d] text-[#d75151] px-4 py-4 rounded-lg">
-				{submissions[0].compile_output}
-			</code>
-		</div>
-	);
-}
-
-function TimeLimitExceed() {
-	return (
-		<div className="flex flex-col gap-1">
-			<label className="text-md text-gray-400 font-medium" htmlFor="">
-				Last Executed Input:{" "}
-			</label>
-			<code className="bg-gray-800 px-4 py-4 rounded-lg">n = 50000</code>
-		</div>
-	);
-}
 
 // This component is used for the loading spinner
 export const Icons = {
