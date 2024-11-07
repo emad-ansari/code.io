@@ -59,7 +59,7 @@ export const ProblemNavBar = ({
 	];
 
 	return (
-		<nav className="flex flex-row justify-between items-center bg-PRIMARY fixed top-0 left-0 right-0 z-50 ">
+		<nav className="flex flex-row justify-between items-center bg-code-bg fixed top-0 left-0 right-0 z-50 ">
 			<div className="flex-none items-center justify-start w-96">
 				<img
 					src={CodeInLogo}
@@ -74,12 +74,13 @@ export const ProblemNavBar = ({
 			</div>
 			<div className="flex flex-1 flex-row items-center  text-white">
 				{!isProbleDescriptioPage && (
-					<div className="bg-darkGray flex items-center h-11 rounded-full  shadow-md border border-[#334155] text-sm gap-5 px-5">
+					<div className="bg-code-bg flex items-center h-11 rounded-full  shadow-md border border-code-border text-sm gap-5 px-5">
 						{navItems.map((item) => (
 							<a
+								key = {item.href}
 								href={item.href}
 								onClick={(e) => onNavigation(e, item.href)}
-								className={`text-sm font-dmMono px-4 py-2 rounded-full hover:bg-gray-800 ${item.active && "bg-gray-800"}`}
+								className={`text-sm font-dmMono px-4 py-2 rounded-full hover:bg-code-hover ${item.active && "bg-code-hover"}`}
 							>
 								{item.label}
 							</a>
@@ -89,10 +90,9 @@ export const ProblemNavBar = ({
 				{!isLogin ? (
 					<div className="flex flex-1 justify-end pr-5">
 						<div className="flex gap-3 items-center">
-							{/* <MdOutlineNightlightRound className="hover:bg-gray-800 w-10 h-10 rounded-full px-3 py-3 cursor-pointer border border-[#334155]" /> */}
 							<Button
 								variant="ghost"
-								className=" hover:bg-darkGray  hover:text-white  border border-[#334155]"
+								className=" hover:bg-darkGray  hover:text-white  border border-code-border"
 								onClick={() =>
 									navigate("/login", {
 										state: { from: location },
@@ -103,7 +103,7 @@ export const ProblemNavBar = ({
 							</Button>
 							<Button
 								variant="ghost"
-								className=" hover:bg-darkGray  hover:text-white  border border-[#334155]"
+								className=" hover:bg-darkGray  hover:text-white  border border-code-border"
 								onClick={() => navigate("/signup")}
 							>
 								Signup
@@ -122,7 +122,7 @@ export const ProblemNavBar = ({
 							</DropdownMenuTrigger>
 							<DropdownMenuContent
 								align="end"
-								className="bg-gray-900 text-white border border-BORDER"
+								className="bg-gray-900 text-white border border-codeio_border"
 							>
 								<DropdownMenuItem>Profile</DropdownMenuItem>
 								<DropdownMenuItem>Settings</DropdownMenuItem>

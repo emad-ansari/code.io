@@ -72,26 +72,24 @@ export const FilterSection = memo(() => {
 				</h2>
 				<div className="flex space-x-5">
 					<DropDownMenu
-						className="bg-darkGray w-32 h-10 text-md "
+						className="bg-code-bg w-32 h-10 text-md  border border-code-border"
 						placeholder="Difficulty"
 						items={DIFFICULTY}
 						onValueChange={filterProblems}
 					/>
 					<DropDownMenu
-						className="bg-darkGray w-32 h-10 text-md"
+						className="bg-code-bg w-32 h-10 text-md border border-code-border"
 						placeholder="Status"
 						items={STATUS}
 						onValueChange={handleStatusFilter}
 					/>
 				</div>
 			</div>
-
-			{/* <StatusFilterButton /> */}
 			<div className="relative flex-1 text-white shadow-inner mt-8 ">
 				<Search strokeWidth={1.25} className="absolute top-1/4 left-3 w-5 h-5"/>
 				<input
 					type="text"
-					className="bg-darkGray rounded-md outline-none px-10 py-2.5 text-sm w-full placeholder-[#484848] focus:ring ring-slate-800 border border-[#334155] "
+					className="bg-code-bg rounded-full outline-none px-10 py-2.5 text-sm w-full placeholder-[#484848] focus:ring ring-slate-800 border border-[#334155] "
 					placeholder="Filter problems..."
 					onChange={(e) => setSearchQuery(e.target.value)}
 				/>

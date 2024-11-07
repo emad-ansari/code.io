@@ -17,15 +17,6 @@ import {
 	PaginationPrevious,
 } from "@/client/components/ui/pagination";
 
-import {
-	Select,
-	SelectContent,
-	SelectGroup,
-	SelectItem,
-	SelectTrigger,
-	SelectValue,
-} from "@/client/components/ui/select";
-
 import { problems_per_page } from "@/client/lib/types";
 import { DropDownMenu } from "../components/ui/DropDownMenu";
 
@@ -74,7 +65,7 @@ const ProblemsetPage = () => {
 
 	return (
 		<div
-			className=" flex flex-col gap-8  bg-PRIMARY items-center pb-20 mt-[63px] fixed top-0 bottom-0 left-0 right-0"
+			className=" flex flex-col gap-8 bg-code-bg items-center pb-20 mt-[63px] fixed top-0 bottom-0 left-0 right-0"
 			onClick={(e: React.SyntheticEvent<EventTarget>) =>
 				handleDropDown(e)
 			}
@@ -82,17 +73,6 @@ const ProblemsetPage = () => {
 			<div className="flex flex-col gap-8 items-center pt-10 pb-10 w-full  overflow-y-scroll fixed top-0  left-0 right-0 bottom-0 mt-[64px]">
 				<div className="flex flex-col gap-8 w-[900px] ">
 					<FilterSection />
-					<div className="flex items-center ">
-						<span className="flex-none [font-family: Inter] font-mono text-white w-36 px-3 ">
-							Status
-						</span>
-						<span className="flex flex-1 text-white justify-start font-mono">
-							Title
-						</span>
-						<span className="flex flex-1 text-white items-center font-mono justify-end pr-5">
-							Difficulty
-						</span>
-					</div>
 					<Suspense fallback={<ProblemListSkeleton />}>
 						<Outlet />
 					</Suspense>
@@ -101,7 +81,7 @@ const ProblemsetPage = () => {
 					<DropDownMenu 
 						items={problems_per_page}
 						placeholder="10 / page"
-						className="bg-darkGray"
+						className="bg-code-bg w-36 h-10 border border-code-border"
 						onValueChange={onProblemPerPageChange}
 					/>
 					<div className="flex flex-row justify-end">
@@ -124,14 +104,14 @@ const CustomPagination = memo(() => {
 				<PaginationItem>
 					<PaginationPrevious
 						href={page > 1 ? `/problemset/?page=${page - 1}` : ""}
-						className="bg-darkGray text-white hover:bg-gray-800 hover:text-white"
+						className="bg-code-bg text-white hover:bg-code-hover hover:text-white border border-code-border"
 					/>
 				</PaginationItem>
 				{Array.from({ length: totalPages }).map((_, index) => (
 					<PaginationItem key={index}>
 						<PaginationLink
 							href={`/problemset/?page=${index + 1}`}
-							className={`text-white hover:bg-gray-800 hover:text-white ${
+							className={`text-white hover:bg-code-bg hover:text-white border border-code-border ${
 								page === index + 1
 									? "bg-gray-800"
 									: "bg-darkGray"
@@ -151,7 +131,7 @@ const CustomPagination = memo(() => {
 								? ""
 								: `/problemset/?page=${page + 1}`
 						}
-						className="bg-darkGray text-white hover:bg-gray-800 hover:text-white"
+						className="bg-code-bg text-white hover:bg-gray-700 hover:text-white border border-code-border"
 					/>
 				</PaginationItem>
 			</PaginationContent>
