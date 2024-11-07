@@ -1,32 +1,33 @@
 import { BrowserRouter, Route, Routes } from "react-router-dom";
 import { lazy, useEffect, Suspense } from "react";
-import { LoginPage } from "./client/pages/LoginPage";
-import { SignupPage } from "./client/pages/SignupPage";
-import { EmailAuthenticaiton } from "./client/pages/EmailAuthenticaiton";
-import { ContestPage } from "./client/pages/ContestPage";
-import { StandingPage } from "./client/pages/StandingPage";
-import { ProblemSubmissions } from "./client/components/common/ProblemSubmissions";
-import { Contribution } from "./client/pages/Contribution";
-import { TestCaseForm } from "./client/pages/TestCaseForm";
-import { ProblemForm } from "./client/pages/ProblemForm";
-import { ProblemNavBar } from "./client/components/common/ProblemNavBar";
-import { LoadingPage } from "./client/pages/LoadingPage";
 import "./index.css";
 
-const HomePage = lazy(() => import("./client/pages/HomePage"));
+import { LoginPage } from "@/client/pages/LoginPage";
+import { SignupPage } from "@/client/pages/SignupPage";
+import { EmailAuthenticaiton } from "@/client/pages/EmailAuthenticaiton";
+import { ContestPage } from "@/client/pages/ContestPage";
+import { StandingPage } from "@/client/pages/StandingPage";
+import { ProblemSubmissions } from "@/client/components/common/ProblemSubmissions";
+import { Contribution } from "@/client/pages/Contribution";
+import { TestCaseForm } from "@/client/pages/TestCaseForm";
+import { ProblemForm } from "@/client/pages/ProblemForm";
+import { ProblemNavBar } from "@/client/components/common/ProblemNavBar";
+import { LoadingPage } from "@/client/pages/LoadingPage";
+
+const HomePage = lazy(() => import("@/client/pages/HomePage"));
 const ProblemStatement = lazy(() =>
-	wait(2000).then(() => import("./client/components/common/ProblemStatement"))
+	wait(2000).then(() => import("@/client/components/common/ProblemStatement"))
 );
-const ProblemsetPage = lazy(() => import("./client/pages/ProblemsetPage"));
+const ProblemsetPage = lazy(() => import("@/client/pages/ProblemsetPage"));
 const ProblemList = lazy(() =>
-	wait(2000).then(() => import("./client/components/common/ProblemList"))
+	wait(2000).then(() => import("@/client/components/common/ProblemList"))
 );
 const ProblemDescriptionPage = lazy(
-	() => import("./client/pages/ProblemDescriptionPage")
+	() => import("@/client/pages/ProblemDescriptionPage")
 );
 
-import { rehydrateAuth } from "./client/features/authSlice";
-import { useAppDispatch } from "./client/app/store";
+import { rehydrateAuth } from "@/client/features/authSlice";
+import { useAppDispatch } from "@/client/app/store";
 
 const App = () => {
 	const dispatch = useAppDispatch();
