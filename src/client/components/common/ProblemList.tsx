@@ -29,7 +29,7 @@ const ProblemList = memo(() => {
 
 	return (
 		<div className="flex flex-col gap-2">
-			<Table className=" overflow-hidden rounded-lg bg-code-bg-secondary ">
+			<Table className=" overflow-hidden rounded-lg bg-code-bg-secondary border border-code-border">
 				<TableHeader>
 					<TableRow className="border-b border-code-border  hover:bg-gray-750">
 						<TableHead className="text-gray-300">Status</TableHead>
@@ -45,7 +45,7 @@ const ProblemList = memo(() => {
 						</TableHead>
 					</TableRow>
 				</TableHeader>
-				<TableBody>
+				<TableBody className = 'border border-code-border'>
 					{problems.map((problem) => (
 						<TableRow
 							key={problem.id}
