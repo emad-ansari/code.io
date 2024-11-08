@@ -290,3 +290,20 @@ export async function getTestCaseExample(problemId: string) {
 		console.log("Error: ", error.message);
 	}
 }
+
+export async function updateProblemStatusOnUser (userId: string, problemId: string, status: string) {
+	try {
+		await prisma.problemStatus.updateMany({
+			where: {
+				userId,
+				problemId
+			},
+			data: {
+				status
+			}
+		})
+	}
+	catch(error: any){
+		console.log("UPDATE_PROBLEM_STATUS ", error.message);
+	}
+}
