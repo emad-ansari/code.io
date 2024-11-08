@@ -5,7 +5,7 @@ import axios from "axios";
 import prisma from "../db";
 import { getAllTestcases } from "../db/testcase";
 import { getTestCaseExample, updateProblemStatusOnUser } from "../db/problem";
-import { createSubmission } from "../db/submission";
+import { createSubmission, getSubmissions } from "../db/submission";
 
 import auth, { CustomRequestObject } from "../middleware/auth";
 import {
@@ -21,7 +21,31 @@ const JUDGE0_API_URL = process.env.JUDGE0_API_URL; // move into types.ts file
 const JUDGE0_API_KEY = process.env.JUDGE0_API_KEY; // mmove into types.ts file
 
 
-router.get("/get-submissions", async () => {});
+router.get("/get-submissions", auth, async (req: Request, res: Response) => {
+	const { userAuthorized } = req as CustomRequestObject;
+
+	if (!userAuthorized) {
+		return res.status(401).json({
+			suceess: false,
+			message: "Unauthorized!, Please login",
+		});
+	}
+	const { userId } = req as CustomRequestObject;
+
+	try {
+		const userSubmissions = await getSubmissions(userId);
+		return res.status(200).json({
+			success: true,
+			message: "user submissions fetched successfully",
+			data: userSubmissions,
+		})
+
+	}
+	catch(error: any){
+		console.error(error);
+	}
+
+});
 
 router.post("/submit-code", auth, async (req: Request, res: Response) => {
 	const { userAuthorized } = req as CustomRequestObject;
