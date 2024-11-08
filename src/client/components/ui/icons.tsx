@@ -24,12 +24,12 @@ export const Icons = {
 			xmlns="http://www.w3.org/2000/svg"
 			{...props}
 		>
-			<rect width="200" height="" fill="#111827" />
+			<rect width="200" height="50" fill="#111827" />
 			<text
 				x="20"
 				y="35"
-				font-family="Verdana, sans-serif"
-				font-size="24"
+				fontFamily="Verdana, sans-serif"
+				fontSize="24"
 				fill="white"
 			>
 				&lt;/&gt; Code.io
