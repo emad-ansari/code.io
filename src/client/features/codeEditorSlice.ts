@@ -9,7 +9,7 @@ import {
 
 export const codeEditorState: EditorState = {
 	isFullScreen: false,
-	language: "java",
+	language: localStorage.getItem("selectedLanguage") || "java",
 	code: "",
 	execution_result: {
 		overallStatus: "",
@@ -51,7 +51,7 @@ export const runCode = createAsyncThunk(
 	async ({ problemTitle, languageId, code }: DefaultCodeProps, thunkAPI) => {
 		try {
 			const res = await api.post<CodeExecutionResponse>(
-				"/problem/run-code",
+				"/submission/run-code",
 				{
 					data: {
 						problemTitle,
@@ -67,6 +67,29 @@ export const runCode = createAsyncThunk(
 		}
 	}
 );
+
+export const submitCode = createAsyncThunk(
+	"/editor/submitCode",
+	async ({ problemTitle, languageId, code }: DefaultCodeProps, thunkAPI) => {
+		try {
+			const res = await api.post<CodeExecutionResponse>(
+				"/submission/submit-code",
+				{
+					data: {
+						problemTitle,
+						languageId,
+						code: code,
+					},
+				}
+			);
+			return res.data;
+		} catch (error: any) {
+			console.log(error.message);
+			return thunkAPI.rejectWithValue(error.message || "Error while  running code.");
+		}
+	}
+);
+
 
 export const codeEditorSlice = createSlice({
 	name: "editor",
@@ -108,6 +131,21 @@ export const codeEditorSlice = createSlice({
 			}
 		});
 		builder.addCase(runCode.rejected, (state, action) => {
+			state.loading = false;
+			state.error = action.error.message;
+		});
+		builder.addCase(submitCode.pending, (state) => {
+			state.loading = true;
+		});
+		builder.addCase(submitCode.fulfilled, (state, action) => {
+			const { success, data } = action.payload;
+			if (success) {
+				state.execution_result = data;
+				state.loading = false;
+				console.log("submit code api response: ", data );
+			}
+		});
+		builder.addCase(submitCode.rejected, (state, action) => {
 			state.loading = false;
 			state.error = action.error.message;
 		});
