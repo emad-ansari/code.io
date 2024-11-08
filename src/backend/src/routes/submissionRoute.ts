@@ -4,72 +4,132 @@ import axios from "axios";
 
 import prisma from "../db";
 import { getAllTestcases } from "../db/testcase";
-import { getTestCaseExample } from "../db/problem";
+import { getTestCaseExample, updateProblemStatusOnUser } from "../db/problem";
+import { createSubmission } from "../db/submission";
+
 import auth, { CustomRequestObject } from "../middleware/auth";
-import { Modifiedsubmission, ProblemSubmissionDataSchema, SubmissionsResult, TestCaseReturnType } from "../@utils/types";
+import {
+	Modifiedsubmission,
+	ProblemSubmissionDataSchema,
+	SubmissionsResult,
+	TestCaseReturnType,
+} from "../@utils/types";
 import { GenerateFullProblemDefinition } from "../lib/generateFullProblemDefinition";
+
 
 const JUDGE0_API_URL = process.env.JUDGE0_API_URL; // move into types.ts file
 const JUDGE0_API_KEY = process.env.JUDGE0_API_KEY; // mmove into types.ts file
+
+
+router.get("/get-submissions", async () => {});
 
 router.post("/submit-code", auth, async (req: Request, res: Response) => {
 	const { userAuthorized } = req as CustomRequestObject;
 
 	try {
 		if (!userAuthorized) {
-			return res
-				.status(401)
-				.json({ message: "your are not authorized, please login" });
+			return res.status(401).json({
+				suceess: false,
+				message: "Unauthorized!, Please login",
+			});
 		}
+		const { userId } = req as CustomRequestObject;
 		const parseUserSubmitCode = ProblemSubmissionDataSchema.safeParse(
-			req.body
+			req.body.data
 		);
 		if (!parseUserSubmitCode.success) {
-			return res.status(401).json({ error: parseUserSubmitCode.error });
+			return res
+				.status(400)
+				.json({ success: false, message: parseUserSubmitCode.error });
 		}
 		const { problemTitle, languageId, code } = parseUserSubmitCode.data;
+
+		// get the problem to extract the problem id
 		const problem = await prisma.problem.findUnique({
 			where: {
-				title: problemTitle
+				title: problemTitle,
 			},
 			select: {
-				id: true
-			}
-		})
-		if (!problem) return res.json({
-			success: false,
-			message: "No Problem exist with title"
-		})
+				id: true,
+			},
+		});
 
+		if (!problem)
+			return res.status(400).json({
+				success: false,
+				message: "No Problem exist with title",
+			});
+
+		// get all testcases.
 		const testcases = await getAllTestcases(problem.id);
 
 		if (testcases.data === undefined || !testcases.success) {
 			return res.status(500).json({
-				error:
+				success: false,
+				message:
 					testcases?.err || "Error occured while fetching testcases",
 			});
 		}
-		// 3. create submission array
+
+		// evaluate the user code.
 		const result = await evaluateCode(testcases.data, languageId, code);
+
 		if (!result?.success) {
-			return res.status(400).json({ error: result?.msg });
+			return res.status(400).json({ success: false, error: result?.msg });
 		}
+		/*
+			- need to find the overall status of submission.
+			- if all testcase are passed: 
+				- update the problem staus on user as  Accpeted.
+				- append first three testcases to submission array
+				- and send the submission array back to frontend.
+			- else 
+				- update the problem status on user as Attempted.
+				- append the first three rejected testcases to submission array
+				- and send the submission array back to frontend.
+			- 
+		*/
+		const { data } = result;
+		console.log('code evaluation result', data)
+		const examineResult = examineSubmissionResult(data, testcases.data);
+		console.log('code examine  result');
 
-		//  save the user submission with {userId, problemId, code, languageId, time, memory, status }
-		// one user can have more than one submissons
-		// update the ProblemStaus { Attempted: if submit code and it failed, Sovled: if user paased all testcases}
+		// update the problem status on user
+		const status =
+			examineResult.overAllStatus === "Accepted" ? "Solved" : "Attempted";
+		await updateProblemStatusOnUser(userId, problem.id, status);
 
+		// save user submission in database.
+		await createSubmission({
+			userId,
+			languageId,
+			problemId: problem.id,
+			code,
+			time: data[1].time ? data[1].time : "N/A",
+			memory: data[1].memory ? `${data[1].memory}` : "N/A",
+			status: examineResult.overAllStatus,
+		});
+
+		// send the submission result to user.
 		return res.status(200).json({
-			type: "success",
-			message: "Your submissions has been accepted",
+			success: true,
+			message: "Your submission saved successfullly",
+			data: {
+				overallStatus: examineResult.overAllStatus,
+				passed_testcases: examineResult.no_of_accepted_testcases,
+				submissions: examineResult.submissions,
+			},
 		});
 		// store the user submission in databases if accepted { problemId, userId, submission status, code}
-	} catch (error: any) {}
+	} catch (error: any) {
+		console.log("SUBMIT_CODE", error.message);
+		return res.json({
+			success: false,
+			message: (error as Error).message,
+		});
+	}
 });
 
-router.get('/get-submissions', async() => {
-
-})
 
 router.post("/run-code", auth, async (req: Request, res: Response) => {
 	const { userAuthorized } = req as CustomRequestObject;
@@ -82,31 +142,33 @@ router.post("/run-code", auth, async (req: Request, res: Response) => {
 
 	try {
 		if (!userAuthorized) {
-			return res
-				.status(400)
-				.json({ success: false,  message: "your are not authorized, please login" });
+			return res.status(400).json({
+				success: false,
+				message: "your are not authorized, please login",
+			});
 		}
 
 		const { problemTitle, languageId, code } = parseUserSubmitCode.data;
 		const problem = await prisma.problem.findUnique({
 			where: {
-				title: problemTitle
+				title: problemTitle,
 			},
 			select: {
-				id: true
-			}
-		})
-		if (!problem) return res.json({
-			success: false,
-			message: "Problem with title not found"
-		})
-		console.log('control reaches here...');
+				id: true,
+			},
+		});
+		if (!problem)
+			return res.json({
+				success: false,
+				message: "Problem with title not found",
+			});
+		console.log("control reaches here...");
 
 		// here get the first three testcases and run it on jude0
 		const testcaseExamples = await getTestCaseExample(problem.id);
 		// run these testcase exmaples
 		if (testcaseExamples !== undefined) {
-			// evaluate the code
+			// evaluate the user code.
 			const result = await evaluateCode(
 				testcaseExamples,
 				languageId,
@@ -122,10 +184,12 @@ router.post("/run-code", auth, async (req: Request, res: Response) => {
 					inputs: testcaseExamples[i].inputs,
 				})
 			);
-			let passed_testcases = 0;
+
 			const { data } = result;
 
+			let passed_testcases = 0;
 			let resultStatus = "";
+			//  below logic is not correct  (if one testcase failed and another )
 			data.forEach((v) => {
 				if (v.status.description === "Accepted") passed_testcases++;
 				else if (v.status.description === "Compilation Error") {
@@ -181,8 +245,7 @@ export async function evaluateCode(
 				expected_output: problem.stdout,
 			};
 		});
-		console.log('submission array :',  submissionsArray);
-
+		console.log("submission array :", submissionsArray);
 
 		const CreateSubmissionsOptions = {
 			method: "POST",
@@ -196,10 +259,9 @@ export async function evaluateCode(
 				submissions: submissionsArray,
 			},
 		};
-		
 
 		const response = await axios.request(CreateSubmissionsOptions);
-		console.log('submission token response: ', response);
+		
 		const getSubmissionsOptions = {
 			method: "GET",
 			url: JUDGE0_API_URL,
@@ -220,7 +282,7 @@ export async function evaluateCode(
 
 		const result = await axios.request(getSubmissionsOptions);
 		const { submissions } = result.data;
-		console.log('submission result: ', submissions);
+		console.log("submission result: ", submissions);
 
 		return {
 			success: true,
@@ -237,6 +299,68 @@ export async function evaluateCode(
 	}
 }
 
+function examineSubmissionResult(
+	data: SubmissionsResult[],
+	testcases: TestCaseReturnType[]
+) {
+	// need to find the overallStatus
+	// need to find the first three accepeted/rejected testcases based on overallStaus
+	let no_of_accepted_testcases = 0;
+	let overAllStatus = "";
+	let submissions: Modifiedsubmission[] = [];
+	console.log('before for loop');
 
+	for (let i = 0; i < data.length; i++) {
+		if (data[i].status.description === "Accepted") {
+			no_of_accepted_testcases++;
+		}
+		if (data[i].status.description === "Compilation Error") {
+			overAllStatus = "Compilation Error";
+			break;
+		} else if (data[i].status.description === "Wrong Answer") {
+			if (submissions.length < 1) {
+				// put only first reject submission
+				console.log('before accessing inputs 1')
+				const formattedSubmission = {
+					...data[i],
+					inputs: testcases[i].inputs,
+				};
+				console.log('after accessing inputs 1')
+				submissions.push(formattedSubmission);
+			}
+			overAllStatus = "Wrong Answer";
+		} else if (data[i].status.description === "Time Limit Exceeded") {
+			if (submissions.length < 1) {
+				// put only first reject submission
+				console.log('before accessing inputs 2')
+				const formattedSubmission = {
+					...data[i],
+					inputs: testcases[i].inputs,
+				};
+				console.log('after accessing inputs 2')
+				submissions.push(formattedSubmission);
+			}
+			overAllStatus = "Time Limit Exceeded";
+		}
+	}
+
+	if (no_of_accepted_testcases === data.length) {
+		overAllStatus = "Accepted";
+		console.log('before accessing inputs 3')
+		const end = testcases.length > 2 ? 3 : testcases.length;
+		for (let i = 0; i < end; i++) {
+			submissions.push({
+				...data[i],
+				inputs: testcases[i].inputs,
+			});
+		}
+		console.log('after accessing inputs 3')
+	}
+	return {
+		overAllStatus,
+		submissions,
+		no_of_accepted_testcases,
+	};
+}
 
 export default router;
