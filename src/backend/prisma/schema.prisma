@@ -107,4 +107,6 @@ model Submission {
   problemId     String
   languageId    Int
   user           User @relation("SubmissionToUser", fields: [userId], references: [id], onDelete: Cascade)
+  createdAt     DateTime  @default(now())
+  updatedAt     DateTime  @updatedAt
 }
