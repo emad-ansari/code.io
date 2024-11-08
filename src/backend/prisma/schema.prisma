@@ -31,6 +31,7 @@ model User {
   updatedAt    DateTime @updatedAt
   problem      Problem[]
   problemStatus  ProblemStatus[]
+  submissions  Submission[] @relation("SubmissionToUser")
 }
 
 // Problem Schema
@@ -96,17 +97,14 @@ model TestCaseOutput {
   testcase   TestCase @relation(fields: [testcaseId], references: [id], onDelete: Cascade)
 }
 
-// enum Status {
-//   TODO
-//   SOLVED
-//   ATTEMPTED
-// }
-// enum Role {
-//   USER
-//   ADMIN
-// }
-// enum Difficulty {
-//   EASY
-//   MEDIUM
-//   HARD
-// }
+model Submission {
+  id            String   @id @default(uuid())
+  code          String
+  time          String
+  memory        String
+  status        String
+  userId        String
+  problemId     String
+  languageId    Int
+  user           User @relation("SubmissionToUser", fields: [userId], references: [id], onDelete: Cascade)
+}
