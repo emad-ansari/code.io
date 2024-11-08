@@ -28,3 +28,28 @@ export async function createSubmission (submision: UserSubmissionProps) {
         console.log("CREATE_SUBMSSSION", error.message);
     }
 }
+
+export async function getSubmissions (userId: string) {
+    try {
+        const submissions = await prisma.submission.findMany({
+            where: {
+                userId
+            },
+            select: {
+                id: true,
+                languageId: true,
+                code: true,
+                time: true,
+                memory: true,
+                status: true,
+                createdAt: true
+            }
+        })
+        return submissions;
+    }
+    catch(error: any) {
+        console.log("CREATE_SUBMSSSION", error.message);
+    }
+}
+
+
