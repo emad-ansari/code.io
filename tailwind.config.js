@@ -20,11 +20,11 @@ export default {
 			"code-btn": "#1f2937", 
 			"code-border": "#374151",
 			"code-hover": "#1f2937",
+			"code-green": '#0FA958',
+			"code-red": '#D91111',
   			darkGray: '#0D1621',
   			hover: '#334155',
-  			codeio_green: '#0FA958',
   			codeio_yellow: '#dadd32',
-  			codeio_red: '#D91111',
   			background: 'hsl(var(--background))',
   			foreground: 'hsl(var(--foreground))',
   			card: {
