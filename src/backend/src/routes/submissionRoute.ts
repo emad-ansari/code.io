@@ -25,6 +25,7 @@ router.get("/get-submissions", auth, async (req: Request, res: Response) => {
 	const { userAuthorized } = req as CustomRequestObject;
 
 	if (!userAuthorized) {
+
 		return res.status(401).json({
 			suceess: false,
 			message: "Unauthorized!, Please login",
@@ -114,9 +115,7 @@ router.post("/submit-code", auth, async (req: Request, res: Response) => {
 			- 
 		*/
 		const { data } = result;
-		console.log('code evaluation result', data)
 		const examineResult = examineSubmissionResult(data, testcases.data);
-		console.log('code examine  result');
 
 		// update the problem status on user
 		const status =
@@ -186,8 +185,7 @@ router.post("/run-code", auth, async (req: Request, res: Response) => {
 				success: false,
 				message: "Problem with title not found",
 			});
-		console.log("control reaches here...");
-
+		
 		// here get the first three testcases and run it on jude0
 		const testcaseExamples = await getTestCaseExample(problem.id);
 		// run these testcase exmaples
@@ -332,7 +330,7 @@ function examineSubmissionResult(
 	let no_of_accepted_testcases = 0;
 	let overAllStatus = "";
 	let submissions: Modifiedsubmission[] = [];
-	console.log('before for loop');
+
 
 	for (let i = 0; i < data.length; i++) {
 		if (data[i].status.description === "Accepted") {
@@ -344,24 +342,23 @@ function examineSubmissionResult(
 		} else if (data[i].status.description === "Wrong Answer") {
 			if (submissions.length < 1) {
 				// put only first reject submission
-				console.log('before accessing inputs 1')
+
 				const formattedSubmission = {
 					...data[i],
 					inputs: testcases[i].inputs,
 				};
-				console.log('after accessing inputs 1')
+
 				submissions.push(formattedSubmission);
 			}
 			overAllStatus = "Wrong Answer";
 		} else if (data[i].status.description === "Time Limit Exceeded") {
 			if (submissions.length < 1) {
 				// put only first reject submission
-				console.log('before accessing inputs 2')
+
 				const formattedSubmission = {
 					...data[i],
 					inputs: testcases[i].inputs,
 				};
-				console.log('after accessing inputs 2')
 				submissions.push(formattedSubmission);
 			}
 			overAllStatus = "Time Limit Exceeded";
@@ -370,7 +367,7 @@ function examineSubmissionResult(
 
 	if (no_of_accepted_testcases === data.length) {
 		overAllStatus = "Accepted";
-		console.log('before accessing inputs 3')
+
 		const end = testcases.length > 2 ? 3 : testcases.length;
 		for (let i = 0; i < end; i++) {
 			submissions.push({
@@ -378,7 +375,6 @@ function examineSubmissionResult(
 				inputs: testcases[i].inputs,
 			});
 		}
-		console.log('after accessing inputs 3')
 	}
 	return {
 		overAllStatus,
