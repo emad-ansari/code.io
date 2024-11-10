@@ -120,6 +120,16 @@ export interface SubmissionsResult {
 	stderr?: null;
 }
 
-export interface Modifiedsubmission extends SubmissionsResult {
+export interface Modifiedsubmission extends SubmissionsResult { // rename it as FormattedSubmission.
 	inputs: TestCaseInput[]
 }
+
+export const LNAGUAGE_MAPPING: {
+	[key: string]: { name: string; languageId: number };
+} = {
+	js: { name: "javascript", languageId: 63 },
+	cpp: { name: "cpp", languageId: 54 },
+	typescript: { name: "typescript", languageId: 74 },
+	java: { name: "java", languageId: 62 },
+	python: { name: "python", languageId: 71 },
+};
