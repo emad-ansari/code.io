@@ -1,18 +1,16 @@
 ## Todo
 
-- [ ] Fix the bug in loading booiler plate code when navigating on page problem/problemTitle/description
+- [ ] correct the implementation of role based authentication
 
-- [ ] add feature to run cpp code
-
-- [ ] User written code must persist across  page reloads.
-
-- [ ] Test CppCodeGenerator library
+- [ ] Store new problem and testcases into database system instead of file system.
 
 - [ ] add tooltip to setting and full screen icon
 
-- [ ] correct the implementation of role based authentication
+- [ ] add feature to run cpp code
 
-- [ ] Add functionality to submit the code
+- [ ] Test CppCodeGenerator library
+
+- [ ] Dsiplay react toast when logut successfully
 
 - [ ] Replace user icon with profile image option in navbar
 
@@ -20,11 +18,16 @@
 
 - [ ] Design user profile page
 
-- [ ] Store new problem and testcases into database system instead of file system.
 
 
 
 ## Completed
+- [x] Add functionality to submit the code
+
+- [x] User written code must persist across  page reloads.
+
+- [x] Fix the bug in loading booiler plate code when navigating on page problem/problemTitle/description
+
 - [x] Fix the problemId bug in runCode function in EditorSection component
 
 - [x] add getJavaScriptBoilerplateCode()
