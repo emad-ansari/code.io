@@ -13,15 +13,7 @@ datasource db {
   url      = env("DATABASE_URL")
 }
 
-// Admin model
-model Admin {
-  id        String @id @default(cuid())
-  username  String
-  email     String
-  password  String
-}
-
-// User schema
+// User model
 model User {
   id           String @id @default(cuid())
   username     String
@@ -32,9 +24,10 @@ model User {
   problem      Problem[]
   problemStatus  ProblemStatus[]
   submissions  Submission[] @relation("SubmissionToUser")
+  role         String @default("user")
 }
 
-// Problem Schema
+// Problem model
 model Problem {
   id           String @id @default(cuid())
   title        String @unique
