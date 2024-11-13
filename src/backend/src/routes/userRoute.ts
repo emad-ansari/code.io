@@ -50,12 +50,12 @@ router.post("/login", async (req: Request, res: Response) => {
 	try {
 		const { email, password } = parsedInput.data;
 		// check if user exist or not
-		const userExist = await findUser(email, password);
-		if (!userExist.success || userExist.userId === undefined) {
-			return res.json({ success: false, message: userExist.msg });
+		const user = await findUser(email, password);
+		if (!user.success || user.userId === undefined) {
+			return res.json({ success: false, message: user.msg });
 		}
-		const accessToken = generateAccessToken(userExist.userId, "user");
-		const refreshToken = generateRefreshToken(userExist.userId, "user");
+		const accessToken = generateAccessToken(user.userId, user.role);
+		const refreshToken = generateRefreshToken(user.userId, user.role);
 
 		// Set refresh token in an HTTP-only cookie
 		res.cookie("refreshToken", refreshToken, {
