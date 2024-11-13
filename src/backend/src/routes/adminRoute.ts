@@ -2,73 +2,21 @@ import { Request, Response, Router } from "express";
 const router = Router();
 import * as fs from "fs";
 import path from "path";
-import { Problem, NewTestCase, SignUpInputSchema, LoginInputSchema } from "../@utils/types";
+
+
 import { createProblem } from "../db/problem";
-import { ParseProblemDetails } from "../lib";
-import { addTestCases, createTestCases } from "../db/testcase";
-import { createBoilerplateCode } from "../db/boilerplate";
+import { addTestCases, createTestCases, TestCase } from "../db/testcase";
 import { TestCaseParser } from "../lib/testcaseParser";
-import { CustomRequestObject } from "../middleware/auth";
-import { createAdmin, findAdmin } from "../db/admin";
-import  jwt from "jsonwebtoken";
-import auth from "../middleware/auth";
-import prisma from "../db";
-import { TestCase } from "../db/testcase";
+import { ParseProblemDetails } from "../lib";
+import { createBoilerplateCode } from "../db/boilerplate";
+import auth, { CustomRequestObject } from "../middleware/auth";
+import {
+	Problem,
+	NewTestCase,
+	LNAGUAGE_MAPPING,
+} from "../@utils/types";
 
-
-router.post("/signup", async (req: Request, res: Response) => {
-	const parsedSingUpInput = SignUpInputSchema.safeParse(req.body.data);
-	if (!parsedSingUpInput.success) {
-		return res.status(400).json({ err: parsedSingUpInput.error });
-	}
-	try {
-		const { username, email, password } = parsedSingUpInput.data
-		const admin = await prisma.admin.findFirst({
-			where: {
-				email: parsedSingUpInput.data.email
-			}
-		})
-		if (admin){
-			return res.status(400).json({ msg: "Admin already exist"})
-		}
-		// create a new admin
-		const result = await createAdmin(username, email, password);
-		if (result.success){
-			return res.status(200).json({msg: result.msg})
-		}
-		return res.status(400).json({msg: result.msg})
-
-	} catch (error: any) {
-		console.error(error.message);
-		return res.status(500).json({ err: error.message });
-	}
-});
-
-router.post("/login", async (req: Request, res: Response) => {
-	const parsedLoginInput = LoginInputSchema.safeParse(req.body.data);
-	if (!parsedLoginInput.success){
-		return res.status(400).json({ err: parsedLoginInput.error});
-	}
-	try {
-		const { email, password } = parsedLoginInput.data;
-		// check if admin exist or not
-		const admin = await findAdmin(email, password);
-		if (!admin.success){
-			return res.json({ err: admin.msg});
-		}
-		// else create jwt token 
-		const token = jwt.sign({ userId: admin.adminId, role: "admin" } , process.env.JWT_ACCESS_SECRET!, { expiresIn: '1d'} )
-		console.log('generated token', token);
-		return res.status(201).json({ msg: 'login successfully' ,  adminToken: token })
-	}
-	catch(error: any){
-		console.error(error.message);
-		return res.status(500).json({err: error.message});
-	}
-});
-
-
-router.get("/new-problems", async (req: Request, res: Response) => {
+router.get("/problems", async (req: Request, res: Response) => {
 	try {
 		const ALL_PROBLEMS = getAllNewProblem();
 		return res.status(200).json({
@@ -88,33 +36,24 @@ router.get("/new-testcases", async (req: Request, res: Response) => {
 	}
 });
 
-const LNAGUAGE_MAPPING: {
-	[key: string]: { name: string; languageId: number };
-} = {
-	js: { name: "javascript", languageId: 63 },
-	cpp: { name: "cpp", languageId: 10 },
-	typescript: { name: "typescript", languageId: 74 },
-	java: { name: "java", languageId: 62 },
-	python: { name: "python", languageId: 71 },
-};
-
-
 // Save problem after review
 router.post("/save-problem", auth, async (req: Request, res: Response) => {
 	const { userAuthorized } = req as CustomRequestObject;
 	const { problemId } = req.body.data;
-	
-	if (!userAuthorized){
-		console.log('not authorized');
-		return res.status(401).json({ err: "You are not authorize, please login "})
+
+	if (!userAuthorized) {
+		console.log("not authorized");
+		return res
+			.status(401)
+			.json({ err: "You are not authorize, please login " });
 	}
 	const { role } = req as CustomRequestObject;
-	if ( role !== 'admin') return res.json({ err: " You are not admin"});
+	if (role !== "admin") return res.json({ err: " You are not admin" });
 
 	try {
 		// save the problem and testcases in database with with given problemId
-		
-		const isSaved = await  saveProblemAndTestCase(problemId);
+
+		const isSaved = await saveProblemAndTestCase(problemId);
 		if (isSaved.success) {
 			// then prepare the boilerplate code array to save them into database
 			return res
@@ -122,7 +61,6 @@ router.post("/save-problem", auth, async (req: Request, res: Response) => {
 				.json({ msg: "Problem has been saved successfully" });
 		}
 		return res.status(200).json({ error: isSaved.err });
-
 	} catch (error: any) {
 		console.error("Error: ", (error as Error).message);
 	}
@@ -132,11 +70,13 @@ router.post("/save-problem", auth, async (req: Request, res: Response) => {
 router.post("/add-testcase", auth, async (req: Request, res: Response) => {
 	const { userAuthorized } = req as CustomRequestObject;
 	const { title } = req.body;
-	if (!userAuthorized){
-		return res.status(401).json({ err: "You are not authorize, please login "})
+	if (!userAuthorized) {
+		return res
+			.status(401)
+			.json({ err: "You are not authorize, please login " });
 	}
 	const { role } = req as CustomRequestObject;
-	if ( role !== 'admin') return res.json({ err: " You are not admin"});
+	if (role !== "admin") return res.json({ err: " You are not admin" });
 
 	try {
 		saveTestCases(title); // edit this function
@@ -152,15 +92,16 @@ router.post("/add-testcase", auth, async (req: Request, res: Response) => {
 router.post("/update-problem", auth, async (req: Request, res: Response) => {
 	const { problemId, updatedProblem } = req.body;
 	const { userAuthorized } = req as CustomRequestObject;
-	if (!userAuthorized){
-		return res.status(401).json({ err: "You are not authorize, please login "})
+	if (!userAuthorized) {
+		return res
+			.status(401)
+			.json({ err: "You are not authorize, please login " });
 	}
 	const { role } = req as CustomRequestObject;
 
-	if ( role !== 'admin') return res.json({ err: " You are not admin"});
-	
+	if (role !== "admin") return res.json({ err: " You are not admin" });
+
 	try {
-	
 		const folderPath = path.join(__dirname, "contribute", "newproblem");
 		const files = fs.readdirSync(folderPath);
 
@@ -171,7 +112,10 @@ router.post("/update-problem", auth, async (req: Request, res: Response) => {
 				const problem = parser.extractProblemDetails(filePath);
 				if (problem.id === problemId) {
 					// then update the details
-					const newProblemInfo = { ...updatedProblem, userId: problem.userId };
+					const newProblemInfo = {
+						...updatedProblem,
+						userId: problem.userId,
+					};
 
 					const jsonString = JSON.stringify(newProblemInfo, null, 2);
 
@@ -199,15 +143,17 @@ router.post("/update-problem", auth, async (req: Request, res: Response) => {
 });
 
 // After testcase details if find error while reviewing
-router.get("/update-tesctcase", auth,  async (req: Request, res: Response) => {
+router.get("/update-tesctcase", auth, async (req: Request, res: Response) => {
 	const { userAuthorized } = req as CustomRequestObject;
-	if (!userAuthorized){
-		return res.status(401).json({ err: "You are not authorize, please login "})
+	if (!userAuthorized) {
+		return res
+			.status(401)
+			.json({ err: "You are not authorize, please login " });
 	}
 	const { role } = req as CustomRequestObject;
 
-	if ( role !== 'admin') return res.json({ err: " You are not admin"});
-	
+	if (role !== "admin") return res.json({ err: " You are not admin" });
+
 	const { updatedTestCase } = req.body;
 
 	try {
@@ -220,13 +166,25 @@ router.get("/update-tesctcase", auth,  async (req: Request, res: Response) => {
 				const parser = new TestCaseParser();
 				const testcase = parser.extractTestCaseDetails(filePath);
 
-				if (testcase.title === updatedTestCase.title ) {
+				if (testcase.title === updatedTestCase.title) {
 					// then update the details
-					const modifiedTestcases: TestCase[] = testcase.testcases.map(t => t.testcaseId === updatedTestCase.testcaseId ? updatedTestCase : t);
-					
-					const updatedProblemInfo  = { ... testcase, testcases: modifiedTestcases };
+					const modifiedTestcases: TestCase[] =
+						testcase.testcases.map((t) =>
+							t.testcaseId === updatedTestCase.testcaseId
+								? updatedTestCase
+								: t
+						);
 
-					const jsonString = JSON.stringify(updatedProblemInfo , null, 2);
+					const updatedProblemInfo = {
+						...testcase,
+						testcases: modifiedTestcases,
+					};
+
+					const jsonString = JSON.stringify(
+						updatedProblemInfo,
+						null,
+						2
+					);
 
 					fs.writeFile(filePath, jsonString, (err) => {
 						if (err) {
@@ -251,13 +209,11 @@ router.get("/update-tesctcase", auth,  async (req: Request, res: Response) => {
 	}
 });
 
-
-
 function getAllNewProblem(): Problem[] {
 	let problems: Problem[] = [];
-	const folderPath = `src/contribution/newproblem`
+	const folderPath = `src/contribution/newproblem`;
 	const files = fs.readdirSync(folderPath);
-	
+
 	files.forEach((file) => {
 		// Only process JSON files
 		if (path.extname(file) === ".json") {
@@ -287,11 +243,9 @@ function getAllNewProblem(): Problem[] {
 	return problems;
 }
 
-
-
 function getAllNewTestcases(): NewTestCase[] {
 	let testcases: NewTestCase[] = [];
-	const folderPath = `src/contribution/newtestcase`
+	const folderPath = `src/contribution/newtestcase`;
 	const files = fs.readdirSync(folderPath);
 	files.forEach((file) => {
 		// Only process JSON files
@@ -323,10 +277,11 @@ function getAllNewTestcases(): NewTestCase[] {
 	return testcases;
 }
 
-async function saveProblemAndTestCase(problemId: string):Promise<{success: boolean, err: string}> {
-	const folderPath = `src/contribution/newproblem`
+async function saveProblemAndTestCase(
+	problemId: string
+): Promise<{ success: boolean; err: string }> {
+	const folderPath = `src/contribution/newproblem`;
 	const files = fs.readdirSync(folderPath);
-	
 
 	for (let file of files) {
 		// Only process JSON files
@@ -340,7 +295,7 @@ async function saveProblemAndTestCase(problemId: string):Promise<{success: boole
 				const problem = parser.extractProblemDetails(filePath);
 				if (problem.id === problemId) {
 					// read the details and save it into database
-				
+
 					const newProblem = await createProblem(
 						problem.title,
 						problem.description,
@@ -378,16 +333,12 @@ async function saveProblemAndTestCase(problemId: string):Promise<{success: boole
 						{ name: "typescript", code: typescript },
 					];
 					// save boiler plate code
-					await saveBoilerplateCodes(
-						newProblem.id,
-						array
-					);
-					console.log('control reaches here...');
+					await saveBoilerplateCodes(newProblem.id, array);
+					console.log("control reaches here...");
 					return {
 						success: true,
 						err: "No error",
 					};
-					
 				}
 			} catch (err) {
 				console.error(`Error parsing JSON in file ${file}:`, err);
@@ -397,7 +348,7 @@ async function saveProblemAndTestCase(problemId: string):Promise<{success: boole
 				};
 			}
 		}
-	};
+	}
 	return {
 		success: false,
 		err: "Error while checking file",
