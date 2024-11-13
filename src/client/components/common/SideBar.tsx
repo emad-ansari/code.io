@@ -4,17 +4,19 @@ import {
 	ChevronRight,
 	BookOpenCheck,
 	CodeXml,
+    User
 } from "lucide-react";
-import { Button } from '@/client/components/ui/button'
-
+import { Button } from "@/client/components/ui/button";
+import React, { startTransition } from "react";
 
 interface SidebarProps {
 	isSidebarCollapsed: boolean;
 	onToggle: () => void;
 }
 
-export const SideBar = ({ isSidebarCollapsed, onToggle }: SidebarProps) => {
+export const SideBar: React.FC<SidebarProps> = ({ isSidebarCollapsed, onToggle }) => {
 	const sidebarItems = [
+        { icon: <User className="h-5 w-5" />, label: "Users" },
 		{ icon: <CodeXml className="h-5 w-5" />, label: "Problems" },
 		{ icon: <BookOpenCheck className="h-5 w-5" />, label: "Testcases" },
 	];
@@ -71,9 +73,9 @@ export const SideBar = ({ isSidebarCollapsed, onToggle }: SidebarProps) => {
 										} hover:bg-gray-800`}
 										title={item.label}
 										onClick={() =>
-											navigate(
-												`${item.label.toLowerCase()}`
-											)
+											startTransition(() => {
+												navigate(`${item.label.toLocaleLowerCase()}`);
+											})
 										}
 									>
 										{item.icon}
