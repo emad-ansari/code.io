@@ -12,7 +12,7 @@ import {
 
 export const DashboardHeader = () => {
 	return (
-		<header className="bg-gray-900  p-4 flex items-center justify-between">
+		<header className="bg-code-bg  p-4 flex items-center justify-between">
 			<div className="flex items-center flex-1">
 				<div className="relative w-96">
 					<Search className="absolute left-3 top-1/2 transform -translate-y-1/2 h-5 w-5 text-gray-400" />
