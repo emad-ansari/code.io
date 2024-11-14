@@ -10,7 +10,7 @@ const HomePage = () => {
 
 	return (
 		<Suspense fallback = {<p>Loading...</p>}>
-			<main className="bg-[#09090b] fixed top-0 bottom-0 left-0 right-0">
+			<main className="bg-code-bg fixed top-0 bottom-0 left-0 right-0">
 				<div className="grid grid-cols-2 fixed bottom-0 left-0 right-0 top-16">
 					<div className="pt-20 flex flex-col items-center gap-20">
 						<p className=" w-[710px] font-fugaz  text-white text-[38px] text-center tracking-[3.20px] leading-[normal]">
