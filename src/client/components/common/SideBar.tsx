@@ -25,7 +25,7 @@ export const SideBar: React.FC<SidebarProps> = ({ isSidebarCollapsed, onToggle }
 	return (
 		<div className="relative h-screen">
 			<aside
-				className={`bg-gray-900 fixed top-0 left-0 h-full  transition-all duration-300 ease-in-out  ${
+				className={`bg-code-bg fixed top-0 left-0 h-full  transition-all duration-300 ease-in-out  ${
 					isSidebarCollapsed ? "w-16" : "w-64"
 				} relative flex flex-col`}
 			>
