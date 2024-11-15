@@ -5,36 +5,46 @@ import { Editor, Monaco } from "@monaco-editor/react";
 
 import { RootState, useAppDispatch } from "@/client/app/store";
 import { fetchDefaultCode, setCode } from "@/client/features/codeEditorSlice";
+import { LNAGUAGE_MAPPING } from "@/client/lib/types";
 import OneDarkPro from "@/client/theme/oneDarkPro.json";
 
-import { LNAGUAGE_MAPPING } from "@/client/lib/types";
-
 export const CodeEditor = () => {
-	const { title } = useParams();
 	const dispatch = useAppDispatch();
+	const { title } = useParams();
 	const { language, code } = useSelector((state: RootState) => state.editor);
-
 	const { fontSize } = useSelector((state: RootState) => state.setting);
+	
+	const formattedTitle = title?.replace(/-/g, " ");
 
-	const handleEditorDidMount = (monaco: Monaco) => {
+	const onEditorMount = (monaco: Monaco) => {
 		monaco.editor.defineTheme("OneDarkPro", {
 			base: "vs-dark",
 			inherit: true,
 			...OneDarkPro,
 		});
 	};
+	
 
 	useEffect(() => {
-		if (title) {
-			const formattedTitle = title.replace(/-/g, " ");
-			dispatch(
-				fetchDefaultCode({
-					problemTitle: formattedTitle,
-					languageId: LNAGUAGE_MAPPING["java"].languageId,
-				})
-			);
+		if (formattedTitle) {
+			const savedCode = localStorage.getItem(`${title}_${language}`);
+			if (savedCode) {
+				dispatch(setCode(savedCode));
+			} else {
+				dispatch(
+					fetchDefaultCode({
+						problemTitle: formattedTitle,
+						languageId: LNAGUAGE_MAPPING[`${language}`].languageId,
+					})
+				);
+			}
 		}
 	}, [title]);
+
+	const onCodeChange = (value: string | undefined) => {
+		localStorage.setItem(`${title}_${language}`,  value!);
+		dispatch(setCode(value!));
+	}
 
 	return (
 		<Editor
@@ -66,9 +76,10 @@ export const CodeEditor = () => {
 				matchBrackets: "always",
 				autoIndent: "full",
 			}}
-			beforeMount={handleEditorDidMount}
+			beforeMount={onEditorMount}
 			className="rounded-lg"
-			onChange={(value) => dispatch(setCode(value!))}
+			onChange={(value) =>  onCodeChange(value)}
+
 		/>
 	);
 };
