@@ -65,7 +65,7 @@ const ProblemsetPage = () => {
 
 	return (
 		<div
-			className=" flex flex-col gap-8 bg-code-bg items-center pb-20 mt-[63px] fixed top-0 bottom-0 left-0 right-0"
+			className=" flex flex-col gap-8 bg-code-bg items-center pb-20 mt-[50chpx] fixed top-0 bottom-0 left-0 right-0"
 			onClick={(e: React.SyntheticEvent<EventTarget>) =>
 				handleDropDown(e)
 			}
@@ -93,7 +93,7 @@ const ProblemsetPage = () => {
 	);
 };
 
-const CustomPagination = memo(() => {
+export const CustomPagination = memo(() => {
 	const { totalPages } = useSelector((state: RootState) => state.problem);
 	const [searchParams] = useSearchParams();
 	const page = Number(searchParams.get("page")) || 1;

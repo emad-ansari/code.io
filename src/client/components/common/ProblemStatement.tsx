@@ -46,8 +46,8 @@ export default function ProblemStatement() {
 									difficulty == "Easy"
 										? "text-[#4ac3ab]"
 										: difficulty == "Medium"
-										? "text-YELLOW"
-										: "text-RED"
+										? "text-codeio_yellow"
+										: "text-codeio_red"
 								} `}
 							>
 								{difficulty}
@@ -73,7 +73,7 @@ export default function ProblemStatement() {
 											<Contrast
 												size={16}
 												absoluteStrokeWidth
-												className="text-YELLOW"
+												className="text-codeio_yellow"
 											/>
 										) : null}
 									</span>

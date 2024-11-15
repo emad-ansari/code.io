@@ -51,7 +51,7 @@ export function EditorTopBar() {
 			<DropDownMenu 
 				items={LANGUAGES}
 				placeholder= {language}
-				className="bg-gray-800 w-28 h-9"
+				className="bg-gray-800 w-28 h-9 border-none"
 				onValueChange={onLanguageChange}
 			/>
 			<div className="flex flex-row gap-2 items-center ">
