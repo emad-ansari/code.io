@@ -23,7 +23,7 @@ export const SideBar: React.FC<SidebarProps> = ({ isSidebarCollapsed, onToggle }
 	const navigate = useNavigate();
 
 	return (
-		<div className="relative h-screen">
+		<div className="relative h-screen border border-r-slate-800 border-t-transparent border-l-transparent border-b-transparent box-border">
 			<aside
 				className={`bg-code-bg fixed top-0 left-0 h-full  transition-all duration-300 ease-in-out  ${
 					isSidebarCollapsed ? "w-16" : "w-64"
@@ -51,7 +51,7 @@ export const SideBar: React.FC<SidebarProps> = ({ isSidebarCollapsed, onToggle }
 							variant="ghost"
 							size="icon"
 							onClick={() => onToggle()}
-							className="text-gray-400 hover:text-gray-100 hover:bg-gray-800 "
+							className="text-gray-400 rounded-full hover:text-gray-100 hover:bg-gray-800 "
 							aria-label="Collapse sidebar"
 						>
 							<ChevronLeft className="h-4 w-4" />
@@ -59,7 +59,7 @@ export const SideBar: React.FC<SidebarProps> = ({ isSidebarCollapsed, onToggle }
 					)}
 				</div>
 
-				<div className="flex-1 overflow-y-auto">
+				<div className="flex-1 overflow-y-auto mt-6">
 					<nav className="px-2 py-4">
 						<ul className="space-y-2">
 							{sidebarItems.map((item, index) => (
