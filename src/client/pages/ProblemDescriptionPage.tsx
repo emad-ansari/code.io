@@ -1,4 +1,5 @@
 import { useSelector } from "react-redux";
+import { ToastContainer } from "react-toastify";
 import Split from "react-split";
 
 import { RootState } from "@/client/app/store";
@@ -8,13 +9,14 @@ import { ProblemNavBar } from "@/client/components/common/ProblemNavBar";
 
 const ProblemDescriptionPage = () => {
 	const { isFullScreen } = useSelector((state: RootState) => state.editor);
-	
+
 	return (
 		<>
+			<ToastContainer />
 			<ProblemNavBar isProbleDescriptioPage={true} />
 			<Split
-				className={`flex flex-row bg-PRIMARY p-2 fixed top-0 bottom-0 left-0 right-0 transition-all duration-500 ease-in-out ${
-					isFullScreen ? "z-50 " : "mt-[64px]"
+				className={`flex flex-row bg-code-bg p-2 fixed top-0 bottom-0 left-0 right-0 transition-all duration-500 ease-in-out ${
+					isFullScreen ? "z-50 " : "mt-[50px]"
 				}`}
 				sizes={[45, 55]}
 				gutterSize={6}
@@ -27,4 +29,4 @@ const ProblemDescriptionPage = () => {
 		</>
 	);
 };
-export default  ProblemDescriptionPage;
+export default ProblemDescriptionPage;
