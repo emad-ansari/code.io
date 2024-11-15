@@ -7,15 +7,14 @@ import { RootState, useAppDispatch } from "@/client/app/store";
 import { ChevronDown, ChevronUp, CloudUpload, Play } from "lucide-react";
 import { Button } from "@/client/components/ui/button";
 import { ConsoleSkeleton } from "@/client/components/skeletons/ConsoleSkeleton";
-
 import {
 	Tooltip,
 	TooltipContent,
 	TooltipProvider,
 	TooltipTrigger,
 } from "@/client/components/ui/tooltip";
-
-import { runCode } from "@/client/features/codeEditorSlice";
+import { Icons } from "@/client/components/ui/icons";
+import { runCode, submitCode } from "@/client/features/codeEditorSlice";
 import { CodeEditor } from "./CodeEditor";
 import { LNAGUAGE_MAPPING } from "@/client/lib/types";
 import { EditorTopBar } from "./EditorTopBar";
@@ -53,6 +52,26 @@ export const EditorSection = () => {
 			})
 		);
 	};
+
+	const onSubmitCode = () => {
+		if (!isLogin) return;
+
+		if (!title) return;
+
+		if (!isConsoleOpen) {
+			setSplitRatio([60, 40]);
+		}
+		setIsConsoleOpen((prevState) => !prevState);
+		
+		dispatch(
+			submitCode({
+				problemTitle: formattedTitle,
+				languageId: LNAGUAGE_MAPPING[`${language}`].languageId,
+				code: code,
+			})
+		);
+
+	}
 
 	return (
 		<section>
@@ -137,7 +156,7 @@ export const EditorSection = () => {
 								<Tooltip>
 									<TooltipTrigger asChild>
 										<Button
-											// variant={'outline'}
+											onClick={onSubmitCode}
 											className=" text-white justify-center flex gap-2 items-center rounded-md  border border-[#334155]"
 										>
 											<CloudUpload size={16} />
@@ -197,25 +216,3 @@ function OutputConsole() {
 		</div>
 	);
 }
-
-
-
-// This component is used for the loading spinner
-export const Icons = {
-	spinner: (props: React.SVGProps<SVGSVGElement>) => (
-		<svg
-			xmlns="http://www.w3.org/2000/svg"
-			width="30"
-			height="30"
-			viewBox="0 0 24 24"
-			fill="none"
-			stroke="currentColor"
-			strokeWidth="2"
-			strokeLinecap="round"
-			strokeLinejoin="round"
-			{...props}
-		>
-			<path d="M21 12a9 9 0 1 1-6.219-8.56" />
-		</svg>
-	),
-};
