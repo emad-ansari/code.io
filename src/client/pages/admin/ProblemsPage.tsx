@@ -1,7 +1,9 @@
-import { Button } from "@/client/components/ui/button";
+import { useNavigate } from "react-router-dom";
 import { BarChart, Plus, Star, Ellipsis, Search } from "lucide-react";
-import { CustomPagination } from "@/client/pages/ProblemsetPage";
 
+import { Button } from "@/client/components/ui/button";
+import { CustomPagination } from "@/client/pages/ProblemsetPage";
+import { DropDownMenu } from "@/client/components/ui/DropDownMenu";
 import {
 	Table,
 	TableBody,
@@ -10,8 +12,9 @@ import {
 	TableHeader,
 	TableRow,
 } from "@/client/components/ui/table";
-import { DropDownMenu } from "@/client/components/ui/DropDownMenu";
 import { DIFFICULTY } from "@/client/lib/types";
+import { startTransition } from "react";
+
 const problems = [
 	{
 		id: 1,
@@ -49,6 +52,7 @@ const problems = [
 ];
 
 const ProblemsPage = () => {
+	const navigate = useNavigate();
 	function filterProblems() {
 		throw new Error("Function not implemented.");
 	}
@@ -57,7 +61,14 @@ const ProblemsPage = () => {
 		<main>
 			<div className="flex items-center justify-between">
 				<h1 className="text-3xl font-semibold m-0">All Problems</h1>
-				<Button className="flex gap-2 bg-[#29324a]  border border-transparent hover:border-[#307dd9] box-border ">
+				<Button
+					className="flex gap-2 bg-[#29324a]  border border-transparent hover:border-[#307dd9] box-border "
+					onClick={() =>
+						startTransition(() => {
+							navigate('../new-problem');
+						})
+					}
+				>
 					<Plus size={18} />
 					<span>Add New Problem</span>
 				</Button>
@@ -158,7 +169,7 @@ const ProblemsPage = () => {
 					</TableBody>
 				</Table>
 			</div>
-			<div className="flex flex-row items-center justify-end mt-5">
+			<div className="flex flex-row items-center justify-start mt-5">
 				<div>
 					<CustomPagination />
 				</div>
