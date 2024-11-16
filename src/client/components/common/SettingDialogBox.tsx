@@ -3,7 +3,6 @@ import {
 	Dialog,
 	DialogContent,
 	DialogDescription,
-	DialogFooter,
 	DialogHeader,
 	DialogTitle,
 	DialogTrigger,
@@ -35,7 +34,7 @@ export default function SettingDialogBox() {
 					<Settings size={16} className="text-white" />
 				</Button>
 			</DialogTrigger>
-			<DialogContent className="sm:max-w-[425px] bg-darkGray text-white border border-BORDER">
+			<DialogContent className="sm:max-w-[425px] bg-darkGray text-white border border-codeio_border">
 				<DialogHeader>
 					<DialogTitle>Editor Playground Setting</DialogTitle>
 					<DialogDescription>
@@ -61,7 +60,7 @@ export default function SettingDialogBox() {
 									className="text-white"
 								/>
 							</SelectTrigger>
-							<SelectContent className="bg-darkGray text-white border border-BORDER">
+							<SelectContent className="bg-darkGray text-white border border-codeio_border">
 								<SelectGroup className="">
 									{FONT_SIZES.map((item, index) => {
 										return (
@@ -91,7 +90,7 @@ export default function SettingDialogBox() {
 									className="texxt-white"
 								/>
 							</SelectTrigger>
-							<SelectContent className="bg-darkGray text-white border border-BORDER">
+							<SelectContent className="bg-darkGray text-white border border-codeio_border">
 								<SelectGroup className="">
 									{EDITOR_THEMES.map((item, index) => {
 										return (
@@ -109,9 +108,6 @@ export default function SettingDialogBox() {
 						</Select>
 					</div>
 				</div>
-				{/* <DialogFooter>
-					<Button type="submit">Save changes</Button>
-				</DialogFooter> */}
 			</DialogContent>
 		</Dialog>
 	);
