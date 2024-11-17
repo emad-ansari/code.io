@@ -5,9 +5,10 @@ import {
 	Problem,
 	APIResponse,
 	ProblemDetail,
-} from "../lib/types";
-import { api } from "../api/client";
-import { RootState } from "../app/store";
+	UserSubmission,
+} from "@/client/lib/types";
+import { api } from "@/client/api/client";
+import { RootState } from "@/client/app/store";
 
 export const problemSliceInitialState: ProblemState = {
 	problems: [],
@@ -21,6 +22,7 @@ export const problemSliceInitialState: ProblemState = {
 		problemNo: 0,
 		testcaseExamples: [],
 	},
+	userSubmissions: [], 
 	error: null,
 	loading: false,
 };
@@ -46,6 +48,7 @@ export const fetchProblem = createAsyncThunk(
 				},
 			});
 			const data = res.data;
+			console.log(data);
 
 			return data;
 		} catch (error: any) {
@@ -72,6 +75,21 @@ export const fetchProblemDetail = createAsyncThunk<
 	}
 });
 
+export const fetchUserSubmissions = createAsyncThunk(
+	"/problem/fetchUserSubmissions",
+	async (_, thunkAPI) => {
+		try {
+			const response = await api.get<APIResponse<UserSubmission[]>>("/submission/get-submissions");
+			const data = response.data;
+			return data;
+		} catch (error: any) {
+			return thunkAPI.rejectWithValue(
+				error.message || "Error occurred while fetching default code."
+			);
+		}
+	}
+);
+
 export const problemSlice = createSlice({
 	name: "problem",
 	initialState: problemSliceInitialState,
@@ -92,13 +110,12 @@ export const problemSlice = createSlice({
 			console.log(action.payload);
 		});
 		builder.addCase(fetchProblem.fulfilled, (state, action) => {
-			const { success, data, message } = action.payload;
+			const { success, data } = action.payload;
 			if (success && data) {
 				const { problems, totalPages } = data;
 				state.problems = problems;
 				state.totalPages = totalPages;
 			}
-			console.log("fetch problem message: ", message);
 		});
 		builder.addCase(fetchProblem.rejected, (_, action) => {
 			console.log(action.payload);
@@ -108,7 +125,6 @@ export const problemSlice = createSlice({
 		});
 		builder.addCase(fetchProblemDetail.fulfilled, (state, action) => {
 			const { success, data } = action.payload;
-			console.log("one problem detail: ", data);
 			if (success && data) {
 				state.problemDetail = data;
 				state.loading = false;
@@ -117,6 +133,13 @@ export const problemSlice = createSlice({
 		builder.addCase(fetchProblemDetail.rejected, (state, action) => {
 			state.loading = false;
 			console.log(action.payload);
+		});
+		builder.addCase(fetchUserSubmissions.fulfilled, (state, action) => {
+			const { success, data } = action.payload;
+			if (success && data !== undefined) {
+				state.userSubmissions = data;
+			}
+			console.log('user submissions api response: ', data);
 		});
 	},
 });
