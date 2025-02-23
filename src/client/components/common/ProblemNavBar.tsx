@@ -1,12 +1,18 @@
 import React, { startTransition } from "react";
 import { useNavigate, useLocation } from "react-router-dom";
 import { useSelector } from "react-redux";
-import { CircleUserRound, CodeXml } from "lucide-react";
+import {
+	AlignJustify,
+	CodeXml,
+	LogOut,
+	Settings,
+	Trophy,
+	UserPen,
+} from "lucide-react";
 
 import { useAppDispatch, RootState } from "@/client/app/store";
 import { logOut } from "@/client/features/authSlice";
 import { Button } from "@/client/components/ui/button";
-
 
 import {
 	DropdownMenu,
@@ -15,9 +21,45 @@ import {
 	DropdownMenuTrigger,
 } from "../ui/dropdown-menu";
 
+import {
+	Avatar,
+	AvatarFallback,
+	AvatarImage,
+} from "@/client/components/ui/avatar";
+
+import {
+	Sheet,
+	SheetContent,
+	SheetHeader,
+	SheetTrigger,
+} from "@/client/components/ui/sheet";
+
 interface ProbelemNaveBarProps {
 	isProbleDescriptioPage: boolean;
 }
+
+const drawerItems = [
+	{
+		name: "Profile",
+		icon: <UserPen className = "w-5 h-5"/>,
+	},
+	{
+		name: "Problems",
+		icon: <CodeXml className = "w-5 h-5"/>,
+	},
+	{
+		name: "Contest",
+		icon: <Trophy className = "w-5 h-5"/>,
+	},
+	{
+		name: "Settings",
+		icon: <Settings className = "w-5 h-5"  />,
+	},
+	{
+		name: "Logout",
+		icon: <LogOut className = "w-5 h-5"/>,
+	},
+];
 export const ProblemNavBar: React.FC<ProbelemNaveBarProps> = ({
 	isProbleDescriptioPage,
 }) => {
@@ -44,7 +86,7 @@ export const ProblemNavBar: React.FC<ProbelemNaveBarProps> = ({
 			href: "/problemset",
 			active: location.pathname === "/problemset",
 		},
-		{
+		{ 
 			label: "Contests",
 			href: "/contests",
 			active: location.pathname === "/contests",
@@ -54,87 +96,77 @@ export const ProblemNavBar: React.FC<ProbelemNaveBarProps> = ({
 			href: "/standings",
 			active: location.pathname === "/standings",
 		},
-		{
-			label: "Contribution",
-			href: "/contribution",
-			active: location.pathname === "/contribution",
-		},
 	];
 
 	return (
 		<>
-			{!isAdminPage && (
-				<nav className="flex flex-row justify-between items-center  bg-code-bg fixed top-0 left-0 right-0 z-50 h-14">
-					<div className="flex-none items-center justify-start w-96 pl-5">
-						<div
-							className="flex space-x-2 items-center cursor-pointer"
-							onClick={() => {
-								startTransition(() => {
-									navigate("/");
-								});
-							}}
-						>
-							<CodeXml
-								strokeWidth={3}
-								size={28}
-								className=" text-white"
-							/>
-							<span className="text-2xl text-white font-medium font-fugaz">
-								Code.io
-							</span>
-						</div>
+			<nav className="flex justify-between items-center  bg-code-bg z-50  h-16 w-full border-b border-slate-800 fixed ">
+				<div className="flex flex-1 items-center justify-start w-60 md:pl-20 pl-6 ">
+					<div
+						className="flex space-x-2 items-center cursor-pointer"
+						onClick={() => {
+							startTransition(() => {
+								navigate("/");
+							});
+						}}
+					>
+						<CodeXml
+							strokeWidth={3}
+							size={28}
+							className=" text-white"
+						/>
+						<span className="text-2xl text-white font-medium font-fugaz">
+							Code.io
+						</span>
 					</div>
-					<div className="flex flex-1 flex-row items-center  text-white">
-						{!isProbleDescriptioPage && (
-							<div className="bg-code-bg flex items-center h-11 rounded-full  shadow-md border border-code-border text-sm gap-5 px-5">
-								{navItems.map((item) => (
-									<a
-										key={item.href}
-										href={item.href}
-										onClick={(e) =>
-											onNavigation(e, item.href)
-										}
-										className={`text-sm font-dmMono px-4 py-2 rounded-full hover:bg-code-hover ${
-											item.active && "bg-code-hover"
-										}`}
-									>
-										{item.label}
-									</a>
-								))}
+				</div>
+				<div className="flex flex-1  items-center  text-white ">
+					<div className="hidden md:flex items-center h-11 rounded-full shadow-md bg-code-bg  border border-code-border text-sm gap-5 px-5 ">
+						{navItems.map((item) => (
+							<a
+								key={item.href}
+								href={item.href}
+								onClick={(e) => onNavigation(e, item.href)}
+								className={`text-sm font-dmMono px-4 py-2 rounded-full hover:bg-code-hover ${
+									item.active && "bg-code-hover"
+								}`}
+							>
+								{item.label}
+							</a>
+						))}
+					</div>
+				</div>
+				<div className="flex flex-1">
+					{!isLogin ? (
+						<div className="flex flex-1 justify-end pr-5">
+							<div className="flex gap-2 items-center md:gap-3 ">
+								<Button
+									className=" hidden md:block border border-slate-800 duration-300 hover:shadow-md hover:shadow-gray-600 transitio"
+									onClick={() =>
+										navigate("/login", {
+											state: { from: location },
+										})
+									}
+								>
+									LogIn
+								</Button>
+								<Button
+									className=" border-[1px] border-slate-800 duration-300 hover:shadow-md hover:shadow-gray-600 transition"
+									onClick={() => navigate("/signup")}
+								>
+									Signup
+								</Button>
 							</div>
-						)}
-						{!isLogin ? (
-							<div className="flex flex-1 justify-end pr-5">
-								<div className="flex gap-3 items-center">
-									<Button
-										variant="ghost"
-										className=" hover:bg-darkGray  hover:text-white  border border-code-border"
-										onClick={() =>
-											navigate("/login", {
-												state: { from: location },
-											})
-										}
-									>
-										LogIn
-									</Button>
-									<Button
-										variant="ghost"
-										className=" hover:bg-darkGray  hover:text-white  border border-code-border"
-										onClick={() => navigate("/signup")}
-									>
-										Signup
-									</Button>
-								</div>
-							</div>
-						) : (
-							<div className="flex flex-1 justify-end pr-5">
+						</div>
+					) : (
+						<div className="flex flex-1 justify-end md:pr-10 pr-4">
+							<div className="hidden md:block cursor-pointer">
 								<DropdownMenu>
 									<DropdownMenuTrigger asChild>
-										<CircleUserRound
-											size={40}
-											strokeWidth={1}
-											className="cursor-pointer"
-										/>
+										<Avatar>
+											<AvatarImage src="https://assets.leetcode.com/users/emad-ansari/avatar_1728627541.png" />
+											<AvatarFallback>CN</AvatarFallback>
+										</Avatar>
 									</DropdownMenuTrigger>
 									<DropdownMenuContent
 										align="end"
@@ -154,10 +186,75 @@ export const ProblemNavBar: React.FC<ProbelemNaveBarProps> = ({
 									</DropdownMenuContent>
 								</DropdownMenu>
 							</div>
-						)}
-					</div>
-				</nav>
-			)}
+							<div className="md:hidden">
+								<Sheet>
+									<SheetTrigger>
+										<Button
+											size={"icon"}
+											className="rounded-full hover:bg-slate-800 "
+										>
+											<AlignJustify />
+										</Button>
+									</SheetTrigger>
+									<SheetContent
+										side="top"
+										className="bg-slate-800 border-none"
+									>
+										<SheetHeader>
+											<div className="flex items-center gap-4 mb-5">
+												<div className="">
+													<Avatar className="bg-red-500 w-14 h-14">
+														<AvatarImage src="https://assets.leetcode.com/users/emad-ansari/avatar_1728627541.png" />
+														<AvatarFallback>
+															CN
+														</AvatarFallback>
+													</Avatar>
+												</div>
+
+												<span className="text-white text-lg font-medium">
+													Mohammad Emad{" "}
+												</span>
+											</div>
+
+											<div className="flex flex-col gap-3 ">
+												{drawerItems.map((item) => {
+													return (
+														<div key = {item.name} className="flex items-center gap-6 text-white hover:bg-slate-700 rounded-lg px-3 py-2 cursor-pointer transition duration-200
+														">
+															{item.icon}
+															<span>{item.name}</span>
+														</div>
+													);
+												})}
+											</div>
+										</SheetHeader>
+									</SheetContent>
+								</Sheet>
+							</div>
+						</div>
+					)}
+				</div>
+			</nav>
 		</>
 	);
 };
+
+// <div className="flex flex-1 justify-end pr-5">
+// 	<DropdownMenu>
+// 		<DropdownMenuTrigger asChild>
+// 			<Button size={"icon"} className="rounded-full hover:bg-slate-800 ">
+// 				<AlignJustify />
+// 			</Button>
+// 		</DropdownMenuTrigger>
+// 		<DropdownMenuContent
+// 			align="end"
+// 			className="bg-gray-900 text-white border border-codeio_border"
+// 		>
+// 			<DropdownMenuItem>Profile</DropdownMenuItem>
+// 			<DropdownMenuItem>Settings</DropdownMenuItem>
+// 			<DropdownMenuItem onClick={() => dispatch(logOut())}>
+// 				Logout
+// 			</DropdownMenuItem>
+// 		</DropdownMenuContent>
+// 	</DropdownMenu>
+// </div>;
