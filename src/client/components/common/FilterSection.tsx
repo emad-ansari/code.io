@@ -65,20 +65,22 @@ export const FilterSection = memo(() => {
 	};
 
 	return (
-		<nav className="flex-col w-full z-0 ">
-			<div className="flex w-full items-center justify-between">
-				<h2 className="text-4xl font-bold text-white">
-					Coding Challenges
+		<nav className="flex-col  w-full z-0 ">
+			<div className="flex flex-wrap gap-8 w-full items-center justify-between">
+				<h2 className="text-4xl font-bold text-white flex items-center gap-3">
+					Coding 
+					<span className="text-[#eb8069]">Challenges</span>
+					
 				</h2>
 				<div className="flex space-x-5">
 					<DropDownMenu
-						className="bg-code-bg w-32 h-10 text-md  border border-code-border"
+						className="bg-code-bg w-32 h-10 text-md  border-[1.5px] border-slate-800"
 						placeholder="Difficulty"
 						items={DIFFICULTY}
 						onValueChange={filterProblems}
 					/>
 					<DropDownMenu
-						className="bg-code-bg w-32 h-10 text-md border border-code-border"
+						className="bg-code-bg w-32 h-10 text-md border-[1.5px] border-slate-800"
 						placeholder="Status"
 						items={STATUS}
 						onValueChange={handleStatusFilter}
@@ -89,7 +91,7 @@ export const FilterSection = memo(() => {
 				<Search strokeWidth={1.25} className="absolute top-1/4 left-3 w-5 h-5"/>
 				<input
 					type="text"
-					className="bg-code-bg rounded-full outline-none px-10 py-2.5 text-sm w-full placeholder-[#484848] focus:ring ring-slate-800 border border-[#334155] "
+					className="bg-code-bg rounded-full outline-none px-10 py-2.5 text-sm w-full placeholder-[#484848] duration-300 hover:shadow-lg hover:shadow-gray-600 transition  border-[1.5px] border-slate-800 "
 					placeholder="Filter problems..."
 					onChange={(e) => setSearchQuery(e.target.value)}
 				/>

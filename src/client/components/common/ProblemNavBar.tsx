@@ -101,7 +101,7 @@ export const ProblemNavBar: React.FC<ProbelemNaveBarProps> = ({
 	return (
 		<>
 			<nav className="flex justify-between items-center  bg-code-bg z-50  h-16 w-full border-b border-slate-800 fixed ">
-				<div className="flex flex-1 items-center justify-start w-60 md:pl-20 pl-6 ">
+				<div className="flex flex-1 items-center justify-start w-60 md:pl-16 pl-6 ">
 					<div
 						className="flex space-x-2 items-center cursor-pointer"
 						onClick={() => {

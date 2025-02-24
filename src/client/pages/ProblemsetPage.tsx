@@ -65,19 +65,19 @@ const ProblemsetPage = () => {
 
 	return (
 		<div
-			className=" flex flex-col gap-8 bg-code-bg items-center pb-20 mt-[50chpx] fixed top-0 bottom-0 left-0 right-0"
+			className=" flex flex-col gap-8 bg-code-bg items-center pt-16 justify-center"
 			onClick={(e: React.SyntheticEvent<EventTarget>) =>
 				handleDropDown(e)
 			}
 		>
-			<div className="flex flex-col gap-8 items-center pt-10 pb-10 w-full  overflow-y-scroll fixed top-0  left-0 right-0 bottom-0 mt-[64px]">
-				<div className="flex flex-col gap-8 w-[900px] ">
+			<div className="flex flex-col gap-8 items-center pt-20 px-6 md:px-44 w-full h-full  overflow-y-scroll  ">
+				<div className="flex flex-col gap-8 w-full">
 					<FilterSection />
 					<Suspense fallback={<ProblemListSkeleton />}>
 						<Outlet />
 					</Suspense>
 				</div>
-				<div className="flex items-center w-[900px] justify-between">
+				<div className="flex items-center w-full justify-between">
 					<DropDownMenu 
 						items={problems_per_page}
 						placeholder="10 / page"
@@ -121,7 +121,7 @@ export const CustomPagination = memo(() => {
 						</PaginationLink>
 					</PaginationItem>
 				))}
-				<PaginationItem>
+				<PaginationItem className="hidden md:block">
 					<PaginationEllipsis className=" text-white " />
 				</PaginationItem>
 				<PaginationItem>

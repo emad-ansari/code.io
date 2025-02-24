@@ -23,7 +23,7 @@ export const DropDownMenu: React.FC<DropDownMenuProps> = ({ items, placeholder, 
 			<SelectTrigger className={cn("text-white", className)}>
 				<SelectValue placeholder={placeholder} className="text-white" />
 			</SelectTrigger>
-			<SelectContent className={cn("bg-code-bg text-white border border-code-border")}>
+			<SelectContent className={cn("bg-code-bg text-white border-[1.5px] border-slate-800")}>
 				<SelectGroup >
 					{items.map((item, index) => {
 						return (

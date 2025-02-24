@@ -13,10 +13,111 @@ import {
 	TableHeader,
 	TableRow,
 } from "@/client/components/ui/table";
+const problems = [
+	{
+		id: "1",
+		title: "Two sum",
+		difficulty: "Easy",
+		problemNo: 1,
+		problemStatus: {
+			status: "Solved",
+		},
+		likes: 12,
+		submissions: 100,
+	},
+	{
+		id: "2",
+		title: "Two sum",
+		difficulty: "Hard",
+		problemNo: 2,
+		problemStatus: {
+			status: "Attempted",
+		},
+		likes: 12,
+		submissions: 100,
+	},
+	{
+		id: "3",
+		title: "Two sum",
+		difficulty: "Medium",
+		problemNo: 3,
+		problemStatus: {
+			status: "Todo",
+		},
+		likes: 12,
+		submissions: 100,
+	},
+	{
+		id: "4",
+		title: "Two sum",
+		difficulty: "Medium",
+		problemNo: 3,
+		problemStatus: {
+			status: "Todo",
+		},
+		likes: 12,
+		submissions: 100,
+	},
+	{
+		id: "5",
+		title: "Two sum",
+		difficulty: "Medium",
+		problemNo: 3,
+		problemStatus: {
+			status: "Todo",
+		},
+		likes: 12,
+		submissions: 100,
+	},
+	{
+		id: "6",
+		title: "Two sum",
+		difficulty: "Medium",
+		problemNo: 3,
+		problemStatus: {
+			status: "Todo",
+		},
+		likes: 12,
+		submissions: 100,
+	},
+	{
+		id: "7",
+		title: "Two sum",
+		difficulty: "Medium",
+		problemNo: 3,
+		problemStatus: {
+			status: "Todo",
+		},
+		likes: 12,
+		submissions: 100,
+	},
+	{
+		id: "8",
+		title: "Two sum",
+		difficulty: "Medium",
+		problemNo: 3,
+		problemStatus: {
+			status: "Todo",
+		},
+		likes: 12,
+		submissions: 100,
+	},
+	{
+		id: "9",
+		title: "Two sum",
+		difficulty: "Medium",
+		problemNo: 3,
+		problemStatus: {
+			status: "Todo",
+		},
+		likes: 12,
+		submissions: 100,
+	},
+]
 
 const ProblemList = memo(() => {
 	const navigate = useNavigate();
-	const { problems } = useSelector((state: RootState) => state.problem);
+	// const { problems } = useSelector((state: RootState) => state.problem);
 
 	const onNavigate = (id: string, title: string) => {
 		const formattedTitle = title.replace(/ /g, "-");
@@ -29,9 +130,9 @@ const ProblemList = memo(() => {
 
 	return (
 		<div className="flex flex-col gap-2">
-			<Table className=" overflow-hidden rounded-lg bg-code-bg-secondary border border-code-border">
+			<Table className="overflow-hidden rounded-lg border-[1.5px] border-slate-800">
 				<TableHeader>
-					<TableRow className="border-b border-code-border  hover:bg-gray-750">
+					<TableRow className="border-b-[1.5px] border-slate-800 bg-slate-800  hover:bg-gray-750">
 						<TableHead className="text-gray-300">Status</TableHead>
 						<TableHead className="text-gray-300">Title</TableHead>
 						<TableHead className="text-gray-300 text-center ">
@@ -45,11 +146,11 @@ const ProblemList = memo(() => {
 						</TableHead>
 					</TableRow>
 				</TableHeader>
-				<TableBody className = 'border border-code-border'>
+				<TableBody className = 'border-[1.5px] border-slate-800'>
 					{problems.map((problem) => (
 						<TableRow
 							key={problem.id}
-							className="border-b border-gray-700 hover:bg-gray-750"
+							className="border-b-[1.5px] border-slate-800 hover:bg-gray-750"
 						>
 							<TableCell>
 								{problem.problemStatus?.status === "Solved" ? (
