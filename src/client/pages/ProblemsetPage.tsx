@@ -60,32 +60,31 @@ const ProblemsetPage = () => {
 	const onProblemPerPageChange = (value: string) => {
 		const problemPerPage = Number(value.split(" ")[0]);
 		dispatch(setPageSize(problemPerPage));
-	}
-	
+	};
 
 	return (
 		<div
-			className=" flex flex-col gap-8 bg-code-bg items-center pt-16 justify-center"
+			className=" flex flex-col gap-8 bg-code-bg items-center pt-16 justify-center h-screen"
 			onClick={(e: React.SyntheticEvent<EventTarget>) =>
 				handleDropDown(e)
 			}
 		>
-			<div className="flex flex-col gap-8 items-center pt-20 px-6 md:px-44 w-full h-full  overflow-y-scroll  ">
-				<div className="flex flex-col gap-8 w-full">
+			<div className="flex flex-col gap-8 items-center pt-20 px-6 md:px-44 w-full h bg-code-bg">
+				<div className="flex flex-col gap-8 w-full ">
 					<FilterSection />
 					<Suspense fallback={<ProblemListSkeleton />}>
 						<Outlet />
 					</Suspense>
-				</div>
-				<div className="flex items-center w-full justify-between">
-					<DropDownMenu 
-						items={problems_per_page}
-						placeholder="10 / page"
-						className="bg-code-bg w-36 h-10 border border-code-border"
-						onValueChange={onProblemPerPageChange}
-					/>
-					<div className="flex flex-row justify-end">
-						<CustomPagination />
+					<div className="flex items-center w-full justify-between ">
+						<DropDownMenu
+							items={problems_per_page}
+							placeholder="10 / page"
+							className="bg-code-bg w-36 h-10 border border-code-border"
+							onValueChange={onProblemPerPageChange}
+						/>
+						<div className="flex flex-row justify-end">
+							<CustomPagination />
+						</div>
 					</div>
 				</div>
 			</div>
