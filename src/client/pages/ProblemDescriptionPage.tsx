@@ -5,19 +5,17 @@ import Split from "react-split";
 import { RootState } from "@/client/app/store";
 import { ProblemDescriptionSection } from "@/client/components/common/ProblemDescriptionSection";
 import { EditorSection } from "@/client/components/common/EditorSection";
-import { ProblemNavBar } from "@/client/components/common/ProblemNavBar";
+
 
 const ProblemDescriptionPage = () => {
-	const { isFullScreen } = useSelector((state: RootState) => state.editor);
+	const {isFullScreen } = useSelector((state: RootState) => state.editor);
 
 	return (
-		<>
+		<div className={` px-2 pb-2 bg-code-bg h-screen  transition-all duration-500 ease-in-out ${isFullScreen ? 'pt-0 z-50' : 'pt-16'}`}>
+
 			<ToastContainer />
-			<ProblemNavBar isProbleDescriptioPage={true} />
 			<Split
-				className={`flex flex-row bg-code-bg p-2 fixed top-0 bottom-0 left-0 right-0 transition-all duration-500 ease-in-out ${
-					isFullScreen ? "z-50 " : "mt-[50px]"
-				}`}
+				className={`flex flex-row pt-2 h-full`}
 				sizes={[45, 55]}
 				gutterSize={6}
 				minSize={0}
@@ -26,7 +24,7 @@ const ProblemDescriptionPage = () => {
 				<ProblemDescriptionSection />
 				<EditorSection />
 			</Split>
-		</>
+		</div>
 	);
 };
 export default ProblemDescriptionPage;
