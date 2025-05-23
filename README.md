@@ -1,62 +1,69 @@
-## Todo
+# 🚀 Code.io – Online Code Editor
 
-- [ ] correct the implementation of role based authentication
+Code.io is a clean and modern online code editor built for students and developers who want a smooth, distraction-free coding experience directly in their browser. It supports multiple languages, has a beautiful UI, and provides instant output for your code.
 
-- [ ] Store new problem and testcases into database system instead of file system.
+> 🧪 Project is currently in development and not yet deployed. Screenshots below demonstrate the UI and functionality.
 
-- [ ] add tooltip to setting and full screen icon
+---
 
-- [ ] add feature to run cpp code
+## 🌟 Key Features
 
-- [ ] Test CppCodeGenerator library
+- 🔤 **Multi-Language Support** – Write code in various programming languages.
+- 🎨 **Beautiful & Responsive UI** – Sleek interface that looks great on all devices.
+- 🧠 **Monaco Code Editor** – Smart syntax highlighting.
+- ⚡ **Instant Output Console** – Run your code and view results in real time.
+- 🌙 **Dark Mode Ready** – Comfortable coding experience, day or night.
 
-- [ ] Dsiplay react toast when logut successfully
+---
 
-- [ ] Replace user icon with profile image option in navbar
+## 📸 Screenshots
 
-- [ ] Design landing page
+### 🏠 Home Page
+A clean and welcoming home screen to start coding with ease.
 
-- [ ] Design user profile page
+![Home Page](./src/assets/HomePage.png)
 
+---
+### 🧩 Problem Set
+Provides diverse set of coding questions to practice and improve your programming skills.
 
+![Output Console](./src/assets//Problemset-page.png)
 
+---
+### 👨‍💻 Code Editor
+A powerful editor using Monaco, with syntax highlighting and smart suggestions.
 
-## Completed
-- [x] Add functionality to submit the code
+![Code Editor](./src/assets//Editor-page.png)
 
-- [x] User written code must persist across  page reloads.
+---
 
-- [x] Fix the bug in loading booiler plate code when navigating on page problem/problemTitle/description
+## 🛠️ Tech Stack
 
-- [x] Fix the problemId bug in runCode function in EditorSection component
+| Layer        | Tools Used                 |
+|--------------|----------------------------|
+| Frontend     | React.js, Tailwind CSS, Shadcn UI   |
+| Code Editor  | Monaco Editor              |
+| Future Backend | Node.js, Express.js     |
+| Other Tools  | Axios, REST APIs           |
 
-- [x] add getJavaScriptBoilerplateCode()
+---
 
-- [x] add condition of void return type in other langauge boilerplate code generation function
+## 🧑‍💻 Set up Locally
 
-- [x] Learn and fix the refresh token problem
-    - https://www.saurabhmisra.dev/store-jwt-token-http-only-cookie/
-    - https://github.com/axios/axios/issues/4907
-    - https://medium.com/@etearner/use-httponly-cookie-to-secure-your-react-app-4e8417d136b8
-    - https://www.reddit.com/r/node/comments/hfmvs3/better_understanding_of_axios_handling_of/
-    - https://www.dhiwise.com/post/managing-secure-cookies-via-axios-interceptors
-    
-- [x] fix the bug when usr click on chrome back button to go back -> application get break
+Follow the steps below to run this project on your local machine:
 
-- [x] fix the bug in compilation error when executing code.
+```bash
+# Fork this repository to your own GitHub account.
 
-- [x] add some loader to /problemset page and /problme/problem-title/description page so that clicking back button should render loader rather than nothing for a small amount of time
+# Clone the repository
+git clone https://github.com/yourusername/code.io.git
 
-- [x] fix the active button backgorund color in shadcn pagination component and should also fix next and previous button to work properly
-- [x] add filter by search functionality
+# Move into the project directory
+cd code.io
 
-- [x] add button to set page size.
+# Install the dependencies
+npm install
 
-- [x] After the login, User should automatically redirect to the page where it  was before login
-
-- [x] add logout functionality
-
-- [x] fix the bug in calling getDefualtCode inside useEffect in CodeEditor component 
-
-- [x] change the setting dialog to shadcn ui dialog
+# Start the development server
+npm run dev
 
