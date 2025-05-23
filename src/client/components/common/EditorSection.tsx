@@ -85,15 +85,15 @@ export const EditorSection = () => {
 			>
 				<div
 					id="editor-container "
-					className="  rounded-lg  flex flex-1 flex-col overflow-hidden border-[1.5px] border-[#334155] transition-all duration-500 ease-in-out"
+					className="  rounded-lg  flex flex-1 flex-col overflow-hidden border-[1.5px] border-code-border transition-all duration-500 ease-in-out"
 				>
 					<EditorTopBar />
 					<div className=" h-full">
 						<CodeEditor />
 					</div>
 				</div>
-				<div className="flex-col text-white w-full  bg-darkGray rounded-lg border-[1.5px] border-[#334155] flex flex-1 overflow-hidden transition-all duration-500 ease-in-out">
-					<div className=" flex bg-darkGray rounded-tl-lg rounded-tr-lg px-2 py-1.5 items-center justify-between border border-b-[#334155] border-l-transparent border-r-transparent border-t-transparent">
+				<div className="flex-col text-white w-full  bg-code-bg rounded-lg border-[1.5px] border-code-border flex flex-1 overflow-hidden transition-all duration-500 ease-in-out">
+					<div className=" flex bg-code-bg rounded-tl-lg rounded-tr-lg px-2 py-1.5 items-center justify-between border border-b-code-border border-l-transparent border-r-transparent border-t-transparent">
 						<div className="flex gap-5">
 							<Button
 								className="flex w-28 gap-2 hover:bg-gray-800 rounded-md items-center"

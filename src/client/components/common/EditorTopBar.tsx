@@ -47,7 +47,7 @@ export function EditorTopBar() {
 	};
 
 	return (
-		<div className="flex items-center px-2 py-1 bg-darkGray rounded-tl-lg rounded-tr-lg justify-between  gap-5 border border-b-[#334155] border-t-transparent border-l-transparent border-r-transparent">
+		<div className="flex items-center px-2 py-1 bg-code-bg rounded-tl-lg rounded-tr-lg justify-between  gap-5 border border-b-code-border border-t-transparent border-l-transparent border-r-transparent">
 			<DropDownMenu 
 				items={LANGUAGES}
 				placeholder= {language}
