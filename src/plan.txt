@@ -1,1 +1,0 @@
-1. try to generate the shadcn component folder into client/src/component folder

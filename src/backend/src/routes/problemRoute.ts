@@ -7,9 +7,10 @@ import {
 	getOneProblemStatusOnUser,
 	getAllProblems,
 	getTotalPages,
+	createProblem
 } from "../db/problem";
 import auth, { CustomRequestObject } from "../middleware/auth";
-import { ProblemDetailWithStatusOnUser } from "../@utils/types";
+import { ProblemDetailWithStatusOnUser, problemFormSchema } from "../@utils/types";
 
 router.get("/filter-problem", auth, async (req: Request, res: Response) => {
 	const { userAuthorized } = req as CustomRequestObject;
@@ -36,7 +37,6 @@ router.get("/filter-problem", auth, async (req: Request, res: Response) => {
 			problemPerPage,
 			filterQuery
 		);
-
 		const totalPages = await getTotalPages(problemPerPage, filterQuery);
 		if (userAuthorized) {
 			return res.status(200).json({
@@ -71,6 +71,74 @@ router.get("/filter-problem", auth, async (req: Request, res: Response) => {
 		return res.status(500).json({ success: false, message: e.message });
 	}
 });
+
+// create new problem
+router.post('/create-problem', auth, async(req: Request, res: Response) => {
+	const { userAuthorized } = req as CustomRequestObject;
+	if (!userAuthorized){
+		return res.status(401).json({ success: false, message: "Unauthenticated!"})
+	}
+	const { role } = req as CustomRequestObject;
+	if (role !== 'admin') {
+		return res.status(403).json({ success: false, message: "Unauthorized!"});
+	}
+
+	const { userId } = req as CustomRequestObject;
+	try {
+		const parsedProblem = problemFormSchema.safeParse(req.body);
+		if (!parsedProblem.success) {
+			return res.json({ success: false, message: parsedProblem.error});
+		}
+
+		const { title, difficulty, description, testcases } = parsedProblem.data;
+
+		// save the problem
+		const newProblem = await createProblem(title, description , difficulty, userId);
+		if (!newProblem.success) {
+			return res.json({ success: false, message: newProblem.msg});
+		}
+
+		// parse the testcase 
+		/*
+			testcases: [
+				{
+					inputs: {
+						name: string;
+						type: string;
+						value: string
+					}[],
+					outputs: {
+						type: string,
+						value: string
+					}
+				}
+			]
+		*/
+
+
+
+		// save the testcases
+
+		/*
+			for creating testcases
+			createTestcase({
+				problemId,
+				testcases
+			})
+
+		*/
+
+
+		// generate boiler plate code
+
+		// save boiler plate code
+
+	}
+	catch(error: any) {
+		console.error(error.message)
+	}
+})
+
 
 router.get(
 	"/get-problem-details/:title",

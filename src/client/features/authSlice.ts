@@ -1,4 +1,5 @@
 import { createSlice, PayloadAction, createAsyncThunk } from "@reduxjs/toolkit";
+import { toast } from "react-toastify";
 import { api } from "@/client/api/client";
 import { RootState } from "@/client/app/store";
 import { APIResponse } from "@/client/lib/types";
@@ -141,6 +142,9 @@ export const userSlice = createSlice({
 			if (success && data) {
 				state.isLogin = true;
 				localStorage.setItem("CToken", data.token);
+				toast.success("Login successfully", {
+					position: "top-center",
+				})
 			}
 			console.log("Login response msg : ", message);
 			state.isSignup = false;
@@ -153,6 +157,9 @@ export const userSlice = createSlice({
 			if (success) {
 				state.isLogin = false;
 				localStorage.removeItem("CToken");
+				toast.success("Logout successfully", {
+					position: "top-center",
+				})
 			}
 			state.isSignup = false;
 			console.log("Logout message: ", message);

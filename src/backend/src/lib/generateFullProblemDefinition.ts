@@ -53,7 +53,7 @@ export class GenerateFullProblemDefinition {
 			// return typescriptFullCode();
 			case 63:
 			// return javascriptFullCode();
-			case 10:
+			case 54:
 				return this.generateCpp()
 			default:
 				return "";

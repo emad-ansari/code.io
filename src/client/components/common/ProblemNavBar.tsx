@@ -100,7 +100,7 @@ export const ProblemNavBar: React.FC<ProbelemNaveBarProps> = ({
 
 	return (
 		<>
-			<nav className={`flex justify-between items-center  bg-code-bg  h-16 w-full border-b border-slate-800 z-0 transition-all duration-500 ease-in-out ${isFullScreen ? 'hidden' : 'fixed'}`}>
+			<nav className={`flex justify-between items-center  bg-code-bg  h-16 w-full border-b border-slate-800 z-10 transition-all duration-500 ease-in-out ${isFullScreen ? 'hidden' : 'fixed'}`}>
 				<div className="flex flex-1 items-center justify-start w-60 md:pl-16 pl-6 ">
 					<div
 						className="flex space-x-2 items-center cursor-pointer"

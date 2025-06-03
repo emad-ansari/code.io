@@ -1,31 +1,30 @@
 import { createSlice, PayloadAction, createAsyncThunk } from "@reduxjs/toolkit";
-import { api } from "../api/client";
-import { RootState } from "../app/store";
 import { v4 as uuidv4 } from 'uuid'
 
+import { api } from "../api/client";
+import { RootState } from "../app/store";
+import { TestCaseExample } from "../lib/types"; // delete this
 
-export interface Parameter {
-	parameterId: string;
-	name: string;
-	type: string;
+
+export interface Testcase {
+	id: string
+	input: string;
+	output: string
 }
-
-
 export interface ProblemFormState {
 	id: string;
 	title: string;
 	description: string;
 	difficulty: string;
-	returnType: string;
-	parameters: Parameter[];
+	testcases: Testcase[]
+
 }
 export const ProblemFormInitailState: ProblemFormState = {
 	id: "",
 	title: "",
 	description: "",
 	difficulty: "",
-	returnType: "",
-	parameters: [],
+	testcases: []
 };
 
 export const createProblem = createAsyncThunk(
@@ -33,21 +32,17 @@ export const createProblem = createAsyncThunk(
 	async (_, ThunkAPI) => {
 		try {
 			const store = ThunkAPI.getState() as RootState;
-			const { title, description, difficulty, parameters, returnType } =
-				store.problemform;   
-            const { testcases } = store.TestCaseForm;
+			const { title, description, difficulty, testcases } = store.problemform;   
+            
 			if (title === ""){
 				alert("please fill the title");
 				return;
 			}
 
-			const res = await api.post("/contribute/create-problem", {
-				id: uuidv4(),
+			const res = await api.post("/problem/create-problem", {
 				title,
 				description,
 				difficulty,
-				parameters,
-				returnType,
 				testcases
 			},
 			{
@@ -78,69 +73,56 @@ export const problemFormSlice = createSlice({
 		setDifficulty: (state, action: PayloadAction<string>) => {
 			state.difficulty = action.payload;
 		},
-		addParameter: (state, action: PayloadAction<Parameter>) => {
-			let updatedValue = [...state.parameters];
-			updatedValue.push(action.payload);
-			state.parameters = updatedValue;
+		addNewTestcase :(state) => {
+			const newTestcase: Testcase = {
+				id: uuidv4(),
+				input: "",
+				output: ""
+			}
+			const updatedTestcase = [...state.testcases];
+			updatedTestcase.push(newTestcase);
+			state.testcases = updatedTestcase;
 		},
-		deleteParameter: (state, action: PayloadAction<{ id: string }>) => {
-			const { id } = action.payload;
-			const filteredParameter = state.parameters.filter(
-				(parameter) => parameter.parameterId !== id
-			);
-			state.parameters = filteredParameter;
+		setTestcasesInput: (state, action: PayloadAction<{ id: string, input: string }>) => {
+			const { id, input} = action.payload;
+			const updatedTestcase = state.testcases.map(testcase => (
+				testcase.id === id ? {...testcase, input: input} : testcase
+			))
+			state.testcases = updatedTestcase;
 		},
-		setparameterName: (
-			state,
-			action: PayloadAction<{ id: string; name: string }>
-		) => {
-			const { id, name } = action.payload;
-			const updatedParameter = state.parameters.map((parameter) =>
-				parameter.parameterId === id ? { ...parameter, name: name } : parameter
-			);
-			state.parameters = updatedParameter;
+		setTestcasesOutput: (state, action: PayloadAction<{ id: string, output: string }>) => {
+			const { id, output} = action.payload;
+			const updatedTestcase = state.testcases.map(testcase => (
+				testcase.id === id ? {...testcase, output: output} : testcase
+			))
+			state.testcases = updatedTestcase;
 		},
-		setParameterType: (
-			state,
-			action: PayloadAction<{ id: string; type: string }>
-		) => {
-			const { id, type } = action.payload;
-			const updatedParameter = state.parameters.map((parameter) =>
-				parameter.parameterId === id ? { ...parameter, type } : parameter
-			);
-			state.parameters = updatedParameter;
-		},
-		setReturnType: (state, action: PayloadAction<string>) => {
-			state.returnType = action.payload;
-		},
-
-		
-		
-        
-
+		deleteTestcase: (state, action: PayloadAction<string>) => {
+			const testcaseId = action.payload
+			const updatedTestcase = state.testcases.filter(testcase => testcase.id !== testcaseId);
+			state.testcases = updatedTestcase;
+		}, 
 	},
-	extraReducers: (builder) => {
-		builder.addCase(createProblem.pending, (_, action) => {
-			console.log("status is pending", action.payload);
-		}), 
-			builder.addCase(createProblem.fulfilled, (_, action) => {
-				console.log("status is fulfilled", action.payload);
-			}),
-			builder.addCase(createProblem.rejected, (_, action) => {
-				console.log("status is rejected", action.payload);
-			});
-	},
+	// extraReducers: (builder) => {
+	// 	builder.addCase(createProblem.pending, (_, action) => {
+	// 		console.log("status is pending", action.payload);
+	// 	}), 
+	// 		builder.addCase(createProblem.fulfilled, (_, action) => {
+	// 			console.log("status is fulfilled", action.payload);
+	// 		}),
+	// 		builder.addCase(createProblem.rejected, (_, action) => {
+	// 			console.log("status is rejected", action.payload);
+	// 		});
+	// },
 });
 
 export default problemFormSlice.reducer;
 export const {
 	setTitle,
 	setDescription,
-	setDifficulty,
-	addParameter,
-	setReturnType,
-	deleteParameter,
-	setparameterName,
-	setParameterType,
-    
+	setDifficulty,  
+	addNewTestcase, 
+	setTestcasesInput,
+	setTestcasesOutput,
+	deleteTestcase
 } = problemFormSlice.actions;

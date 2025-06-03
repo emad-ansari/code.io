@@ -3,11 +3,10 @@ const router = Router();
 import * as fs from "fs";
 import path from "path";
 
-
 import { createProblem } from "../db/problem";
 import { addTestCases, createTestCases, TestCase } from "../db/testcase";
 import { TestCaseParser } from "../lib/testcaseParser";
-import { ParseProblemDetails } from "../lib";
+// import { ParseProblemDetails } from "../lib";
 import { createBoilerplateCode } from "../db/boilerplate";
 import auth, { CustomRequestObject } from "../middleware/auth";
 import {
@@ -37,34 +36,34 @@ router.get("/new-testcases", async (req: Request, res: Response) => {
 });
 
 // Save problem after review
-router.post("/save-problem", auth, async (req: Request, res: Response) => {
-	const { userAuthorized } = req as CustomRequestObject;
-	const { problemId } = req.body.data;
+// router.post("/save-problem", auth, async (req: Request, res: Response) => {
+// 	const { userAuthorized } = req as CustomRequestObject;
+// 	const { problemId } = req.body.data;
 
-	if (!userAuthorized) {
-		console.log("not authorized");
-		return res
-			.status(401)
-			.json({ err: "You are not authorize, please login " });
-	}
-	const { role } = req as CustomRequestObject;
-	if (role !== "admin") return res.json({ err: " You are not admin" });
+// 	if (!userAuthorized) {
+// 		console.log("not authorized");
+// 		return res
+// 			.status(401)
+// 			.json({ err: "You are not authorize, please login " });
+// 	}
+// 	const { role } = req as CustomRequestObject;
+// 	if (role !== "admin") return res.json({ err: " You are not admin" });
 
-	try {
-		// save the problem and testcases in database with with given problemId
+// 	try {
+// 		// save the problem and testcases in database with with given problemId
 
-		const isSaved = await saveProblemAndTestCase(problemId);
-		if (isSaved.success) {
-			// then prepare the boilerplate code array to save them into database
-			return res
-				.status(200)
-				.json({ msg: "Problem has been saved successfully" });
-		}
-		return res.status(200).json({ error: isSaved.err });
-	} catch (error: any) {
-		console.error("Error: ", (error as Error).message);
-	}
-});
+// 		const isSaved = await saveProblemAndTestCase(problemId);
+// 		if (isSaved.success) {
+// 			// then prepare the boilerplate code array to save them into database
+// 			return res
+// 				.status(200)
+// 				.json({ msg: "Problem has been saved successfully" });
+// 		}
+// 		return res.status(200).json({ error: isSaved.err });
+// 	} catch (error: any) {
+// 		console.error("Error: ", (error as Error).message);
+// 	}
+// });
 
 // Save testcase after review - here we are going to save the testcase of existing problem
 router.post("/add-testcase", auth, async (req: Request, res: Response) => {
@@ -105,38 +104,38 @@ router.post("/update-problem", auth, async (req: Request, res: Response) => {
 		const folderPath = path.join(__dirname, "contribute", "newproblem");
 		const files = fs.readdirSync(folderPath);
 
-		files.forEach((file) => {
-			if (path.extname(file) === ".json") {
-				const filePath = path.join(folderPath, file);
-				const parser = new ParseProblemDetails();
-				const problem = parser.extractProblemDetails(filePath);
-				if (problem.id === problemId) {
-					// then update the details
-					const newProblemInfo = {
-						...updatedProblem,
-						userId: problem.userId,
-					};
+		// files.forEach((file) => {
+		// 	if (path.extname(file) === ".json") {
+		// 		const filePath = path.join(folderPath, file);
+		// 		const parser = new ParseProblemDetails();
+		// 		const problem = parser.extractProblemDetails(filePath);
+		// 		if (problem.id === problemId) {
+		// 			// then update the details
+		// 			const newProblemInfo = {
+		// 				...updatedProblem,
+		// 				userId: problem.userId,
+		// 			};
 
-					const jsonString = JSON.stringify(newProblemInfo, null, 2);
+		// 			const jsonString = JSON.stringify(newProblemInfo, null, 2);
 
-					fs.writeFile(filePath, jsonString, (err) => {
-						if (err) {
-							console.log("Error writing file", err);
-							return res.status(500).json({
-								err: "server is not able to save you problem please try again!!",
-							});
-						} else {
-							console.log(
-								"Updated problem successfully written to file"
-							);
-							return res.status(200).json({
-								msg: "Problem has been updated successfully",
-							});
-						}
-					});
-				}
-			}
-		});
+		// 			fs.writeFile(filePath, jsonString, (err) => {
+		// 				if (err) {
+		// 					console.log("Error writing file", err);
+		// 					return res.status(500).json({
+		// 						err: "server is not able to save you problem please try again!!",
+		// 					});
+		// 				} else {
+		// 					console.log(
+		// 						"Updated problem successfully written to file"
+		// 					);
+		// 					return res.status(200).json({
+		// 						msg: "Problem has been updated successfully",
+		// 					});
+		// 				}
+		// 			});
+		// 		}
+		// 	}
+		// });
 	} catch (error: any) {
 		console.error("Error: ", (error as Error).message);
 	}
@@ -277,83 +276,83 @@ function getAllNewTestcases(): NewTestCase[] {
 	return testcases;
 }
 
-async function saveProblemAndTestCase(
-	problemId: string
-): Promise<{ success: boolean; err: string }> {
-	const folderPath = `src/contribution/newproblem`;
-	const files = fs.readdirSync(folderPath);
+// async function saveProblemAndTestCase(
+// 	problemId: string
+// ): Promise<{ success: boolean; err: string }> {
+// 	const folderPath = `src/contribution/newproblem`;
+// 	const files = fs.readdirSync(folderPath);
 
-	for (let file of files) {
-		// Only process JSON files
-		if (path.extname(file) === ".json") {
-			const filePath = path.join(folderPath, file);
+// 	for (let file of files) {
+// 		// Only process JSON files
+// 		if (path.extname(file) === ".json") {
+// 			const filePath = path.join(folderPath, file);
 
-			// Read the file contents
-			try {
-				// Parse the JSON content
-				const parser = new ParseProblemDetails();
-				const problem = parser.extractProblemDetails(filePath);
-				if (problem.id === problemId) {
-					// read the details and save it into database
+// 			// Read the file contents
+// 			try {
+// 				// Parse the JSON content
+// 				const parser = new ParseProblemDetails();
+// 				const problem = parser.extractProblemDetails(filePath);
+// 				if (problem.id === problemId) {
+// 					// read the details and save it into database
 
-					const newProblem = await createProblem(
-						problem.title,
-						problem.description,
-						problem.difficulty,
-						problem.userId
-					);
+// 					const newProblem = await createProblem(
+// 						problem.title,
+// 						problem.description,
+// 						problem.difficulty,
+// 						problem.userId
+// 					);
 
-					if (!newProblem.success) {
-						console.log("Error: ", newProblem.msg);
-						return {
-							success: false,
-							err: newProblem.msg,
-						};
-					}
-					// save testcase
-					const newTestcase = await createTestCases({
-						problemId: newProblem.id,
-						title: problem.title,
-						testcases: problem.testcases,
-					});
-					if (!newTestcase.success) {
-						console.log(newTestcase.msg);
-						return {
-							success: false,
-							err: newTestcase.msg,
-						};
-					}
+// 					if (!newProblem.success) {
+// 						console.log("Error: ", newProblem.msg);
+// 						return {
+// 							success: false,
+// 							err: newProblem.msg,
+// 						};
+// 					}
+// 					// save testcase
+// 					const newTestcase = await createTestCases({
+// 						problemId: newProblem.id,
+// 						title: problem.title,
+// 						testcases: problem.testcases,
+// 					});
+// 					if (!newTestcase.success) {
+// 						console.log(newTestcase.msg);
+// 						return {
+// 							success: false,
+// 							err: newTestcase.msg,
+// 						};
+// 					}
 
-					const java = parser.getJavaBoilerplateCode();
-					const cpp = parser.getCppBoilerplateCode();
-					const typescript = parser.getTypescriptBoilerplateCode();
-					const array = [
-						{ name: "java", code: java },
-						{ name: "cpp", code: cpp },
-						{ name: "typescript", code: typescript },
-					];
-					// save boiler plate code
-					await saveBoilerplateCodes(newProblem.id, array);
-					console.log("control reaches here...");
-					return {
-						success: true,
-						err: "No error",
-					};
-				}
-			} catch (err) {
-				console.error(`Error parsing JSON in file ${file}:`, err);
-				return {
-					success: false,
-					err: `Error parsing JSON in file ${file}: ${err}`,
-				};
-			}
-		}
-	}
-	return {
-		success: false,
-		err: "Error while checking file",
-	};
-}
+// 					const java = parser.getJavaBoilerplateCode();
+// 					const cpp = parser.getCppBoilerplateCode();
+// 					const typescript = parser.getTypescriptBoilerplateCode();
+// 					const array = [
+// 						{ name: "java", code: java },
+// 						{ name: "cpp", code: cpp },
+// 						{ name: "typescript", code: typescript },
+// 					];
+// 					// save boiler plate code
+// 					await saveBoilerplateCodes(newProblem.id, array);
+// 					console.log("control reaches here...");
+// 					return {
+// 						success: true,
+// 						err: "No error",
+// 					};
+// 				}
+// 			} catch (err) {
+// 				console.error(`Error parsing JSON in file ${file}:`, err);
+// 				return {
+// 					success: false,
+// 					err: `Error parsing JSON in file ${file}: ${err}`,
+// 				};
+// 			}
+// 		}
+// 	}
+// 	return {
+// 		success: false,
+// 		err: "Error while checking file",
+// 	};
+// }
 
 async function saveBoilerplateCodes(
 	problemId: string,

@@ -14,8 +14,8 @@ export const TestCaseOutputSchema = z.object({
 	type: z.string(),
 	value: z.string(),
 })
-export type TestCaseInput = z.infer<typeof TestCaseInputOjectSchema >
-export type TestCaseOutput = z.infer<typeof TestCaseOutputSchema>
+export type TestCaseInput = z.infer<typeof TestCaseInputOjectSchema > // used
+export type TestCaseOutput = z.infer<typeof TestCaseOutputSchema>    // used
 
 export const TestCaseSchema = z.object({
 	testcaseId: z.string(),
@@ -25,7 +25,7 @@ export const TestCaseSchema = z.object({
 
 // export const TestCaseArray = z.array(TestCaseSchema);
 
-const ParameterSchema = z.array(
+const ParameterSchema = z.array( // check and delete
 	z.object({
 		parameterId: z.string(),
 		type: z.string(),
@@ -33,7 +33,21 @@ const ParameterSchema = z.array(
 	})
 );
 
-export const ProblemSchema = z.object({
+export const testcaseFormSchema = z.object({
+	id: z.string(),
+	input: z.string(),
+	output: z.string(),
+})
+export type Testcase = z.infer<typeof testcaseFormSchema>;
+
+export const problemFormSchema = z.object({
+	title: z.string(),
+	description: z.string(),
+	difficulty: z.string(),
+	testcases: testcaseFormSchema.array()
+})
+
+export const ProblemSchema = z.object({ // check and delete
 	id: z.string(),
 	title: z.string(),
 	description: z.string(),

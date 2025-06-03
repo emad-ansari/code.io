@@ -69,7 +69,7 @@ function WrongAnswerOrAccepted() {
 							<span
 								className={`text-lg ${
 									description === "Accepted"
-										? "text-GREEN"
+										? "text-code-green"
 										: "text-red-500"
 								}`}
 							>

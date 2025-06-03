@@ -96,7 +96,7 @@ const ProblemsPage = () => {
 			</div>
 			<div className="mt-8">
 				<Table className=" overflow-hidden rounded-lg bg-[#29324a] border border-code-border">
-					<TableHeader className="bg-gray-800">
+					<TableHeader className="bg-gray-[#1e293b]">
 						<TableRow className="border-b border-code-border  hover:bg-gray-750 ">
 							<TableHead className="text-gray-300">
 								Problem No.

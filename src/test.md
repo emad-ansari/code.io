@@ -39,15 +39,6 @@ this is paragraph
 ## <mark>this text is highlited</mark>
 
 ## How to  create a Table in markdown ?
-
-|  userId  |    username     |
-|----------|-----------------|
-|1         | Arsalan         |
-|2         | Emad            |
-|3         | Rehan           |
-|4         | Farhan          |
-|5         | Emad            |
-
 ## How to ceate a check box ? 
 - [ ] this is a unchec  check box 
 

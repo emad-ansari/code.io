@@ -3,6 +3,7 @@ export interface ProblemState {
 	pageSize: number;
 	totalPages: number;
 	problemDetail: ProblemDetail;
+	userSubmissions: UserSubmission[]
 	error: any;
 	loading: boolean;
 }
@@ -88,6 +89,7 @@ export interface CodeExecutionResponse {
 	data: ExecutionResult;
 	message?: string;
 }
+
 export interface ExecutionResult {
 	overallStatus: string; // Wrong Answer || Compilation Error || Accepted || Time Limit Exceed
 	passed_testcases: number;
@@ -112,6 +114,15 @@ export interface APIResponse<T> {
 	success: boolean;
 	data?: T;	
 	message: string | null
+}
+export interface UserSubmission {
+	id: string;
+	languageId: number;
+	code: string;
+	time: string;
+	memory: string;
+	status: string;
+	createdAt: Date
 }
 
 export const typeOptions: string[] = [
@@ -141,13 +152,21 @@ export const LNAGUAGE_MAPPING: {
 	[key: string]: { name: string; languageId: number };
 } = {
 	javascript: { name: "javascript", languageId: 63 },
-	cpp: { name: "cpp", languageId: 10 },
+	cpp: { name: "cpp", languageId: 54 },
 	typescript: { name: "typescript", languageId: 74 },
 	java: { name: "java", languageId: 62 },
 	python: { name: "python", languageId: 71 },
 };
 
 export const EDITOR_THEMES: string[] = ["vs-dark", "vs", "hc-light", "OneDarkPro"];
+
 export const FONT_SIZES: string[] = ["12px", "14px", "16px", "18px", "20px", "22px"];
-export const LANGUAGES = ["java", "cpp", "typescript", "javascript", "go", "rust"];
+
+export const LANGUAGES = ["java", "cpp", "typescript"];
+
 export const problems_per_page = ["10 / page", "20 / page", "50 / page"];
+
+export const DIFFICULTY = ['Easy', 'Medium', 'Hard'];
+
+export const STATUS =  ["Todo", "Solved", "Attempted"]
+

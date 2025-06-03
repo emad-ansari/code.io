@@ -1,5 +1,7 @@
 import { BrowserRouter, Route, Routes } from "react-router-dom";
 import { lazy, useEffect, Suspense } from "react";
+import { ToastContainer } from "react-toastify";
+import "react-toastify/dist/ReactToastify.css";
 import "./index.css";
 
 import { LoginPage } from "@/client/pages/LoginPage";
@@ -8,11 +10,13 @@ import { EmailAuthenticaiton } from "@/client/pages/EmailAuthenticaiton";
 import { ContestPage } from "@/client/pages/ContestPage";
 import { StandingPage } from "@/client/pages/StandingPage";
 import { ProblemSubmissions } from "@/client/components/common/ProblemSubmissions";
-import { Contribution } from "@/client/pages/Contribution";
-import { TestCaseForm } from "@/client/pages/TestCaseForm";
-import { ProblemForm } from "@/client/pages/ProblemForm";
+
+
 import { ProblemNavBar } from "@/client/components/common/ProblemNavBar";
 import { LoadingPage } from "@/client/pages/LoadingPage";
+
+import { rehydrateAuth } from "@/client/features/authSlice";
+import { useAppDispatch } from "@/client/app/store";
 
 const HomePage = lazy(() => import("@/client/pages/HomePage"));
 const ProblemStatement = lazy(() =>
@@ -26,8 +30,13 @@ const ProblemDescriptionPage = lazy(
 	() => import("@/client/pages/ProblemDescriptionPage")
 );
 
-import { rehydrateAuth } from "@/client/features/authSlice";
-import { useAppDispatch } from "@/client/app/store";
+const AdminDashboardPage = lazy(
+	() => import("@/client/pages/admin/DashboardPage")
+);
+const ProblemsPage = lazy(() => import("@/client/pages/admin/ProblemsPage"));
+const UserPage = lazy(() => import("@/client/pages/admin/UserPage"));
+const TestcasesPage = lazy(() => import("@/client/pages/admin/TestcasesPage"));
+const ProblemForm = lazy(() => import("@/client/pages/ProblemForm"));
 
 const App = () => {
 	const dispatch = useAppDispatch();
@@ -39,7 +48,20 @@ const App = () => {
 	return (
 		<>
 			<BrowserRouter>
-				<Suspense fallback = {<LoadingPage />}>
+				<Suspense fallback={<LoadingPage />}>
+					<ToastContainer
+						position="top-center"
+						autoClose={4000}
+						hideProgressBar={false}
+						newestOnTop={false}
+						closeOnClick
+						rtl={false}
+						pauseOnFocusLoss
+						draggable
+						pauseOnHover
+						theme="dark"
+						// transition: Bounce
+					/>
 					<ProblemNavBar isProbleDescriptioPage={false} />
 					<Routes>
 						<Route index element={<HomePage />} />
@@ -54,11 +76,6 @@ const App = () => {
 						</Route>
 						<Route path="/contests" element={<ContestPage />} />
 						<Route path="/standings" element={<StandingPage />} />
-						<Route path="/contribution" element={<Contribution />}>
-							<Route index element={<ProblemForm />} />
-							<Route path="testcase" element={<TestCaseForm />} />
-						</Route>
-
 						<Route
 							path="problem/:title/"
 							element={<ProblemDescriptionPage />}
@@ -71,6 +88,24 @@ const App = () => {
 							<Route
 								path="submissions"
 								element={<ProblemSubmissions />}
+							/>
+						</Route>
+						<Route
+							path="admin/dashboard"
+							element={<AdminDashboardPage />}
+						>
+							<Route index path="users" element={<UserPage />} />
+							<Route
+								path="problems"
+								element={<ProblemsPage />}
+							></Route>
+							<Route
+								path="new-problem"
+								element={<ProblemForm />}
+							/>
+							<Route
+								path="testcases"
+								element={<TestcasesPage />}
 							/>
 						</Route>
 					</Routes>

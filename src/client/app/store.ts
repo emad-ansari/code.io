@@ -7,7 +7,6 @@ import filterReducer from "@/client/features/filterSlice";
 import settingReducer from "@/client/features/editorSettingSlice";
 import editorReducer from "@/client/features/codeEditorSlice";
 import problemFormSlice from "@/client/features/problemFormSlice";
-import TestcaseFormSlice from "@/client/features/TestcaseSlice";
 import userSlice from "@/client/features/authSlice";
 
 
@@ -19,7 +18,6 @@ export const store = configureStore({
 		setting: settingReducer,
 		editor: editorReducer,
 		problemform: problemFormSlice,
-		TestCaseForm: TestcaseFormSlice,
 		user: userSlice,
 	},
 });

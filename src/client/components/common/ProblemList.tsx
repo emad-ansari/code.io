@@ -27,92 +27,60 @@ const problems = [
 	},
 	{
 		id: "2",
-		title: "Two sum",
-		difficulty: "Hard",
+		title: "3 Sum",
+		difficulty: "Medium",
 		problemNo: 2,
 		problemStatus: {
 			status: "Attempted",
 		},
-		likes: 12,
-		submissions: 100,
+		likes: 123,
+		submissions: 3451,
 	},
 	{
 		id: "3",
-		title: "Two sum",
+		title: "Largest Sum",
 		difficulty: "Medium",
 		problemNo: 3,
 		problemStatus: {
 			status: "Todo",
 		},
-		likes: 12,
-		submissions: 100,
+		likes: 334,
+		submissions: 1654,
 	},
 	{
 		id: "4",
-		title: "Two sum",
-		difficulty: "Medium",
+		title: "Coin Exchange",
+		difficulty: "Hard",
 		problemNo: 3,
 		problemStatus: {
 			status: "Todo",
 		},
-		likes: 12,
-		submissions: 100,
+		likes: 834,
+		submissions: 1234,
 	},
 	{
 		id: "5",
-		title: "Two sum",
+		title: "Count Primes",
 		difficulty: "Medium",
 		problemNo: 3,
 		problemStatus: {
 			status: "Todo",
 		},
-		likes: 12,
-		submissions: 100,
+		likes: 383,
+		submissions: 1032,
 	},
 	{
 		id: "6",
-		title: "Two sum",
-		difficulty: "Medium",
+		title: "Longest Increasing Subsequence",
+		difficulty: "Hard",
 		problemNo: 3,
 		problemStatus: {
 			status: "Todo",
 		},
-		likes: 12,
-		submissions: 100,
+		likes: 924,
+		submissions: 2000,
 	},
-	{
-		id: "7",
-		title: "Two sum",
-		difficulty: "Medium",
-		problemNo: 3,
-		problemStatus: {
-			status: "Todo",
-		},
-		likes: 12,
-		submissions: 100,
-	},
-	{
-		id: "8",
-		title: "Two sum",
-		difficulty: "Medium",
-		problemNo: 3,
-		problemStatus: {
-			status: "Todo",
-		},
-		likes: 12,
-		submissions: 100,
-	},
-	{
-		id: "9",
-		title: "Two sum",
-		difficulty: "Medium",
-		problemNo: 3,
-		problemStatus: {
-			status: "Todo",
-		},
-		likes: 12,
-		submissions: 100,
-	},
+	
 ]
 
 const ProblemList = memo(() => {
@@ -194,13 +162,13 @@ const ProblemList = memo(() => {
 							<TableCell className="text-right">
 								<div className="flex items-center justify-end space-x-1">
 									<Star className="h-4 w-4 text-yellow-400" />
-									{/* <span>{problem.likes}</span> */}
+									<span className = "text-white">{problem.likes}</span>
 								</div>
 							</TableCell>
 							<TableCell className="text-right">
 								<div className="flex items-center justify-end space-x-1">
 									<BarChart className="h-4 w-4 text-blue-400" />
-									{/* <span>{problem.submissions}</span> */}
+									<span className ="text-white">{problem.submissions}</span>
 								</div>
 							</TableCell>
 						</TableRow>

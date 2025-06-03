@@ -6,14 +6,14 @@ export type TestCase = z.infer<typeof TestCaseSchema>; // without title
 
 interface TestCaseProps {
 	problemId: string;
-	title: string;
+	title: string;  // remove
 	testcases: TestCase[]
 }
 
 // function to create new testcase which does not exist
 export async function createTestCases({
 	problemId,
-	title,
+	title, // remove
 	testcases,
 }: TestCaseProps): Promise<{ success: boolean; msg: string }> {
 	try {
@@ -22,14 +22,12 @@ export async function createTestCases({
 			// Insert each input for the testcase
 			const createdTestCase = await prisma.testCase.create({
 				data: {
-					title, // You can use the same title for all test cases, or modify this
-					problemId, // Problem this testcase is associated with
+					title, // remove
+					problemId, 
 				},
 			});
 			createTestCaseInputAndOutput(createdTestCase.id, testcase);
-			
 		}
-
 		return {
 			success: true,
 			msg: "Testcases created successfully",
