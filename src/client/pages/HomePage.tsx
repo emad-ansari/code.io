@@ -54,7 +54,7 @@ const HomePage = () => {
 
 	return (
 		<Suspense fallback={<p>Loading...</p>}>
-			<main className="bg-code-bg py-16 h-screen">
+			<main className="bg-[#111827] py-16 h-screen">
 				<div className="grid md:grid-cols-2 gap-6">
 					<div className="md:pt-22 pt-8 flex flex-col items-center gap-20 justify-center">
 						<p className=" w-full  px-[18px] md:px-10 font-fugaz font-bold  text-white text-[28px] md:text-4xl text-center  leading-[1.5] md:leading-[1.5] md:tracking-[1.5px] tracking-[0.5px]">

@@ -49,7 +49,7 @@ const App = () => {
 		<>
 			<BrowserRouter>
 				<Suspense fallback={<LoadingPage />}>
-					<ToastContainer
+					{/* <ToastContainer
 						position="top-center"
 						autoClose={4000}
 						hideProgressBar={false}
@@ -60,8 +60,9 @@ const App = () => {
 						draggable
 						pauseOnHover
 						theme="dark"
+						aria-label={2}
 						// transition: Bounce
-					/>
+					/> */}
 					<ProblemNavBar isProbleDescriptioPage={false} />
 					<Routes>
 						<Route index element={<HomePage />} />

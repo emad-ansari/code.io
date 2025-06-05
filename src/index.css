@@ -1,6 +1,21 @@
-@tailwind base;
-@tailwind components;
-@tailwind utilities;
+@import url("https://fonts.googleapis.com/css2?family=DM+Mono&family=Fugaz+One&display=swap");
+@import "tailwindcss";
+
+@theme {
+	--color-cyan: #cffafe;
+	--color-PRIMARY: #030303;
+	--color-code-bg: #111827;
+	--color-code-bg-secondary": #1f2937;
+	--color-code-btn: #1f2937;
+	--color-code-border: oklch(27.9% 0.041 260.031);
+	--color-code-hover: #1f2937;
+	--color-code-green: #0FA958;
+	--color-code-red: #D91111;
+	--color-darkGray: #0D1621;
+	--color-codeio_yellow: #dadd32;
+	--font-fugaz: "Fugaz One", "sans-serif"; 
+	--font-dmMono: "DM Mono", "monospace"; 
+}
 
 ::-webkit-scrollbar {
 	width: 0.3rem;
@@ -13,7 +28,6 @@
     background-color: #334155;
     border-radius: 1rem
 }
-
 
 /* .gutter:hover {
     background-color: #1f2937;
@@ -92,25 +106,5 @@
 }
 
 
-@layer base {
-  * {
-    @apply border-border;
-	}
-  body {
-    @apply bg-background text-foreground;
-	}
-}
 
-
-
-
-
-@layer base {
-  * {
-    @apply border-border outline-ring/50;
-	}
-  body {
-    @apply bg-background text-foreground;
-	}
-}
 

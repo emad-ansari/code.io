@@ -1,9 +1,9 @@
-import { Input, Output } from "@/client/lib/types";
+import { TestCaseInput, TestCaseOutput } from "@/client/lib/types";
 
 interface TestCaseProps {
 	testCaseNumber: number;
-	inputs: Input[];
-	output: Output | null;
+	inputs: TestCaseInput[];
+	output: TestCaseOutput | null;
 }
 
 export const TestCaseExample = ({
