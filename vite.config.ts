@@ -8,6 +8,7 @@ export default defineConfig({
     react(),
     tailwindcss()
   ],
+  build: { manifest: true, outDir: './dist'},
   optimizeDeps: {
     include: ['@monaco-editor/react'],
   },
