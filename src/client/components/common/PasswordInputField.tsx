@@ -10,7 +10,7 @@ export const PasswordInputField = () => {
   const dispatch = useAppDispatch();
   const { password } = useSelector((state: RootState) => state.user);
 
-  const style = "absolute right-3 top-2  text-gray-400 px-1 py-1 w-8 h-8 cursor-pointer rounded-full hover:bg-gray-600";
+  const style = "absolute right-3 top-1  text-gray-400 px-1 py-1 w-8 h-8 cursor-pointer rounded-full hover:bg-gray-600";
 
   return (
     <>
@@ -19,7 +19,7 @@ export const PasswordInputField = () => {
           type={showPassword ? "text" : "password"}
           placeholder="Passowrd"
           value = {password}
-          className="focus:outline-none focus:ring focus:ring-offset-[#81E291] rounded-md border  px-3 py-3 bg-transparent text-white relative w-full text-sm"
+          className="outline-none  rounded-lg border border-code-border  px-3 py-2.5 bg-transparent text-white relative w-full text-sm"
           onChange={(e) => dispatch(setPassword(e.target.value))}
         />
         {showPassword ? (
