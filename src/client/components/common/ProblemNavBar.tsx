@@ -34,41 +34,63 @@ import {
 	SheetTrigger,
 } from "@/client/components/ui/sheet";
 
-interface ProbelemNaveBarProps {
-	isProbleDescriptioPage: boolean;
-}
+// interface ProbelemNaveBarProps {
+// 	isProbleDescriptioPage: boolean;
+// }
 
 const drawerItems = [
 	{
 		name: "Profile",
-		icon: <UserPen className = "w-5 h-5"/>,
+		icon: <UserPen className="w-5 h-5" />,
 	},
 	{
 		name: "Problems",
-		icon: <CodeXml className = "w-5 h-5"/>,
+		icon: <CodeXml className="w-5 h-5" />,
 	},
 	{
 		name: "Contest",
-		icon: <Trophy className = "w-5 h-5"/>,
+		icon: <Trophy className="w-5 h-5" />,
 	},
 	{
 		name: "Settings",
-		icon: <Settings className = "w-5 h-5"  />,
+		icon: <Settings className="w-5 h-5" />,
 	},
 	{
 		name: "Logout",
-		icon: <LogOut className = "w-5 h-5"/>,
+		icon: <LogOut className="w-5 h-5" />,
 	},
 ];
-export const ProblemNavBar: React.FC<ProbelemNaveBarProps> = ({
-	isProbleDescriptioPage,
-}) => {
+
+const navItems = [
+	{
+		label: "Home",
+		href: "/",
+		active: location.pathname === "/",
+	},
+	{
+		label: "Problems",
+		href: "/problemset",
+		active: location.pathname === "/problemset",
+	},
+	{
+		label: "CS Fundamentals",
+		href: "/core-cs",
+		active: location.pathname === "/core-cs",
+	},
+	{
+		label: "Documents",
+		href: "/documents",
+		active: location.pathname === "/documents",
+	},
+];
+
+export const ProblemNavBar: React.FC = () => {
 	const navigate = useNavigate();
 	const location = useLocation();
 	const dispatch = useAppDispatch();
 
 	const { isLogin } = useSelector((state: RootState) => state.user);
-	const { isFullScreen } = useSelector((state: RootState )=>  state.editor)
+	const { isFullScreen } = useSelector((state: RootState) => state.editor);
 	const onNavigation = (
 		event: React.MouseEvent<HTMLAnchorElement>,
 		path: string
@@ -78,30 +100,16 @@ export const ProblemNavBar: React.FC<ProbelemNaveBarProps> = ({
 			navigate(path); // Navigate to the path
 		});
 	};
-	const isAdminPage = location.pathname.startsWith("/admin");
-
-	const navItems = [
-		{
-			label: "Problems",
-			href: "/problemset",
-			active: location.pathname === "/problemset",
-		},
-		{ 
-			label: "Contests",
-			href: "/contests",
-			active: location.pathname === "/contests",
-		},
-		{
-			label: "Standings",
-			href: "/standings",
-			active: location.pathname === "/standings",
-		},
-	];
+	// const isAdminPage = location.pathname.startsWith("/admin");
 
 	return (
 		<>
-			<nav className={`flex justify-between items-center  bg-code-bg  h-16 w-full border-b border-slate-800 z-10 transition-all duration-500 ease-in-out ${isFullScreen ? 'hidden' : 'fixed'}`}>
-				<div className="flex flex-1 items-center justify-start w-60 md:pl-16 pl-6 ">
+			<nav
+				className={`flex justify-between items-center  bg-code-bg  h-16 w-full border-b border-slate-800 z-10 transition-all duration-500 ease-in-out ${
+					isFullScreen ? "hidden" : "fixed"
+				}`}
+			>
+				<div className="flex  items-center h-full w-48 md:pl-16 pl-6 ">
 					<div
 						className="flex space-x-2 items-center cursor-pointer"
 						onClick={() => {
@@ -113,21 +121,21 @@ export const ProblemNavBar: React.FC<ProbelemNaveBarProps> = ({
 						<CodeXml
 							strokeWidth={3}
 							size={28}
-							className=" text-white"
+							className=" text-[#EB8069]"
 						/>
 						<span className="text-2xl text-white font-medium font-fugaz">
 							Code.io
 						</span>
 					</div>
 				</div>
-				<div className="flex flex-1  items-center  text-white ">
-					<div className="hidden md:flex items-center h-11 rounded-full shadow-md bg-code-bg  border border-code-border text-sm gap-5 px-5 ">
+				<div className="flex   items-center h-full  text-white ">
+					<div className="hidden md:flex items-center gap-4 h-[80%] rounded-full shadow-md bg-code-bg  border border-code-border text-sm px-1.5 ">
 						{navItems.map((item) => (
 							<a
 								key={item.href}
 								href={item.href}
 								onClick={(e) => onNavigation(e, item.href)}
-								className={`text-sm font-dmMono px-4 py-2 rounded-full hover:bg-code-hover ${
+								className={`text-sm font-dmMono px-4 py-[11px]  rounded-full hover:bg-code-hover ${
 									item.active && "bg-code-hover"
 								}`}
 							>
@@ -136,12 +144,12 @@ export const ProblemNavBar: React.FC<ProbelemNaveBarProps> = ({
 						))}
 					</div>
 				</div>
-				<div className="flex flex-1">
-					{!isLogin ? (
+				<div className="flex  h-full items-center">
+					{isLogin ? (
 						<div className="flex flex-1 justify-end pr-5">
-							<div className="flex gap-2 items-center md:gap-3 ">
+							<div className="flex items-center md:gap-3 ">
 								<Button
-									className=" hidden md:block border border-slate-800 duration-300 hover:shadow-md hover:shadow-gray-600 transitio"
+									className=" text-white cursor-pointer hidden md:block border border-code-border duration-300 hover:shadow-md hover:shadow-gray-600 transition"
 									onClick={() =>
 										navigate("/login", {
 											state: { from: location },
@@ -151,7 +159,7 @@ export const ProblemNavBar: React.FC<ProbelemNaveBarProps> = ({
 									LogIn
 								</Button>
 								<Button
-									className=" border-[1px] border-slate-800 duration-300 hover:shadow-md hover:shadow-gray-600 transition"
+									className=" text-white cursor-pointer border-[1px] border-slate-800 duration-300 hover:shadow-md hover:shadow-gray-600 transition"
 									onClick={() => navigate("/signup")}
 								>
 									Signup
@@ -159,39 +167,48 @@ export const ProblemNavBar: React.FC<ProbelemNaveBarProps> = ({
 							</div>
 						</div>
 					) : (
-						<div className="flex flex-1 justify-end md:pr-10 pr-4">
-							<div className="hidden md:block cursor-pointer">
-								<DropdownMenu>
-									<DropdownMenuTrigger asChild>
-										<Avatar>
-											<AvatarImage src="https://assets.leetcode.com/users/emad-ansari/avatar_1728627541.png" />
-											<AvatarFallback>CN</AvatarFallback>
-										</Avatar>
-									</DropdownMenuTrigger>
-									<DropdownMenuContent
-										align="end"
-										className="bg-gray-900 text-white border border-codeio_border"
-									>
-										<DropdownMenuItem>
-											Profile
-										</DropdownMenuItem>
-										<DropdownMenuItem>
-											Settings
-										</DropdownMenuItem>
-										<DropdownMenuItem
-											onClick={() => dispatch(logOut())}
+						<div className="flex flex-1  pr-4 md:pr-10  h-full items-center cursor-pointer ">
+							<div className="flex items-center gap-4 pl-3 pr-1.5  h-[80%]  rounded-full border border-code-border">
+								<span className= "text-white" >Hi, Emad</span> 
+								<div className="hidden md:block cursor-pointer">
+									<DropdownMenu>
+										<DropdownMenuTrigger asChild>
+											<Avatar>
+												<AvatarImage src="https://assets.leetcode.com/users/emad-ansari/avatar_1728627541.png" />
+												<AvatarFallback>
+													CN
+												</AvatarFallback>
+											</Avatar>
+										</DropdownMenuTrigger>
+										<DropdownMenuContent
+											align="end"
+											className="bg-gray-900  text-white border border-code-border cursor-pointer"
 										>
-											Logout
-										</DropdownMenuItem>
-									</DropdownMenuContent>
-								</DropdownMenu>
+											<DropdownMenuItem className="hover:bg-gray-800 cursor-pointer ">
+												Profile
+											</DropdownMenuItem>
+											<DropdownMenuItem className = "hover:bg-gray-800  cursor-pointer ">
+												Settings
+											</DropdownMenuItem>
+											<DropdownMenuItem
+												className = "hover:bg-gray-800  cursor-pointer "
+												onClick={() =>
+													dispatch(logOut())
+												}
+											>
+												Logout
+											</DropdownMenuItem>
+										</DropdownMenuContent>
+									</DropdownMenu>
+								</div>
 							</div>
+
 							<div className="md:hidden">
 								<Sheet>
 									<SheetTrigger>
 										<Button
 											size={"icon"}
-											className="rounded-full hover:bg-slate-800 "
+											className="rounded-full text-white hover:bg-slate-800 "
 										>
 											<AlignJustify />
 										</Button>
@@ -219,10 +236,15 @@ export const ProblemNavBar: React.FC<ProbelemNaveBarProps> = ({
 											<div className="flex flex-col gap-3 ">
 												{drawerItems.map((item) => {
 													return (
-														<div key = {item.name} className="flex items-center gap-6 text-white hover:bg-slate-700 rounded-lg px-3 py-2 cursor-pointer transition duration-200
-														">
+														<div
+															key={item.name}
+															className="flex items-center gap-6 text-white hover:bg-slate-700 rounded-lg px-3 py-2 cursor-pointer transition duration-200
+														"
+														>
 															{item.icon}
-															<span>{item.name}</span>
+															<span>
+																{item.name}
+															</span>
 														</div>
 													);
 												})}
