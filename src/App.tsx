@@ -10,6 +10,7 @@ import { EmailAuthenticaiton } from "@/client/pages/EmailAuthenticaiton";
 import { ContestPage } from "@/client/pages/ContestPage";
 import { StandingPage } from "@/client/pages/StandingPage";
 import { ProblemSubmissions } from "@/client/components/common/ProblemSubmissions";
+import { ProblemChallenges } from "@/client/pages/ProblemChallenges";
 
 
 import { ProblemNavBar } from "@/client/components/common/ProblemNavBar";
@@ -49,31 +50,17 @@ const App = () => {
 		<>
 			<BrowserRouter>
 				<Suspense fallback={<LoadingPage />}>
-					{/* <ToastContainer
-						position="top-center"
-						autoClose={4000}
-						hideProgressBar={false}
-						newestOnTop={false}
-						closeOnClick
-						rtl={false}
-						pauseOnFocusLoss
-						draggable
-						pauseOnHover
-						theme="dark"
-						aria-label={2}
-						// transition: Bounce
-					/> */}
-					<ProblemNavBar isProbleDescriptioPage={false} />
+					<ProblemNavBar />
 					<Routes>
 						<Route index element={<HomePage />} />
 						<Route path="/login" element={<LoginPage />} />
 						<Route path="/signup" element={<SignupPage />} />
-						<Route
-							path="/verify-email"
-							element={<EmailAuthenticaiton />}
-						/>
-						<Route path="/problemset" element={<ProblemsetPage />}>
-							<Route index element={<ProblemList />} />
+						<Route path="/problemset" >
+							<Route index element={<ProblemChallenges/>} />
+							<Route path = ':type' element={<ProblemsetPage />} >
+								<Route index element={<ProblemList />} />		
+							</Route>
+
 						</Route>
 						<Route path="/contests" element={<ContestPage />} />
 						<Route path="/standings" element={<StandingPage />} />
