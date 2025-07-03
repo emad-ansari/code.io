@@ -178,6 +178,7 @@ export const ProblemChallenges = () => {
 					{challengesCard.map((c) => {
 						return (
 							<ChallengesCard
+								key = {c.id}
 								id={c.id}
 								title={c.title}
 								type={c.type}

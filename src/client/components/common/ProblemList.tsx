@@ -1,8 +1,13 @@
 import { memo, startTransition } from "react";
-import { useNavigate } from "react-router-dom";
+import { useNavigate, useParams } from "react-router-dom";
 import { useSelector } from "react-redux";
-import { BarChart, Star, CircleCheckBig, Contrast , Squircle} from "lucide-react";
-
+import {
+	BarChart,
+	Star,
+	CircleCheckBig,
+	Contrast,
+	Squircle,
+} from "lucide-react";
 import { RootState } from "@/client/app/store";
 
 import {
@@ -80,17 +85,19 @@ const problems = [
 		likes: 924,
 		submissions: 2000,
 	},
-	
-]
+];
+
 
 const ProblemList = memo(() => {
 	const navigate = useNavigate();
+	const { type } = useParams();  // fetch the problems using it's type
+	
 	// const { problems } = useSelector((state: RootState) => state.problem);
 
 	const onNavigate = (id: string, title: string) => {
 		const formattedTitle = title.replace(/ /g, "-");
 		startTransition(() => {
-			navigate(`../../problem/${formattedTitle}/description`, {
+			navigate(`../${type}/${formattedTitle}/description`, {
 				state: { id: id },
 			});
 		});
@@ -114,7 +121,7 @@ const ProblemList = memo(() => {
 						</TableHead>
 					</TableRow>
 				</TableHeader>
-				<TableBody className = 'border-[1.5px] border-slate-800'>
+				<TableBody className="border-[1.5px] border-slate-800">
 					{problems.map((problem) => (
 						<TableRow
 							key={problem.id}
@@ -135,7 +142,10 @@ const ProblemList = memo(() => {
 										className="text-codeio_yellow"
 									/>
 								) : (
-									<Squircle size = {17} className="text-gray-400"/>
+									<Squircle
+										size={17}
+										className="text-gray-400"
+									/>
 								)}
 							</TableCell>
 							<TableCell
@@ -162,13 +172,17 @@ const ProblemList = memo(() => {
 							<TableCell className="text-right">
 								<div className="flex items-center justify-end space-x-1">
 									<Star className="h-4 w-4 text-yellow-400" />
-									<span className = "text-white">{problem.likes}</span>
+									<span className="text-white">
+										{problem.likes}
+									</span>
 								</div>
 							</TableCell>
 							<TableCell className="text-right">
 								<div className="flex items-center justify-end space-x-1">
 									<BarChart className="h-4 w-4 text-blue-400" />
-									<span className ="text-white">{problem.submissions}</span>
+									<span className="text-white">
+										{problem.submissions}
+									</span>
 								</div>
 							</TableCell>
 						</TableRow>
