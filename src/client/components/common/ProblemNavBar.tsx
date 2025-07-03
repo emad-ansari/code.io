@@ -1,6 +1,7 @@
 import React, { startTransition } from "react";
-import { useNavigate, useLocation } from "react-router-dom";
+import { useNavigate, useLocation, NavLink } from "react-router-dom";
 import { useSelector } from "react-redux";
+
 import {
 	AlignJustify,
 	CodeXml,
@@ -131,16 +132,16 @@ export const ProblemNavBar: React.FC = () => {
 				<div className="flex   items-center h-full  text-white ">
 					<div className="hidden md:flex items-center gap-4 h-[80%] rounded-full shadow-md bg-code-bg  border border-code-border text-sm px-1.5 ">
 						{navItems.map((item) => (
-							<a
+							<NavLink
 								key={item.href}
-								href={item.href}
+								to={item.href}
+								
 								onClick={(e) => onNavigation(e, item.href)}
-								className={`text-sm font-dmMono px-4 py-[11px]  rounded-full hover:bg-code-hover ${
-									item.active && "bg-code-hover"
-								}`}
+								className = {({ isActive }) => `text-sm font-dmMono px-4 py-[11px]  rounded-full hover:bg-code-hover ${isActive && 'bg-code-hover'}`}
+								
 							>
 								{item.label}
-							</a>
+							</NavLink>
 						))}
 					</div>
 				</div>
@@ -169,7 +170,7 @@ export const ProblemNavBar: React.FC = () => {
 					) : (
 						<div className="flex flex-1  pr-4 md:pr-10  h-full items-center cursor-pointer ">
 							<div className="flex items-center gap-4 pl-3 pr-1.5  h-[80%]  rounded-full border border-code-border">
-								<span className= "text-white" >Hi, Emad</span> 
+								<span className= "text-white text-sm " >Hi, Emad</span> 
 								<div className="hidden md:block cursor-pointer">
 									<DropdownMenu>
 										<DropdownMenuTrigger asChild>

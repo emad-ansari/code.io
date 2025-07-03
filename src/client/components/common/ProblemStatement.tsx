@@ -37,7 +37,7 @@ export default function ProblemStatement() {
 				<div className="flex flex-row items-center justify-between">
 					<span className="flex gap-2 text-[26px] font-semibold">
 						{problemNo !== 0 && <span>{problemNo}.</span>}
-						<span>{problemDetail.title}</span>
+						<span className = "text-white"> problem titlel goes here</span>
 					</span>
 					<div className="flex flex-row gap-4">
 						{!loading && (
