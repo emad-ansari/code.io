@@ -1,5 +1,6 @@
 import React from "react";
 import { cn } from "@/client/lib/utils";
+import { AppliedFilter } from "../common/FilterSection";
 import {
 	Select,
 	SelectContent,
@@ -10,20 +11,23 @@ import {
 } from "@/client/components/ui/select";
 
 interface DropDownMenuProps {
-	items: string[];
+	filterType: "difficulty" | "status";
+	filterOptions: string[];
 	placeholder: string;
 	className: string;
-	onValueChange: (value: string) => void;
+	onSelect: ({filterType, filterOption}: AppliedFilter) => void;
 }
 
 export const DropDownMenu: React.FC<DropDownMenuProps> = ({
-	items,
+	filterType,
+	filterOptions,
 	placeholder,
 	className,
-	onValueChange,
+	onSelect,
 }) => {
+	console.log('this is filter array: ', filterOptions);
 	return (
-		<Select onValueChange={(value) => onValueChange(value)}>
+		<Select onValueChange={(value) => onSelect({filterType, filterOption: value})}>
 			<SelectTrigger className={cn("text-white", className)}>
 				<SelectValue placeholder={placeholder} className="text-white" />
 			</SelectTrigger>
@@ -33,14 +37,14 @@ export const DropDownMenu: React.FC<DropDownMenuProps> = ({
 				)}
 			>
 				<SelectGroup>
-					{items.map((item, index) => {
+					{filterOptions && filterOptions.map((option, index) => {
 						return (
 							<SelectItem
-								value={item}
+								value={option}
 								key={index}
 								className={cn("cursor-pointer")}
 							>
-								{item}
+								{option}
 							</SelectItem>
 						);
 					})}
