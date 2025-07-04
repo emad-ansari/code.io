@@ -6,7 +6,6 @@ import "./index.css";
 
 import { LoginPage } from "@/client/pages/LoginPage";
 import { SignupPage } from "@/client/pages/SignupPage";
-import { EmailAuthenticaiton } from "@/client/pages/EmailAuthenticaiton";
 import { ContestPage } from "@/client/pages/ContestPage";
 import { StandingPage } from "@/client/pages/StandingPage";
 import { ProblemSubmissions } from "@/client/components/common/ProblemSubmissions";
@@ -60,24 +59,13 @@ const App = () => {
 							<Route path = ':type' element={<ProblemsetPage />} >
 								<Route index element={<ProblemList />} />		
 							</Route>
-
+							<Route path = ':type/:title/' element={<ProblemDescriptionPage/>} >
+								<Route path = "description"  element={<ProblemStatement />}/>
+								<Route path="submissions" element={<ProblemSubmissions />}/>
+							</Route>		
+							
 						</Route>
-						<Route path="/contests" element={<ContestPage />} />
-						<Route path="/standings" element={<StandingPage />} />
-						<Route
-							path="problem/:title/"
-							element={<ProblemDescriptionPage />}
-						>
-							<Route
-								path="description"
-								element={<ProblemStatement />}
-							/>
 
-							<Route
-								path="submissions"
-								element={<ProblemSubmissions />}
-							/>
-						</Route>
 						<Route
 							path="admin/dashboard"
 							element={<AdminDashboardPage />}
