@@ -14,10 +14,16 @@ import {
 	setCode,
 } from "@/client/features/codeEditorSlice";
 
+import { LNAGUAGE_MAPPING, LANGUAGES } from "@/client/lib/types";
 import {
-	LNAGUAGE_MAPPING,
-	LANGUAGES,
-} from "@/client/lib/types";
+	Select,
+	SelectContent,
+	SelectGroup,
+	SelectItem,
+	SelectTrigger,
+	SelectValue,
+} from "../ui/select";
+import { cn } from "@/client/lib/utils";
 
 export function EditorTopBar() {
 	const dispatch = useAppDispatch();
@@ -48,12 +54,40 @@ export function EditorTopBar() {
 
 	return (
 		<div className="flex items-center px-2 py-1 bg-code-bg rounded-tl-lg rounded-tr-lg justify-between  gap-5 border border-b-code-border border-t-transparent border-l-transparent border-r-transparent">
-			<DropDownMenu 
-				items={LANGUAGES}
-				placeholder= {language}
-				className="bg-gray-800 w-28 h-9 border-none"
-				onValueChange={onLanguageChange}
-			/>
+			<div className="">
+				<Select onValueChange={onLanguageChange}>
+					<SelectTrigger
+						className={cn("text-white bg-code-dark  w-28 h-9 border-none")}
+					>
+						<SelectValue
+							placeholder={"java"}
+							className="text-white"
+						/>
+					</SelectTrigger>
+					<SelectContent
+						className={cn(
+							"bg-code-bg text-white border-[1.5px] border-code-border"
+						)}
+					>
+						<SelectGroup>
+							{LANGUAGES.map((language, index) => {
+								return (
+									<SelectItem
+										value={language}
+										key={index}
+										className={cn(
+											"cursor-pointer focus:bg-code-hover"
+										)}
+									>
+										{language}
+									</SelectItem>
+								);
+							})}
+						</SelectGroup>
+					</SelectContent>
+				</Select>
+			</div>
+
 			<div className="flex flex-row gap-2 items-center ">
 				<SettingDialogBox /> {/* editor setting */}
 				<Button

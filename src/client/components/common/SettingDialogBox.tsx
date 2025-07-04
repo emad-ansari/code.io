@@ -22,7 +22,7 @@ import {
 	SelectTrigger,
 	SelectValue,
 } from "../ui/select";
-import { EDITOR_THEMES, FONT_SIZES } from "../../lib/types";
+import { EDITOR_THEMES, FONT_SIZES } from "@/client/lib/types";
 
 export default function SettingDialogBox() {
 	const dispatch = useAppDispatch();
@@ -30,11 +30,11 @@ export default function SettingDialogBox() {
 	return (
 		<Dialog>
 			<DialogTrigger asChild>
-				<Button size="icon" className="rounded-full hover:bg-gray-800">
+				<Button size="icon" className="rounded-full hover:bg-code-hover">
 					<Settings size={16} className="text-white" />
 				</Button>
 			</DialogTrigger>
-			<DialogContent className="sm:max-w-[425px] bg-darkGray text-white border border-codeio_border">
+			<DialogContent className="sm:max-w-[425px] bg-code-bg text-white border border-code-border">
 				<DialogHeader>
 					<DialogTitle>Editor Playground Setting</DialogTitle>
 					<DialogDescription>
@@ -53,21 +53,22 @@ export default function SettingDialogBox() {
 								);
 								dispatch(setFontSize(newFontSize));
 							}}
+							
 						>
-							<SelectTrigger className="w-[80%] text-white border border-none bg-gray-800">
+							<SelectTrigger className="w-[80%] text-white border border-none bg-code-dark">
 								<SelectValue
 									placeholder={`${fontSize}px`}
 									className="text-white"
 								/>
 							</SelectTrigger>
-							<SelectContent className="bg-darkGray text-white border border-codeio_border">
-								<SelectGroup className="">
+							<SelectContent className="text-white border border-code-border bg-code-dark">
+								<SelectGroup >
 									{FONT_SIZES.map((item, index) => {
 										return (
 											<SelectItem
 												value={item}
 												key={index}
-												className="cursor-pointer"
+												className="cursor-pointer focus:bg-gray-700"
 											>
 												{item}
 											</SelectItem>
@@ -83,21 +84,22 @@ export default function SettingDialogBox() {
 						</Label>
 						<Select
 							onValueChange={(value) => dispatch(setTheme(value))}
+
 						>
-							<SelectTrigger className="w-[80%] text-white border border-none bg-gray-800">
+							<SelectTrigger className="w-[80%] text-white border border-none bg-code-dark">
 								<SelectValue
 									placeholder="vs-dark"
 									className="texxt-white"
 								/>
 							</SelectTrigger>
-							<SelectContent className="bg-darkGray text-white border border-codeio_border">
+							<SelectContent className="bg-code-dark text-white border border-code-border">
 								<SelectGroup className="">
 									{EDITOR_THEMES.map((item, index) => {
 										return (
 											<SelectItem
 												value={item}
 												key={index}
-												className="cursor-pointer"
+												className="cursor-pointer focus:bg-gray-700"
 											>
 												{item}
 											</SelectItem>
