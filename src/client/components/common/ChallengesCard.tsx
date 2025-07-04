@@ -20,10 +20,10 @@ export const ChallengesCard: React.FC<ChallengesCardSchema> = ({
 
 	return (
 		<div
-			className="flex h-auto  gap-4  border-[1.5px] border-code-border rounded-3xl py-3 pl-3 pr-5 shadow-lg cursor-pointer items-stretch"
+			className="flex h-auto gap-4 border-[1.5px] border-code-border rounded-3xl py-3 pl-3 pr-5 shadow-lg cursor-pointer items-stretch"
 			onClick={() => navigate(`/problemset/${type}`)}
 		>
-			<div className=" flex w-40 h-34 self-center">
+			<div className=" flex w-34 h-34 self-center shrink-0">
 				<img
 					src={imgUrl}
 					alt="Challenges-Image"
@@ -43,19 +43,19 @@ export const ChallengesCard: React.FC<ChallengesCardSchema> = ({
 				</div>
 			</div>
 
-			<div className=" flex flex-col justify-between pt-5">
-				<div className="flex flex-col items-end w-52 gap-2 justify-end">
+			<div className=" flex flex-col justify-between pt-3 pb-2 ">
+				<div className="flex flex-col items-end w-40 gap-2 justify-end">
 					<Progress
 						value={(solvedChallenges / totalChallenges) * 100}
-						className="w-[70%] [&>div]:bg-code-orange bg-code-dark"
+						className="w-[85%] [&>div]:bg-code-orange bg-code-dark"
 					/>
 					<span className="text-sm">
 						{solvedChallenges} / {totalChallenges} challenges
 					</span>
 				</div>
-				<div className="flex justify-end  ">
+				<div className="flex justify-end items-center ">
 					<span className="text-sm">view All Problems</span>
-					<ChevronRight className="w-6 h-6 " />
+					<ChevronRight className="w-5 h-5 " />
 				</div>
 			</div>
 		</div>

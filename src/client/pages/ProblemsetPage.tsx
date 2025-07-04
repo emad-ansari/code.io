@@ -1,5 +1,5 @@
 import { memo, useEffect, Suspense } from "react";
-import { Outlet, useSearchParams } from "react-router-dom";
+import { Outlet, useSearchParams, useParams } from "react-router-dom";
 import { useSelector } from "react-redux";
 
 import { RootState, useAppDispatch } from "@/client/app/store";
@@ -7,6 +7,7 @@ import { setOpenDropDownMenu } from "@/client/features/dropDownSlice";
 import { fetchProblem, setPageSize } from "@/client/features/problemSlice";
 import { FilterSection } from "@/client/components/common/FilterSection";
 import { ProblemListSkeleton } from "@/client/components/skeletons/ProblemListSkeleton";
+
 import {
 	Pagination,
 	PaginationContent,
@@ -17,12 +18,22 @@ import {
 	PaginationPrevious,
 } from "@/client/components/ui/pagination";
 
+import {
+	Select,
+	SelectContent,
+	SelectGroup,
+	SelectItem,
+	SelectTrigger,
+	SelectValue,
+} from "@/client/components/ui/select";
+
 import { problems_per_page } from "@/client/lib/types";
-import { DropDownMenu } from "../components/ui/DropDownMenu";
+import { cn } from "@/client/lib/utils";
 
 const ProblemsetPage = () => {
 	const dispatch = useAppDispatch();
 	const [searchParams] = useSearchParams();
+	const { type } = useParams();
 
 	const { isDifficultyMenuOpen, isStatusMenuOpen } = useSelector(
 		(state: RootState) => state.dropdown
@@ -76,12 +87,43 @@ const ProblemsetPage = () => {
 						<Outlet />
 					</Suspense>
 					<div className="flex items-center w-full justify-between ">
-						<DropDownMenu
-							items={problems_per_page}
-							placeholder="10 / page"
-							className="bg-code-bg w-36 h-10 border border-code-border"
-							onValueChange={onProblemPerPageChange}
-						/>
+						<Select onValueChange={onProblemPerPageChange}>
+							<SelectTrigger
+								className={cn(
+									"text-white",
+									"bg-code-bg w-36 h-10 border border-code-border"
+								)}
+							>
+								<SelectValue
+									placeholder="10 / page"
+									className="text-white"
+								/>
+							</SelectTrigger>
+							<SelectContent
+								className={cn(
+									"bg-code-bg text-white border-[1.5px] border-slate-800"
+								)}
+							>
+								<SelectGroup>
+									{problems_per_page &&
+										problems_per_page.map(
+											(option, index) => {
+												return (
+													<SelectItem
+														value={option}
+														key={index}
+														className={cn(
+															"cursor-pointer"
+														)}
+													>
+														{option}
+													</SelectItem>
+												);
+											}
+										)}
+								</SelectGroup>
+							</SelectContent>
+						</Select>
 						<div className="flex flex-row justify-end">
 							<CustomPagination />
 						</div>

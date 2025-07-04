@@ -25,7 +25,7 @@ export const DropDownMenu: React.FC<DropDownMenuProps> = ({
 	className,
 	onSelect,
 }) => {
-	console.log('this is filter array: ', filterOptions);
+
 	return (
 		<Select onValueChange={(value) => onSelect({filterType, filterOption: value})}>
 			<SelectTrigger className={cn("text-white", className)}>
@@ -42,7 +42,7 @@ export const DropDownMenu: React.FC<DropDownMenuProps> = ({
 							<SelectItem
 								value={option}
 								key={index}
-								className={cn("cursor-pointer")}
+								className={cn("cursor-pointer focus:bg-code-hover")}
 							>
 								{option}
 							</SelectItem>
