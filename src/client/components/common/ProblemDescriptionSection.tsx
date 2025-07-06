@@ -9,14 +9,14 @@ export const ProblemDescriptionSection = () => {
 		<section className="rounded-lg bg-code-bg text-white  border-[1.5px] border-code-border ">
 			<div className="flex items-center bg-code-bg px-2 py-1 rounded-tl-lg rounded-tr-lg gap-5  border border-b-[#334155] border-t-transparent border-l-transparent border-r-transparent">
 				<NavLink
-					className = {({ isActive }) => `px-3 py-1.5  hover:bg-gray-800 text-white rounded-md ${isActive && 'bg-code-hover'}`}
+					className = {({ isActive }) => `px-3 py-1.5  hover:bg-code-dark text-gray-300 rounded-md ${isActive && 'bg-code-dark text-white'}`}
 					to = {"description"}
 				>
 					Description
 				</NavLink>
 
 				<NavLink
-					className = {({ isActive }) => `px-3 py-1.5  hover:bg-gray-800 text-white rounded-md ${isActive && 'bg-code-hover'}`}
+					className = {({ isActive }) => `px-3 py-1.5  hover:bg-code-dark text-gray-300 rounded-md ${isActive && 'bg-code-dark text-white'}`}
 					to = {"submissions"}
 				>
 					Submissions
