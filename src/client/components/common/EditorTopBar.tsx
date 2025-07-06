@@ -76,7 +76,7 @@ export function EditorTopBar() {
 										value={language}
 										key={index}
 										className={cn(
-											"cursor-pointer focus:bg-code-hover"
+											"cursor-pointer focus:bg-code-dark"
 										)}
 									>
 										{language}
