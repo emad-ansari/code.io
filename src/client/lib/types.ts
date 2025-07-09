@@ -125,29 +125,7 @@ export interface UserSubmission {
 	createdAt: Date
 }
 
-export const typeOptions: string[] = [
-	"void",
-	"int",
-	"int[]",
-	"int[][]",
-	"char",
-	"char[]",
-	"char[][]",
-	"String",
-	"String[]",
-	"String[][]",
-	"boolean",
-	"boolean[]",
-	"boolean[][]",
-	"float",
-	"float[]",
-	"double",
-	"double[]",
-	"List<Integer>",
-	"List<List<Integer>>",
-	"List<String>",
-	"List<List<String>>",
-];
+
 export const LNAGUAGE_MAPPING: {
 	[key: string]: { name: string; languageId: number };
 } = {
@@ -162,7 +140,7 @@ export const EDITOR_THEMES: string[] = ["vs-dark", "vs", "hc-light", "OneDarkPro
 
 export const FONT_SIZES: string[] = ["12px", "14px", "16px", "18px", "20px", "22px"];
 
-export const LANGUAGES = ["java", "cpp", "typescript"];
+export const LANGUAGES = ["java", "cpp", "python"];
 
 export const problems_per_page = ["10 / page", "20 / page", "50 / page"];
 
