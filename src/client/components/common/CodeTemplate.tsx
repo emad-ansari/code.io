@@ -1,31 +1,43 @@
 import { useState } from "react";
 import { ChevronDown, ChevronLeft, Trash } from "lucide-react";
-
 import { useAppDispatch } from "@/client/app/store";
+import { LANGUAGES } from "@/client/lib/types";
 import { Button } from "@/client/components/ui/button";
-import { Checkbox } from "@/client/components/ui/checkbox";
-
 import {
-	deleteTestcase,
-	setInput,
-	setIsSample,
+	deleteTemplate,
+	setDifficulty,
 	setOutput,
-	Testcase,
+	Template,
+	setLanguage,
+	setTemplateCode,
+	setBoilerFucntion
 } from "@/client/features/problemFormSlice";
 
-interface TestcaseContainerProps extends Testcase {
-	testcaseNo: number;
+
+
+import {
+	Select,
+	SelectContent,
+	SelectGroup,
+	SelectItem,
+	SelectTrigger,
+	SelectValue,
+} from "../ui/select";
+
+interface CodeTemplateProps extends Template {
+	templateNo: number;
 }
 
-export const TestCaseContainer: React.FC<TestcaseContainerProps> = ({
+
+export const CodeTemplate: React.FC<CodeTemplateProps> = ({
 	id,
-	testcaseNo,
-	input,
-	expected_output,
-	isSample,
+	templateNo,
+	template_code,
+	boiler_function,
 }) => {
 	const dispatch = useAppDispatch();
 	const [open, setOpen] = useState<boolean>(false);
+	console.log(template_code)
 
 	return (
 		<>
@@ -39,7 +51,7 @@ export const TestCaseContainer: React.FC<TestcaseContainerProps> = ({
 						} transition-all ease-in-out `}
 						onClick={() => setOpen((prev) => !prev)}
 					>
-						<span className="text-md ">Testcase {testcaseNo}</span>
+						<span className="text-md ">Template {templateNo}</span>
 						{open ? (
 							<ChevronDown className="w-4 h-4 transition-all ease-in-out" />
 						) : (
@@ -49,26 +61,60 @@ export const TestCaseContainer: React.FC<TestcaseContainerProps> = ({
 				</div>
 				{open && (
 					<div className="pt-3 border-[1.5px] border-code-border rounded-bl-xl rounded-br-xl transition-all ease-in-out">
-						<div className="px-2 ">
+						<div className="mb-4 px-2">
+							<label
+								htmlFor="language"
+								className="block text-gray-200 text-sm font-bold mb-2"
+							>
+								Language
+							</label>
+							<Select
+								onValueChange={(value) =>
+									dispatch(setLanguage({id, language: value}))
+								}
+							>
+								<SelectTrigger className="w-full text-[#9ca3af] border-[1.5px] border-slate-800 rounded-lg  placeholder:text-gray-300  ">
+									<SelectValue
+										placeholder="Language"
+										className="text-white  placeholder:text-gray-300 "
+									/>
+								</SelectTrigger>
+								<SelectContent className="bg-code-dark text-white  border-[1.5px] border-code-border ">
+									<SelectGroup className="">
+										{LANGUAGES.map((language) => {
+											return (
+												<SelectItem
+													value={language}
+													className="hover:bg-[#334155] !important cursor-pointer"
+												>
+													{language}
+												</SelectItem>
+											);
+										})}
+									</SelectGroup>
+								</SelectContent>
+							</Select>
+						</div>
+						<div className="px-2">
 							<label
 								className="block text-gray-200 text-sm font-bold mb-2"
-								htmlFor="title"
+								htmlFor="template_code"
 							>
-								Input
+								Template Code
 							</label>
 							<textarea
-								id="description"
+								id="template_code"
 								className=" text-white text-sm w-full px-3 py-2  border-[1.5px] hover:outline-none focus:outline-none border-code-border  rounded-lg bg-transparent"
-								value={input}
+								value={template_code}
 								onChange={(e) =>
 									dispatch(
-										setInput({
+										setTemplateCode({
 											id,
-											input: e.target.value,
+											t_code: e.target.value,
 										})
 									)
 								}
-								placeholder={`5\n1 2 3 4 5`}
+								placeholder={"template code"}
 								rows={4}
 								required
 							></textarea>
@@ -76,51 +122,31 @@ export const TestCaseContainer: React.FC<TestcaseContainerProps> = ({
 						<div className="px-2 ">
 							<label
 								className="block text-gray-200 text-sm font-bold mb-2"
-								htmlFor="output"
+								htmlFor="template_code"
 							>
-								Output
+								Boiler Function
 							</label>
 							<textarea
-								id="output"
+								id="boiler_function"
 								className=" text-white text-sm w-full px-3 py-2  border-[1.5px] hover:outline-none focus:outline-none border-code-border  rounded-lg bg-transparent"
-								value={expected_output}
+								value={boiler_function}
 								onChange={(e) =>
 									dispatch(
-										setOutput({
+										setBoilerFucntion({
 											id,
-											output: e.target.value,
+											b_function: e.target.value,
 										})
 									)
 								}
-								placeholder={`10`}
-								rows={2}
+								placeholder={`boiler function`}
+								rows={4}
 								required
 							></textarea>
-						</div>
-						<div className="px-2 flex items-center gap-4 mt-2 ">
-							<Checkbox
-								className="text-code-orange font-bold"
-								checked={isSample}
-								onCheckedChange={(checked) => {
-									if (typeof checked == 'boolean') {
-										dispatch(
-											setIsSample({
-												id,
-												isSample: checked,
-											})
-										);
-									}
-									
-								}}
-							/>
-							<span className="text-sm font-normal text-gray-300">
-								Sample Testcase
-							</span>
 						</div>
 						<div className="w-full px-2 mb-2 mt-2">
 							<Button
 								className="flex items-center bg-red-500 space-x-2 w-full hover:bg-red-600"
-								onClick={() => dispatch(deleteTestcase(id))}
+								onClick={() => dispatch(deleteTemplate(id))}
 							>
 								<Trash className="w-4 h-4 " />
 								<span className="font-semibold">Delete</span>

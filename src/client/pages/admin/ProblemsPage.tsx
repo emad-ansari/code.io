@@ -18,9 +18,10 @@ import { startTransition } from "react";
 const problems = [
 	{
 		id: 1,
+		problemNo: 1,
 		title: "Two sum",
 		difficulty: "Easy",
-		problemNo: 1,
+		category: "Math",
 		problemStatus: {
 			status: "Solved",
 		},
@@ -29,9 +30,10 @@ const problems = [
 	},
 	{
 		id: 2,
+		problemNo: 2,
 		title: "Two sum",
 		difficulty: "Hard",
-		problemNo: 2,
+		category: "Math",
 		problemStatus: {
 			status: "Solved",
 		},
@@ -40,9 +42,10 @@ const problems = [
 	},
 	{
 		id: 3,
+		problemNo: 3,
 		title: "Two sum",
 		difficulty: "Medium",
-		problemNo: 3,
+		category: "Math",
 		problemStatus: {
 			status: "Solved",
 		},
@@ -53,19 +56,16 @@ const problems = [
 
 const ProblemsPage = () => {
 	const navigate = useNavigate();
-	function filterProblems() {
-		throw new Error("Function not implemented.");
-	}
 
 	return (
 		<main>
 			<div className="flex items-center justify-between">
-				<h1 className="text-3xl font-semibold m-0">All Problems</h1>
+				<h1 className="text-3xl text-code-orange font-semibold m-0">All Problems</h1>
 				<Button
-					className="flex gap-2 bg-[#29324a]  border border-transparent hover:border-[#307dd9] box-border "
+					className="flex gap-2 bg-code-orange "
 					onClick={() =>
 						startTransition(() => {
-							navigate('../new-problem');
+							navigate("../new-problem");
 						})
 					}
 				>
@@ -77,35 +77,31 @@ const ProblemsPage = () => {
 				<div className="relative flex-1 text-white shadow-inner">
 					<Search
 						strokeWidth={1.25}
-						className="absolute top-1/4 left-3 w-5 h-5"
+						className="absolute top-1/4 left-3 w-5 h-5 rounded-full "
 					/>
 					<input
 						type="text"
-						className="bg-code-bg rounded-md outline-none px-10 py-2.5 text-sm w-full placeholder-[#484848] focus:ring ring-slate-800 border border-[#334155] "
+						className="bg-code-bg rounded-full outline-none px-10 py-2.5 text-sm w-full placeholder-[#484848] focus:ring ring-slate-800 border border-code-border"
 						placeholder="Search Problems"
-					/>
-				</div>
-				<div className="flex flex-1 items-center justify-end">
-					<DropDownMenu
-						className="bg-code-bg w-32 h-10 text-md  border border-code-border"
-						placeholder="Difficulty"
-						items={DIFFICULTY}
-						onValueChange={filterProblems}
 					/>
 				</div>
 			</div>
 			<div className="mt-8">
-				<Table className=" overflow-hidden rounded-lg bg-[#29324a] border border-code-border">
-					<TableHeader className="bg-gray-[#1e293b]">
-						<TableRow className="border-b border-code-border  hover:bg-gray-750 ">
+				<Table className=" overflow-hidden rounded-lg  border border-code-border">
+					<TableHeader className="bg-code-dark">
+						<TableRow className="border-b border-code-border ">
 							<TableHead className="text-gray-300">
 								Problem No.
 							</TableHead>
 							<TableHead className="text-gray-300">
 								Title
 							</TableHead>
+
 							<TableHead className="text-gray-300 text-center ">
 								Difficulty
+							</TableHead>
+							<TableHead className="text-gray-300 text-center ">
+								Category
 							</TableHead>
 							<TableHead className="text-gray-300 text-right">
 								Likes
@@ -122,7 +118,7 @@ const ProblemsPage = () => {
 						{problems.map((problem) => (
 							<TableRow
 								key={problem.id}
-								className="border-b border-gray-700 hover:bg-gray-750"
+								className="border-b border-code-border  hover:bg-gray-750"
 							>
 								<TableCell className="font-normal text-gray-200 cursor-pointer hover:text-blue-400">
 									{problem.problemNo}
@@ -143,6 +139,12 @@ const ProblemsPage = () => {
 									>
 										{problem.difficulty}
 									</span>
+								</TableCell>
+								<TableCell className="text-center">
+									{problem.category}
+									{/* <div className="flex items-center justify-end space-x-1">
+										
+									</div> */}
 								</TableCell>
 								<TableCell className="text-right">
 									<div className="flex items-center justify-end space-x-1">
