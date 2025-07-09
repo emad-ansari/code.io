@@ -1,7 +1,5 @@
-import { useSelector } from "react-redux";
+import { useDispatch, useSelector } from "react-redux";
 import { useAppDispatch, RootState } from "../app/store";
-
-// import { ContributionExample } from "../components/common/ContributionExample";  delete the file
 import {
 	Tooltip,
 	TooltipContent,
@@ -14,6 +12,9 @@ import {
 	setTitle,
 	setDescription,
 	setDifficulty,
+	addNewTag,
+	addNewTemplate,
+	removeTag,
 } from "../features/problemFormSlice";
 
 import {
@@ -25,26 +26,48 @@ import {
 	SelectValue,
 } from "../components/ui/select";
 import { Button } from "../components/ui/button";
-// import { typeOptions } from "../lib/types"; delete the type
+import { Plus, X } from "lucide-react";
+import { useState } from "react";
+import { CodeTemplate } from "../components/common/CodeTemplate";
 
 const ProblemForm = () => {
 	const dispatch = useAppDispatch();
-	const { title, description } = useSelector(
+	const [tagName, setTagName] = useState<string>("");
+
+	const { category, title, description, tags, templates } = useSelector(
 		(state: RootState) => state.problemform
 	);
 
-	const { isLogin } = useSelector((state: RootState) => state.user);
+	// const { isLogin } = useSelector((state: RootState) => state.user);
 
 	return (
 		<>
 			<div className="flex flex-row justify-between gap-3  ">
 				<div className="max-w-3xl  shadow-lg rounded-2xl  border-[1.5px] border-slate-800  flex flex-1 flex-col">
 					<div className="bg-slate-800 flex items-center px-5 py-4 rounded-tl-2xl rounded-tr-2xl">
-						<h2 className="text-2xl font-bold text-slate-200">
+						<h2 className="text-2xl font-bold text-code-orange">
 							Add New Problem
 						</h2>
 					</div>
 					<div className=" pt-4 px-4 pb-20">
+						<div className="mb-4">
+							<label
+								className="block text-gray-200 text-sm font-bold mb-2"
+								htmlFor="title"
+							>
+								Problem Category
+							</label>
+							<Input
+								type="text"
+								placeholder="Category Name"
+								className="focus:outline-none hover:outline-none  placeholder:text-gray-300  border-[1.5px] border-slate-800 rounded-lg"
+								value={category}
+								onChange={(e) =>
+									dispatch(setTitle(e.target.value))
+								}
+								required
+							/>
+						</div>
 						<div className="mb-4">
 							<label
 								className="block text-gray-200 text-sm font-bold mb-2"
@@ -105,7 +128,7 @@ const ProblemForm = () => {
 								</SelectContent>
 							</Select>
 						</div>
-						<div className="mb-3">
+						<div className="mb-4">
 							<label
 								className="block text-gray-200 text-sm font-bold mb-2"
 								htmlFor="description"
@@ -124,19 +147,93 @@ const ProblemForm = () => {
 								required
 							></textarea>
 						</div>
+						<div className="mb-4">
+							<div className="mb-4">
+								<label
+									className="block text-gray-200 text-sm font-bold mb-2"
+									htmlFor="title"
+								>
+									Tag
+								</label>
+								<Input
+									required
+									placeholder="Enter tag name"
+									className="border-[1.5px] border-code-border outline-none  bg-transparent"
+									value={tagName}
+									onChange={(e) => setTagName(e.target.value)}
+									onKeyDown={(e) => {
+										if (e.key === "Enter") {
+											dispatch(addNewTag(tagName));
+											setTagName("");
+										}
+									}}
+								/>
+							</div>
+							<div className="flex flex-row gap-2">
+								{tags.map((tag, index) => {
+									return <Tag key={index} tagName={tag} />;
+								})}
+							</div>
+						</div>
 					</div>
 				</div>
 				<TestCaseForm />
 			</div>
-			<div className="mt-5">
+			{/* Code template */}
+			<div className="flex flex-row justify-between gap-3 mt-5">
+				<div className=" shadow-lg rounded-2xl  border-[1.5px] border-code-border flex-col w-full pb-5">
+					<div className="bg-slate-800 flex items-center px-5 py-4 rounded-tl-2xl rounded-tr-2xl">
+						<h2 className="text-2xl font-bold text-code-orange">
+							Add Template & Boiler Function
+						</h2>
+					</div>
+					<div
+						className={`flex flex-col justify-start  max-h-[600px] overflow-y-auto ${
+							templates.length === 0 && " items-center pt-10"
+						}`}
+					>
+						<div className=" px-4 py-4 flex flex-col gap-4 text-lg overflow-y-scroll mb-2">
+							{templates.length === 0 ? (
+								<div className="font-fugaz">
+									No Template added yet
+								</div>
+							) : (
+								templates.map((template, index) => (
+									<CodeTemplate
+										key={template.id}
+										id={template.id}
+										language={template.language}
+										templateNo={index + 1}
+										template_code={template.template_code}
+										boiler_function={
+											template.boiler_function
+										}
+									/>
+								))
+							)}
+						</div>
+
+						<div className="px-4 flex justify-center">
+							<Button
+								className="flex flex-row gap-3 bg-code-dark rounded-xl "
+								onClick={() => dispatch(addNewTemplate())}
+							>
+								<Plus className="w-4 h-4" />
+								Add More Template
+							</Button>
+						</div>
+					</div>
+				</div>
+			</div>
+			{/* <div className="mt-5">
 				<div className="flex justify-end">
 					<TooltipProvider>
 						<Tooltip>
 							<TooltipTrigger asChild>
 								<Button
-									disabled={isLogin ? false : true}
+									// disabled={isLogin ? false : true}
 									type="submit"
-									className="bg-cyan text-black font-medium px-4 py-2 rounded-md hover:bg-[#a5f3fc] focus:outline-none "
+									className="bg-code-orange text-white font-medium px-4 py-2 rounded-md cursor-pointer "
 									// onClick={() =>
 									// 	dispatch(createProblem())
 									// }
@@ -154,100 +251,25 @@ const ProblemForm = () => {
 						</Tooltip>
 					</TooltipProvider>
 				</div>
-			</div>
+			</div> */}
 		</>
 	);
 };
 export default ProblemForm;
 
-{
-}
-
-// export function CustomSelectTypes({ id }: { id: string }) {
-// 	const dispatch = useAppDispatch();
-
-// 	return (
-// 		<Select
-// 			onValueChange={(value) =>
-// 				dispatch(setParameterType({ id, type: value }))
-// 			}
-// 		>
-// 			<SelectTrigger className="w-full text-[#9ca3af] bg-darkGray">
-// 				<SelectValue placeholder="Type" className="text-white" />
-// 			</SelectTrigger>
-// 			<SelectContent className="bg-darkGray text-white">
-// 				<SelectGroup className="">
-// 					{typeOptions.map((type, index) => {
-// 						return (
-// 							<SelectItem
-// 								key={index}
-// 								value={type}
-// 								className="cursor-pointer"
-// 							>
-// 								{type}
-// 							</SelectItem>
-// 						);
-// 					})}
-// 				</SelectGroup>
-// 			</SelectContent>
-// 		</Select>
-// 	);
-// }
-
-{
-	/* <div className="mb-4">
-						<label
-							className="block text-gray-200 text-sm font-bold mb-2"
-							htmlFor="returnType"
-						>
-							Function Return Type
-						</label>
-						<Select
-							onValueChange={(value) =>
-								dispatch(setReturnType(value))
-							}
-						>
-							<SelectTrigger className="w-full text-[#9ca3af] bg-darkGray">
-								<SelectValue
-									placeholder="Type"
-									className="text-white"
-								/>
-							</SelectTrigger>
-							<SelectContent className="bg-darkGray text-white">
-								<SelectGroup className="">
-									{typeOptions.map((type, index) => {
-										return (
-											<SelectItem
-												key={index}
-												value={type}
-												className="cursor-pointer"
-											>
-												{type}
-											</SelectItem>
-										);
-									})}
-								</SelectGroup>
-							</SelectContent>
-						</Select>
-					</div> */
-}
-
-{
-	/* <div className="mb-4">
-						<label
-							className="block text-gray-200 text-sm font-bold mb-2"
-							htmlFor="testcase"
-						>
-							Add Test Case Exmaples
-						</label>
-						<Button
-							classname="flex items-center justify-between bg-transparent border rounded-md focus:outline-none  focus:ring focus:ring-offset-[#81E291] w-full hover:bg-[#ecfeff] text-[#9ca3af] hover:text-black"
-							onClick={() => handleNewTestCase()}
-						>
-							<span className="text-md ">Add new TestCase</span>
-							<IoAdd className="font-medium text-xl" />
-						</Button>
-					</div> */
-}
-{
-}
+const Tag = ({ tagName }: { tagName: string }) => {
+	const dispatch = useDispatch();
+	return (
+		<div className="bg-slate-800 rounded-full px-3 py-2 text-xs flex gap-3 items-cetner text-white justify-center font-medium cursor-pointer ">
+			<span className="flex items-center text-code-orange">
+				{tagName}
+			</span>
+			<span
+				className="bg-slate-700  w-4 h-4 rounded-full flex items-center justify-center"
+				onClick={() => dispatch(removeTag({ tagName }))}
+			>
+				<X className="w-3 h-3 rounded-full" />
+			</span>
+		</div>
+	);
+};
