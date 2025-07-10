@@ -185,7 +185,7 @@ export const ProblemNavBar: React.FC = () => {
 											align="end"
 											className="bg-gray-900  text-white border border-code-border cursor-pointer"
 										>
-											<DropdownMenuItem className="hover:bg-gray-800 cursor-pointer ">
+											<DropdownMenuItem className="hover:bg-gray-800 cursor-pointer " onClick={() => navigate('u/user-name')}>
 												Profile
 											</DropdownMenuItem>
 											<DropdownMenuItem className = "hover:bg-gray-800  cursor-pointer ">

@@ -1,22 +1,15 @@
 
 ## Todo
-
-- [ ] Add functionality to display all applied filter.
-
+  [ ] make challenges page responsive
 - [ ] analyze the judge0 to run different code.
-
 - [ ] Store new problem and testcases into database system instead of file system.
-
 - [ ] add tooltip to setting and full screen icon
-
 - [ ] add feature to run cpp code
-
 - [ ] Test CppCodeGenerator library
-
-- [ ] Design landing page
-
 - [ ] Design user profile page
-
+- [x] Design landing page
+- [x] Add functionality to display all applied filter.
+- [x] current path should be highlighted
 
 ## Completed
 - [x] Dsiplay react toast when logut successfully

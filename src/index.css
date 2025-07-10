@@ -1,5 +1,7 @@
 @import url("https://fonts.googleapis.com/css2?family=DM+Mono&family=Fugaz+One&display=swap");
 @import "tailwindcss";
+@plugin "@tailwindcss/typography";
+
 
 @theme {
 	--color-cyan: #cffafe;
@@ -11,15 +13,19 @@
 	--color-code-hover: #1f2937;
 	--color-code-green: #0FA958;
 	--color-code-red: #D91111;
-	--color-darkGray: #0D1621;
+	--color-code-dark: #1d293d;
+	--color-code-orange: #EB8069;
 	--color-codeio_yellow: #dadd32;
 	--font-fugaz: "Fugaz One", "sans-serif"; 
 	--font-dmMono: "DM Mono", "monospace"; 
 }
 
+
 ::-webkit-scrollbar {
 	width: 0.3rem;
+	display: none;
 }
+
 ::-webkit-scrollbar-track {
     /* background-color: #282828; */
     border-radius: 0.5rem;
@@ -104,7 +110,4 @@
 		--chart-5: 340 75% 55%;
 	}
 }
-
-
-
 

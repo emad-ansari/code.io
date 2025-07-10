@@ -11,18 +11,18 @@ interface TokenPayload extends JwtPayload {
 
 const DashboardPage = () => {
 	const navigate = useNavigate();
-	const token = localStorage.getItem("CToken");
-	const decodedToken = token ? jwtDecode<TokenPayload>(token) : null;
-	const userRole = decodedToken?.role;
+	// const token = localStorage.getItem("CToken");
+	// const decodedToken = token ? jwtDecode<TokenPayload>(token) : null;
+	// const userRole = decodedToken?.role;
 	
 	const [isSidebarCollapsed, setIsSidebarCollapsed] =
 		useState<boolean>(false);
 
-	useEffect(() => {
-		if (userRole !== "admin") {
-			navigate("/");
-		}
-	});
+	// useEffect(() => {
+	// 	if (userRole !== "admin") {
+	// 		navigate("/");
+	// 	}
+	// });
 
 	const toggleSidebar = () => {
 		setIsSidebarCollapsed(!isSidebarCollapsed);

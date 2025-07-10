@@ -72,18 +72,6 @@ export interface FetchProblemProps {
 	searchKeywords: string;
 }
 
-export interface DropDownItemProps {
-	value: string;
-	isFilterApply: boolean;
-	filterProblems: (difficultyLevel: string) => void;
-}
-
-export interface CustomMuiMenuProps {  // check whether its used or not
-	labelName: string;
-	labelValue: string;
-	ITEMS_ARRAY: string[];
-}
-
 export interface CodeExecutionResponse {
 	success: boolean;
 	data: ExecutionResult;
@@ -138,7 +126,7 @@ export const LNAGUAGE_MAPPING: {
 
 export const EDITOR_THEMES: string[] = ["vs-dark", "vs", "hc-light", "OneDarkPro"];
 
-export const FONT_SIZES: string[] = ["12px", "14px", "16px", "18px", "20px", "22px"];
+export const FONT_SIZES: string[] = ["14px", "16px", "18px", "20px", "22px"];
 
 export const LANGUAGES = ["java", "cpp", "python"];
 

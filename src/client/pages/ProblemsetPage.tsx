@@ -145,17 +145,17 @@ export const CustomPagination = memo(() => {
 				<PaginationItem>
 					<PaginationPrevious
 						href={page > 1 ? `/problemset/?page=${page - 1}` : ""}
-						className="bg-code-bg text-white hover:bg-code-hover hover:text-white border border-code-border"
+						className="bg-code-bg text-white hover:bg-code-dark hover:text-white border border-code-border"
 					/>
 				</PaginationItem>
 				{Array.from({ length: totalPages }).map((_, index) => (
 					<PaginationItem key={index}>
 						<PaginationLink
 							href={`/problemset/?page=${index + 1}`}
-							className={`text-white hover:bg-code-bg hover:text-white border border-code-border ${
+							className={`text-white hover:bg-code-dark hover:text-white border border-code-border ${
 								page === index + 1
-									? "bg-gray-800"
-									: "bg-darkGray"
+									? "bg-code-dark"
+									: "bg-code-dark"
 							}`}
 						>
 							{index + 1}
@@ -172,7 +172,7 @@ export const CustomPagination = memo(() => {
 								? ""
 								: `/problemset/?page=${page + 1}`
 						}
-						className="bg-code-bg text-white hover:bg-gray-700 hover:text-white border border-code-border"
+						className="bg-code-bg text-white hover:bg-code-dark hover:text-white border border-code-border"
 					/>
 				</PaginationItem>
 			</PaginationContent>

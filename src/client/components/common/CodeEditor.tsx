@@ -6,7 +6,7 @@ import { Editor, Monaco } from "@monaco-editor/react";
 import { RootState, useAppDispatch } from "@/client/app/store";
 import { fetchDefaultCode, setCode } from "@/client/features/codeEditorSlice";
 import { LNAGUAGE_MAPPING } from "@/client/lib/types";
-import OneDarkPro from "@/client/theme/oneDarkPro.json";
+import gitHubDark from "@/client/theme/gitHubDark.json";
 
 export const CodeEditor = () => {
 	const dispatch = useAppDispatch();
@@ -17,10 +17,10 @@ export const CodeEditor = () => {
 	const formattedTitle = title?.replace(/-/g, " ");
 
 	const onEditorMount = (monaco: Monaco) => {
-		monaco.editor.defineTheme("OneDarkPro", {
+		monaco.editor.defineTheme("gitHubDark", {
 			base: "vs-dark",
 			inherit: true,
-			...OneDarkPro,
+			...gitHubDark,
 		});
 	};
 	
@@ -51,7 +51,7 @@ export const CodeEditor = () => {
 			height="100%"
 			defaultLanguage="java"
 			defaultValue={code}
-			theme={"OneDarkPro"}
+			theme={"gitHubDark"}
 			language={language}
 			value={code}
 			onMount={() => {}}
@@ -67,7 +67,6 @@ export const CodeEditor = () => {
 				bracketPairColorization: {
 					enabled: true,
 				},
-				cursorBlinking: "expand",
 				formatOnPaste: true,
 				suggest: {
 					showFields: false,

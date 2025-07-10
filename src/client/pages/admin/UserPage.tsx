@@ -1,5 +1,5 @@
 import { Button } from "@/client/components/ui/button";
-import { BarChart, Plus, Star, Ellipsis, Search } from "lucide-react";
+import { Ellipsis, Search } from "lucide-react";
 import { CustomPagination } from "@/client/pages/ProblemsetPage";
 
 import {
@@ -10,8 +10,8 @@ import {
 	TableHeader,
 	TableRow,
 } from "@/client/components/ui/table";
-import { DropDownMenu } from "@/client/components/ui/DropDownMenu";
-import { DIFFICULTY } from "@/client/lib/types";
+
+
 const users = [
 	{
 		id: 1,
@@ -21,14 +21,20 @@ const users = [
 	},
 	{
 		id: 2,
-        username: "Emad",
-		email: "emad@emad.com",
+        username: "Arsalan",
+		email: "arsalan@arsalan.com",
         role: "admin"
 	},
 	{
 		id: 3,
-        username: "Emad",
-		email: "emad@emad.com",
+        username: "Rehan",
+		email: "rehan@rehan.com",
+        role: "user"
+	},
+	{
+		id: 4,
+        username: "Rehan",
+		email: "rehan@rehan.com",
         role: "user"
 	},
 ];
@@ -41,7 +47,7 @@ const UserPage = () => {
 	return (
 		<main>
 			<div className="flex items-center justify-between">
-				<h1 className="text-3xl font-semibold m-0">All Users</h1>
+				<h1 className="text-3xl font-semibold m-0 text-code-orange">All Users</h1>
 			</div>
 			<div className="mt-8 flex items-center justify-between ">
 				<div className="relative flex-1 text-white shadow-inner">
@@ -51,23 +57,15 @@ const UserPage = () => {
 					/>
 					<input
 						type="text"
-						className="bg-code-bg rounded-md outline-none px-10 py-2.5 text-sm w-full placeholder-[#484848] focus:ring ring-slate-800 border border-[#334155] "
+						className="bg-code-bg rounded-full outline-none px-10 py-2.5 text-sm w-full placeholder-[#484848] focus:ring ring-slate-800 border border-code-border "
 						placeholder="Search Users"
 					/>
 				</div>
-				<div className="flex flex-1 items-center justify-end">
-					{/* <DropDownMenu
-						className="bg-code-bg w-32 h-10 text-md  border border-code-border"
-						placeholder="Difficulty"
-						items={DIFFICULTY}
-						onValueChange={filterProblems}
-					/> */}
-				</div>
 			</div>
 			<div className="mt-8">
-				<Table className=" overflow-hidden rounded-lg bg-code-bg-secondary border border-code-border w-[900px]">
-					<TableHeader className="bg-gray-800">
-						<TableRow className="border-b border-code-border  hover:bg-gray-750 ">
+				<Table className=" overflow-hidden rounded-xl  border border-code-border">
+					<TableHeader className="bg-code-dark">
+						<TableRow className="border-b border-code-border ">
 							<TableHead className="text-gray-300">
 								Username 
 							</TableHead>
@@ -86,7 +84,7 @@ const UserPage = () => {
 						{users.map((user) => (
 							<TableRow
 								key={user.id}
-								className="border-b border-gray-700 hover:bg-gray-750"
+								className="border-b border-code-border hover:bg-gray-750"
 							>
 								<TableCell className="text-left text-slate-300 ">
                                     {user.username}
@@ -95,7 +93,7 @@ const UserPage = () => {
 								    {user.email}
 								</TableCell>
                                 <TableCell className="text-left text-slate-300">
-								    {user.role}
+									<span className={` rounded-full px-2 py-1 ${user.role == 'admin' ? "bg-orange-500/20 text-orange-300" : "bg-blue-500/20 text-blue-300"} `}>{user.role}</span>
 								</TableCell>
 								<TableCell className="text-center">
 									<Button

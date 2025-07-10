@@ -1,4 +1,4 @@
-import { useNavigate } from "react-router-dom";
+import { NavLink, useNavigate } from "react-router-dom";
 import {
 	ChevronLeft,
 	ChevronRight,
@@ -16,9 +16,9 @@ interface SidebarProps {
 
 export const SideBar: React.FC<SidebarProps> = ({ isSidebarCollapsed, onToggle }) => {
 	const sidebarItems = [
-        { icon: <User className="h-5 w-5" />, label: "Users" },
-		{ icon: <CodeXml className="h-5 w-5" />, label: "Problems" },
-		{ icon: <BookOpenCheck className="h-5 w-5" />, label: "Testcases" },
+        { icon: <User className="h-5 w-5" />, label: "Users", to: "users" },
+		{ icon: <CodeXml className="h-5 w-5" />, label: "Problems", to: "problems"},
+		{ icon: <BookOpenCheck className="h-5 w-5" />, label: "Testcases", to: "testcases" },
 	];
 	const navigate = useNavigate();
 
@@ -64,19 +64,14 @@ export const SideBar: React.FC<SidebarProps> = ({ isSidebarCollapsed, onToggle }
 						<ul className="space-y-2">
 							{sidebarItems.map((item, index) => (
 								<li key={index}>
-									<Button
-										variant="ghost"
-										className={`w-full hover:text-white ${
+									<NavLink
+										to = {item.to}
+										className = {({isActive}) => `flex gap-2 rounded-md  w-full hover:text-white ${
 											isSidebarCollapsed
 												? "justify-center p-2"
 												: "justify-start px-3 py-2"
-										} hover:bg-gray-800`}
+										} hover:bg-code-dark ${isActive && "bg-code-dark"}`}
 										title={item.label}
-										onClick={() =>
-											startTransition(() => {
-												navigate(`${item.label.toLocaleLowerCase()}`);
-											})
-										}
 									>
 										{item.icon}
 										{!isSidebarCollapsed && (
@@ -84,7 +79,7 @@ export const SideBar: React.FC<SidebarProps> = ({ isSidebarCollapsed, onToggle }
 												{item.label}
 											</span>
 										)}
-									</Button>
+									</NavLink>
 								</li>
 							))}
 						</ul>

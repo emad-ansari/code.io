@@ -2,7 +2,7 @@ import { createSlice, PayloadAction } from "@reduxjs/toolkit";
 import { SettingState } from "../lib/types";
 
 export const settingState: SettingState = {
-	fontSize: 15,
+	fontSize: 16,
 	theme: "vs-dark",
 };
 

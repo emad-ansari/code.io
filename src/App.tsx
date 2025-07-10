@@ -6,14 +6,11 @@ import "./index.css";
 
 import { LoginPage } from "@/client/pages/LoginPage";
 import { SignupPage } from "@/client/pages/SignupPage";
-import { ContestPage } from "@/client/pages/ContestPage";
-import { StandingPage } from "@/client/pages/StandingPage";
 import { ProblemSubmissions } from "@/client/components/common/ProblemSubmissions";
 import { ProblemChallenges } from "@/client/pages/ProblemChallenges";
-
-
-import { ProblemNavBar } from "@/client/components/common/ProblemNavBar";
+import { MainLayout } from "@/client/layouts/MainLayout";
 import { LoadingPage } from "@/client/pages/LoadingPage";
+import { ProfilePage } from "@/client/pages/ProfilePage";
 
 import { rehydrateAuth } from "@/client/features/authSlice";
 import { useAppDispatch } from "@/client/app/store";
@@ -49,28 +46,40 @@ const App = () => {
 		<>
 			<BrowserRouter>
 				<Suspense fallback={<LoadingPage />}>
-					<ProblemNavBar />
 					<Routes>
-						<Route index element={<HomePage />} />
-						<Route path="/login" element={<LoginPage />} />
-						<Route path="/signup" element={<SignupPage />} />
-						<Route path="/problemset" >
-							<Route index element={<ProblemChallenges/>} />
-							<Route path = ':type' element={<ProblemsetPage />} >
-								<Route index element={<ProblemList />} />		
+						<Route path="/" element={<MainLayout />}>
+							<Route index element={<HomePage />} />
+							<Route path="/login" element={<LoginPage />} />
+							<Route path="/signup" element={<SignupPage />} />
+							<Route path="/problemset">
+								<Route index element={<ProblemChallenges />} />
+								<Route
+									path=":type"
+									element={<ProblemsetPage />}
+								>
+									<Route index element={<ProblemList />} />
+								</Route>
+								<Route
+									path=":type/:title/"
+									element={<ProblemDescriptionPage />}
+								>
+									<Route
+										path="description"
+										element={<ProblemStatement />}
+									/>
+									<Route
+										path="submissions"
+										element={<ProblemSubmissions />}
+									/>
+								</Route>
 							</Route>
-							<Route path = ':type/:title/' element={<ProblemDescriptionPage/>} >
-								<Route path = "description"  element={<ProblemStatement />}/>
-								<Route path="submissions" element={<ProblemSubmissions />}/>
-							</Route>		
-							
+							<Route path = "u/:user-name" element = {<ProfilePage/>}/>
 						</Route>
-
 						<Route
 							path="admin/dashboard"
 							element={<AdminDashboardPage />}
 						>
-							<Route index path="users" element={<UserPage />} />
+							<Route path = "users" element={<UserPage />} />
 							<Route
 								path="problems"
 								element={<ProblemsPage />}
