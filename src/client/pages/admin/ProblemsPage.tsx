@@ -1,9 +1,8 @@
 import { useNavigate } from "react-router-dom";
 import { BarChart, Plus, Star, Ellipsis, Search } from "lucide-react";
-
 import { Button } from "@/client/components/ui/button";
 import { CustomPagination } from "@/client/pages/ProblemsetPage";
-import { DropDownMenu } from "@/client/components/ui/DropDownMenu";
+
 import {
 	Table,
 	TableBody,
@@ -12,8 +11,7 @@ import {
 	TableHeader,
 	TableRow,
 } from "@/client/components/ui/table";
-import { DIFFICULTY } from "@/client/lib/types";
-import { startTransition } from "react";
+
 
 const problems = [
 	{
@@ -60,17 +58,17 @@ const ProblemsPage = () => {
 	return (
 		<main>
 			<div className="flex items-center justify-between">
-				<h1 className="text-3xl text-code-orange font-semibold m-0">All Problems</h1>
+				<h1 className="text-3xl text-code-orange font-semibold m-0">
+					All Problems
+				</h1>
 				<Button
-					className="flex gap-2 bg-code-orange "
-					onClick={() =>
-						startTransition(() => {
-							navigate("../new-problem");
-						})
-					}
+					// disabled={isLogin ? false : true}
+					type="submit"
+					className="bg-green-800/20 text-green-500 font-medium px-4 h-11 rounded-full cursor-pointer gap-2 shadow-md "
+					onClick={() => navigate("../new-problem")}
 				>
-					<Plus size={18} />
-					<span>Add New Problem</span>
+					<Plus className="w-5 h-5" />
+					Add New Problem
 				</Button>
 			</div>
 			<div className="mt-8 flex items-center justify-between ">

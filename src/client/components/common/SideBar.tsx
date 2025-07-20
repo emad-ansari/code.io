@@ -1,4 +1,4 @@
-import { NavLink, useNavigate } from "react-router-dom";
+import { NavLink } from "react-router-dom";
 import {
 	ChevronLeft,
 	ChevronRight,
@@ -7,7 +7,7 @@ import {
     User
 } from "lucide-react";
 import { Button } from "@/client/components/ui/button";
-import React, { startTransition } from "react";
+
 
 interface SidebarProps {
 	isSidebarCollapsed: boolean;
@@ -20,7 +20,6 @@ export const SideBar: React.FC<SidebarProps> = ({ isSidebarCollapsed, onToggle }
 		{ icon: <CodeXml className="h-5 w-5" />, label: "Problems", to: "problems"},
 		{ icon: <BookOpenCheck className="h-5 w-5" />, label: "Testcases", to: "testcases" },
 	];
-	const navigate = useNavigate();
 
 	return (
 		<div className="relative h-screen border border-r-slate-800 border-t-transparent border-l-transparent border-b-transparent box-border">
@@ -37,12 +36,12 @@ export const SideBar: React.FC<SidebarProps> = ({ isSidebarCollapsed, onToggle }
 					} p-4`}
 				>
 					<div className="flex items-center">
-						<span className="text-2xl font-bold text-purple-500 ">
-							<CodeXml />
+						<span className="text-2xl  text-code-orange ">
+							<CodeXml strokeWidth = {2.5} className=""/>
 						</span>
 						{!isSidebarCollapsed && (
-							<span className="ml-2 text-xl font-bold">
-								Code.In
+							<span className="ml-2 text-xl font-fugaz">
+								Code.io
 							</span>
 						)}
 					</div>
