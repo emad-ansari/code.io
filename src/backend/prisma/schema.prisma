@@ -15,94 +15,179 @@ datasource db {
 
 // User model
 model User {
-  id           String @id @default(cuid())
-  username     String
-  email        String
-  password     String
-  createdAt    DateTime @default(now())
-  updatedAt    DateTime @updatedAt
-  problem      Problem[]
-  problemStatus  ProblemStatus[]
-  submissions  Submission[] @relation("SubmissionToUser")
-  role         String @default("user")
+  id             String          @id @default(cuid())
+  username       String
+  email          String
+  password       String
+  role           UserRole        @default(USER)
+  streak         Streak?        // 1:1 relationship
+  activityLogs   ActivityLog[]  // Daily activity tracking
+  progress       Progress?
+  solvedProblems ProblemSolved[]
+  submissions    Submission[]    @relation("SubmissionToUser") // Track of user's submissions
+  createdAt      DateTime        @default(now())
+  updatedAt      DateTime        @updatedAt
+}
+
+model Streak {
+  id          String   @id @default(cuid())
+  current     Int      @default(0)   // Active streak count
+  longest     Int      @default(0)   // All-time highest streak
+  lastUpdated DateTime @default(now()) // Last activity date
+  user        User     @relation(fields: [userId], references: [id])
+  userId      String   @unique
+}
+
+model ActivityLog {
+  id     String   @id @default(cuid())
+  date   DateTime @default(now())  // Date-only (no timezone)
+  user   User     @relation(fields: [userId], references: [id])
+  userId String
+  
+  @@unique([userId, date])
+}
+
+// Category model
+model ProblemCategory {
+  id               String             @id @default(cuid())
+  name             String             @unique
+  title            String
+  imgUrl           String
+  tags             CategoryTag[]
+  problems         Problem[]
+  solvedProblems   ProblemSolved[]
+  CategoryProgress CategoryProgress[]
+}
+
+model CategoryTag {
+  id         String          @id @default(cuid())
+  label      String
+  categoryId String
+  category   ProblemCategory @relation(fields: [categoryId], references: [id], onDelete: Cascade)
 }
 
 // Problem model
 model Problem {
-  id           String @id @default(cuid())
-  title        String @unique
-  description  String
-  difficulty   String @default("Easy")
-  problemNo    Int @unique
-  isReviewed   Boolean @default(false)  // remove it
-  createdAt    DateTime @default(now())
-  updatedAt    DateTime @updatedAt
-  createdBy    String
-  user         User @relation(fields: [createdBy], references: [id], onDelete: Cascade)
-  defualtCode  DefaultCode[]
-  problemStatus ProblemStatus[]
-  testcases    TestCase[]
+  id             String          @id @default(cuid())
+  problemNo      Int             @unique
+  title          String          @unique
+  description    String
+  difficulty     Difficulty
+  likes          Int
+  dislikes       Int
+  submissions    Int
+  tags           Tag[]
+  testcases      Testcase[]
+  templates      TemplateCode[]
+  solvedProblems ProblemSolved[] // problems solved by users
+  categoryId     String
+  category       ProblemCategory @relation(fields: [categoryId], references: [id], onDelete: Cascade)
+  createdBy      String
+  createdAt      DateTime        @default(now())
+  updatedAt      DateTime        @updatedAt
+  @@index([categoryId])
+  @@index([difficulty])
 }
 
-model DefaultCode {
-  id          String @id @default(cuid())
-  code        String
-  problemId   String
-  languageId  Int
-  problem     Problem @relation(fields: [problemId], references: [id], onDelete: Cascade)
-  createdAt   DateTime @default(now())
-  updatedAt   DateTime @updatedAt
+model Tag {
+  id        String  @id @default(cuid())
+  lable     String
+  problemId String
+  problem   Problem @relation(fields: [problemId], references: [id], onDelete: Cascade)
 }
 
-model ProblemStatus {
-  id          String @id @default(cuid())
-  status      String @default("Todo")
-  userId      String
-  user        User @relation(fields: [userId], references: [id], onDelete: Cascade)
-  problemId   String
-  problem     Problem @relation(fields: [problemId], references: [id], onDelete: Cascade)
+model TemplateCode {
+  id            String  @id @default(cuid())
+  language      String  @unique
+  full_template String
+  boiler_code   String
+  problemId     String
+  problem       Problem @relation(fields: [problemId], references: [id], onDelete: Cascade)
+}
+
+model Testcase {
+  id        String  @id @default(cuid())
+  input     String
+  output    String
+  isSample  Boolean
+  problemId String
+  problem   Problem @relation(fields: [problemId], references: [id], onDelete: Cascade)
+}
+
+model Progress {
+  id               String             @id @default(cuid())
+  easySolved       Int                @default(0)
+  mediumSolved     Int                @default(0)
+  hardSolved       Int                @default(0)
+  totalSolved      Int                @default(0)
+  categoryProgress CategoryProgress[]
+  userId           String             @unique
+  user             User               @relation(fields: [userId], references: [id], onDelete: Cascade)
+  createdAt        DateTime           @default(now())
+  updatedAt        DateTime           @updatedAt
+}
+
+// Simplified - now only tracks total solved per category
+model CategoryProgress {
+  id          String          @id @default(cuid())
+  progress    Progress        @relation(fields: [progressId], references: [id], onDelete: Cascade)
+  progressId  String
+  category    ProblemCategory @relation(fields: [categoryId], references: [id])
+  categoryId  String
+  totalSolved Int             @default(0)
+
+  @@unique([progressId, categoryId])
+}
+
+model ProblemSolved {
+  id         String          @id @default(cuid())
+  status     SolvedStatus
+  userId     String
+  user       User            @relation(fields: [userId], references: [id], onDelete: Cascade)
+  problemId  String
+  problem    Problem         @relation(fields: [problemId], references: [id], onDelete: Cascade)
+  categoryId String          
+  category   ProblemCategory @relation(fields: [categoryId], references: [id])
+  solvedAt   DateTime        @default(now())
+
   @@unique([problemId, userId])
 }
 
-model TestCase {
-  id          String @id @default(cuid())
-  title       String?  // remove this don't need any more
-  problemId   String
-  isReviewed   Boolean @default(false)  // remove it 
-  problem     Problem @relation(fields: [problemId], references: [id], onDelete: Cascade)
-  inputs      TestCaseInput[]
-  output      TestCaseOutput?  // [Todo] - need to look on this relation to make one-to-one not one-to-many
-}
-
-// Model for Test case Input 
-model TestCaseInput {
-  id          String @id @default(cuid()) 
-  name        String
-  type        String
-  value       String
-  testcaseId  String
-  testcase   TestCase @relation(fields: [testcaseId], references: [id], onDelete: Cascade)
-}
-
-// model for Test case Output
-model TestCaseOutput {
-  id        String @id @default(cuid())
-  type      String
-  value     String
-  testcaseId  String @unique
-  testcase   TestCase @relation(fields: [testcaseId], references: [id], onDelete: Cascade)
-}
-
 model Submission {
-  id            String   @id @default(uuid())
-  code          String
-  time          String
-  memory        String
-  status        String
-  userId        String
-  problemId     String
-  languageId    Int
-  user           User @relation("SubmissionToUser", fields: [userId], references: [id], onDelete: Cascade)
-  createdAt     DateTime  @default(now())
-  updatedAt     DateTime  @updatedAt
+  id         String           @id @default(uuid())
+  code       String
+  time       String
+  memory     String
+  status     SubmissionStatus
+  userId     String
+  problemId  String
+  languageId Int
+  user       User             @relation("SubmissionToUser", fields: [userId], references: [id], onDelete: Cascade)
+  createdAt  DateTime         @default(now())
+  updatedAt  DateTime         @updatedAt
+}
+
+enum Difficulty {
+  EASY
+  MEDIUM
+  HARD
+}
+
+enum UserRole {
+  USER
+  ADMIN
+}
+
+enum SolvedStatus { 
+  TODO
+  ATTEMPTED
+  SOLVED
+}
+enum SubmissionStatus {
+  ACCEPTED
+  WRONG_ANSWER
+  TIME_LIMIT_EXCEEDED
+  MEMORY_LIMIT_EXCEEDED
+  RUNTIME_ERROR
+  COMPILATION_ERROR
 }
