@@ -137,7 +137,7 @@ export const ProblemNavBar: React.FC = () => {
 								to={item.href}
 								
 								onClick={(e) => onNavigation(e, item.href)}
-								className = {({ isActive }) => `text-sm font-dmMono px-4 py-[11px]  rounded-full hover:bg-code-hover ${isActive && 'bg-code-hover'}`}
+								className = {({ isActive }) => `text-sm font-dmMono px-4 py-[11px]  rounded-full hover:bg-code-dark ${isActive && 'bg-code-dark'}`}
 								
 							>
 								{item.label}

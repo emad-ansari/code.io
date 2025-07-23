@@ -33,7 +33,7 @@ const AdminDashboardPage = lazy(
 const ProblemsPage = lazy(() => import("@/client/pages/admin/ProblemsPage"));
 const UserPage = lazy(() => import("@/client/pages/admin/UserPage"));
 const TestcasesPage = lazy(() => import("@/client/pages/admin/TestcasesPage"));
-const ProblemForm = lazy(() => import("@/client/pages/ProblemForm"));
+const ProblemForm = lazy(() => import("@/client/pages/admin/New-Problem-Page"));
 
 const App = () => {
 	const dispatch = useAppDispatch();
@@ -73,13 +73,16 @@ const App = () => {
 									/>
 								</Route>
 							</Route>
-							<Route path = "u/:user-name" element = {<ProfilePage/>}/>
+							<Route
+								path="u/:user-name"
+								element={<ProfilePage />}
+							/>
 						</Route>
 						<Route
 							path="admin/dashboard"
 							element={<AdminDashboardPage />}
 						>
-							<Route path = "users" element={<UserPage />} />
+							<Route path="users" element={<UserPage />} />
 							<Route
 								path="problems"
 								element={<ProblemsPage />}

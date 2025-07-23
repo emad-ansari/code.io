@@ -2,7 +2,7 @@ import { useNavigate } from "react-router-dom";
 import { Progress } from "@/client/components/ui/progress";
 import { ChevronRight } from "lucide-react";
 
-import { ChallengesCardSchema } from "@/client/pages/ProblemChallenges";
+import { ChallengesCardSchema } from "@/client/lib/types";
 
 interface TagProps {
 	name: string;
@@ -20,7 +20,7 @@ export const ChallengesCard: React.FC<ChallengesCardSchema> = ({
 
 	return (
 		<div
-			className="flex h-auto gap-4 border-[1.5px] border-code-border rounded-3xl py-3 pl-3 pr-5 shadow-lg cursor-pointer items-stretch"
+			className="flex h-auto gap-4 border-[1.5px] border-code-border rounded-2xl py-3 pl-3 pr-5 shadow-lg cursor-pointer items-stretch"
 			onClick={() => navigate(`/problemset/${type}`)}
 		>
 			<div className=" flex w-34 h-34 self-center shrink-0">

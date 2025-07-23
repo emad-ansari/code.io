@@ -62,13 +62,13 @@ const HomePage = () => {
 							Skills with Code.io
 						</p>
 						<Button
-							className="w-[50%] h-12 text-black bg-[#EB8069] cursor-pointer font-semibold rounded-full flex gap-5 text-justify border border-code-border"
+							className="w-[50%] h-12 text-gray-300 bg-code-dark cursor-pointer font-semibold rounded-full flex gap-5 text-justify  transition-all duration-200"
 							onClick={() => navigate("/signup")}
 						>
 							<span className="flex text-justify  ">
 								Start Coding Now
 							</span>
-							<FaArrowRightLong className=" pt-1" />
+							<FaArrowRightLong className=" pt-1 hover:scale-150 transition-transform" />
 						</Button>
 					</div>
 					<div className=" flex items-center justify-center bg-code-bg">
