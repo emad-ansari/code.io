@@ -72,6 +72,7 @@ export interface FilterState {
 }
 
 export interface FetchProblemProps {
+	categoryName: string,
 	pageNumber: number;
 	difficulty: string;
 	status: string;
