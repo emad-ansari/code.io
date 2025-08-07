@@ -11,9 +11,11 @@ import { ProblemChallenges } from "@/client/pages/ProblemChallenges";
 import { MainLayout } from "@/client/layouts/MainLayout";
 import { LoadingPage } from "@/client/pages/LoadingPage";
 import { ProfilePage } from "@/client/pages/ProfilePage";
+import { ProblemCategoryPage } from "./client/pages/admin/ProblemCategoryPage";
 
 import { rehydrateAuth } from "@/client/features/authSlice";
 import { useAppDispatch } from "@/client/app/store";
+import { BadgeCheck, CircleAlert, Info, TriangleAlert } from "lucide-react";
 
 const HomePage = lazy(() => import("@/client/pages/HomePage"));
 const ProblemStatement = lazy(() =>
@@ -45,6 +47,30 @@ const App = () => {
 	return (
 		<>
 			<BrowserRouter>
+				<ToastContainer
+					position="top-center"
+					autoClose={3000}
+					icon={({ type, theme }) => {
+						switch (type) {
+							case "info":
+								return <Info className="stroke-indigo-400" />;
+							case "error":
+								return (
+									<CircleAlert className="stroke-red-500" />
+								);
+							case "success":
+								return (
+									<BadgeCheck className="stroke-green-500" />
+								);
+							case "warning":
+								return (
+									<TriangleAlert className="stroke-yellow-500" />
+								);
+							default:
+								return null;
+						}
+					}}
+				/>
 				<Suspense fallback={<LoadingPage />}>
 					<Routes>
 						<Route path="/" element={<MainLayout />}>
@@ -54,13 +80,13 @@ const App = () => {
 							<Route path="/problemset">
 								<Route index element={<ProblemChallenges />} />
 								<Route
-									path=":type"
+									path=":category"
 									element={<ProblemsetPage />}
 								>
 									<Route index element={<ProblemList />} />
 								</Route>
 								<Route
-									path=":type/:title/"
+									path=":category/:problemId/"
 									element={<ProblemDescriptionPage />}
 								>
 									<Route
@@ -90,6 +116,10 @@ const App = () => {
 							<Route
 								path="new-problem"
 								element={<ProblemForm />}
+							/>
+							<Route
+								path="category"
+								element={<ProblemCategoryPage />}
 							/>
 							<Route
 								path="testcases"
