@@ -53,30 +53,23 @@ model ProblemCategory {
   name             String             @unique
   title            String
   imgUrl           String
-  tags             CategoryTag[]
+  tags             String[]
   problems         Problem[]
   solvedProblems   ProblemSolved[]
   CategoryProgress CategoryProgress[]
 }
 
-model CategoryTag {
-  id         String          @id @default(cuid())
-  label      String
-  categoryId String
-  category   ProblemCategory @relation(fields: [categoryId], references: [id], onDelete: Cascade)
-}
-
 // Problem model
 model Problem {
   id             String          @id @default(cuid())
-  problemNo      Int             @unique
+  problemNo      Int             @unique @default(autoincrement())
   title          String          @unique
   description    String
   difficulty     Difficulty
-  likes          Int
-  dislikes       Int
-  submissions    Int
-  tags           Tag[]
+  likes          Int @default(0)
+  dislikes       Int @default(0)
+  submissions    Int @default(0)
+  tags           String[]
   testcases      Testcase[]
   templates      TemplateCode[]
   solvedProblems ProblemSolved[] // problems solved by users
@@ -89,13 +82,6 @@ model Problem {
   @@index([difficulty])
 }
 
-model Tag {
-  id        String  @id @default(cuid())
-  lable     String
-  problemId String
-  problem   Problem @relation(fields: [problemId], references: [id], onDelete: Cascade)
-}
-
 model TemplateCode {
   id            String  @id @default(cuid())
   language      String  @unique
@@ -106,12 +92,12 @@ model TemplateCode {
 }
 
 model Testcase {
-  id        String  @id @default(cuid())
-  input     String
-  output    String
-  isSample  Boolean
-  problemId String
-  problem   Problem @relation(fields: [problemId], references: [id], onDelete: Cascade)
+  id               String  @id @default(cuid())
+  input            String
+  expected_output  String
+  isSample         Boolean
+  problemId        String
+  problem          Problem @relation(fields: [problemId], references: [id], onDelete: Cascade)
 }
 
 model Progress {
@@ -141,7 +127,7 @@ model CategoryProgress {
 
 model ProblemSolved {
   id         String          @id @default(cuid())
-  status     SolvedStatus
+  status     SolvedStatus    @default(TODO)
   userId     String
   user       User            @relation(fields: [userId], references: [id], onDelete: Cascade)
   problemId  String
