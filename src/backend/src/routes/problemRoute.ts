@@ -1,20 +1,13 @@
 import { Request, Router, Response } from "express";
 const router = Router();
-
-import prisma from "../db";
-import {
-	getProblemDetail,
-	getOneProblemStatusOnUser,
-	getAllProblems,
-	getTotalPages,
-	createProblem
-} from "../db/problem";
 import auth, { CustomRequestObject } from "../middleware/auth";
-import { ProblemDetailWithStatusOnUser, problemFormSchema } from "../@utils/types";
+import { getAllProblems, getProblemDetail} from "../db/problem";
 
-router.get("/filter-problem", auth, async (req: Request, res: Response) => {
+// GET ALL PROBLEMS
+router.get("/get-problems", auth, async (req: Request, res: Response) => {
 	const { userAuthorized } = req as CustomRequestObject;
 
+	const categoryName = req.query.category as string;
 	const page = Number(req.query.pageNumber) || 1;
 	const problemPerPage = Number(req.query.pageSize);
 	const difficulty = req.query.difficulty as string | undefined;
@@ -32,158 +25,45 @@ router.get("/filter-problem", auth, async (req: Request, res: Response) => {
 		if (status) filterQuery.status = status;
 		if (searchKeywords) filterQuery.searchKeywords = searchKeywords;
 
-		const problems = await getAllProblems(
+		const result = await getAllProblems(
+			categoryName,
 			page,
 			problemPerPage,
-			filterQuery
+			filterQuery,
+			userAuthorized
 		);
-		const totalPages = await getTotalPages(problemPerPage, filterQuery);
-		if (userAuthorized) {
-			return res.status(200).json({
-				success: true,
-				message: "Filtered problems",
-				data: {
-					problems,
-					totalPages,
-				},
-			});
-		} else {
-			// if user is not authorize then remove the status property from problems
-			const problemsWithoutStatus = problems?.map((p) => {
-				return {
-					id: p.id,
-					title: p.title,
-					problemNo: p.problemNo,
-					difficulty: p.difficulty,
-				};
-			});
-			return res.status(200).json({
-				success: true,
-				message: "filtered problem without status",
-				data: {
-					problems: problemsWithoutStatus,
-					totalPages,
-				},
-			});
-		}
+
+		return res.status(200).json({
+			success: true,
+			msg: "Successfully fetched all problems",
+			data: {
+				problems: result?.problems,
+				totalPages: result?.totalCount,
+			},
+		});
 	} catch (e: any) {
 		console.error(e.message);
 		return res.status(500).json({ success: false, message: e.message });
 	}
 });
 
-// create new problem
-router.post('/create-problem', auth, async(req: Request, res: Response) => {
-	const { userAuthorized } = req as CustomRequestObject;
-	if (!userAuthorized){
-		return res.status(401).json({ success: false, message: "Unauthenticated!"})
-	}
-	const { role } = req as CustomRequestObject;
-	if (role !== 'admin') {
-		return res.status(403).json({ success: false, message: "Unauthorized!"});
-	}
-
-	const { userId } = req as CustomRequestObject;
-	try {
-		const parsedProblem = problemFormSchema.safeParse(req.body);
-		if (!parsedProblem.success) {
-			return res.json({ success: false, message: parsedProblem.error});
-		}
-
-		const { title, difficulty, description, testcases } = parsedProblem.data;
-
-		// save the problem
-		const newProblem = await createProblem(title, description , difficulty, userId);
-		if (!newProblem.success) {
-			return res.json({ success: false, message: newProblem.msg});
-		}
-
-		// parse the testcase 
-		/*
-			testcases: [
-				{
-					inputs: {
-						name: string;
-						type: string;
-						value: string
-					}[],
-					outputs: {
-						type: string,
-						value: string
-					}
-				}
-			]
-		*/
-
-
-
-		// save the testcases
-
-		/*
-			for creating testcases
-			createTestcase({
-				problemId,
-				testcases
-			})
-
-		*/
-
-
-		// generate boiler plate code
-
-		// save boiler plate code
-
-	}
-	catch(error: any) {
-		console.error(error.message)
-	}
-})
-
-
+// GET PROBLEM DETAILS
 router.get(
-	"/get-problem-details/:title",
+	"/get-problem-detail/:problemId",
 	auth,
 	async (req: Request, res: Response) => {
-		const { title } = req.params;
+		const { problemId } = req.params;
 		const { userAuthorized } = req as CustomRequestObject;
 		try {
-			// get the problem detail along with testcase examples
-			const result = await getProblemDetail(title);
-			if (!result.success || result.problemDetail == undefined) {
-				return res.json({ success: false, message: result.msg });
-			}
-
-			if (userAuthorized) {
-				const { userId } = req as CustomRequestObject;
-				// find the staus of user regarding the problem
-				const response = await getOneProblemStatusOnUser(
-					userId,
-					result.problemDetail.id
-				);
-				if (!response.success || response.status === undefined) {
-					return res.json({ success: false, message: response.msg });
-				}
-
-				const problemDetailWithStatusOnUser: ProblemDetailWithStatusOnUser =
-					{
-						...result.problemDetail,
-						problemStatus: { status: response.status },
-					};
-
-				return res.json({
-					success: true,
-					message: result.msg,
-					data: problemDetailWithStatusOnUser,
-				});
-			} else {
-				// if user is not authorized then only send the problemDetail to guest user
-
-				return res.json({
-					success: true,
-					message: result.msg,
-					data: result.problemDetail,
-				});
-			}
+			const problemDetails = await getProblemDetail(
+				problemId,
+				userAuthorized
+			);
+			return res.status(200).json({
+				success: true,
+				msg: "Successfull fetched problem Details",
+				data: problemDetails,
+			});
 		} catch (error: any) {
 			console.log(error.message);
 			return res.json({ success: false, message: error.message });
@@ -191,58 +71,59 @@ router.get(
 	}
 );
 
-router.get("/default-code", async (req: Request, res: Response) => {
-	try {
-		const query = req.query;
-		const problemTitle = String(query.problemTitle);
-		const langId = Number(query.languageId);
 
-		const problem = await prisma.problem.findFirst({
-			where: {
-				title: problemTitle,
-			},
-			select: {
-				id: true,
-				title: true,
-			},
-		});
-		if (problem && problem.title === problemTitle) {
-			const result = await prisma.defaultCode.findFirst({
-				where: {
-					problemId: problem.id,
-					languageId: langId,
-				},
-				select: {
-					code: true,
-				},
-			});
-			return res.json({
-				success: true,
-				message: "success",
-				data: { defaultCode: result?.code },
-			});
-		}
-		return res
-			.status(204)
-			.json({ success: false, message: "problem not found" });
-	} catch (error: any) {
-		console.log(error);
-		return res.json({ success: false, message: "error" });
-	}
-});
-
-export default router;
-
-// router.post('/judge0-callback', async(req: Request, res: Response) => {
+// router.get("/default-code", async (req: Request, res: Response) => {
 // 	try {
-// 		const payload = req.body; // Parse the JSON payload sent by Judge0
-// 		console.log('Judge0 callback received:', payload);
-// 	}
-// 	catch(error: any){
-// 		console.error('Error handling Judge0 callback:', error);
-// 		res.status(500).send('Internal Server Error'); // Handle error appropriately
-// 	}
+// 		const query = req.query;
+// 		const problemTitle = String(query.problemTitle);
+// 		const langId = Number(query.languageId);
 
-// })
+// 		const problem = await prisma.problem.findFirst({
+// 			where: {
+// 				title: problemTitle,
+// 			},
+// 			select: {
+// 				id: true,
+// 				title: true,
+// 			},
+// 		});
+// 		if (problem && problem.title === problemTitle) {
+// 			const result = await prisma.defaultCode.findFirst({
+// 				where: {
+// 					problemId: problem.id,
+// 					languageId: langId,
+// 				},
+// 				select: {
+// 					code: true,
+// 				},
+// 			});
+// 			return res.json({
+// 				success: true,
+// 				message: "success",
+// 				data: { defaultCode: result?.code },
+// 			});
+// 		}
+// 		return res
+// 			.status(204)
+// 			.json({ success: false, message: "problem not found" });
+// 	} catch (error: any) {
+// 		console.log(error);
+// 		return res.json({ success: false, message: "error" });
+// 	}
+// });
 
-// when you are going to submit the code
+// export default router;
+
+// // router.post('/judge0-callback', async(req: Request, res: Response) => {
+// // 	try {
+// // 		const payload = req.body; // Parse the JSON payload sent by Judge0
+// // 		console.log('Judge0 callback received:', payload);
+// // 	}
+// // 	catch(error: any){
+// // 		console.error('Error handling Judge0 callback:', error);
+// // 		res.status(500).send('Internal Server Error'); // Handle error appropriately
+// // 	}
+
+// // })
+
+// // when you are going to submit the code

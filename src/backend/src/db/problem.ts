@@ -1,309 +1,283 @@
 import prisma from "./index";
-import { ProblemDetail } from "../@utils/types";
+import {
+	Problem,
+	UserSubmissions,
+	convertDifficultyToEnum,
+	convertStatusToEnum,
+} from "../@utils/types";
+import { Prisma } from "@prisma/client";
 
+// CREATE: new problem
 export async function createProblem(
-	title: string,
-	description: string,
-	difficulty: string,
+	data: Problem,
 	userId: string
-): Promise<{ success: boolean; msg: string; id: string }> {
+): Promise<{ success: boolean; msg: string }> {
 	try {
-		// you need to generate a new problem no
-		const lastProblem = await prisma.problem.findFirst({
-			orderBy: {
-				problemNo: "desc",
-			},
-			select: {
-				problemNo: true,
-			},
-		});
-		let newProblemNo: number = 1;
-
-		if (lastProblem !== null) {
-			newProblemNo = lastProblem.problemNo + 1;
-		}
 		// if problem with the given title does not exist then only create the problem
-		const isTitleExist = await prisma.problem.findUnique({
+		const problem = await prisma.problem.findUnique({
 			where: {
-				title: title,
+				title: data.problemTitle,
 			},
 			select: {
 				id: true,
 			},
 		});
 
-		if (isTitleExist) {
+		if (problem) {
 			return {
 				success: false,
-				msg: `problem already exist with the ${title}`,
-				id: "",
+				msg: `problem already exist with the title ${data.problemTitle}`,
 			};
 		}
-		const newProblem = await prisma.problem.create({
-			data: {
-				title,
-				description,
-				difficulty,
-				problemNo: newProblemNo,
-				createdBy: userId,
+		// get problem category id
+		const category = await prisma.problemCategory.findFirst({
+			where: {
+				name: data.problemCategory,
 			},
 			select: {
 				id: true,
 			},
 		});
-		// before return create problemstatus field for all user
-		createProblemStatus(newProblem.id);
+
+		if (category == null) {
+			return {
+				success: false,
+				msg: "Category Not Found",
+			};
+		}
+		// create new problem with the category id
+		const newProblem = await prisma.problem.create({
+			data: {
+				title: data.problemTitle,
+				description: data.description,
+				difficulty: data.difficulty,
+				tags: data.tags,
+				testcases: {
+					create: data.testcases,
+				},
+				templates: {
+					create: data.templates,
+				},
+				categoryId: category.id,
+				createdBy: userId,
+			},
+		});
+
 		return {
 			success: true,
-			msg: "problem created successfully",
-			id: newProblem.id,
+			msg: "Problem Created Successfully",
 		};
 	} catch (error: any) {
-		console.error(
-			"Error occurred while creating new problem: ",
-			(error as Error).message
-		);
+		console.log("CREATE_NEW_PROBLEM_DB_ERROR: ", error);
 		return {
 			success: false,
 			msg: error.message,
-			id: "",
 		};
 	}
 }
 
+// GET: all problems on user page
 export async function getAllProblems(
+	categoryName: string,
 	page: number,
 	problemPerPage: number,
 	filterQuery: {
 		difficulty?: string | undefined;
 		status?: string | undefined;
 		searchKeywords?: string | undefined;
-	}
+	},
+	userAuthorized: boolean
 ) {
 	try {
-		const problems = await prisma.problem.findMany({
-			where: {
-				// Filter by difficulty if it's provided
-				difficulty: filterQuery.difficulty
-					? filterQuery.difficulty
-					: undefined,
+		const difficulty = convertDifficultyToEnum(filterQuery.difficulty);
+		const status = convertStatusToEnum(filterQuery.status);
 
-				// Nested query to filter by status if provided
-				problemStatus: filterQuery.status
-					? {
-							some: { status: filterQuery.status }, // Assuming ProblemStatus is a one-to-many relation
-					  }
-					: undefined,
-				// Filter by title if provided
-				title: filterQuery.searchKeywords
-					? {
-							contains: String(filterQuery.searchKeywords), // Case-insensitive search for title
-							mode: "insensitive", // Ignore case sensitivity
-					  }
-					: undefined,
+		const filterConditions: Prisma.ProblemWhereInput = {
+			category: {
+				name: categoryName,
 			},
+			difficulty: difficulty ? difficulty : undefined,
+			solvedProblems: {
+				some: {
+					status: status && userAuthorized ? status : undefined,
+				},
+			},
+
+			title: filterQuery.searchKeywords
+				? {
+						contains: String(filterQuery.searchKeywords),
+						mode: "insensitive",
+				  }
+				: undefined,
+		};
+
+		const totalCount = await prisma.problem.count({
+			where: filterConditions,
+		});
+
+		const problems = await prisma.problem.findMany({
+			where: filterConditions,
 			skip: (page - 1) * problemPerPage,
 			take: problemPerPage,
 			select: {
 				id: true,
+				problemNo: true,
 				title: true,
 				difficulty: true,
-				problemNo: true,
-				problemStatus: {
+				category: {
 					select: {
-						status: true,
+						title: true,
 					},
 				},
+				likes: true,
+				submissions: true,
 			},
 		});
+
+		return {
+			problems,
+			totalCount,
+		};
+	} catch (error: any) {
+		console.log("GET_ALL_PROBLEMS_DB_ERROR", error);
+	}
+}
+
+// GET all prooblems on admin page
+export async function getProblemsOnAdminPage(page: number) {
+	try {
+		const problems = await prisma.problem.findMany({
+			skip: (page - 1) * 15,
+			take: 15,
+			select: {
+				id: true,
+				problemNo: true,
+				title: true,
+				difficulty: true,
+				category: {
+					select: {
+						name: true,
+					},
+				},
+				likes: true,
+				submissions: true,
+			},
+		});
+
 		return problems;
 	} catch (error: any) {
 		console.log("Error while fetching all problem");
 	}
 }
 
-export async function getTotalPages(
-	problemPerPage: number,
-	filterQuery: {
-		difficulty?: string | undefined;
-		status?: string | undefined;
-		searchKeywords?: string | undefined;
-	}
-) {
+// GET current problem details
+export async function getProblemDetail(problemId: string, userAuthorized: boolean) {
 	try {
-
-		const totalPages = await prisma.problem.aggregate({
+		const problemDetail = await prisma.problem.findFirst({
 			where: {
-				// Filter by difficulty if it's provided
-				difficulty: filterQuery.difficulty
-					? filterQuery.difficulty
-					: undefined,
-
-				// Nested query to filter by status if provided
-				problemStatus: filterQuery.status
-					? {
-							some: { status: filterQuery.status }, // Assuming ProblemStatus is a one-to-many relation
-					  }
-					: undefined,
-				title: filterQuery.searchKeywords
-					? {
-							contains: String(filterQuery.searchKeywords), // Case-insensitive search for title
-							mode: "insensitive", // Ignore case sensitivity
-					  }
-					: undefined,
-			},
-			_count: {
-				id: true,
-			},
-		});
-		return Math.ceil(totalPages._count.id / problemPerPage);
-	} catch (e: any) {
-		console.error(e.message);
-	}
-}
-
-export async function createProblemStatus(problemId: string) {
-	try {
-		const users = await prisma.user.findMany({
-			select: {
-				id: true,
-			},
-		});
-		const problemStatuses = await prisma.problemStatus.createMany({
-			data: users.map((user) => ({
-				userId: user.id,
-				problemId: problemId,
-				status: "Todo", // You can omit this as it defaults to 'todo'
-			})),
-		});
-		console.log("Problem status created");
-	} catch (error: any) {
-		console.log("Error", (error as Error).message);
-	}
-}
-
-export async function getProblemDetail(
-	title: string
-): Promise<{ success: boolean; msg: string; problemDetail?: ProblemDetail }> {
-	try {
-		const problem = await prisma.problem.findUnique({
-			where: {
-				title,
+				id: problemId
 			},
 			select: {
 				id: true,
+				problemNo: true,
 				title: true,
 				description: true,
 				difficulty: true,
-				problemNo: true,
-			},
-		});
-		if (problem) {
-			const testcaseExamples = await getTestCaseExample(problem.id);
-			if (!testcaseExamples) {
-				return {
-					success: false,
-					msg: "Test case not found",
-				};
-			}
-			const problemDetails: ProblemDetail = {
-				...problem,
-				testcaseExamples,
-			};
-			return {
-				success: true,
-				problemDetail: problemDetails,
-				msg: "problem detail with status",
-			};
-		}
-		return {
-			success: false,
-			msg: "Problem not found!",
-		};
-	} catch (error: any) {
-		return {
-			success: false,
-			msg: error.message,
-		};
-	}
-}
-
-export async function getOneProblemStatusOnUser(
-	userId: string,
-	problemId: string
-): Promise<{ success: boolean; msg: string; status?: string }> {
-	try {
-		const problemStatusOnUser = await prisma.problemStatus.findFirst({
-			where: {
-				userId,
-				problemId,
-			},
-			select: {
-				status: true,
-			},
-		});
-		if (problemStatusOnUser) {
-			return {
-				success: true,
-				msg: "Problem status on user",
-				status: problemStatusOnUser.status,
-			};
-		}
-		return {
-			success: false,
-			msg: "Problem status not found for user",
-		};
-	} catch (error: any) {
-		return {
-			success: false,
-			msg: error.message,
-		};
-	}
-}
-
-export async function getTestCaseExample(problemId: string) {
-	try {
-		const testcaseExamples = await prisma.testCase.findMany({
-			where: {
-				problemId,
-			},
-			take: 3,
-			select: {
-				title: true,
-				inputs: {
+				likes: true,
+				tags: true,
+				solvedProblems: {
 					select: {
-						type: true,
-						name: true,
-						value: true,
-					},
-				},
-				output: {
-					select: {
-						type: true,
-						value: true,
-					},
-				},
-			},
-		});
-		return testcaseExamples;
-	} catch (error: any) {
-		console.log("Error: ", error.message);
-	}
-}
-
-export async function updateProblemStatusOnUser (userId: string, problemId: string, status: string) {
-	try {
-		await prisma.problemStatus.updateMany({
-			where: {
-				userId,
-				problemId
-			},
-			data: {
-				status
+						status: userAuthorized ? true: false
+					}
+				}
 			}
 		})
-	}
-	catch(error: any){
-		console.log("UPDATE_PROBLEM_STATUS ", error.message);
+		return problemDetail;
+
+	} catch (error: any) {
+		console.log("GET_PROLBEM_DETAIL_DB_ERROR: ", error);
 	}
 }
+
+
+
+
+// export async function getOneProblemStatusOnUser(
+// 	userId: string,
+// 	problemId: string
+// ): Promise<{ success: boolean; msg: string; status?: string }> {
+// 	try {
+// 		const problemStatusOnUser = await prisma.problemStatus.findFirst({
+// 			where: {
+// 				userId,
+// 				problemId,
+// 			},
+// 			select: {
+// 				status: true,
+// 			},
+// 		});
+// 		if (problemStatusOnUser) {
+// 			return {
+// 				success: true,
+// 				msg: "Problem status on user",
+// 				status: problemStatusOnUser.status,
+// 			};
+// 		}
+// 		return {
+// 			success: false,
+// 			msg: "Problem status not found for user",
+// 		};
+// 	} catch (error: any) {
+// 		return {
+// 			success: false,
+// 			msg: error.message,
+// 		};
+// 	}
+// }
+
+// export async function getTestCaseExample(problemId: string) {
+// 	try {
+// 		const testcaseExamples = await prisma.testCase.findMany({
+// 			where: {
+// 				problemId,
+// 			},
+// 			take: 3,
+// 			select: {
+// 				title: true,
+// 				inputs: {
+// 					select: {
+// 						type: true,
+// 						name: true,
+// 						value: true,
+// 					},
+// 				},
+// 				output: {
+// 					select: {
+// 						type: true,
+// 						value: true,
+// 					},
+// 				},
+// 			},
+// 		});
+// 		return testcaseExamples;
+// 	} catch (error: any) {
+// 		console.log("Error: ", error.message);
+// 	}
+// }
+
+// export async function updateProblemStatusOnUser (userId: string, problemId: string, status: string) {
+// 	try {
+// 		await prisma.problemStatus.updateMany({
+// 			where: {
+// 				userId,
+// 				problemId
+// 			},
+// 			data: {
+// 				status
+// 			}
+// 		})
+// 	}
+// 	catch(error: any){
+// 		console.log("UPDATE_PROBLEM_STATUS ", error.message);
+// 	}
+// }
