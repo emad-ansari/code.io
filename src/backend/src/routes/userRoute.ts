@@ -2,13 +2,18 @@ import { Request, Response, Router } from "express";
 const router = Router();
 import jwt from "jsonwebtoken";
 import prisma from "../db";
-import { createUser, findUser } from "../db/user";
+import { createUser, findUser, getAllUsers } from "../db/user";
 import { LoginInputSchema, SignUpInputSchema } from "../@utils/types";
-import { generateAccessToken, generateRefreshToken } from "../middleware/auth";
+import auth, {
+	CustomRequestObject,
+	generateAccessToken,
+	generateRefreshToken,
+} from "../middleware/auth";
 
 router.post("/signup", async (req: Request, res: Response) => {
-	const parsedInput = SignUpInputSchema.safeParse(req.body.data);
+	const parsedInput = SignUpInputSchema.safeParse(req.body);
 
+	console.log("route hit");
 	if (!parsedInput.success) {
 		return res
 			.status(400)
@@ -33,15 +38,15 @@ router.post("/signup", async (req: Request, res: Response) => {
 		}
 		return res
 			.status(200)
-			.json({ success: true, message: "User created successfully" });
+			.json({ success: true, msg: "User created successfully" });
 	} catch (error: any) {
 		console.error(error.message);
-		return res.status(500).json({ success: false, message: error.message });
+		return res.status(500).json({ success: false, msg: error.message });
 	}
 });
 
 router.post("/login", async (req: Request, res: Response) => {
-	const parsedInput = LoginInputSchema.safeParse(req.body.data);
+	const parsedInput = LoginInputSchema.safeParse(req.body);
 	if (!parsedInput.success) {
 		return res
 			.status(400)
@@ -63,7 +68,7 @@ router.post("/login", async (req: Request, res: Response) => {
 			httpOnly: true,
 			secure: true,
 			sameSite: "none",
-			path: "/api/user/", // This end point only
+			path: "/api/auth/", // This end point only
 		});
 
 		return res.status(201).json({
@@ -75,6 +80,24 @@ router.post("/login", async (req: Request, res: Response) => {
 		console.error(error.message);
 		return res.status(500).json({ success: false, message: error.message });
 	}
+});
+
+// GET ALL USERS route
+router.get("/get-all-users", auth, async (req: Request, res: Response) => {
+	const { userAuthorized, role } = req as CustomRequestObject;
+	const { page } = req.body;
+
+	if (!userAuthorized || role != "ADMIN") {
+		return res.status(404).json({
+			success: false,
+			msg: "UnAuthorized Access!!",
+		});
+	}
+
+	try {
+		const users = getAllUsers(Number(page));
+		return res.status(200).json({ success: true, msg: "All users", data: users})
+	} catch (error: any) {}
 });
 
 // Refresh token endpoint

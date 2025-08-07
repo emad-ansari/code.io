@@ -1,6 +1,7 @@
 import prisma from ".";
 import bcrypt from "bcrypt";
 
+// CREATE NEW USER
 export async function createUser(
 	username: string,
 	email: string,
@@ -10,7 +11,7 @@ export async function createUser(
 		const allowedAdminsEmails =
 			process.env.ALLOWED_ADMINS?.split(",") || [];
 
-		const userRole = allowedAdminsEmails.includes(email) ? "admin" : "user";
+		const userRole = allowedAdminsEmails.includes(email) ? "ADMIN" : "USER";
 
 		const hashedPassword = await bcrypt.hash(password, 10);
 		const newUser = await prisma.user.create({
@@ -41,6 +42,7 @@ export async function createUser(
 	}
 }
 
+// FIND NEW USER
 export async function findUser(email: string, password: string) {
 	try {
 		const user = await prisma.user.findFirst({
@@ -79,5 +81,30 @@ export async function findUser(email: string, password: string) {
 			success: false,
 			msg: error.message,
 		};
+	}
+}
+
+// GET ALL USERS
+export async function getAllUsers(page: number) {
+	try {
+		const users = await prisma.user.findMany({
+			skip: (page - 1) * 10,
+			take: 10,
+			select: {
+				id: true,
+				username: true,
+				email: true,
+				role: true,
+			},
+			orderBy: {
+				createdAt: "desc"
+			}
+
+		})
+
+		return users;
+	}
+	catch(error: any) {
+		console.log("GET_ALL_USERS_DB_ERROR", error);
 	}
 }
