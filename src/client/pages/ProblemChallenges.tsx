@@ -1,8 +1,16 @@
-
 import { ChallengesCard } from "@/client/components/common/ChallengesCard";
-import { challengesCard } from "@/client/lib/types";
+import { useSelector } from "react-redux";
+import { RootState, useAppDispatch } from "../app/store";
+import { useEffect } from "react";
+import { fetchCategories } from "../features/problemCategorySlice";
 
 export const ProblemChallenges = () => {
+	const dispatch = useAppDispatch();
+	const { categories} = useSelector((staet: RootState) => staet.problem_category);
+
+	useEffect(() => {
+		dispatch(fetchCategories());
+	}, [])
 	
 	return (
 		<main className="bg-code-bg pt-16 text-white h-screen flex justify-center ">
@@ -12,17 +20,17 @@ export const ProblemChallenges = () => {
 					{/* Coding <span className="text-code-orange">Challenges</span> */}
 				</h1>
 				<div className="flex flex-col gap-5 py-2">
-					{challengesCard.map((c) => {
+					{categories.map((cat) => {
 						return (
 							<ChallengesCard
-								key = {c.id}
-								id={c.id}
-								title={c.title}
-								type={c.type}
-								imgUrl={c.imgUrl}
-								tags={c.tags}
-								solvedChallenges={c.solvedChallenges}
-								totalChallenges={c.totalChallenges}
+								key = {cat.id}
+								id={cat.id}
+								name = {cat.name}
+								title={cat.title}
+								imgUrl={cat.imgUrl}
+								tags={cat.tags}
+								totalProblems ={cat.totalProblems}
+								solvedProblems={cat.solvedProblems}
 							/>
 						);
 					})}

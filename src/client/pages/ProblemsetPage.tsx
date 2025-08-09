@@ -33,7 +33,7 @@ import { cn } from "@/client/lib/utils";
 const ProblemsetPage = () => {
 	const dispatch = useAppDispatch();
 	const [searchParams] = useSearchParams();
-	const { type } = useParams();
+	const { category } = useParams();
 
 	const { isDifficultyMenuOpen, isStatusMenuOpen } = useSelector(
 		(state: RootState) => state.dropdown
@@ -42,6 +42,7 @@ const ProblemsetPage = () => {
 	useEffect(() => {
 		dispatch(
 			fetchProblem({
+				categoryName: category,
 				pageNumber: Number(searchParams.get("page")) || 1,
 				difficulty: searchParams.get("difficulty") || "",
 				status: searchParams.get("status") || "",
