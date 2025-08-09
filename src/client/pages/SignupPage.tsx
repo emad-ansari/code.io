@@ -7,11 +7,12 @@ import { useAppDispatch, RootState } from "@/client/app/store";
 import { setUsername, setEmail, signup } from "@/client/features/authSlice";
 import { Button } from "@/client/components/common/Button";
 import { PasswordInputField } from "@/client/components/common/PasswordInputField";
+import { Loader } from "lucide-react";
 
 export const SignupPage = () => {
 	const navigate = useNavigate();
 	const dispatch = useAppDispatch();
-	const { username, email, isSignup } = useSelector(
+	const { username, email, isSignup, isLoading } = useSelector(
 		(state: RootState) => state.user
 	);
 
@@ -24,7 +25,9 @@ export const SignupPage = () => {
 	return (
 		<main className="bg-code-bg  fixed top-0 right-0 left-0 bottom-0 flex justify-center pt-32">
 			<div className="w-[350px] h-[400px] md:w-[450px] md:h-[550px]  rounded-3xl shadow-lg flex flex-col items-center border border-code-border">
-				<h1 className = "text-3xl text-white font-medium font-fugaz py-8">Code.io</h1>
+				<h1 className="text-3xl text-white font-medium font-fugaz py-8">
+					Code.io
+				</h1>
 				<h1 className="text-white text-xl font-normal  ">
 					Welcome to Code.io
 				</h1>
@@ -48,7 +51,7 @@ export const SignupPage = () => {
 						classname="w-full bg-white  cursor-pointer text-sm font-medium shadow-lg rounded-lg h-10"
 						onClick={() => dispatch(signup())}
 					>
-						Sign up
+						{isLoading ? <Loader /> : <span>Sign up</span>}
 					</Button>
 					<div className="flex flex-row gap-4 items-center justify-between">
 						<hr className="w-40 h-[1px]  bg-gray-200 border-0 dark:bg-gray-500" />

@@ -4,30 +4,34 @@ import { useLocation, useNavigate } from "react-router-dom";
 import { FcGoogle } from "react-icons/fc";
 
 import { useAppDispatch, RootState } from "@/client/app/store";
-import { setEmail, login } from "@/client/features/authSlice";
+import { setEmail, login, setIsLoading } from "@/client/features/authSlice";
 import { PasswordInputField } from "@/client/components/common/PasswordInputField";
-import { Button } from "@/client/components/common/Button";
-
+import { Button } from "@/client/components/ui/button";
+import { Loader } from "lucide-react";
 
 export const LoginPage = () => {
-	const { email, isLogin } = useSelector((state: RootState) => state.user);
+	const { email, isLogin, isLoading } = useSelector(
+		(state: RootState) => state.user
+	);
 	const dispatch = useAppDispatch();
-	
+
 	const navigate = useNavigate();
 	const location = useLocation();
-	const  from = location.state?.from?.pathname || "/";
-	
+	const from = location.state?.from?.pathname || "/";
+
 	// navigate user to the page,  where it was before login.
 	useEffect(() => {
-	    if (isLogin){
+		if (isLogin) {
 			navigate(from, { replace: true });
-	    }
-	}, [dispatch, isLogin ])
+		}
+	}, [dispatch, isLogin]);
 
 	return (
 		<main className="bg-code-bg  fixed top-0 right-0 left-0 bottom-0 flex justify-center pt-32 ">
-			<div className="w-[350px] h-[400px] md:w-[450px] md:h-[500px]  shadow-lg  rounded-2xl flex flex-col items-center border border-code-border">
-				<h1 className = "text-3xl text-white font-medium font-fugaz py-8">Code.io</h1>
+			<div className="w-[350px] h-[400px] md:w-[450px] md:h-[500px]  shadow-lg rounded-2xl flex flex-col items-center border border-code-border">
+				<h1 className="text-3xl text-white font-medium font-fugaz py-8">
+					Code.io
+				</h1>
 				<h1 className="text-white text-xl font-normal  ">
 					Login to your account
 				</h1>
@@ -41,17 +45,19 @@ export const LoginPage = () => {
 					/>
 					<PasswordInputField />
 					<Button
-						classname="w-full bg-[#EB8069]  h-10 cursor-pointer text-sm font-medium  rounded-lg"
-						onClick={() => dispatch(login())}
+						className={`w-full bg-code-orange h-10 cursor-pointer text-sm font-medium rounded-lg `}
+						onClick={() => {
+							dispatch(login());
+						}}
 					>
-						Log In
+						{isLoading ? <Loader className={`${isLoading && "animate-spin"}`}/> : <span>Log In</span>}
 					</Button>
 					<div className="flex flex-row gap-4 items-center justify-between">
 						<hr className="w-40 h-[1px]  bg-gray-200 border-0 dark:bg-gray-500" />
 						<span className="text-white text-sm">OR</span>
 						<hr className="w-40 h-[1px]  bg-gray-200 border-0 dark:bg-gray-500" />
 					</div>
-					<Button classname="w-full text-white bg-black items-center relative rounded-md">
+					<Button className="w-full text-white bg-black items-center relative rounded-md">
 						<FcGoogle
 							style={{
 								position: "absolute",
@@ -71,8 +77,8 @@ export const LoginPage = () => {
 						<span className="text-white text-sm">
 							Don't have an account?{" "}
 							<a
-								href="/signup"
-								className=" font-medium italic cursor-pointer text-[#EB8069]"
+								href="signup"
+								className=" font-medium italic cursor-pointer text-code-orange"
 							>
 								Sign up
 							</a>

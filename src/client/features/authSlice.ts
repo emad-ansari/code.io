@@ -5,6 +5,7 @@ import { RootState } from "@/client/app/store";
 import { APIResponse } from "@/client/lib/types";
 
 export interface User {
+	isLoading: boolean,
 	isLogin: boolean;
 	isSignup: boolean;
 	username: string;
@@ -12,6 +13,7 @@ export interface User {
 	password: string;
 }
 export const initialState: User = {
+	isLoading: false,
 	isLogin: false,
 	isSignup: false,
 	username: "",
@@ -19,13 +21,12 @@ export const initialState: User = {
 	password: "",
 };
 
-export const signup = createAsyncThunk("/user/signup", async (_, ThunkAPI) => {
+export const signup = createAsyncThunk("/auth/signup", async (_, ThunkAPI) => {
 	try {
 		const store = ThunkAPI.getState() as RootState;
-		const { username, email, password } = store.user;
-
-		const res = await api.post(
-			"/user/signup",
+		const { username, email, password} = store.user;
+		
+		const res = await api.post("/auth/signup",
 			{
 				data: {
 					username,
@@ -41,19 +42,19 @@ export const signup = createAsyncThunk("/user/signup", async (_, ThunkAPI) => {
 		);
 		return res.data;
 	} catch (error: any) {
-		ThunkAPI.rejectWithValue(error.message || "Error while  signing up");
+		ThunkAPI.rejectWithValue(error.message || "Error while Sign up");
 	}
 });
 
 export const login = createAsyncThunk<APIResponse<{ token: string }>>(
-	"/user/login",
+	"/auth/login",
 	async (_, ThunkAPI) => {
 		try {
 			const store = ThunkAPI.getState() as RootState;
 			const { email, password } = store.user;
 
 			const res = await api.post(
-				"/user/login",
+				"/auth/login",
 				{
 					data: {
 						email,
@@ -67,8 +68,6 @@ export const login = createAsyncThunk<APIResponse<{ token: string }>>(
 					},
 				}
 			);
-
-			console.log("user Login response: ", res);
 			return res.data;
 		} catch (error: any) {
 			ThunkAPI.rejectWithValue(error.message || "Error occurred while login");
@@ -106,6 +105,9 @@ export const userSlice = createSlice({
 		setPassword: (state, action: PayloadAction<string>) => {
 			state.password = action.payload;
 		},
+		setIsLoading: (state, _) => {
+			state.isLoading = true;
+		},
 		rehydrateAuth: (state) => {
 			const token = localStorage.getItem("CToken");
 			if (token) {
@@ -117,43 +119,50 @@ export const userSlice = createSlice({
 		builder.addCase(signup.pending, (state, _) => {
 			state.isLogin = false;
 			state.isSignup = false;
+			state.isLoading = true;
 		});
 		builder.addCase(
 			signup.fulfilled,
-			(state, action: PayloadAction<{ success: boolean; msg: any }>) => {
-				const { success, msg } = action.payload;
+			(state, action) => {
+				const { success } = action.payload;
 				if (success) {
 					state.isSignup = true;
+					toast.success("User Registered Successfully")
 				}
-				console.log("Message: ", msg);
+				else {
+					toast.error("Something went wrong, please try again");
+				}
+				state.isLoading = false
 				state.isLogin = false;
 			}
 		);
 		builder.addCase(signup.rejected, (state, _) => {
 			state.isLogin = false;
 			state.isSignup = false;
+			state.isLoading = false;
 		});
 		builder.addCase(login.pending, (state, _) => {
 			state.isLogin = false;
 			state.isSignup = false;
+			state.isLoading = true;
 		});
 		builder.addCase(login.fulfilled, (state, action) => {
-			const { success, message, data } = action.payload;
+			const { success,  data, msg } = action.payload;
 			if (success && data) {
 				state.isLogin = true;
 				localStorage.setItem("CToken", data.token);
-				toast.success("Login successfully", {
-					position: "top-center",
-				})
+				toast.success("Login successfully")
 			}
-			console.log("Login response msg : ", message);
 			state.isSignup = false;
+			state.isLoading = false;
+			console.log("Message: ", msg);
 		});
 		builder.addCase(login.rejected, (state, _) => {
 			state.isSignup = false;
+			state.isLoading = false;
 		});
 		builder.addCase(logOut.fulfilled, (state, action) => {
-			const { success, message } = action.payload;
+			const { success, msg } = action.payload;
 			if (success) {
 				state.isLogin = false;
 				localStorage.removeItem("CToken");
@@ -162,11 +171,11 @@ export const userSlice = createSlice({
 				})
 			}
 			state.isSignup = false;
-			console.log("Logout message: ", message);
+			console.log("Logout message: ", msg);
 		});
 	},
 });
 
 export default userSlice.reducer;
-export const { setUsername, setEmail, setPassword, rehydrateAuth } =
+export const { setUsername, setEmail, setPassword, setIsLoading, rehydrateAuth } =
 	userSlice.actions;
