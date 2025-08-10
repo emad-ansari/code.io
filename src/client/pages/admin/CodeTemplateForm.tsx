@@ -1,14 +1,14 @@
 import { RootState, useAppDispatch} from "@/client/app/store";
 import { CodeTemplate } from "@/client/components/common/CodeTemplate";
 import { Button } from "@/client/components/ui/button";
-import { addNewTemplate } from "@/client/features/problemFormSlice";
+import { addNewTemplate } from "@/client/features/problemSlice";
 import { Plus } from "lucide-react";
 import { useSelector } from "react-redux";
 
 export const CodeTemplateForm = () => {
     const dispatch = useAppDispatch();
     const { templates } = useSelector(
-		(state: RootState) => state.problemform
+		(state: RootState) => state.problem
 	);
 	return (
 		<div className=" max-w-4xl flex flex-row justify-between gap-3">

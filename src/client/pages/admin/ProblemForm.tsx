@@ -15,15 +15,16 @@ import { Input } from "../../components/ui/input";
 import {
 	addNewTag,
 	removeTag,
+	setCategory,
 	setDescription,
 	setDifficulty,
 	setTitle,
-} from "@/client/features/problemFormSlice";
+} from "@/client/features/problemSlice";
 
 export const ProblemForm = () => {
 	const dispatch = useAppDispatch();
 	const { category, title, description, tags } = useSelector(
-		(state: RootState) => state.problemform
+		(state: RootState) => state.problem
 	);
 	const [tagName, setTagName] = useState<string>("");
 
@@ -48,7 +49,7 @@ export const ProblemForm = () => {
 							placeholder="Category Name"
 							className="focus:outline-none hover:outline-none  placeholder:text-gray-300  border-[1.5px] border-slate-800 rounded-lg"
 							value={category}
-							onChange={(e) => dispatch(setTitle(e.target.value))}
+							onChange={(e) => dispatch(setCategory(e.target.value))}
 							required
 						/>
 					</div>

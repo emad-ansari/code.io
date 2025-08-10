@@ -11,7 +11,7 @@ import {
 	setIsSample,
 	setOutput,
 	Testcase,
-} from "@/client/features/problemFormSlice";
+} from "@/client/features/problemSlice";
 
 interface TestcaseContainerProps extends Testcase {
 	testcaseNo: number;

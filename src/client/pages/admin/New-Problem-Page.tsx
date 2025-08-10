@@ -1,6 +1,6 @@
 import { useSelector } from "react-redux";
-import { RootState } from "@/client/app/store";
-import { Wand } from "lucide-react";
+import { RootState, useAppDispatch } from "@/client/app/store";
+import { Loader, Wand } from "lucide-react";
 import { Button } from "@/client/components/ui/button";
 import {
 	Tooltip,
@@ -19,10 +19,12 @@ import {
 import { TestCaseForm } from "./TestCaseForm";
 import { ProblemForm } from "./ProblemForm";
 import { CodeTemplateForm } from "./CodeTemplateForm";
-
+import { createProblem } from "@/client/features/problemSlice";
 
 const NewProblemPage = () => {
+	const dispatch = useAppDispatch();
 	const { isLogin } = useSelector((state: RootState) => state.user);
+	const { loading } = useSelector((state: RootState) => state.problem);
 
 	return (
 		<main>
@@ -50,22 +52,26 @@ const NewProblemPage = () => {
 					<Tooltip>
 						<TooltipTrigger asChild>
 							<Button
-								// disabled={isLogin ? false : true}
+								disabled={isLogin ? false : true}
 								type="submit"
-								className="bg-green-800/20 text-green-500 font-medium px-4 h-11 rounded-full cursor-pointer gap-2 shadow-md "
-								// onClick={() =>
-								// 	dispatch(createProblem())
-								// }
+								className="bg-green-800/20 text-green-500 font-medium px-4 h-11 rounded-full cursor-pointer gap-2 shadow-md min-w-40"
+								onClick={() => dispatch(createProblem())}
 							>
-								<Wand className="w-5 h-5"/>
-								Create Problem
+								{loading ? (
+									<Loader className = "w-5 h-5 animate-spin"/>
+								) : (
+									<span className="flex items-center gap-2">
+										<Wand className="w-5 h-5" />
+										Create Problem
+									</span>
+								)}
 							</Button>
 						</TooltipTrigger>
 						<TooltipContent>
 							<p className="text-white">
 								{isLogin
-									? ""
-									: "You are not logged in, please login "}
+									? null
+									: "You are not logged in, please login"}
 							</p>
 						</TooltipContent>
 					</Tooltip>

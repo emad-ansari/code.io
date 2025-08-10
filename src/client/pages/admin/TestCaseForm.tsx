@@ -1,7 +1,7 @@
 import { useSelector } from "react-redux";
 import { Plus } from "lucide-react";
 import { useAppDispatch, RootState } from "@/client/app/store";
-import { addNewTestcase } from "@/client/features/problemFormSlice";
+import { addNewTestcase } from "@/client/features/problemSlice";
 import { TestCaseContainer } from "@/client/components/common/TestCaseContainer";
 import { Button } from "@/client/components/ui/button";
 
@@ -9,7 +9,7 @@ import { Button } from "@/client/components/ui/button";
 export const TestCaseForm = () => {
 	const dispatch = useAppDispatch();
 
-	const { testcases } = useSelector((state: RootState) => state.problemform);
+	const { testcases } = useSelector((state: RootState) => state.problem);
 	
 	return (
 		<div className="max-w-3xl  shadow-lg rounded-2xl  border-[1.5px] border-code-border  flex flex-1 flex-col ">
@@ -30,7 +30,6 @@ export const TestCaseForm = () => {
 								testcaseNo={index + 1}
 								input={testcase.input}
 								expected_output={testcase.expected_output}
-								explanation = {testcase.explanation}
 								isSample = {testcase.isSample}
 							/>
 						))

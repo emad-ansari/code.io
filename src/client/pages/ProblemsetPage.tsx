@@ -4,7 +4,7 @@ import { useSelector } from "react-redux";
 
 import { RootState, useAppDispatch } from "@/client/app/store";
 import { setOpenDropDownMenu } from "@/client/features/dropDownSlice";
-import { fetchProblem, setPageSize } from "@/client/features/problemSlice";
+import { fetchProblems, setPageSize } from "@/client/features/problemSlice";
 import { FilterSection } from "@/client/components/common/FilterSection";
 import { ProblemListSkeleton } from "@/client/components/skeletons/ProblemListSkeleton";
 
@@ -41,8 +41,8 @@ const ProblemsetPage = () => {
 
 	useEffect(() => {
 		dispatch(
-			fetchProblem({
-				categoryName: category,
+			fetchProblems({
+				categoryName: category ? category : "math",
 				pageNumber: Number(searchParams.get("page")) || 1,
 				difficulty: searchParams.get("difficulty") || "",
 				status: searchParams.get("status") || "",

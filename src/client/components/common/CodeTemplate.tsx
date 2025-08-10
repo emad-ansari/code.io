@@ -11,7 +11,7 @@ import {
 	setLanguage,
 	setTemplateCode,
 	setBoilerFucntion
-} from "@/client/features/problemFormSlice";
+} from "@/client/features/problemSlice";
 
 
 
