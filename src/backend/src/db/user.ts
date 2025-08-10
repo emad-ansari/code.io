@@ -22,17 +22,9 @@ export async function createUser(
 				role: userRole,
 			},
 		});
-		if (newUser) {
-			console.log("admin reated successfully");
-			return {
-				success: true,
-				msg: "admin reated successfully",
-			};
-		} else {
-			return {
-				success: false,
-				msg: "Not able to create admin",
-			};
+		return {
+			success: true,
+			msg: "User Created Successfully"
 		}
 	} catch (error: any) {
 		return {
@@ -84,7 +76,7 @@ export async function findUser(email: string, password: string) {
 	}
 }
 
-// GET ALL USERS
+// GET ALL USERS ON ADMIN PAGE
 export async function getAllUsers(page: number) {
 	try {
 		const users = await prisma.user.findMany({
