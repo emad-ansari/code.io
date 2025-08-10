@@ -17,7 +17,7 @@ datasource db {
 model User {
   id             String          @id @default(cuid())
   username       String
-  email          String
+  email          String  @unique
   password       String
   role           UserRole        @default(USER)
   streak         Streak?        // 1:1 relationship
@@ -118,16 +118,15 @@ model CategoryProgress {
   id          String          @id @default(cuid())
   progress    Progress        @relation(fields: [progressId], references: [id], onDelete: Cascade)
   progressId  String
+  totalSolved Int             @default(0)
   category    ProblemCategory @relation(fields: [categoryId], references: [id])
   categoryId  String
-  totalSolved Int             @default(0)
-
   @@unique([progressId, categoryId])
 }
 
 model ProblemSolved {
   id         String          @id @default(cuid())
-  status     SolvedStatus    @default(TODO)
+  status     SolvedStatus    @default(Todo)
   userId     String
   user       User            @relation(fields: [userId], references: [id], onDelete: Cascade)
   problemId  String
@@ -154,9 +153,9 @@ model Submission {
 }
 
 enum Difficulty {
-  EASY
-  MEDIUM
-  HARD
+  Easy
+  Medium
+  Hard
 }
 
 enum UserRole {
@@ -165,9 +164,9 @@ enum UserRole {
 }
 
 enum SolvedStatus { 
-  TODO
-  ATTEMPTED
-  SOLVED
+  Todo
+  Attempted
+  Solved
 }
 enum SubmissionStatus {
   ACCEPTED
