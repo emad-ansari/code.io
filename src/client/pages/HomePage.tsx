@@ -62,13 +62,14 @@ const HomePage = () => {
 							Skills with Code.io
 						</p>
 						<Button
-							className="w-[50%] h-12 text-gray-300 bg-code-dark cursor-pointer font-semibold rounded-full flex gap-5 text-justify  transition-all duration-200"
+							variant={"default"}
+							className="w-[45%] h-12 text-gray-300 bg-transparent cursor-pointer font-semibold rounded-full flex gap-5 text-justify border border-code-orange hover:shadow-sm hover:shadow-code-orange/60  transition-all  duration-300"
 							onClick={() => navigate("/signup")}
 						>
-							<span className="flex text-justify  ">
+							<span className="flex text-justify">
 								Start Coding Now
 							</span>
-							<FaArrowRightLong className=" pt-1 hover:scale-150 transition-transform" />
+							<FaArrowRightLong className=" pt-1 " />
 						</Button>
 					</div>
 					<div className=" flex items-center justify-center bg-code-bg">
@@ -95,7 +96,7 @@ const HomePage = () => {
 							{features.map((feature, index) => (
 								<div
 									key={index}
-									className="group relative overflow-hidden rounded-lg  border-[1.5px] border-slate-800 p-8  duration-300 hover:shadow-lg hover:shadow-gray-600 transition"
+									className="group relative overflow-hidden rounded-lg  border-[1.5px] border-slate-800 p-8  duration-300 hover:shadow-md hover:shadow-code-orange/60 transition"
 								>
 									<div className="relative space-y-4">
 										<div className="inline-flex items-center justify-center rounded-lg bg-[#374151] p-3 text-white">
@@ -121,7 +122,7 @@ const HomePage = () => {
 				{/* CTA Section */}
 				<section className="py-20 relative flex justify-center bg-code-bg px-4 md:px-16">
 					<div >
-						<div className="relative overflow-hidden rounded-lg  border-[1.5px]  border-slate-800 transition duration-300 hover:shadow-lg hover:shadow-gray-600 ">
+						<div className="relative overflow-hidden rounded-lg  border-[1.5px]  border-slate-800 transition duration-300 hover:shadow-md hover:shadow-code-orange/60 ">
 							<div className="p-8 md:p-12 lg:p-16 text-center">
 								<h2 className="text-2xl md:text-4xl font-bold text-white mb-4">
 									Ready to Start Your Coding Journey?
