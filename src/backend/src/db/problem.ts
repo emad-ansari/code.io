@@ -1,11 +1,7 @@
 import prisma from "./index";
-import {
-	Problem,
-	UserSubmissions,
-	convertDifficultyToEnum,
-	convertStatusToEnum,
-} from "../@utils/types";
+import { Problem, UserSubmissions } from "../@utils/types";
 import { Prisma } from "@prisma/client";
+import { SlowBuffer } from "buffer";
 
 // CREATE: new problem
 export async function createProblem(
@@ -45,8 +41,9 @@ export async function createProblem(
 				msg: "Category Not Found",
 			};
 		}
+
 		// create new problem with the category id
-		const newProblem = await prisma.problem.create({
+		await prisma.problem.create({
 			data: {
 				title: data.problemTitle,
 				description: data.description,
@@ -86,28 +83,19 @@ export async function getAllProblems(
 		status?: string | undefined;
 		searchKeywords?: string | undefined;
 	},
-	userAuthorized: boolean
+	userAuthorized: boolean,
+	userId: string
 ) {
 	try {
-		const difficulty = convertDifficultyToEnum(filterQuery.difficulty);
-		const status = convertStatusToEnum(filterQuery.status);
+		const { difficulty, status, searchKeywords } = filterQuery;
 
 		const filterConditions: Prisma.ProblemWhereInput = {
-			category: {
-				name: categoryName,
-			},
 			difficulty: difficulty ? difficulty : undefined,
-			solvedProblems: {
-				some: {
-					status: status && userAuthorized ? status : undefined,
-				},
-			},
-
-			title: filterQuery.searchKeywords
-				? {
-						contains: String(filterQuery.searchKeywords),
-						mode: "insensitive",
-				  }
+			...(status && userAuthorized
+				? { solvedProblems: { some: { status } } }
+				: {}),
+			title: searchKeywords
+				? { contains: String(searchKeywords), mode: "insensitive" }
 				: undefined,
 		};
 
@@ -115,27 +103,53 @@ export async function getAllProblems(
 			where: filterConditions,
 		});
 
-		const problems = await prisma.problem.findMany({
-			where: filterConditions,
-			skip: (page - 1) * problemPerPage,
-			take: problemPerPage,
+		const problems = await prisma.problemCategory.findMany({
+			where: {
+				name: categoryName,
+			},
 			select: {
-				id: true,
-				problemNo: true,
 				title: true,
-				difficulty: true,
-				category: {
+				problems: {
+					where: filterConditions,
+					skip: (page - 1) * problemPerPage,
+					take: problemPerPage,
 					select: {
+						id: true,
+						problemNo: true,
 						title: true,
+						difficulty: true,
+						likes: true,
+						submissions: true,
+						solvedProblems: userAuthorized ? {
+							where : {
+								userId: userId
+							},
+							select: {
+								status: true
+							}
+						} : false
 					},
 				},
-				likes: true,
-				submissions: true,
 			},
 		});
+		
+		const formattedProblem = problems.flatMap((cat) => 
+			cat.problems.map(p => {
+				return {
+					id: p.id,
+					categoryTitle: cat.title,
+					problemNo: p.problemNo,
+					title: p.title,
+					difficulty: p.difficulty,
+					likes: p.likes,
+					submissions: p.submissions,
+					status: p.solvedProblems.length > 0 ? p.solvedProblems[0].status : null
+				}
+			})
+		);
 
 		return {
-			problems,
+			problems: formattedProblem,
 			totalCount,
 		};
 	} catch (error: any) {
@@ -171,11 +185,14 @@ export async function getProblemsOnAdminPage(page: number) {
 }
 
 // GET current problem details
-export async function getProblemDetail(problemId: string, userAuthorized: boolean) {
+export async function getProblemDetail(
+	problemId: string,
+	userAuthorized: boolean
+) {
 	try {
 		const problemDetail = await prisma.problem.findFirst({
 			where: {
-				id: problemId
+				id: problemId,
 			},
 			select: {
 				id: true,
@@ -187,20 +204,16 @@ export async function getProblemDetail(problemId: string, userAuthorized: boolea
 				tags: true,
 				solvedProblems: {
 					select: {
-						status: userAuthorized ? true: false
-					}
-				}
-			}
-		})
+						status: userAuthorized ? true : false,
+					},
+				},
+			},
+		});
 		return problemDetail;
-
 	} catch (error: any) {
 		console.log("GET_PROLBEM_DETAIL_DB_ERROR: ", error);
 	}
 }
-
-
-
 
 // export async function getOneProblemStatusOnUser(
 // 	userId: string,

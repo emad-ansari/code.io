@@ -1,18 +1,58 @@
 import { Request, Router, Response } from "express";
 const router = Router();
-import auth, { CustomRequestObject } from "../middleware/auth";
-import { getAllProblems, getProblemDetail} from "../db/problem";
+import { CustomRequestObject } from "../middleware/auth";
+import { createProblem, getAllProblems, getProblemDetail } from "../db/problem";
+import { getAllCategory } from "../db/problem-category";
+import { ProblemSchema } from "../@utils/types";
+
+// CREATE: New problem
+router.post("/create-problem", async (req: Request, res: Response) => {
+	const { userAuthorized, userId, role } = req as CustomRequestObject;
+
+	if (!userAuthorized || role != "Admin") {
+		return res.json({
+			success: false,
+			msg: "UnAuthorized Access!!",
+		});
+	}
+	try {
+		const data = req.body.data;
+		console.log("incomming data before : ", req.body.data);
+
+		const parsedInput = ProblemSchema.safeParse(data);
+		if (!parsedInput.success) {
+			return res.json({
+				success: false,
+				msg: parsedInput.error,
+			});
+		}
+		console.log("incomming data after parsing : ", req.body.data);
+
+		const result = await createProblem(parsedInput.data, userId);
+
+		return res.json({ success: result.success, msg: result.msg });
+	} catch (error: any) {
+		console.error("Error: ", (error as Error).message);
+	}
+});
 
 // GET ALL PROBLEMS
-router.get("/get-problems", auth, async (req: Request, res: Response) => {
-	const { userAuthorized } = req as CustomRequestObject;
+router.get("/get-problems", async (req: Request, res: Response) => {
+	const { userAuthorized, userId } = req as CustomRequestObject;
 
 	const categoryName = req.query.category as string;
-	const page = Number(req.query.pageNumber) || 1;
+	const page = Number(req.query.page) || 1;
 	const problemPerPage = Number(req.query.pageSize);
 	const difficulty = req.query.difficulty as string | undefined;
 	const status = req.query.status as string | undefined;
 	const searchKeywords = req.query.searchKeywords as string | undefined;
+	console.log("category: ", categoryName);
+	console.log("page: ", page);
+	console.log("problemPerPage: ", problemPerPage);
+	console.log("difficulty: ", difficulty);
+	console.log("status: ", status);
+	console.log("searchKeywords: ", searchKeywords);
+
 
 	try {
 		const filterQuery: {
@@ -30,7 +70,8 @@ router.get("/get-problems", auth, async (req: Request, res: Response) => {
 			page,
 			problemPerPage,
 			filterQuery,
-			userAuthorized
+			userAuthorized,
+			userId
 		);
 
 		return res.status(200).json({
@@ -41,6 +82,7 @@ router.get("/get-problems", auth, async (req: Request, res: Response) => {
 				totalPages: result?.totalCount,
 			},
 		});
+		
 	} catch (e: any) {
 		console.error(e.message);
 		return res.status(500).json({ success: false, message: e.message });
@@ -50,7 +92,6 @@ router.get("/get-problems", auth, async (req: Request, res: Response) => {
 // GET PROBLEM DETAILS
 router.get(
 	"/get-problem-detail/:problemId",
-	auth,
 	async (req: Request, res: Response) => {
 		const { problemId } = req.params;
 		const { userAuthorized } = req as CustomRequestObject;
@@ -71,48 +112,23 @@ router.get(
 	}
 );
 
+// GET ALL CATEGORIES
+router.get("/get-categories", async (req: Request, res: Response) => {
+	const { userAuthorized, userId } = req as CustomRequestObject;
 
-// router.get("/default-code", async (req: Request, res: Response) => {
-// 	try {
-// 		const query = req.query;
-// 		const problemTitle = String(query.problemTitle);
-// 		const langId = Number(query.languageId);
+	try {
+		const categories = await getAllCategory(userAuthorized, userId);
+		return res.status(200).json({
+			success: true,
+			msg: "Successfully fetched problem category",
+			data: categories,
+		});
+	} catch (error: any) {
+		console.log("GET_CATEGORIES_ERROR: ", error);
+	}
+});
 
-// 		const problem = await prisma.problem.findFirst({
-// 			where: {
-// 				title: problemTitle,
-// 			},
-// 			select: {
-// 				id: true,
-// 				title: true,
-// 			},
-// 		});
-// 		if (problem && problem.title === problemTitle) {
-// 			const result = await prisma.defaultCode.findFirst({
-// 				where: {
-// 					problemId: problem.id,
-// 					languageId: langId,
-// 				},
-// 				select: {
-// 					code: true,
-// 				},
-// 			});
-// 			return res.json({
-// 				success: true,
-// 				message: "success",
-// 				data: { defaultCode: result?.code },
-// 			});
-// 		}
-// 		return res
-// 			.status(204)
-// 			.json({ success: false, message: "problem not found" });
-// 	} catch (error: any) {
-// 		console.log(error);
-// 		return res.json({ success: false, message: "error" });
-// 	}
-// });
-
-// export default router;
+export default router;
 
 // // router.post('/judge0-callback', async(req: Request, res: Response) => {
 // // 	try {
