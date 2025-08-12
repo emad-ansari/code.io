@@ -3,7 +3,7 @@ import prisma from "../db/index";
 
 export async function createNewProblemCategory(
 	data: ProblemCategoryType
-): Promise<{ success: boolean; msg: string }> {
+): Promise<{ success: boolean; msg: string; category?: ProblemCategoryType }> {
 	try {
 		const category = await prisma.problemCategory.findFirst({
 			where: {
@@ -18,7 +18,7 @@ export async function createNewProblemCategory(
 			};
 		}
 		// otherwise create new category
-		const newCategory = await prisma.problemCategory.create({
+		await prisma.problemCategory.create({
 			data: {
 				name: data.name,
 				title: data.title,
@@ -67,7 +67,7 @@ export async function getAllCategory(userAuthorized: boolean, userId: string) {
 					problems: {
 						where: {
 							solvedProblems: {
-								some: { userId, status: "SOLVED" },
+								some: { userId, status: "Solved" },
 							},
 						},
 						select: { id: true },
@@ -88,6 +88,6 @@ export async function getAllCategory(userAuthorized: boolean, userId: string) {
 		return result;
 	} catch (error: any) {
 		console.log("GET_ALL_CATEGORY_ERROR: ", error);
-        throw error;
+		throw error;
 	}
 }
