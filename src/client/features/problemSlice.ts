@@ -22,14 +22,15 @@ export const problemInitialState: ProblemState = {
 	difficulty: "",
 	description: "",
 	tags: [],
+	likes: 0,
+	dislikes: 0,
 	testcases: [],
 	templates: [],
 	totalPages: 0,
 	pageSize: 10,
 	problems: [],
 	problemDetail: null,
-	likes: 0,
-	dislikes: 0
+	userSubmissions: []
 };
 
 export const createProblem = createAsyncThunk(
@@ -339,7 +340,7 @@ export const problemSlice = createSlice({
 			state.loading = false;
 			console.log('FETCHED_PROBLEM_DETAILS_REDCUCER:', action.payload);
 		});
-		builder.addCase(updateLikes.pending, (state, action) => {
+		builder.addCase(updateLikes.pending, (state) => {
 			state.loading = true;
 			
 		});
@@ -351,13 +352,23 @@ export const problemSlice = createSlice({
 			state.loading = false;
 			console.log(action.payload);
 		});
-		// builder.addCase(fetchUserSubmissions.fulfilled, (state, action) => {
-		// 	const { success, data } = action.payload;
-		// 	if (success && data !== undefined) {
-		// 		state.userSubmissions = data;
-		// 	}
-		// 	console.log("user submissions api response: ", data);
-		// });
+		builder.addCase(fetchUserSubmissions.pending, (state, action) => {
+			state.loading = true;
+			console.log(action.payload);
+		});
+		
+		builder.addCase(fetchUserSubmissions.fulfilled, (state, action) => {
+			state.loading  = false;
+			const { success, data } = action.payload;
+			if (success && data !== undefined) {
+				state.userSubmissions = data;
+			}
+			console.log("user submissions api response: ", data);
+		});
+		builder.addCase(fetchUserSubmissions.rejected, (state, action) => {
+			state.loading = false;
+			console.log(action.payload);
+		});
 	},
 });
 

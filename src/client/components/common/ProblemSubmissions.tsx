@@ -1,9 +1,9 @@
-import { useEffect } from 'react';
+import { useEffect } from "react";
 import { Clock4 } from "lucide-react";
-import { useSelector } from 'react-redux';
+import { useSelector } from "react-redux";
 
-import { useAppDispatch, RootState } from '@/client/app/store';
-import { fetchUserSubmissions } from '@/client/features/problemSlice';
+import { useAppDispatch, RootState } from "@/client/app/store";
+import { fetchUserSubmissions } from "@/client/features/problemSlice";
 import {
 	Table,
 	TableBody,
@@ -39,15 +39,24 @@ const submissions = [
 
 export function ProblemSubmissions() {
 	const dispatch = useAppDispatch();
-	const { userSubmissions } = useSelector((state: RootState) => state.problem);
+	const { userSubmissions } = useSelector(
+		(state: RootState) => state.problem
+	);
 	const { isLogin } = useSelector((state: RootState) => state.user);
 
 	useEffect(() => {
 		if (isLogin) {
 			dispatch(fetchUserSubmissions());
 		}
-	}, [])
+	}, []);
 
+	if (userSubmissions.length == 0) {
+		return (
+			<h1 className="text-center font-fugaz text-xl pt-10">
+				No submission made yet 😐
+			</h1>
+		);
+	}
 
 	return (
 		<section>
@@ -64,10 +73,13 @@ export function ProblemSubmissions() {
 						<TableHead className="text-gray-300 text-center">
 							Memory
 						</TableHead>
+						<TableHead className="text-gray-300 text-center">
+							Created At
+						</TableHead>
 					</TableRow>
 				</TableHeader>
 				<TableBody>
-					{submissions.map((submission) => (
+					{userSubmissions.map((submission) => (
 						<TableRow
 							key={submission.id}
 							className="border-b border-gray-700 hover:bg-gray-750"
@@ -83,13 +95,16 @@ export function ProblemSubmissions() {
 							</TableCell>
 							<TableCell className="text-left">
 								<span className="bg-code-btn px-3 py-0.5 rounded-full align-middle ">
-									{submission.langauge}
+									{submission.languageId}
 								</span>
 							</TableCell>
 							<TableCell className="text-center text-gray-300">
 								<div className="flex items-center justify-left space-x-1.5">
-									<Clock4 size={15} className="text-muted-foreground" />
-									<span>{submission.runTime} ms</span>
+									<Clock4
+										size={15}
+										className="text-muted-foreground"
+									/>
+									<span>{submission.time} ms</span>
 								</div>
 							</TableCell>
 							<TableCell className="text-center text-gray-300">
