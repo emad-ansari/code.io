@@ -19,12 +19,13 @@ model User {
   username       String
   email          String  @unique
   password       String
-  role           UserRole        @default(USER)
+  role           String        @default("User")
   streak         Streak?        // 1:1 relationship
   activityLogs   ActivityLog[]  // Daily activity tracking
   progress       Progress?
   solvedProblems ProblemSolved[]
   submissions    Submission[]    @relation("SubmissionToUser") // Track of user's submissions
+  likes          Likes[]
   createdAt      DateTime        @default(now())
   updatedAt      DateTime        @updatedAt
 }
@@ -65,8 +66,8 @@ model Problem {
   problemNo      Int             @unique @default(autoincrement())
   title          String          @unique
   description    String
-  difficulty     Difficulty
-  likes          Int @default(0)
+  difficulty     String
+  likes          Likes[]
   dislikes       Int @default(0)
   submissions    Int @default(0)
   tags           String[]
@@ -80,6 +81,15 @@ model Problem {
   updatedAt      DateTime        @updatedAt
   @@index([categoryId])
   @@index([difficulty])
+}
+
+model Likes {
+  id             String @id @default(uuid())
+  problemId      String
+  problem       Problem @relation(fields: [problemId], references: [id])
+  userId       String
+  user         User @relation(fields: [userId], references: [id])
+  @@unique([userId, problemId]) 
 }
 
 model TemplateCode {
@@ -126,7 +136,7 @@ model CategoryProgress {
 
 model ProblemSolved {
   id         String          @id @default(cuid())
-  status     SolvedStatus    @default(Todo)
+  status     String          @default("Todo")
   userId     String
   user       User            @relation(fields: [userId], references: [id], onDelete: Cascade)
   problemId  String
@@ -143,7 +153,7 @@ model Submission {
   code       String
   time       String
   memory     String
-  status     SubmissionStatus
+  status     String
   userId     String
   problemId  String
   languageId Int
@@ -152,22 +162,6 @@ model Submission {
   updatedAt  DateTime         @updatedAt
 }
 
-enum Difficulty {
-  Easy
-  Medium
-  Hard
-}
-
-enum UserRole {
-  USER
-  ADMIN
-}
-
-enum SolvedStatus { 
-  Todo
-  Attempted
-  Solved
-}
 enum SubmissionStatus {
   ACCEPTED
   WRONG_ANSWER
