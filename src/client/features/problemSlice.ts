@@ -1,36 +1,82 @@
 import { createSlice, PayloadAction, createAsyncThunk } from "@reduxjs/toolkit";
+import { v4 as uuidv4 } from "uuid";
 import {
-	ProblemState,
 	FetchProblemProps,
-	Problem,
 	APIResponse,
 	ProblemDetail,
 	UserSubmission,
+	ProblemState,
+	Testcase,
+	Template,
+	Problem,
 } from "@/client/lib/types";
 import { api } from "@/client/api/client";
 import { RootState } from "@/client/app/store";
+import { toast } from "react-toastify";
 
-export const problemSliceInitialState: ProblemState = {
-	problems: [],
-	pageSize: 10,
-	totalPages: 1,
-	problemDetail: {
-		id: "",
-		title: "",
-		description: "",
-		difficulty: "",
-		problemNo: 0,
-		testcaseExamples: [],
-	},
-	userSubmissions: [], 
-	error: null,
+
+export const problemInitialState: ProblemState = {
 	loading: false,
+	category: "",
+	title: "",
+	difficulty: "",
+	description: "",
+	tags: [],
+	testcases: [],
+	templates: [],
+	totalPages: 0,
+	pageSize: 10,
+	problems: [],
+	problemDetail: null,
+	likes: 0,
+	dislikes: 0
 };
 
-export const fetchProblem = createAsyncThunk(
-	"/problem/fetchProblem",
+export const createProblem = createAsyncThunk(
+	"/problem/createProblem",
+	async (_, ThunkAPI) => {
+		try {
+			const store = ThunkAPI.getState() as RootState;
+			const {
+				category,
+				title,
+				description,
+				difficulty,
+				tags,
+				testcases,
+				templates,
+			} = store.problem;
+
+			const res = await api.post("/problem/create-problem", {
+				data: {
+					problemCategory: category,
+					problemTitle: title,
+					description,
+					difficulty,
+					tags,
+					testcases,
+					templates,
+				},
+			});
+
+			console.log("new problme contribution response: ", res.data);
+			return res.data;
+		} catch (error: any) {
+			console.error("Error: ", (error as Error).message);
+		}
+	}
+);
+
+export const fetchProblems = createAsyncThunk(
+	"/problem/fetchProblems",
 	async (
-		{ pageNumber, difficulty, status, searchKeywords }: FetchProblemProps,
+		{
+			categoryName,
+			pageNumber,
+			difficulty,
+			status,
+			searchKeywords,
+		}: FetchProblemProps,
 		ThunkAPI
 	) => {
 		const store = ThunkAPI.getState() as RootState;
@@ -38,9 +84,10 @@ export const fetchProblem = createAsyncThunk(
 		try {
 			const res = await api.get<
 				APIResponse<{ problems: Problem[]; totalPages: number }>
-			>(`/problem/filter-problem`, {
+			>(`/problem/get-problems`, {
 				params: {
-					pageNumber: pageNumber < 1 ? 1 : pageNumber,
+					category: categoryName,
+					page: pageNumber < 1 ? 1 : pageNumber,
 					pageSize,
 					difficulty,
 					status,
@@ -48,7 +95,7 @@ export const fetchProblem = createAsyncThunk(
 				},
 			});
 			const data = res.data;
-			console.log(data);
+			console.log('problem response data: ', data);
 
 			return data;
 		} catch (error: any) {
@@ -61,14 +108,15 @@ export const fetchProblem = createAsyncThunk(
 
 export const fetchProblemDetail = createAsyncThunk<
 	APIResponse<ProblemDetail>,
-	{ title: string }
->("/problem/fetchProblemDetail", async ({ title }: { title: string }) => {
-	if (!title) {
+	{ problemId: string }
+>("/problem/fetchProblemDetail", async ({ problemId }: { problemId: string }) => {
+	if (!problemId) {
 		return;
 	}
 	try {
-		const res = await api.get(`/problem/get-problem-details/${title}`);
+		const res = await api.get(`/problem/get-problem-details/${problemId}`);
 		const data = res.data;
+		console.log('problem detail response: ', data);
 		return data;
 	} catch (error: any) {
 		console.log(error);
@@ -79,7 +127,9 @@ export const fetchUserSubmissions = createAsyncThunk(
 	"/problem/fetchUserSubmissions",
 	async (_, thunkAPI) => {
 		try {
-			const response = await api.get<APIResponse<UserSubmission[]>>("/submission/get-submissions");
+			const response = await api.get<APIResponse<UserSubmission[]>>(
+				"/submission/get-submissions"
+			);
 			const data = response.data;
 			return data;
 		} catch (error: any) {
@@ -90,10 +140,149 @@ export const fetchUserSubmissions = createAsyncThunk(
 	}
 );
 
+
+export const updateLikes = createAsyncThunk("problem/updateLikes", async({ problemId}: {problemId: string}, thunkAPI) => {
+	try {
+		const res = await api.post('/problem/update-likes', {
+			data: problemId
+		})
+		return res.data;
+	}
+	catch(error: any) {
+		thunkAPI.rejectWithValue(error.message || "UPDATE_LIKES_ERROR");
+	}
+})
+
 export const problemSlice = createSlice({
 	name: "problem",
-	initialState: problemSliceInitialState,
+	initialState: problemInitialState,
 	reducers: {
+		setCategory: (state, action: PayloadAction<string>) => {
+			state.category = action.payload;
+		},
+		setTitle: (state, action: PayloadAction<string>) => {
+			state.title = action.payload;
+		},
+		setDescription: (state, action: PayloadAction<string>) => {
+			state.description = action.payload;
+		},
+		setDifficulty: (state, action: PayloadAction<string>) => {
+			state.difficulty = action.payload;
+		},
+		addNewTag: (state, action: PayloadAction<string>) => {
+			const updatedTags = [...state.tags];
+			updatedTags.push(action.payload);
+			state.tags = updatedTags;
+		},
+		addNewTestcase: (state) => {
+			const newTestcase: Testcase = {
+				id: uuidv4(),
+				input: "",
+				expected_output: "",
+				isSample: false,
+			};
+			const updatedTestcase = [...state.testcases];
+			updatedTestcase.push(newTestcase);
+			state.testcases = updatedTestcase;
+		},
+		setInput: (
+			state,
+			action: PayloadAction<{ id: string; input: string }>
+		) => {
+			const { id, input } = action.payload;
+			const updatedTestcase = state.testcases.map((testcase) =>
+				testcase.id === id ? { ...testcase, input: input } : testcase
+			);
+			state.testcases = updatedTestcase;
+		},
+		setOutput: (
+			state,
+			action: PayloadAction<{ id: string; output: string }>
+		) => {
+			const { id, output } = action.payload;
+			const updatedTestcase = state.testcases.map((testcase) =>
+				testcase.id === id
+					? { ...testcase, expected_output: output }
+					: testcase
+			);
+			state.testcases = updatedTestcase;
+		},
+		setIsSample: (
+			state,
+			action: PayloadAction<{ id: string; isSample: boolean }>
+		) => {
+			const { id, isSample } = action.payload;
+			const updatedTestcase = state.testcases.map((t) =>
+				t.id == id ? { ...t, isSample: isSample } : t
+			);
+			state.testcases = updatedTestcase;
+		},
+		deleteTestcase: (state, action: PayloadAction<string>) => {
+			const testcaseId = action.payload;
+			const updatedTestcase = state.testcases.filter(
+				(testcase) => testcase.id !== testcaseId
+			);
+			state.testcases = updatedTestcase;
+		},
+		removeTag: (state, action: PayloadAction<{ tagName: string }>) => {
+			const { tagName } = action.payload;
+			const updatedTags = state.tags.filter((tag) => tag !== tagName);
+			state.tags = updatedTags;
+		},
+		addNewTemplate: (state) => {
+			const newTemplate: Template = {
+				id: uuidv4(),
+				language: "",
+				full_template: "",
+				boiler_code: "",
+			};
+			const updatedTemplate = [...state.templates];
+			updatedTemplate.push(newTemplate);
+			state.templates = updatedTemplate;
+		},
+		deleteTemplate: (state, action: PayloadAction<string>) => {
+			const templateId = action.payload;
+			const updatedTemplate = state.templates.filter(
+				(template) => template.id !== templateId
+			);
+			state.templates = updatedTemplate;
+		},
+		setLanguage: (
+			state,
+			action: PayloadAction<{ id: string; language: string }>
+		) => {
+			const { id, language } = action.payload;
+			const updatedTemplate = state.templates.map((template) =>
+				template.id == id
+					? { ...template, language: language }
+					: template
+			);
+			state.templates = updatedTemplate;
+		},
+		setTemplateCode: (
+			state,
+			action: PayloadAction<{ id: string; t_code: string }>
+		) => {
+			const { id, t_code } = action.payload;
+			const updatedTemplate = state.templates.map((template) =>
+				template.id == id
+					? { ...template, template_code: t_code }
+					: template
+			);
+			state.templates = updatedTemplate;
+		},
+		setBoilerFucntion: (
+			state,
+			action: PayloadAction<{ id: string; b_function: string }>
+		) => {
+			const { id, b_function } = action.payload;
+			const updatedTemplate = state.templates.map((template) =>
+				template.id == id
+					? { ...template, boiler_function: b_function }
+					: template
+			);
+			state.templates = updatedTemplate;
+		},
 		setPageSize: (state, action: PayloadAction<number>) => {
 			state.pageSize = action.payload;
 		},
@@ -104,12 +293,27 @@ export const problemSlice = createSlice({
 			const { problems } = action.payload;
 			state.problems = problems;
 		},
+
 	},
 	extraReducers: (builder) => {
-		builder.addCase(fetchProblem.pending, (_, action) => {
+		builder.addCase(createProblem.pending, (state) => {
+			state.loading = true;
+		});
+		builder.addCase(createProblem.fulfilled, (state, action) => {
+			state.loading = false;
+			const { success } = action.payload;
+			if (success) {
+				toast.success("Problem Created Successfully")
+			}
+		});
+		builder.addCase(createProblem.rejected, (state) => {
+			state.loading = false;
+			toast.error("Failed to create problem")
+		});
+		builder.addCase(fetchProblems.pending, (_, action) => {
 			console.log(action.payload);
 		});
-		builder.addCase(fetchProblem.fulfilled, (state, action) => {
+		builder.addCase(fetchProblems.fulfilled, (state, action) => {
 			const { success, data } = action.payload;
 			if (success && data) {
 				const { problems, totalPages } = data;
@@ -117,32 +321,64 @@ export const problemSlice = createSlice({
 				state.totalPages = totalPages;
 			}
 		});
-		builder.addCase(fetchProblem.rejected, (_, action) => {
+		builder.addCase(fetchProblems.rejected, (state, action) => {
 			console.log(action.payload);
+			state.loading = false
 		});
 		builder.addCase(fetchProblemDetail.pending, (state, _) => {
 			state.loading = true;
 		});
 		builder.addCase(fetchProblemDetail.fulfilled, (state, action) => {
+			state.loading = false;
 			const { success, data } = action.payload;
 			if (success && data) {
 				state.problemDetail = data;
-				state.loading = false;
 			}
 		});
 		builder.addCase(fetchProblemDetail.rejected, (state, action) => {
 			state.loading = false;
+			console.log('FETCHED_PROBLEM_DETAILS_REDCUCER:', action.payload);
+		});
+		builder.addCase(updateLikes.pending, (state, action) => {
+			state.loading = true;
+			
+		});
+		builder.addCase(updateLikes.fulfilled, (state, action) => {
+			state.loading = false;
 			console.log(action.payload);
 		});
-		builder.addCase(fetchUserSubmissions.fulfilled, (state, action) => {
-			const { success, data } = action.payload;
-			if (success && data !== undefined) {
-				state.userSubmissions = data;
-			}
-			console.log('user submissions api response: ', data);
+		builder.addCase(updateLikes.rejected, (state, action) => {
+			state.loading = false;
+			console.log(action.payload);
 		});
+		// builder.addCase(fetchUserSubmissions.fulfilled, (state, action) => {
+		// 	const { success, data } = action.payload;
+		// 	if (success && data !== undefined) {
+		// 		state.userSubmissions = data;
+		// 	}
+		// 	console.log("user submissions api response: ", data);
+		// });
 	},
 });
 
 export default problemSlice.reducer;
-export const { setPageSize, setProblems } = problemSlice.actions;
+export const {
+	setCategory,
+	setTitle,
+	setDescription,
+	setDifficulty,
+	addNewTag,
+	addNewTestcase,
+	setInput,
+	setOutput,
+	setIsSample,
+	deleteTestcase,
+	deleteTemplate,
+	removeTag,
+	addNewTemplate,
+	setLanguage,
+	setTemplateCode,
+	setBoilerFucntion,
+	setPageSize,
+	setProblems,
+} = problemSlice.actions;
