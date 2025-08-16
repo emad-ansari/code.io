@@ -1,18 +1,68 @@
-import math from '@/assets/math-and-puzzle.png'
-import dp from '@/assets/dp.png';
-import greedy from '@/assets/greedy.png';
-import graph from '@/assets/graph.png';
-import tree from '@/assets/tree.png';
+export interface Testcase {
+	id: string;
+	input: string;
+	expected_output: string;
+	isSample: boolean;
+}
+
+export interface Template {
+	id: string;
+	language: string;
+	full_template: string;
+	boiler_code: string;
+}
+
+export interface Problem {
+	id: string;
+	problemNo: number;
+	title: string;
+	difficulty: string;
+	likes: number;
+	submissions: number;
+	categoryName: string;
+	status: string | null;
+}
 
 export interface ProblemState {
-	problems: Problem[];
-	pageSize: number;
-	totalPages: number;
-	problemDetail: ProblemDetail;
-	userSubmissions: UserSubmission[]
-	error: any;
 	loading: boolean;
+	category: string;
+	title: string;
+	difficulty: string;
+	description: string;
+	tags: string[];
+	testcases: Testcase[];
+	templates: Template[];
+	totalPages: number;
+	pageSize: number;
+	problems: Problem[];
+	problemDetail: ProblemDetail | null;
+	likes: number;
+	dislikes: number
+	userSubmissions: UserSubmission[]
 }
+
+
+export interface ProblemDetail {
+	id: string | undefined;
+	problemNo: number | undefined;
+	title: string | undefined;
+	description: string | undefined;
+	difficulty: string | undefined;
+	likes: number | undefined;
+	tags: string[] | undefined;
+	status: string | null
+}
+
+export interface UserSubmission {
+	id: string;
+	languageId: number;
+	code: string;
+	time: string;
+	memory: string;
+	status: string;
+	createdAt: Date
+}
+
 export interface SettingState {
 	theme: string;
 	fontSize: number;
@@ -22,47 +72,18 @@ export interface DropDownType {
 	isDifficultyMenuOpen: boolean;
 }
 
-export interface EditorState {
-	language: string;
-	isFullScreen: boolean;
-	code: string;
-	execution_result: ExecutionResult;
-	loading: boolean;
-	error: string | null | undefined;
-}
+// export interface EditorState {
+// 	language: string;
+// 	isFullScreen: boolean;
+// 	code: string;
+// 	execution_result: ExecutionResult;
+// 	loading: boolean;
+// 	error: string | null | undefined;
+// }
 export interface DefaultCodeProps {
 	problemTitle: string;
 	languageId: number;
 	code?: string;
-}
-
-export interface Problem {
-	id: string;
-	title: string;
-	difficulty: string;
-	problemNo: number;
-	problemStatus?: {
-		status: string;
-	};
-}
-export interface TestCaseInput {
-	type: string;
-	name: string;
-	value: string;
-}
-export interface TestCaseExample {
-	title: string;
-	inputs: TestCaseInput[];
-	output: TestCaseOutput | null;
-}
-
-export interface TestCaseOutput {
-	value: string;
-	type: string;
-}
-export interface ProblemDetail extends Problem {
-	description: string;
-	testcaseExamples: TestCaseExample[];
 }
 
 export interface FilterState {
@@ -79,46 +100,38 @@ export interface FetchProblemProps {
 	searchKeywords: string;
 }
 
-export interface CodeExecutionResponse {
-	success: boolean;
-	data: ExecutionResult;
-	message?: string;
-}
+// export interface CodeExecutionResponse {
+// 	success: boolean;
+// 	data: ExecutionResult;
+// 	message?: string;
+// }
 
-export interface ExecutionResult {
-	overallStatus: string; // Wrong Answer || Compilation Error || Accepted || Time Limit Exceed
-	passed_testcases: number;
-	submissions: SubmissionDetails[];
-}
+// export interface ExecutionResult {
+// 	overallStatus: string; // Wrong Answer || Compilation Error || Accepted || Time Limit Exceed
+// 	passed_testcases: number;
+// 	submissions: SubmissionDetails[];
+// }
 
-export interface SubmissionDetails {
-	languageId: number;
-	stdin: string;
-	stdout: string;
-	expected_output: string;
-	status: {
-		id: number;
-		description: string;
-	};
-	compile_output?: string | null;
-	testcaseExamples?: TestCaseExample[];
-	inputs: TestCaseInput[];
-}
+// export interface SubmissionDetails {
+// 	languageId: number;
+// 	stdin: string;
+// 	stdout: string;
+// 	expected_output: string;
+// 	status: {
+// 		id: number;
+// 		description: string;
+// 	};
+// 	compile_output?: string | null;
+// 	testcaseExamples?: TestCaseExample[];
+// 	inputs: TestCaseInput[];
+// }
 
 export interface APIResponse<T> {
 	success: boolean;
 	data?: T;	
 	msg: string | null
 }
-export interface UserSubmission {
-	id: string;
-	languageId: number;
-	code: string;
-	time: string;
-	memory: string;
-	status: string;
-	createdAt: Date
-}
+
 export interface ProblemCategory {
 	id: string;
 	name: string;
@@ -151,3 +164,8 @@ export const problems_per_page = ["10 / page", "20 / page", "50 / page"];
 export const DIFFICULTY = ['Easy', 'Medium', 'Hard'];
 
 export const STATUS =  ["Todo", "Solved", "Attempted"]
+
+
+// export const formatNumbers = (value: number | undefined) =>  {
+// 	return formatSiUnit(value);
+// }
