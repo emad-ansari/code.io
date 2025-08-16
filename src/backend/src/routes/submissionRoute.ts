@@ -366,4 +366,4 @@ router.get("/get-submissions", auth, async (req: Request, res: Response) => {
 // 	};
 // }
 
-// export default router;
+export default router;

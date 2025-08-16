@@ -25,7 +25,9 @@ export async function getUserSubmissions(userId: string) {
 						time: true,
 						memory: true,
 						languageId: true,
-						status: true
+						status: true,
+						createdAt: true
+
 					}
 				}
 			}
