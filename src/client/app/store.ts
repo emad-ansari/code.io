@@ -6,8 +6,8 @@ import dropDownReducer from "@/client/features/dropDownSlice";
 import filterReducer from "@/client/features/filterSlice";
 import settingReducer from "@/client/features/editorSettingSlice";
 import editorReducer from "@/client/features/codeEditorSlice";
-import problemFormSlice from "@/client/features/problemFormSlice";
 import userSlice from "@/client/features/authSlice";
+import ProblemCategorySlice from "@/client/features/problemCategorySlice"
 
 
 export const store = configureStore({
@@ -17,8 +17,8 @@ export const store = configureStore({
 		filter: filterReducer,
 		setting: settingReducer,
 		editor: editorReducer,
-		problemform: problemFormSlice,
 		user: userSlice,
+		problem_category :ProblemCategorySlice
 	},
 });
 
