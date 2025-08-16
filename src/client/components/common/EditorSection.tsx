@@ -33,45 +33,45 @@ export const EditorSection = () => {
 		(state: RootState) => state.editor
 	);
 
-	const onRunCode = () => {
-		if (!isLogin) return;
+	// const onRunCode = () => {
+	// 	if (!isLogin) return;
 
-		if (!title) return;
+	// 	if (!title) return;
 
-		if (!isConsoleOpen) {
-			setSplitRatio([60, 40]);
-		}
+	// 	if (!isConsoleOpen) {
+	// 		setSplitRatio([60, 40]);
+	// 	}
 
-		setIsConsoleOpen((prevState) => !prevState);
+	// 	setIsConsoleOpen((prevState) => !prevState);
 
-		dispatch(
-			runCode({
-				problemTitle: formattedTitle,
-				languageId: LNAGUAGE_MAPPING[`${language}`].languageId,
-				code: code,
-			})
-		);
-	};
+	// 	dispatch(
+	// 		runCode({
+	// 			problemTitle: formattedTitle,
+	// 			languageId: LNAGUAGE_MAPPING[`${language}`].languageId,
+	// 			code: code,
+	// 		})
+	// 	);
+	// };
 
-	const onSubmitCode = () => {
-		if (!isLogin) return;
+	// const onSubmitCode = () => {
+	// 	if (!isLogin) return;
 
-		if (!title) return;
+	// 	if (!title) return;
 
-		if (!isConsoleOpen) {
-			setSplitRatio([60, 40]);
-		}
-		setIsConsoleOpen((prevState) => !prevState);
+	// 	if (!isConsoleOpen) {
+	// 		setSplitRatio([60, 40]);
+	// 	}
+	// 	setIsConsoleOpen((prevState) => !prevState);
 		
-		dispatch(
-			submitCode({
-				problemTitle: formattedTitle,
-				languageId: LNAGUAGE_MAPPING[`${language}`].languageId,
-				code: code,
-			})
-		);
+	// 	dispatch(
+	// 		submitCode({
+	// 			problemTitle: formattedTitle,
+	// 			languageId: LNAGUAGE_MAPPING[`${language}`].languageId,
+	// 			code: code,
+	// 		})
+	// 	);
 
-	}
+	// }
 
 	return (
 		<section>
@@ -132,7 +132,7 @@ export const EditorSection = () => {
 									<TooltipTrigger asChild>
 										<Button
 											className=" text-white justify-center flex gap-2 items-center rounded-md w-20 border border-[#334155]"
-											onClick={onRunCode}
+											// onClick={onRunCode}
 										>
 											{loading ? (
 												<Icons.spinner className="mr-0 h-4 w-4 animate-spin " />
@@ -156,7 +156,7 @@ export const EditorSection = () => {
 								<Tooltip>
 									<TooltipTrigger asChild>
 										<Button
-											onClick={onSubmitCode}
+											// onClick={onSubmitCode}
 											className=" text-white justify-center flex gap-2 items-center rounded-md  border border-[#334155]"
 										>
 											<CloudUpload size={16} />
@@ -178,7 +178,7 @@ export const EditorSection = () => {
 						</div>
 					</div>
 					<div className="overflow-y-scroll">
-						{loading ? <ConsoleSkeleton /> : <OutputConsole />}
+						{/* {loading ? <ConsoleSkeleton /> : <OutputConsole />} */}
 					</div>
 				</div>
 			</Split>
@@ -186,33 +186,33 @@ export const EditorSection = () => {
 	);
 };
 
-function OutputConsole() {
-	const { execution_result } = useSelector(
-		(state: RootState) => state.editor
-	);
+// function OutputConsole() {
+// 	const { execution_result } = useSelector(
+// 		(state: RootState) => state.editor
+// 	);
 
-	const resultStatus = execution_result.overallStatus;
-	const passed_testcases = execution_result.passed_testcases;
+// 	const resultStatus = execution_result.overallStatus;
+// 	const passed_testcases = execution_result.passed_testcases;
 
-	return (
-		<div className="px-4 py-2 flex flex-col gap-4">
-			<div className="flex flex-row items-center justify-between">
-				<span
-					className={`text-2xl font-semibold ${
-						resultStatus === "Accepted"
-							? "text-[#4ac3ab]"
-							: "text-[#ea4545]"
-					}`}
-				>
-					{resultStatus}
-				</span>
-				{passed_testcases >= 0 && (
-					<span>Passed test cases: {passed_testcases}/2</span>
-				)}
-			</div>
-			<div>
-				<RenderExecutionResult resultStatus={resultStatus} />
-			</div>
-		</div>
-	);
-}
+// 	return (
+// 		<div className="px-4 py-2 flex flex-col gap-4">
+// 			<div className="flex flex-row items-center justify-between">
+// 				<span
+// 					className={`text-2xl font-semibold ${
+// 						resultStatus === "Accepted"
+// 							? "text-[#4ac3ab]"
+// 							: "text-[#ea4545]"
+// 					}`}
+// 				>
+// 					{resultStatus}
+// 				</span>
+// 				{passed_testcases >= 0 && (
+// 					<span>Passed test cases: {passed_testcases}/2</span>
+// 				)}
+// 			</div>
+// 			<div>
+// 				<RenderExecutionResult resultStatus={resultStatus} />
+// 			</div>
+// 		</div>
+// 	);
+// }
