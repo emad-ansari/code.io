@@ -1,13 +1,10 @@
 import { useState } from "react";
 import { ChevronDown, ChevronLeft, Trash } from "lucide-react";
 import { useAppDispatch } from "@/client/app/store";
-import { LANGUAGES } from "@/client/lib/types";
+import { LANGUAGES, Template } from "@/client/lib/types";
 import { Button } from "@/client/components/ui/button";
 import {
 	deleteTemplate,
-	setDifficulty,
-	setOutput,
-	Template,
 	setLanguage,
 	setTemplateCode,
 	setBoilerFucntion
@@ -32,12 +29,12 @@ interface CodeTemplateProps extends Template {
 export const CodeTemplate: React.FC<CodeTemplateProps> = ({
 	id,
 	templateNo,
-	template_code,
-	boiler_function,
+	full_template,
+	boiler_code,
 }) => {
 	const dispatch = useAppDispatch();
 	const [open, setOpen] = useState<boolean>(false);
-	console.log(template_code)
+
 
 	return (
 		<>
@@ -105,7 +102,7 @@ export const CodeTemplate: React.FC<CodeTemplateProps> = ({
 							<textarea
 								id="template_code"
 								className=" text-white text-sm w-full px-3 py-2  border-[1.5px] hover:outline-none focus:outline-none border-code-border  rounded-lg bg-transparent"
-								value={template_code}
+								value={full_template}
 								onChange={(e) =>
 									dispatch(
 										setTemplateCode({
@@ -129,7 +126,7 @@ export const CodeTemplate: React.FC<CodeTemplateProps> = ({
 							<textarea
 								id="boiler_function"
 								className=" text-white text-sm w-full px-3 py-2  border-[1.5px] hover:outline-none focus:outline-none border-code-border  rounded-lg bg-transparent"
-								value={boiler_function}
+								value={boiler_code}
 								onChange={(e) =>
 									dispatch(
 										setBoilerFucntion({

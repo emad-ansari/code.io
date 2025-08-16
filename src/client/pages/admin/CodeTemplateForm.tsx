@@ -35,8 +35,8 @@ export const CodeTemplateForm = () => {
 									id={template.id}
 									language={template.language}
 									templateNo={index + 1}
-									template_code={template.template_code}
-									boiler_function={template.boiler_function}
+									full_template={template.full_template}
+									boiler_code={template.boiler_code}
 								/>
 							))
 						)}
