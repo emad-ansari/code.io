@@ -1,7 +1,7 @@
 import prisma from "./index";
-import { Problem, UserSubmissions } from "../@utils/types";
+import { Problem } from "../@utils/types";
 import { Prisma } from "@prisma/client";
-import { SlowBuffer } from "buffer";
+import { setMaxIdleHTTPParsers } from "http";
 
 // CREATE: new problem
 export async function createProblem(
@@ -118,33 +118,42 @@ export async function getAllProblems(
 						problemNo: true,
 						title: true,
 						difficulty: true,
-						likes: true,
-						submissions: true,
-						solvedProblems: userAuthorized ? {
-							where : {
-								userId: userId
-							},
+						_count: {
 							select: {
-								status: true
-							}
-						} : false
+								likes: true,
+							},
+						},
+						submissions: true,
+						solvedProblems: userAuthorized
+							? {
+									where: {
+										userId: userId,
+									},
+									select: {
+										status: true,
+									},
+							  }
+							: false,
 					},
 				},
 			},
 		});
-		
-		const formattedProblem = problems.flatMap((cat) => 
-			cat.problems.map(p => {
+
+		const formattedProblem = problems.flatMap((cat) =>
+			cat.problems.map((p) => {
 				return {
 					id: p.id,
 					categoryTitle: cat.title,
 					problemNo: p.problemNo,
 					title: p.title,
 					difficulty: p.difficulty,
-					likes: p.likes,
+					likes: p._count.likes,
 					submissions: p.submissions,
-					status: p.solvedProblems.length > 0 ? p.solvedProblems[0].status : null
-				}
+					status:
+						p.solvedProblems.length > 0
+							? p.solvedProblems[0].status
+							: null,
+				};
 			})
 		);
 
@@ -187,7 +196,8 @@ export async function getProblemsOnAdminPage(page: number) {
 // GET current problem details
 export async function getProblemDetail(
 	problemId: string,
-	userAuthorized: boolean
+	userAuthorized: boolean,
+	userId: string
 ) {
 	try {
 		const problemDetail = await prisma.problem.findFirst({
@@ -200,18 +210,55 @@ export async function getProblemDetail(
 				title: true,
 				description: true,
 				difficulty: true,
-				likes: true,
 				tags: true,
-				solvedProblems: {
+				_count: {
 					select: {
-						status: userAuthorized ? true : false,
+						likes: true,
 					},
 				},
+				solvedProblems: userAuthorized
+					? {
+							where: {
+								userId,
+							},
+							select: {
+								status: userAuthorized ? true : false,
+							},
+					  }
+					: false,
 			},
 		});
-		return problemDetail;
+		console.log("fetched problem detials: ", problemDetail);
+
+		const status = problemDetail?.solvedProblems[0]?.status || "Todo";
+
+		const formattedProblemDetail = {
+			id: problemDetail?.id,
+			problemNo: problemDetail?.problemNo,
+			title: problemDetail?.title,
+			description: problemDetail?.description,
+			difficulty: problemDetail?.difficulty,
+			likes: problemDetail?._count.likes,
+			status: status,
+			tags: problemDetail?.tags,
+		};
+		return formattedProblemDetail;
 	} catch (error: any) {
 		console.log("GET_PROLBEM_DETAIL_DB_ERROR: ", error);
+	}
+}
+
+export async function updateLikes(problemId: string, userId: string) {
+	try {
+		await prisma.likes.create({
+			data: {
+				userId,
+				problemId,
+			},
+		});
+	} catch (error: any) {
+		console.log("UPDATE_LIKES_DB_ERROR: ", error.message);
+		throw new Error(error);
 	}
 }
 

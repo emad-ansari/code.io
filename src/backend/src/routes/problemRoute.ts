@@ -1,7 +1,12 @@
 import { Request, Router, Response } from "express";
 const router = Router();
 import { CustomRequestObject } from "../middleware/auth";
-import { createProblem, getAllProblems, getProblemDetail } from "../db/problem";
+import {
+	createProblem,
+	getAllProblems,
+	getProblemDetail,
+	updateLikes,
+} from "../db/problem";
 import { getAllCategory } from "../db/problem-category";
 import { ProblemSchema } from "../@utils/types";
 
@@ -53,7 +58,6 @@ router.get("/get-problems", async (req: Request, res: Response) => {
 	console.log("status: ", status);
 	console.log("searchKeywords: ", searchKeywords);
 
-
 	try {
 		const filterQuery: {
 			difficulty?: string;
@@ -82,7 +86,6 @@ router.get("/get-problems", async (req: Request, res: Response) => {
 				totalPages: result?.totalCount,
 			},
 		});
-		
 	} catch (e: any) {
 		console.error(e.message);
 		return res.status(500).json({ success: false, message: e.message });
@@ -91,15 +94,17 @@ router.get("/get-problems", async (req: Request, res: Response) => {
 
 // GET PROBLEM DETAILS
 router.get(
-	"/get-problem-detail/:problemId",
+	"/get-problem-details/:problemId",
 	async (req: Request, res: Response) => {
 		const { problemId } = req.params;
-		const { userAuthorized } = req as CustomRequestObject;
+		const { userAuthorized, userId } = req as CustomRequestObject;
 		try {
 			const problemDetails = await getProblemDetail(
 				problemId,
-				userAuthorized
+				userAuthorized,
+				userId
 			);
+			console.log("problem details: ", problemDetails);
 			return res.status(200).json({
 				success: true,
 				msg: "Successfull fetched problem Details",
@@ -128,6 +133,27 @@ router.get("/get-categories", async (req: Request, res: Response) => {
 	}
 });
 
+router.post("/update-likes", async (req: Request, res: Response) => {
+	const { userAuthorized, userId } = req as CustomRequestObject;
+	if (!userAuthorized) {
+		return res.status(401).json({
+			success: false,
+			msg: "UnAuthorized Access!!",
+		});
+	}
+	const problemId = req.body.data;
+
+	try {
+		await updateLikes(problemId, userId);
+		return res.status(201).json ({
+			success: true,
+			msg: "Likes Updated Successfully"
+		})
+	} catch (error: any) {
+		console.log("UPDATE_LIKES_ROUTE_ERORR: ", error);
+		return res.status(500).json({ success: false, msg: error.message });
+	}
+});
 export default router;
 
 // // router.post('/judge0-callback', async(req: Request, res: Response) => {
