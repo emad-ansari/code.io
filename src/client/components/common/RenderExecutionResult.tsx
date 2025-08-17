@@ -1,127 +1,260 @@
-import { useState } from "react";
+import React, { useState } from "react";
 import { useSelector } from "react-redux";
 
 import { RootState } from "@/client/app/store";
-import { SubmissionDetails } from "@/client/lib/types";
+import { Label } from "../ui/label";
+import {
+	errorClassname,
+	SubmissionDetails,
+	successClassname,
+} from "@/client/lib/types";
 
+import {
+	CheckCircle,
+	CircleAlert,
+	CircleX,
+	ClockAlert,
+	DatabaseBackup,
+	TriangleAlert,
+} from "lucide-react";
 
-export function RenderExecutionResult({ resultStatus }: { resultStatus: string }) {
-	switch (resultStatus) {
-		case "Accepted":
-		case "Wrong Answer":
-			return <WrongAnswerOrAccepted />;
-		case "Time Limit Exceed":
-			return <TimeLimitExceed />;
-		case "Compilation Error":
-			return <CompilationError />;
-		default:
-			return <div></div>;
-	}
+interface RenderExecutionResultProps {
+	submission: SubmissionDetails;
 }
 
-function CompilationError() {
-	const { execution_result } = useSelector(
+interface ResultCardProps {
+	submission: SubmissionDetails;
+	onOpenDetail: React.Dispatch<
+		React.SetStateAction<SubmissionDetails | null>
+	>;
+}
+
+
+export function OutputConsole() {
+	const { submission_result } = useSelector(
 		(state: RootState) => state.editor
 	);
-	const submissions = execution_result.submissions;
-	return (
-		<div className="flex flex-col gap-2">
-			<label className="text-md text-gray-400 font-medium" htmlFor="">
-				Compile Output:
-			</label>
-			<code className="bg-[#402d2d] text-[#d75151] px-4 py-4 rounded-lg">
-				{submissions[0].compile_output}
-			</code>
-		</div>
-	);
-}
+	const { passed_testcases, submissions } = submission_result;
 
-function TimeLimitExceed() {
-	return (
-		<div className="flex flex-col gap-1">
-			<label className="text-md text-gray-400 font-medium" htmlFor="">
-				Last Executed Input:{" "}
-			</label>
-			<code className="bg-gray-800 px-4 py-4 rounded-lg">n = 50000</code>
-		</div>
-	);
-}
-
-function WrongAnswerOrAccepted() {
-	const { execution_result } = useSelector(
-		(state: RootState) => state.editor
-	);
-	const submissions = execution_result.submissions;
-	const [selectedTestCaseTab, setSelectedTestCaseTab] =
-		useState<SubmissionDetails>(submissions[0]);
+	const [currentResult, setCurrentResult] =
+		useState<SubmissionDetails | null>(submissions[0]);
 
 	return (
 		<>
-			<div className="flex flex-row gap-3 mb-6">
-				{submissions.map((submission, index) => {
-					const { description } = submission.status;
-					return (
-						<div
-							className="bg-gray-800 rounded-lg px-4 py-1 flex flex-row gap-1 items-center cursor-pointer "
-							key={index}
-							onClick={() => setSelectedTestCaseTab(submission)}
-						>
-							<span
-								className={`text-lg ${
-									description === "Accepted"
-										? "text-code-green"
-										: "text-red-500"
-								}`}
-							>
-								•
+			{currentResult && (
+				<div className="flex flex-col px-4 py-2 gap-4">
+					<div className="flex items-center justify-between">
+						<h1 className="text-lg font-semibold text-green-500">
+							Execution Result{" "}
+						</h1>
+						<div className="flex items-center gap-2  bg-code-dark px-2 py-1 rounded-md text-gray-400 text-sm border border-gray-600 ">
+							<span className="font-semibold">
+								Passed Testcases:{" "}
 							</span>
-							Case
-							<span>{index + 1}</span>
+							<div className="flex items-center gap-1">
+								<span>
+									{passed_testcases == -1
+										? 0
+										: passed_testcases}
+								</span>
+								<span>/</span>
+								<span>{submissions.length}</span>
+							</div>
 						</div>
-					);
-				})}
-			</div>
-			{selectedTestCaseTab && (
-				<div className="flex flex-col gap-4">
-					<div className="flex flex-col gap-2">
-						<label
-							className="text-md text-gray-400 font-medium"
-							htmlFor=""
-						>
-							Input
-						</label>
-						<code className="bg-gray-800 px-4 py-4 rounded-lg">
-							{`${selectedTestCaseTab.inputs
-								.map(
-									(input) => `${input.name} = ${input.value}`
-								)
-								.join(", ")}`}
-						</code>
 					</div>
-					<div className="flex flex-col gap-2">
-						<label
-							htmlFor=""
-							className="text-md text-gray-400 font-medium"
-						>
-							User Output
-						</label>
-						<code className="bg-gray-800 px-4 py-4 rounded-lg">
-							{selectedTestCaseTab.stdout}
-						</code>
-					</div>
-					<div className="flex flex-col gap-2">
-						<label
-							htmlFor=""
-							className="text-md text-gray-400 font-medium"
-						>
-							Expected Output
-						</label>
-						<code className="bg-gray-800 px-4 py-4 rounded-lg">
-							{selectedTestCaseTab.expected_output}
-						</code>
+					<div className="flex gap-2">
+						<div className="flex flex-col gap-2 w-[40%]">
+							{submissions.map((sub, i) => (
+								<ResultCard
+									key={i}
+									submission={sub}
+									onOpenDetail={setCurrentResult}
+								/>
+							))}
+						</div>
+						<div className="flex flex-col gap-3 rounded-lg px-3 py-3 justify-start w-full border border-code-border overflow-y-auto">
+							{currentResult && (
+								<RenderExecutionResult
+									submission={currentResult}
+								/>
+							)}
+						</div>
 					</div>
 				</div>
 			)}
 		</>
 	);
 }
+
+const ResultCard: React.FC<ResultCardProps> = ({
+	submission,
+	onOpenDetail,
+}) => {
+	switch (submission.status) {
+		case "Accepted":
+			return (
+				<div
+					className={successClassname}
+					onClick={() => onOpenDetail(submission)}
+				>
+					<CheckCircle className="w-5 h-5 text-green-500" />
+					<span className="text-sm">{submission.status}</span>
+				</div>
+			);
+		case "Wrong Answer":
+			return (
+				<div
+					className={errorClassname}
+					onClick={() => onOpenDetail(submission)}
+				>
+					<CircleX className="w-5 h-5 text-red-500" />
+					<span className="text-sm">{submission.status}</span>
+				</div>
+			);
+		case "Compilation Error":
+			return (
+				<div
+					className={errorClassname}
+					onClick={() => onOpenDetail(submission)}
+				>
+					<CircleAlert className="w-5 h-5 text-red-500" />
+					<span className="text-sm">{submission.status}</span>
+				</div>
+			);
+		case "Memory Limit Exceeded":
+			return (
+				<div
+					className={errorClassname}
+					onClick={() => onOpenDetail(submission)}
+				>
+					<DatabaseBackup className="w-5 h-5 text-red-500" />
+					<span className="text-sm">{submission.status}</span>
+				</div>
+			);
+		case "Run Time Error":
+			return (
+				<div
+					className={errorClassname}
+					onClick={() => onOpenDetail(submission)}
+				>
+					<TriangleAlert className="w-5 h-5 text-red-500" />
+					<span className="text-sm">{submission.status}</span>
+				</div>
+			);
+		case "Time Limit Exceeded":
+			return (
+				<div
+					className={errorClassname}
+					onClick={() => onOpenDetail(submission)}
+				>
+					<ClockAlert className="w-5 h-5 text-red-500" />
+					<span className="text-sm">{submission.status}</span>
+				</div>
+			);
+		default:
+			return (
+				<div>
+					<span>No status mtaches</span>
+				</div>
+			);
+	}
+};
+
+const RenderExecutionResult: React.FC<RenderExecutionResultProps> = ({
+	submission,
+}) => {
+	switch (submission.status) {
+		case "Accepted":
+		case "Wrong Answer":
+			return <WrongAnswerOrAccepted submission={submission} />;
+		case "Time Limit Exceeded":
+			return <TimeLimitExceed submission={submission} />;
+		case "Compilation Error":
+			return <CompilationError submission={submission} />;
+		case "Run Time Error":
+			return <RunTimeError submission={submission} />;
+		case "Memory Limit Exceeded":
+			return <div>Memory Limit Exceeded</div>;
+		default:
+			return <div>No status matches</div>;
+	}
+};
+
+const CompilationError: React.FC<RenderExecutionResultProps> = ({
+	submission,
+}) => {
+	return (
+		<div className="flex flex-col gap-2">
+			<Label className="text-md text-gray-300">Compile Output:</Label>
+			<span className="bg-red-800/10 text-red-500 px-4 py-4 rounded-lg border border-red-500/10">
+				{submission.compile_output}
+			</span>
+		</div>
+	);
+};
+
+const TimeLimitExceed: React.FC<RenderExecutionResultProps> = ({
+	submission,
+}) => {
+	return (
+		<div className="flex flex-col gap-1">
+			<Label className="text-md text-gray-400 font-medium">Input:</Label>
+			<span className="bg-gray-800 px-4 py-4 rounded-lg">
+				{submission.input}
+			</span>
+		</div>
+	);
+};
+
+const WrongAnswerOrAccepted: React.FC<RenderExecutionResultProps> = ({
+	submission,
+}) => {
+	return (
+		<div className="flex flex-col gap-3">
+			<h1
+				className={`text-md ${
+					submission.status == "Accepted"
+						? "text-green-500"
+						: "text-red-500"
+				}`}
+			>
+				{submission.status}
+			</h1>
+			<div className="flex flex-col gap-1   text-gray-300">
+				<Label className="mb-1">Input: </Label>
+				<span className="rounded-lg bg-code-dark px-2 py-1">
+					{submission.input}
+				</span>
+			</div>
+			<div className="flex flex-col gap-1   text-gray-300">
+				<Label className="mb-1">User Output: </Label>
+				<span className="rounded-lg bg-code-dark px-2 py-1">
+					{submission.user_output}
+				</span>
+			</div>
+			<div className="flex flex-col gap-1   text-gray-300">
+				<Label className="mb-1">Expected Output: </Label>
+				<span className="rounded-lg bg-code-dark px-2 py-1">
+					{submission.expected_output}
+				</span>
+			</div>
+		</div>
+	);
+};
+
+const RunTimeError: React.FC<RenderExecutionResultProps> = ({ submission }) => {
+	return (
+		<div className="flex flex-col gap-2">
+			<Label className="text-md text-red-500">Run Time Error </Label>
+			<span className="bg-red-800/10 text-red-500 px-4 py-4 rounded-lg border border-red-500/10">
+				{submission.compile_output}
+			</span>
+			<Label className="text-sm text-gray-400">
+				Last Executed Input:{" "}
+			</Label>
+			<span className="rounded-lg bg-code-dark px-2 py-1">
+				{submission.input}
+			</span>
+		</div>
+	);
+};

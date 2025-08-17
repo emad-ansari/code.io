@@ -5,17 +5,15 @@ import { Editor, Monaco } from "@monaco-editor/react";
 
 import { RootState, useAppDispatch } from "@/client/app/store";
 import { fetchDefaultCode, setCode } from "@/client/features/codeEditorSlice";
-import { LNAGUAGE_MAPPING } from "@/client/lib/types";
 import gitHubDark from "@/client/theme/gitHubDark.json";
 
 export const CodeEditor = () => {
 	const dispatch = useAppDispatch();
-	const { title } = useParams();
+	const { problemId } = useParams();
 	const { language, code } = useSelector((state: RootState) => state.editor);
 	const { fontSize } = useSelector((state: RootState) => state.setting);
-	
-	const formattedTitle = title?.replace(/-/g, " ");
 
+	console.log('this is code: ', code)
 	const onEditorMount = (monaco: Monaco) => {
 		monaco.editor.defineTheme("gitHubDark", {
 			base: "vs-dark",
@@ -23,28 +21,27 @@ export const CodeEditor = () => {
 			...gitHubDark,
 		});
 	};
-	
+
+	const onCodeChange = (value: string | undefined) => {
+		localStorage.setItem(`${problemId}_${language}`, value!);
+		dispatch(setCode(value!));
+	};
 
 	useEffect(() => {
-		if (formattedTitle) {
-			const savedCode = localStorage.getItem(`${title}_${language}`);
+		if (problemId) {
+			const savedCode = localStorage.getItem(`${problemId}_${language}`);
 			if (savedCode) {
 				dispatch(setCode(savedCode));
 			} else {
 				dispatch(
 					fetchDefaultCode({
-						problemTitle: formattedTitle,
-						languageId: LNAGUAGE_MAPPING[`${language}`].languageId,
+						language: language,
+						problemId,
 					})
 				);
 			}
 		}
-	}, [title]);
-
-	const onCodeChange = (value: string | undefined) => {
-		localStorage.setItem(`${title}_${language}`,  value!);
-		dispatch(setCode(value!));
-	}
+	}, [language]);
 
 	return (
 		<Editor
@@ -77,8 +74,7 @@ export const CodeEditor = () => {
 			}}
 			beforeMount={onEditorMount}
 			className="rounded-lg"
-			onChange={(value) =>  onCodeChange(value)}
-
+			onChange={(value) => onCodeChange(value)}
 		/>
 	);
 };

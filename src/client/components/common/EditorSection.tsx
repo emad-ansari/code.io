@@ -3,8 +3,13 @@ import { useSelector } from "react-redux";
 import { useParams } from "react-router-dom";
 import Split from "react-split";
 import { RootState, useAppDispatch } from "@/client/app/store";
+import {
+	ChevronDown,
+	ChevronUp,
+	CloudUpload,
+	Play,
+} from "lucide-react";
 
-import { ChevronDown, ChevronUp, CloudUpload, Play } from "lucide-react";
 import { Button } from "@/client/components/ui/button";
 import { ConsoleSkeleton } from "@/client/components/skeletons/ConsoleSkeleton";
 import {
@@ -14,16 +19,18 @@ import {
 	TooltipTrigger,
 } from "@/client/components/ui/tooltip";
 import { Icons } from "@/client/components/ui/icons";
-import { runCode, submitCode } from "@/client/features/codeEditorSlice";
+import { runCode } from "@/client/features/codeEditorSlice";
 import { CodeEditor } from "./CodeEditor";
-import { LNAGUAGE_MAPPING } from "@/client/lib/types";
 import { EditorTopBar } from "./EditorTopBar";
-import { RenderExecutionResult } from "./RenderExecutionResult";
+import { OutputConsole } from "./RenderExecutionResult";
+
+
+
+
 
 export const EditorSection = () => {
 	const dispatch = useAppDispatch();
-	const { title } = useParams();
-	const formattedTitle = title?.replace(/-/g, " ") || "";
+	const { problemId } = useParams();
 
 	const [splitRatio, setSplitRatio] = useState<[number, number]>([100, 0]);
 	const [isConsoleOpen, setIsConsoleOpen] = useState<boolean>(false);
@@ -33,25 +40,25 @@ export const EditorSection = () => {
 		(state: RootState) => state.editor
 	);
 
-	// const onRunCode = () => {
-	// 	if (!isLogin) return;
+	const onRunCode = () => {
+		if (!isLogin) return;
 
-	// 	if (!title) return;
+		if (!problemId) return;
 
-	// 	if (!isConsoleOpen) {
-	// 		setSplitRatio([60, 40]);
-	// 	}
+		if (!isConsoleOpen) {
+			setSplitRatio([60, 40]);
+		}
 
-	// 	setIsConsoleOpen((prevState) => !prevState);
+		setIsConsoleOpen((prevState) => !prevState);
 
-	// 	dispatch(
-	// 		runCode({
-	// 			problemTitle: formattedTitle,
-	// 			languageId: LNAGUAGE_MAPPING[`${language}`].languageId,
-	// 			code: code,
-	// 		})
-	// 	);
-	// };
+		dispatch(
+			runCode({
+				problemId,
+				language,
+				code,
+			})
+		);
+	};
 
 	// const onSubmitCode = () => {
 	// 	if (!isLogin) return;
@@ -62,7 +69,7 @@ export const EditorSection = () => {
 	// 		setSplitRatio([60, 40]);
 	// 	}
 	// 	setIsConsoleOpen((prevState) => !prevState);
-		
+
 	// 	dispatch(
 	// 		submitCode({
 	// 			problemTitle: formattedTitle,
@@ -131,13 +138,16 @@ export const EditorSection = () => {
 								<Tooltip>
 									<TooltipTrigger asChild>
 										<Button
-											className=" text-white justify-center flex gap-2 items-center rounded-md w-20 border border-[#334155]"
-											// onClick={onRunCode}
+											className="justify-center flex gap-2 items-center rounded-md w-20  cursor-pointer  text-red-500 border border-red-500/50"
+											onClick={onRunCode}
 										>
 											{loading ? (
 												<Icons.spinner className="mr-0 h-4 w-4 animate-spin " />
 											) : (
-												<Play size={16} />
+												<Play
+													size={16}
+													strokeWidth={2.5}
+												/>
 											)}
 											<span>Run</span>
 										</Button>
@@ -157,9 +167,12 @@ export const EditorSection = () => {
 									<TooltipTrigger asChild>
 										<Button
 											// onClick={onSubmitCode}
-											className=" text-white justify-center flex gap-2 items-center rounded-md  border border-[#334155]"
+											className="justify-center flex gap-2 items-center rounded-md  cursor-pointer text-green-500  border border-green-500/50 font-semibold"
 										>
-											<CloudUpload size={16} />
+											<CloudUpload
+												size={16}
+												strokeWidth={2.5}
+											/>
 											<span className="font-semibold ">
 												Submit
 											</span>
@@ -178,41 +191,10 @@ export const EditorSection = () => {
 						</div>
 					</div>
 					<div className="overflow-y-scroll">
-						{/* {loading ? <ConsoleSkeleton /> : <OutputConsole />} */}
+						{loading ? <ConsoleSkeleton /> : <OutputConsole />}
 					</div>
 				</div>
 			</Split>
 		</section>
 	);
 };
-
-// function OutputConsole() {
-// 	const { execution_result } = useSelector(
-// 		(state: RootState) => state.editor
-// 	);
-
-// 	const resultStatus = execution_result.overallStatus;
-// 	const passed_testcases = execution_result.passed_testcases;
-
-// 	return (
-// 		<div className="px-4 py-2 flex flex-col gap-4">
-// 			<div className="flex flex-row items-center justify-between">
-// 				<span
-// 					className={`text-2xl font-semibold ${
-// 						resultStatus === "Accepted"
-// 							? "text-[#4ac3ab]"
-// 							: "text-[#ea4545]"
-// 					}`}
-// 				>
-// 					{resultStatus}
-// 				</span>
-// 				{passed_testcases >= 0 && (
-// 					<span>Passed test cases: {passed_testcases}/2</span>
-// 				)}
-// 			</div>
-// 			<div>
-// 				<RenderExecutionResult resultStatus={resultStatus} />
-// 			</div>
-// 		</div>
-// 	);
-// }
