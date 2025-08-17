@@ -3,7 +3,7 @@ import { useSearchParams, useParams } from "react-router-dom";
 import { Search, X } from "lucide-react";
 
 import { useAppDispatch } from "@/client/app/store";
-import { fetchProblem } from "@/client/features/problemSlice";
+import { fetchProblems } from "@/client/features/problemSlice";
 import { DropDownMenu } from "@/client/components/ui/DropDownMenu";
 import { DIFFICULTY, STATUS } from "@/client/lib/types";
 
@@ -15,7 +15,7 @@ export interface AppliedFilter {
 export const FilterSection = memo(() => {
 	const dispatch = useAppDispatch();
 	const [searchParams, setSearchParams] = useSearchParams();
-	const { type } = useParams();
+	const { category } = useParams();
 	const [searchQuery, setSearchQuery] = useState<string>("");
 	const [filters, setFilters] = useState<AppliedFilter[]>([]);
 
@@ -46,7 +46,8 @@ export const FilterSection = memo(() => {
 		}
 		setSearchParams(searchParams);
 		dispatch(
-			fetchProblem({
+			fetchProblems({
+				categoryName: category ? category : "math",
 				pageNumber: Number(searchParams.get("page")) || 1,
 				difficulty: searchParams.get("difficulty") || "",
 				status: searchParams.get("status") || "",
@@ -80,7 +81,8 @@ export const FilterSection = memo(() => {
 			]);
 		}
 		dispatch(
-			fetchProblem({
+			fetchProblems({
+				categoryName: category ? category : "math",
 				pageNumber: Number(searchParams.get("page")) || 1,
 				difficulty: searchParams.get("difficulty") || "",
 				status: searchParams.get("status") || "",
@@ -106,7 +108,8 @@ export const FilterSection = memo(() => {
 
 		// get the problem list with eixsting filters
 		dispatch(
-			fetchProblem({
+			fetchProblems({
+				categoryName: category ? category : "math",
 				pageNumber: Number(searchParams.get("page")) || 1,
 				difficulty: searchParams.get("difficulty") || "",
 				status: searchParams.get("status") || "",
@@ -119,7 +122,7 @@ export const FilterSection = memo(() => {
 		<nav className="flex-col  w-full z-0 ">
 			<div className="flex flex-wrap gap-8 w-full items-center justify-between">
 				<h2 className="text-4xl font-bold text-white flex items-center gap-3">
-					{type}
+					{category && category.trim().charAt(0).toUpperCase() + category.trim().slice(1)}
 					<span className="text-[#eb8069]">Challenges</span>
 				</h2>
 				<div className="flex space-x-5">
