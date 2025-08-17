@@ -18,88 +18,16 @@ import {
 	TableHeader,
 	TableRow,
 } from "@/client/components/ui/table";
-const problems = [
-	{
-		id: "1",
-		title: "Two sum",
-		difficulty: "Easy",
-		problemNo: 1,
-		problemStatus: {
-			status: "Solved",
-		},
-		likes: 12,
-		submissions: 100,
-	},
-	{
-		id: "2",
-		title: "3 Sum",
-		difficulty: "Medium",
-		problemNo: 2,
-		problemStatus: {
-			status: "Attempted",
-		},
-		likes: 123,
-		submissions: 3451,
-	},
-	{
-		id: "3",
-		title: "Largest Sum",
-		difficulty: "Medium",
-		problemNo: 3,
-		problemStatus: {
-			status: "Todo",
-		},
-		likes: 334,
-		submissions: 1654,
-	},
-	{
-		id: "4",
-		title: "Coin Exchange",
-		difficulty: "Hard",
-		problemNo: 3,
-		problemStatus: {
-			status: "Todo",
-		},
-		likes: 834,
-		submissions: 1234,
-	},
-	{
-		id: "5",
-		title: "Count Primes",
-		difficulty: "Medium",
-		problemNo: 3,
-		problemStatus: {
-			status: "Todo",
-		},
-		likes: 383,
-		submissions: 1032,
-	},
-	{
-		id: "6",
-		title: "Longest Increasing Subsequence",
-		difficulty: "Hard",
-		problemNo: 3,
-		problemStatus: {
-			status: "Todo",
-		},
-		likes: 924,
-		submissions: 2000,
-	},
-];
 
 
 const ProblemList = memo(() => {
 	const navigate = useNavigate();
-	const { type } = useParams();  // fetch the problems using it's type
+	const { category } = useParams(); 
+	const { problems } = useSelector((state: RootState) => state.problem);
 	
-	// const { problems } = useSelector((state: RootState) => state.problem);
-
-	const onNavigate = (id: string, title: string) => {
-		const formattedTitle = title.replace(/ /g, "-");
+	const onNavigate = (problemId: string) => {
 		startTransition(() => {
-			navigate(`../${type}/${formattedTitle}/description`, {
-				state: { id: id },
-			});
+			navigate(`../${category}/${problemId}/description`);
 		});
 	};
 
@@ -128,18 +56,18 @@ const ProblemList = memo(() => {
 							className="border-b-[1.5px] border-slate-800 hover:bg-gray-750"
 						>
 							<TableCell>
-								{problem.problemStatus?.status === "Solved" ? (
+								{problem.status === "Solved" ? (
 									<CircleCheckBig
 										size={16}
 										absoluteStrokeWidth
 										className="text-[#4ac3ab]"
 									/>
-								) : problem.problemStatus?.status ===
+								) : problem.status ===
 								  "Attempted" ? (
 									<Contrast
 										size={16}
 										absoluteStrokeWidth
-										className="text-codeio_yellow"
+										className="text-code-yellow"
 									/>
 								) : (
 									<Squircle
@@ -150,9 +78,7 @@ const ProblemList = memo(() => {
 							</TableCell>
 							<TableCell
 								className="font-normal text-gray-200 cursor-pointer hover:text-blue-400"
-								onClick={() =>
-									onNavigate(problem.id, problem.title)
-								}
+								onClick={() => onNavigate(problem.id)}
 							>
 								{problem.title}
 							</TableCell>
