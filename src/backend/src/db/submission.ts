@@ -13,7 +13,7 @@ import prisma from "../db";
 // }
 
 
-// GET ALL USER SUBMISSIONS
+// get all user submissions
 export async function getUserSubmissions(userId: string) {
 	try {
 		const result = await prisma.user.findMany({
@@ -40,6 +40,51 @@ export async function getUserSubmissions(userId: string) {
 		console.log("GET_PROBLEM_SUBMISSIONS_DB_ERROR: ", error);
 	}
 }
+
+// get sample testcases
+export async function getSampleTestcases(problemId: string) {
+	try{
+		const testcases = await prisma.testcase.findMany({
+			where:{
+				problemId,
+				isSample: true
+			},
+			select: {
+				input: true,
+				expected_output: true
+			}
+		})
+		return testcases
+
+	}
+	catch(error: any) {
+		console.log('GET_SAMPLE_TEST_CASES_DB_ERROR: ', error);
+		throw new Error(error);
+	}
+}
+
+// get full template code
+export async function getFullTemplateCode(problemId: string, language: string) {
+	try{
+		const template = await prisma.templateCode.findUnique({
+			where:{
+				problemId,
+				language
+			},
+			select: {
+				full_template: true
+			}
+		})
+		return template
+
+	}
+	catch(error: any) {
+		console.log('GET_SAMPLE_TEST_CASES_DB_ERROR: ', error);
+		throw new Error(error);
+	}
+}
+
+
 
 // export async function createSubmission (submision: UserSubmissionProps) {
 //     try {

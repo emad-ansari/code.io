@@ -1,35 +1,222 @@
 import { Request, Router, Response } from "express";
+import axios from "axios";
 const router = Router();
 import auth, { CustomRequestObject } from "../middleware/auth";
-import { getUserSubmissions } from "../db/submission";
+import {
+	getFullTemplateCode,
+	getSampleTestcases,
+	getUserSubmissions,
+} from "../db/submission";
+import {
+	JUDGE0_INCLUDED_RESPONSE_FIELD,
+	LNAGUAGE_MAPPING,
+	PreparedSubmissionArray,
+	PrepareSubmissionArrayProps,
+	SubmissionsResult,
+	TestcaseType,
+} from "../@utils/types";
 
-// const JUDGE0_API_URL = process.env.JUDGE0_API_URL; // move into types.ts file
-// const JUDGE0_API_KEY = process.env.JUDGE0_API_KEY; // mmove into types.ts file
 
+const JUDGE0_API_URL = process.env.JUDGE0_API_URL; // move into types.ts file
+const JUDGE0_API_KEY = process.env.JUDGE0_API_KEY; // mmove into types.ts file
 
 // GET ALL USER SUBMISSIONS
 router.get("/get-submissions", auth, async (req: Request, res: Response) => {
 	const { userAuthorized, userId } = req as CustomRequestObject;
 
-    if (!userAuthorized) {
-        return res.status(404).json({
-            success: false ,
-            msg: "UnAuthorized Access!!"
-        })
-    }
+	if (!userAuthorized) {
+		return res.status(404).json({
+			success: false,
+			msg: "UnAuthorized Access!!",
+		});
+	}
 
 	try {
-        const user_sumbissions = await getUserSubmissions(userId);
-        return res.status(200).json({
-            success: true,
-            msg: "Successfully fetched all user submissions",
-            data: user_sumbissions
-        })
-        
+		const user_sumbissions = await getUserSubmissions(userId);
+		return res.status(200).json({
+			success: true,
+			msg: "Successfully fetched all user submissions",
+			data: user_sumbissions,
+		});
 	} catch (error: any) {
 		console.log("SUBMISSION_ROUTE_ERROR: ", error.message);
 	}
 });
+
+router.post("/run-code", auth, async (req: Request, res: Response) => {
+	const { userAuthorized } = req as CustomRequestObject;
+	if (!userAuthorized) {
+		return res
+			.status(401)
+			.json({ success: false, msg: "UnAuthorized Access!!" });
+	}
+	const { problemId, language, code } = req.body.data;
+	try {
+		// get the sample testcases;
+		const sampleTestcases = await getSampleTestcases(problemId);
+
+		// get full template code
+		const template = await getFullTemplateCode(problemId, language);
+
+		if (!template) {
+			return res
+				.status(404)
+				.json({ success: false, msg: "Template Code not found!!" });
+		}
+		// now run code for these testcases
+		const languageId: number = LNAGUAGE_MAPPING[language].languageId;
+
+		const response = await evaluateCode(
+			sampleTestcases,
+			template.full_template,
+			languageId,
+			code
+		);
+		if (!response.success && response.msg) {
+			return res.status(500).json({ success: false, msg: response.msg });
+		}
+
+		// format the result.
+        const formattedResult = formatExecutionResult (response.data);
+		if (!formattedResult.success) {
+			return res.status(404).json({ success: false, msg: formattedResult.msg});
+		}
+
+		return res.status(200).json({
+			success: true,
+			msg: "Evaluated successfully",
+			data: {
+				passed_testcases: formattedResult.passed_testcases,
+				submissions: formattedResult.submissions
+			}
+		})
+	} catch (error: any) {
+		console.log("RUN_CODE_ROUTE_ERROR: ", error.message);
+		return res.status(500).json({ success: false, msg: error });
+	}
+});
+
+export async function evaluateCode(
+	testcaseExamples: TestcaseType[],
+	fullTemplate: string,
+	languageId: number,
+	code: string
+): Promise<{ success: boolean; msg?: string; data?: SubmissionsResult[] }> {
+	try {
+		const submissionsArray = prepareSubmissionArray({
+			testcases: testcaseExamples,
+			fullTemplate,
+			languageId,
+			code,
+		});
+
+		const CreateSubmissionsOptions = {
+			method: "POST",
+			url: JUDGE0_API_URL,
+			headers: {
+				"Content-Type": "application/json",
+				"x-rapidapi-host": "judge0-ce.p.rapidapi.com",
+				"x-rapidapi-key": JUDGE0_API_KEY,
+			},
+			data: {
+				submissions: submissionsArray,
+			},
+		};
+
+		const response = await axios.request(CreateSubmissionsOptions);
+
+		const getSubmissionsOptions = {
+			method: "GET",
+			url: JUDGE0_API_URL,
+			headers: {
+				"x-rapidapi-host": "judge0-ce.p.rapidapi.com",
+				"x-rapidapi-key": JUDGE0_API_KEY,
+			},
+			params: {
+				tokens: `${response.data
+					.map((token: { token: string }) => token.token)
+					.join(",")}`,
+				base64_encoded: "false",
+				fields: JUDGE0_INCLUDED_RESPONSE_FIELD,
+			},
+		};
+		let submissionsResult: SubmissionsResult[] = [];
+		while (true) {
+			const response = await axios.request(getSubmissionsOptions);
+			const { submissions } = response.data;
+			submissionsResult = submissions;
+
+			const stillProcessing = submissions.some(
+				(sub: SubmissionsResult) => sub.status.id <= 2
+			);
+			if (!stillProcessing) break;
+
+			// wait for 1 second and then get the result of submissions
+			await new Promise((resolve) => setTimeout(resolve, 2000));
+		}
+
+		return {
+			success: true,
+			data: submissionsResult as SubmissionsResult[],
+		};
+	} catch (error: any) {
+		console.error("Error: ", (error as Error).message);
+		return {
+			success: false,
+			msg: error.message,
+		};
+	}
+}
+
+function prepareSubmissionArray({
+	testcases,
+	languageId,
+	fullTemplate,
+	code,
+}: PrepareSubmissionArrayProps): PreparedSubmissionArray[] {
+	const submissionsArray: PreparedSubmissionArray[] = testcases.map(
+		(testcase: TestcaseType) => {
+			return {
+				language_id: languageId,
+				source_code: fullTemplate.replace("__USER_CODE_HERE__", code),
+				stdin: testcase.input,
+				expected_output: testcase.expected_output,
+			};
+		}
+	);
+
+	return submissionsArray;
+}
+
+function formatExecutionResult (result: SubmissionsResult[] | undefined) {
+	if (result == undefined) {
+		return {
+			success: false,
+			msg: "Result not found!!"
+		}
+	}
+	let passed_testcases: number = 0;
+	
+	const formattedResult = result.map(res => {
+		if (res.status.description == "Accepted") passed_testcases++;
+		return {
+			input: res.stdin,
+			user_output: res.stdout,
+			expected_output: res.exptected_output,
+			status: res.status.description,
+			compile_output: res.compile_output
+		}
+	})
+
+	return {
+		success: true,
+		passed_testcases,
+		submissions: formattedResult
+	};
+
+}
+
+
 
 // router.post("/submit-code", auth, async (req: Request, res: Response) => {
 // 	const { userAuthorized } = req as CustomRequestObject;
@@ -42,9 +229,9 @@ router.get("/get-submissions", auth, async (req: Request, res: Response) => {
 // 			});
 // 		}
 // 		const { userId } = req as CustomRequestObject;
-// 		const parseUserSubmitCode = ProblemSubmissionDataSchema.safeParse(
-// 			req.body.data
-// 		);
+// const parseUserSubmitCode = ProblemSubmissionDataSchema.safeParse(
+// 	req.body.data
+// );
 // 		if (!parseUserSubmitCode.success) {
 // 			return res
 // 				.status(400)
@@ -87,15 +274,15 @@ router.get("/get-submissions", auth, async (req: Request, res: Response) => {
 // 		}
 // 		/*
 // 			- need to find the overall status of submission.
-// 			- if all testcase are passed: 
+// 			- if all testcase are passed:
 // 				- update the problem staus on user as  Accpeted.
 // 				- append first three testcases to submission array
 // 				- and send the submission array back to frontend.
-// 			- else 
+// 			- else
 // 				- update the problem status on user as Attempted.
 // 				- append the first three rejected testcases to submission array
 // 				- and send the submission array back to frontend.
-// 			- 
+// 			-
 // 		*/
 // 		const { data } = result;
 // 		const examineResult = examineSubmissionResult(data, testcases.data);
@@ -136,173 +323,7 @@ router.get("/get-submissions", auth, async (req: Request, res: Response) => {
 // 	}
 // });
 
-
-// router.post("/run-code", auth, async (req: Request, res: Response) => {
-// 	const { userAuthorized } = req as CustomRequestObject;
-// 	const parseUserSubmitCode = ProblemSubmissionDataSchema.safeParse(
-// 		req.body.data
-// 	);
-// 	if (!parseUserSubmitCode.success) {
-// 		return res.json({ error: parseUserSubmitCode.error });
-// 	}
-
-// 	try {
-// 		if (!userAuthorized) {
-// 			return res.status(400).json({
-// 				success: false,
-// 				message: "your are not authorized, please login",
-// 			});
-// 		}
-
-// 		const { problemTitle, languageId, code } = parseUserSubmitCode.data;
-// 		const problem = await prisma.problem.findUnique({
-// 			where: {
-// 				title: problemTitle,
-// 			},
-// 			select: {
-// 				id: true,
-// 			},
-// 		});
-// 		if (!problem)
-// 			return res.json({
-// 				success: false,
-// 				message: "Problem with title not found",
-// 			});
-		
-// 		// here get the first three testcases and run it on jude0
-// 		const testcaseExamples = await getTestCaseExample(problem.id);
-// 		// run these testcase exmaples
-// 		if (testcaseExamples !== undefined) {
-// 			// evaluate the user code.
-// 			const result = await evaluateCode(
-// 				testcaseExamples,
-// 				languageId,
-// 				code
-// 			);
-// 			if (!result?.success) {
-// 				return res.status(200).json({ err: result?.msg });
-// 			}
-// 			// add the input array to submision array to render the testcase value on frontend
-// 			const submissions: Modifiedsubmission[] = result.data.map(
-// 				(v: SubmissionsResult, i) => ({
-// 					...v,
-// 					inputs: testcaseExamples[i].inputs,
-// 				})
-// 			);
-
-// 			const { data } = result;
-
-// 			let passed_testcases = 0;
-// 			let resultStatus = "";
-// 			//  below logic is not correct  (if one testcase failed and another )
-// 			data.forEach((v) => {
-// 				if (v.status.description === "Accepted") passed_testcases++;
-// 				else if (v.status.description === "Compilation Error") {
-// 					resultStatus = "Compilation Error";
-// 				} else if (v.status.description === "Wrong Answer") {
-// 					resultStatus = "Wrong Answer";
-// 				} else if (v.status.description === "Time Limit exceeded") {
-// 					resultStatus = "Time Limit exceeded";
-// 				}
-// 			});
-// 			if (passed_testcases === data.length) resultStatus = "Accepted";
-
-// 			return res.status(200).json({
-// 				success: true,
-// 				data: {
-// 					overallStatus: resultStatus,
-// 					passed_testcases: passed_testcases,
-// 					submissions: submissions,
-// 				},
-// 				message: "code evaluated successfully",
-// 			});
-// 		}
-// 	} catch (error: any) {
-// 		console.log(error);
-// 		return res.json({
-// 			success: false,
-// 			message: (error as Error).message,
-// 		});
-// 	}
-// });
-
-// export async function evaluateCode(
-// 	testcaseExamples: TestCaseReturnType[],
-// 	languageId: number,
-// 	code: string
-// ): Promise<{ success: boolean; msg: any; data: SubmissionsResult[] }> {
-// 	try {
-// 		const submissionsArray: {
-// 			language_id: number;
-// 			source_code: string;
-// 			stdin: string;
-// 			expected_output: string;
-// 		}[] = testcaseExamples.map((testcase: TestCaseReturnType) => {
-// 			const parser = new GenerateFullProblemDefinition();
-// 			parser.parseTestCase(testcase);
-// 			//getProblem() --> { fullBoilerplate code, stdin, stdout, }
-// 			const problem = parser.getProblem(languageId, code);
-
-// 			return {
-// 				language_id: languageId, // Java ID for Judge0
-// 				source_code: problem.fullBoilerplatecode,
-// 				stdin: problem.stdin,
-// 				expected_output: problem.stdout,
-// 			};
-// 		});
-// 		console.log("submission array :", submissionsArray);
-
-// 		const CreateSubmissionsOptions = {
-// 			method: "POST",
-// 			url: JUDGE0_API_URL,
-// 			headers: {
-// 				"Content-Type": "application/json",
-// 				"x-rapidapi-host": "judge0-ce.p.rapidapi.com",
-// 				"x-rapidapi-key": JUDGE0_API_KEY,
-// 			},
-// 			data: {
-// 				submissions: submissionsArray,
-// 			},
-// 		};
-
-// 		const response = await axios.request(CreateSubmissionsOptions);
-		
-// 		const getSubmissionsOptions = {
-// 			method: "GET",
-// 			url: JUDGE0_API_URL,
-// 			headers: {
-// 				"x-rapidapi-host": "judge0-ce.p.rapidapi.com",
-// 				"x-rapidapi-key": JUDGE0_API_KEY,
-// 			},
-// 			params: {
-// 				tokens: `${response.data
-// 					.map((token: { token: string }) => token.token)
-// 					.join(",")}`,
-// 				base64_encoded: "false",
-// 				fields: "language_id,stdin,stdout,expected_output,time,memory,stderr,compile_output,message,status,status_id,source_code",
-// 			},
-// 		};
-// 		// wait for 1 second and then get the result of submissions
-// 		await new Promise((resolve) => setTimeout(resolve, 1000));
-
-// 		const result = await axios.request(getSubmissionsOptions);
-// 		const { submissions } = result.data;
-// 		console.log("submission result: ", submissions);
-
-// 		return {
-// 			success: true,
-// 			data: submissions as SubmissionsResult[],
-// 			msg: "",
-// 		};
-// 	} catch (error: any) {
-// 		console.error("Error: ", (error as Error).message);
-// 		return {
-// 			success: false,
-// 			msg: error.message,
-// 			data: [],
-// 		};
-// 	}
-// }
+// export asyn
 
 // function examineSubmissionResult(
 // 	data: SubmissionsResult[],
@@ -313,7 +334,6 @@ router.get("/get-submissions", auth, async (req: Request, res: Response) => {
 // 	let no_of_accepted_testcases = 0;
 // 	let overAllStatus = "";
 // 	let submissions: Modifiedsubmission[] = [];
-
 
 // 	for (let i = 0; i < data.length; i++) {
 // 		if (data[i].status.description === "Accepted") {
