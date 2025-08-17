@@ -3,7 +3,9 @@ import { api } from "@/client/api/client";
 import {
 	EditorState,
 	APIResponse,
-	DefaultCodeProps
+	DefaultCodeProps,
+	CodeExecutionResult,
+	CodeExecutionProps
 } from "@/client/lib/types";
 
 export const codeEditorState: EditorState = {
@@ -12,6 +14,10 @@ export const codeEditorState: EditorState = {
 	isFullScreen: false,
 	language: localStorage.getItem("selectedLanguage") || "java",
 	code: "",
+	submission_result: {
+		passed_testcases: -1,
+		submissions: []
+	}
 };
 
 
@@ -39,31 +45,32 @@ export const fetchDefaultCode = createAsyncThunk<
 	}
 );
 
-// export const runCode = createAsyncThunk(
-// 	"/editor/runCode",
-// 	async ({ problemTitle, languageId, code }: DefaultCodeProps, thunkAPI) => {
-// 		try {
-// 			const res = await api.post<CodeExecutionResponse>(
-// 				"/submission/run-code",
-// 				{
-// 					data: {
-// 						problemTitle,
-// 						languageId,
-// 						code: code,
-// 					},
-// 				}
-// 			);
-// 			return res.data;
-// 		} catch (error: any) {
-// 			console.log(error.message);
-// 			return thunkAPI.rejectWithValue(error.message || "Error while  running code.");
-// 		}
-// 	}
-// );
+export const runCode = createAsyncThunk<APIResponse<CodeExecutionResult>, CodeExecutionProps>(
+	"/editor/runCode",
+	async ({ problemId, language, code }, thunkAPI) => {
+		try {
+			const res = await api.post(
+				"/submission/run-code",
+				{
+					data: {
+						problemId,
+						language,
+						code,
+					},
+				}
+			);
+			console.log("run code repsonse: ", res.data)
+			return res.data;
+		} catch (error: any) {
+			console.log(error.message);
+			return thunkAPI.rejectWithValue(error.message || "Error while  running code.");
+		}
+	}
+);
 
 // export const submitCode = createAsyncThunk(
 // 	"/editor/submitCode",
-// 	async ({ problemTitle, languageId, code }: DefaultCodeProps, thunkAPI) => {
+// 	async ({ problemTitle, languageId, code } thunkAPI) => {
 // 		try {
 // 			const res = await api.post<CodeExecutionResponse>(
 // 				"/submission/submit-code",
@@ -113,20 +120,20 @@ export const codeEditorSlice = createSlice({
 		builder.addCase(fetchDefaultCode.rejected, (_, action) => {
 			console.log(action.payload);
 		});
-		// builder.addCase(runCode.pending, (state) => {
-		// 	state.loading = true;
-		// });
-		// builder.addCase(runCode.fulfilled, (state, action) => {
-		// 	const { success } = action.payload;
-		// 	if (success) {
-		// 		// state.execution_result = data;
-		// 		state.loading = false;
-		// 	}
-		// });
-		// builder.addCase(runCode.rejected, (state, action) => {
-		// 	state.loading = false;
-		// 	state.error = action.error.message;
-		// });
+		builder.addCase(runCode.pending, (state) => {
+			state.loading = true;
+		});
+		builder.addCase(runCode.fulfilled, (state, action: PayloadAction<APIResponse<CodeExecutionResult>>) => {
+			state.loading = false;
+			const { success,msg, data } = action.payload;
+			if (success && data) {
+				state.submission_result = data;
+			}
+			console.log('run code messsage: ', msg);
+		});
+		builder.addCase(runCode.rejected, (state, action) => {
+			state.loading = false;
+		});
 		// builder.addCase(submitCode.pending, (state) => {
 		// 	state.loading = true;
 		// });
