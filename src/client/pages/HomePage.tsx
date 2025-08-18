@@ -63,7 +63,7 @@ const HomePage = () => {
 						</p>
 						<Button
 							variant={"default"}
-							className="w-[45%] h-12 text-gray-300 bg-transparent cursor-pointer font-semibold rounded-full flex gap-5 text-justify border border-code-orange hover:shadow-sm hover:shadow-code-orange/60  transition-all  duration-300"
+							className="w-[45%] h-12 text-gray-300 bg-code-dark cursor-pointer font-semibold rounded-2xl flex gap-5 text-justify border border-slate-700/50 transition-all shadow-md shadow-slate-700/30 duration-300"
 							onClick={() => navigate("/signup")}
 						>
 							<span className="flex text-justify">
@@ -76,7 +76,7 @@ const HomePage = () => {
 						<img
 							src={coding}
 							alt=""
-							className="md:w-[85%] md:h-[85%] w-[80%] h-[80%] cursor-pointer "
+							className="md:w-[85%] md:h-[85%] w-[80%] h-[80%] cursor-pointer " 
 						/>
 					</div>
 				</div>
@@ -96,7 +96,7 @@ const HomePage = () => {
 							{features.map((feature, index) => (
 								<div
 									key={index}
-									className="group relative overflow-hidden rounded-lg  border-[1.5px] border-slate-800 p-8  duration-300 hover:shadow-md hover:shadow-code-orange/60 transition"
+									className="group relative overflow-hidden rounded-lg  border-[1.5px] border-slate-800 p-8  duration-300 hover:shadow-md hover:shadow-slate-700/50 transition"
 								>
 									<div className="relative space-y-4">
 										<div className="inline-flex items-center justify-center rounded-lg bg-[#374151] p-3 text-white">
@@ -122,7 +122,7 @@ const HomePage = () => {
 				{/* CTA Section */}
 				<section className="py-20 relative flex justify-center bg-code-bg px-4 md:px-16">
 					<div >
-						<div className="relative overflow-hidden rounded-lg  border-[1.5px]  border-slate-800 transition duration-300 hover:shadow-md hover:shadow-code-orange/60 ">
+						<div className="relative overflow-hidden rounded-lg  border-[1.5px]  border-slate-800 transition duration-300 hover:shadow-md hover:shadow-slate-700/50  ">
 							<div className="p-8 md:p-12 lg:p-16 text-center">
 								<h2 className="text-2xl md:text-4xl font-bold text-white mb-4">
 									Ready to Start Your Coding Journey?
