@@ -16,17 +16,17 @@ export const ChallengesCard: React.FC<ProblemCategory> = ({
 	name,
 	tags,
 	totalProblems,
-	solvedProblems
+	solvedProblems,
 }) => {
 	const navigate = useNavigate();
 	const { isLogin } = useSelector((state: RootState) => state.user);
 
 	return (
 		<div
-			className="flex h-auto gap-4 border-[1.5px] border-code-border rounded-2xl py-3 pl-3 pr-5 shadow-lg cursor-pointer items-stretch"
+			className="flex flex-col md:flex-row  h-auto gap-4 border-[1.5px] border-code-border rounded-2xl py-3 pl-3 pr-5 shadow-lg cursor-pointer"
 			onClick={() => navigate(`/problemset/${name}`)}
 		>
-			<div className=" flex w-34 h-34 self-center shrink-0">
+			<div className="hidden md:flex  d:w-34 md:h-34 self-center md:shrink-0 ">
 				<img
 					src={imgUrl}
 					alt="Challenges-Image"
@@ -34,7 +34,7 @@ export const ChallengesCard: React.FC<ProblemCategory> = ({
 				/>
 			</div>
 
-			<div className="flex flex-col gap-5">
+			<div className="flex flex-col gap-5 ">
 				<div className="flex justify-between ">
 					<h1 className="text-2xl font-bold ">{title}</h1>
 				</div>
@@ -46,7 +46,11 @@ export const ChallengesCard: React.FC<ProblemCategory> = ({
 				</div>
 			</div>
 
-			<div className=" flex flex-col justify-between pt-3 pb-2 ">
+			<div
+				className={`flex flex-col  shrink-0 pt-3 pb-2 ${
+					isLogin ? "justify-between" : "justify-end"
+				}`}
+			>
 				{isLogin && (
 					<div className="flex flex-col items-end w-40 gap-2 justify-end">
 						<Progress
