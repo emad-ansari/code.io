@@ -23,8 +23,8 @@ export const SignupPage = () => {
 	}, [dispatch, isSignup]);
 
 	return (
-		<main className="bg-code-bg  fixed top-0 right-0 left-0 bottom-0 flex justify-center pt-32">
-			<div className="w-[350px] h-[400px] md:w-[450px] md:h-[550px]  rounded-3xl shadow-lg flex flex-col items-center border border-code-border">
+		<main className="bg-code-bg flex justify-center pt-32 h-screen">
+			<div className=" h-[550px] w-[400px]  md:w-[450px] md:h-[550px]  rounded-3xl shadow-md shadow-slate-700/30 flex flex-col items-center border border-code-border ">
 				<h1 className="text-3xl text-white font-medium font-fugaz py-8">
 					Code.io
 				</h1>

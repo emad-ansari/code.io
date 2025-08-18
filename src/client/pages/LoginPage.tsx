@@ -4,7 +4,7 @@ import { useLocation, useNavigate } from "react-router-dom";
 import { FcGoogle } from "react-icons/fc";
 
 import { useAppDispatch, RootState } from "@/client/app/store";
-import { setEmail, login, setIsLoading } from "@/client/features/authSlice";
+import { setEmail, login } from "@/client/features/authSlice";
 import { PasswordInputField } from "@/client/components/common/PasswordInputField";
 import { Button } from "@/client/components/ui/button";
 import { Loader } from "lucide-react";
@@ -27,8 +27,8 @@ export const LoginPage = () => {
 	}, [dispatch, isLogin]);
 
 	return (
-		<main className="bg-code-bg  fixed top-0 right-0 left-0 bottom-0 flex justify-center pt-32 ">
-			<div className="w-[350px] h-[400px] md:w-[450px] md:h-[500px]  shadow-lg rounded-2xl flex flex-col items-center border border-code-border">
+		<main className="bg-code-bg flex justify-center pt-32 h-screen">
+			<div className=" h-[500px] w-[400px] md:w-[450px] md:h-[500px]  shadow-md shadow-slate-700/30  rounded-2xl flex flex-col items-center border border-code-border box-border">
 				<h1 className="text-3xl text-white font-medium font-fugaz py-8">
 					Code.io
 				</h1>
