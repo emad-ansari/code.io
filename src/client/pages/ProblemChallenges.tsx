@@ -3,15 +3,20 @@ import { useSelector } from "react-redux";
 import { RootState, useAppDispatch } from "../app/store";
 import { useEffect } from "react";
 import { fetchCategories } from "../features/problemCategorySlice";
+import { ChallengesCardSkeleton } from "../components/skeletons/ChallengesCardSkeleton";
 
 export const ProblemChallenges = () => {
 	const dispatch = useAppDispatch();
-	const { categories} = useSelector((staet: RootState) => staet.problem_category);
+	const { loading, categories } = useSelector(
+		(state: RootState) => state.problem_category
+	);
+
+	const array = Array(4).fill(null);
 
 	useEffect(() => {
 		dispatch(fetchCategories());
-	}, [])
-	
+	}, []);
+
 	return (
 		<main className="bg-code-bg pt-16 text-white h-screen flex justify-center ">
 			<div className="flex flex-col w-[95%] md:w-[60%] pt-12 overflow-y-scroll ">
@@ -20,20 +25,26 @@ export const ProblemChallenges = () => {
 					{/* Coding <span className="text-code-orange">Challenges</span> */}
 				</h1>
 				<div className="flex flex-col gap-5 py-2">
-					{categories.map((cat) => {
-						return (
-							<ChallengesCard
-								key = {cat.id}
-								id={cat.id}
-								name = {cat.name}
-								title={cat.title}
-								imgUrl={cat.imgUrl}
-								tags={cat.tags}
-								totalProblems ={cat.totalProblems}
-								solvedProblems={cat.solvedProblems}
-							/>
-						);
-					})}
+					{loading &&
+						array.map((_, i) => <ChallengesCardSkeleton key={i} />)}
+				</div>
+
+				<div className="flex flex-col gap-5 py-2">
+					{!loading &&
+						categories.map((cat) => {
+							return (
+								<ChallengesCard
+									key={cat.id}
+									id={cat.id}
+									name={cat.name}
+									title={cat.title}
+									imgUrl={cat.imgUrl}
+									tags={cat.tags}
+									totalProblems={cat.totalProblems}
+									solvedProblems={cat.solvedProblems}
+								/>
+							);
+						})}
 				</div>
 			</div>
 		</main>
