@@ -5,6 +5,7 @@ import { useSelector } from "react-redux";
 import {
 	AlignJustify,
 	CodeXml,
+	LogIn,
 	LogOut,
 	Settings,
 	Trophy,
@@ -48,10 +49,6 @@ const drawerItems = [
 	{
 		name: "Problems",
 		icon: <CodeXml className="w-5 h-5" />,
-	},
-	{
-		name: "Contest",
-		icon: <Trophy className="w-5 h-5" />,
 	},
 	{
 		name: "Settings",
@@ -102,12 +99,11 @@ export const ProblemNavBar: React.FC = () => {
 			navigate(path); // Navigate to the path
 		});
 	};
-	// const isAdminPage = location.pathname.startsWith("/admin");
 
 	return (
 		<>
 			<nav
-				className={`flex justify-between items-center  bg-code-bg h-16 w-full  z-10 transition-all duration-500 ease-in-out ${
+				className={`flex justify-between items-center bg-code-bg h-16 w-full  z-10 transition-all duration-500 ease-in-out ${
 					isFullScreen ? "hidden" : "fixed"
 				}`}
 			>
@@ -130,8 +126,8 @@ export const ProblemNavBar: React.FC = () => {
 						</span>
 					</div>
 				</div>
-				<div className="flex items-center h-full  text-white ">
-					<div className="hidden  md:flex items-center gap-2 h-[80%] rounded-full shadow-md bg-code-bg  border border-code-border text-sm px-1.5 ">
+				<div className="flex items-center h-full text-white">
+					<div className="hidden  md:flex items-center gap-2 h-[80%] rounded-full shadow-md  border border-code-border text-sm px-1.5 ">
 						{navItems.map((item) => (
 							<NavLink
 								key={item.href}
@@ -194,7 +190,7 @@ export const ProblemNavBar: React.FC = () => {
 							</div>
 						</div>
 					) : (
-						<div className=" md:flex flex-1 justify-end pr-5 h-[80%] items-center">
+						<div className="hidden md:flex flex-1 justify-end pr-5 h-[80%] items-center">
 							<div className="flex items-center md:gap-3  md:px-2">
 								<Button
 									className=" text-white text-sm hover:bg-code-dark cursor-pointer bg-none"
@@ -206,10 +202,6 @@ export const ProblemNavBar: React.FC = () => {
 								>
 									LogIn
 								</Button>
-								{/* <Separator
-									orientation="vertical"
-									className="bg-gray-800"
-								/> */}
 								<Button
 									variant={"default"}
 									className="hidden md:block text-orange-500  cursor-pointer bg-orange-500/10 "
@@ -220,54 +212,63 @@ export const ProblemNavBar: React.FC = () => {
 							</div>
 						</div>
 					)}
-					{/* <div className="md:hidden flex items-center">
+					<div className="md:hidden flex items-center px-5">
 						<Sheet>
 							<SheetTrigger>
 								<Button
 									size={"icon"}
 									className="rounded-full text-white bg-code-dark cursor-pointer "
 								>
-									<AlignJustify className="w-5 h-5"/>
+									<AlignJustify className="w-5 h-5" />
 								</Button>
 							</SheetTrigger>
 							<SheetContent
 								side="top"
-								className="bg-slate-800 border-none"
+								className="bg-code-bg/95 border-none rounde-lg"
 							>
-								<SheetHeader>
-									<div className="flex items-center gap-4 mb-5">
-										<div className="">
-											<Avatar className="bg-red-500 w-14 h-14">
-												<AvatarImage src="https://assets.leetcode.com/users/emad-ansari/avatar_1728627541.png" />
-												<AvatarFallback>
-													CN
-												</AvatarFallback>
-											</Avatar>
+								{isLogin ? (
+									<SheetHeader>
+										<div className="flex items-center gap-4 mb-5">
+											<div className="flex items-center justify-center w-14 h-14 rounded-full bg-gray-700 shadow-md shadow-gray-700/20">
+												<span className="text-white tracking-wide">
+													ME
+												</span>
+											</div>
+
+											<span className="text-white text-lg font-medium">
+												Mohammad Emad{" "}
+											</span>
 										</div>
-
-										<span className="text-white text-lg font-medium">
-											Mohammad Emad{" "}
-										</span>
-									</div>
-
-									<div className="flex flex-col gap-3 ">
-										{drawerItems.map((item) => {
-											return (
-												<div
-													key={item.name}
-													className="flex items-center gap-6 text-white hover:bg-slate-700 rounded-lg px-3 py-2 cursor-pointer transition duration-200
+										<div className="flex flex-col gap-3 ">
+											{drawerItems.map((item) => {
+												return (
+													<div
+														key={item.name}
+														className="flex items-center gap-6 text-white hover:bg-slate-700 rounded-lg px-3 py-2 cursor-pointer transition duration-200
 														"
-												>
-													{item.icon}
-													<span>{item.name}</span>
-												</div>
-											);
-										})}
-									</div>
-								</SheetHeader>
+													>
+														{item.icon}
+														<span>{item.name}</span>
+													</div>
+												);
+											})}
+										</div>
+									</SheetHeader>
+								) : (
+									<SheetHeader className="mt-6">
+										<NavLink to = "/problemset" className="flex items-center gap-4 hover:bg-slate-700 rounded-lg px-3 py-2 cursor-pointer transition duration-200 text-gray-300">
+											<CodeXml className="w-5 h-5" />
+											<span>Problems</span>
+										</NavLink>
+										<NavLink to = "/login" className="flex items-center gap-4 text-gray-300 hover:bg-slate-700 rounded-lg px-3 py-2 cursor-pointer transition duration-200">
+											<LogIn className="w-5 h-5" />
+											<span>Login</span>
+										</NavLink>
+									</SheetHeader>
+								)}
 							</SheetContent>
 						</Sheet>
-					</div> */}
+					</div>
 				</div>
 			</nav>
 		</>
