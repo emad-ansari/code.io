@@ -12,6 +12,8 @@ import { MainLayout } from "@/client/layouts/MainLayout";
 import { LoadingPage } from "@/client/pages/LoadingPage";
 import { ProfilePage } from "@/client/pages/ProfilePage";
 import { ProblemCategoryPage } from "./client/pages/admin/ProblemCategoryPage";
+import { DocumentPage } from "./client/pages/DocumentPage";
+import { CSFundamentals } from "./client/pages/CSFundamentals";
 
 import { rehydrateAuth } from "@/client/features/authSlice";
 import { useAppDispatch } from "@/client/app/store";
@@ -103,6 +105,8 @@ const App = () => {
 								path="u/:user-name"
 								element={<ProfilePage />}
 							/>
+							<Route path="/documents" element={<DocumentPage />} />
+							<Route path="/core-cs" element={<CSFundamentals />} />
 						</Route>
 						<Route
 							path="admin/dashboard"
