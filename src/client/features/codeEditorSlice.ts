@@ -7,6 +7,7 @@ import {
 	CodeExecutionResult,
 	CodeExecutionProps
 } from "@/client/lib/types";
+import { toast } from "react-toastify";
 
 export const codeEditorState: EditorState = {
 	loading: false,
@@ -68,27 +69,27 @@ export const runCode = createAsyncThunk<APIResponse<CodeExecutionResult>, CodeEx
 	}
 );
 
-// export const submitCode = createAsyncThunk(
-// 	"/editor/submitCode",
-// 	async ({ problemTitle, languageId, code } thunkAPI) => {
-// 		try {
-// 			const res = await api.post<CodeExecutionResponse>(
-// 				"/submission/submit-code",
-// 				{
-// 					data: {
-// 						problemTitle,
-// 						languageId,
-// 						code: code,
-// 					},
-// 				}
-// 			);
-// 			return res.data;
-// 		} catch (error: any) {
-// 			console.log(error.message);
-// 			return thunkAPI.rejectWithValue(error.message || "Error while  running code.");
-// 		}
-// 	}
-// );
+export const submitCode = createAsyncThunk<APIResponse<CodeExecutionResult>, CodeExecutionProps>(
+	"/editor/submitCode",
+	async ({ problemId, language, code }, thunkAPI) => {
+		try {
+			const res = await api.post(
+				"/submission/submit-code",
+				{
+					data: {
+						problemId,
+						language,
+						code
+					},
+				}
+			);
+			return res.data;
+		} catch (error: any) {
+			console.log(error.message);
+			return thunkAPI.rejectWithValue(error.message || "Error while  running code.");
+		}
+	}
+);
 
 
 
@@ -134,21 +135,21 @@ export const codeEditorSlice = createSlice({
 		builder.addCase(runCode.rejected, (state, action) => {
 			state.loading = false;
 		});
-		// builder.addCase(submitCode.pending, (state) => {
-		// 	state.loading = true;
-		// });
-		// builder.addCase(submitCode.fulfilled, (state, action) => {
-		// 	const { success, data } = action.payload;
-		// 	if (success) {
-		// 		// state.execution_result = data;
-		// 		state.loading = false;
-		// 		console.log("submit code api response: ", data );
-		// 	}
-		// });
-		// builder.addCase(submitCode.rejected, (state, action) => {
-		// 	state.loading = false;
-		// 	state.error = action.error.message;
-		// });
+		builder.addCase(submitCode.pending, (state) => {
+			state.loading = true;
+		});
+		builder.addCase(submitCode.fulfilled, (state, action) => {
+			state.loading = false;
+			const { success, data } = action.payload;
+			if (success && data) {
+				state.submission_result = data;
+				toast.success("Problem Submitted Successfully 👏")
+			}
+		});
+		builder.addCase(submitCode.rejected, (state, action) => {
+			state.loading = false;
+			state.error = action.error.message;
+		});
 	},
 });
 

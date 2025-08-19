@@ -19,7 +19,7 @@ import {
 	TooltipTrigger,
 } from "@/client/components/ui/tooltip";
 import { Icons } from "@/client/components/ui/icons";
-import { runCode } from "@/client/features/codeEditorSlice";
+import { runCode, submitCode } from "@/client/features/codeEditorSlice";
 import { CodeEditor } from "./CodeEditor";
 import { EditorTopBar } from "./EditorTopBar";
 import { OutputConsole } from "./RenderExecutionResult";
@@ -60,25 +60,25 @@ export const EditorSection = () => {
 		);
 	};
 
-	// const onSubmitCode = () => {
-	// 	if (!isLogin) return;
+	const onSubmitCode = () => {
+		if (!isLogin) return;
 
-	// 	if (!title) return;
+		if (!problemId) return;
 
-	// 	if (!isConsoleOpen) {
-	// 		setSplitRatio([60, 40]);
-	// 	}
-	// 	setIsConsoleOpen((prevState) => !prevState);
+		if (!isConsoleOpen) {
+			setSplitRatio([60, 40]);
+		}
+		setIsConsoleOpen((prevState) => !prevState);
 
-	// 	dispatch(
-	// 		submitCode({
-	// 			problemTitle: formattedTitle,
-	// 			languageId: LNAGUAGE_MAPPING[`${language}`].languageId,
-	// 			code: code,
-	// 		})
-	// 	);
+		dispatch(
+			submitCode({
+				problemId,
+				language,
+				code
+			})
+		);
 
-	// }
+	}
 
 	return (
 		<section>
@@ -166,7 +166,7 @@ export const EditorSection = () => {
 								<Tooltip>
 									<TooltipTrigger asChild>
 										<Button
-											// onClick={onSubmitCode}
+											onClick={onSubmitCode}
 											className="justify-center flex gap-2 items-center rounded-md  cursor-pointer text-green-500  border border-green-500/50 font-semibold"
 										>
 											<CloudUpload
