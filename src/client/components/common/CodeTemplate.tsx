@@ -1,16 +1,14 @@
 import { useState } from "react";
 import { ChevronDown, ChevronLeft, Trash } from "lucide-react";
-import { useAppDispatch } from "@/client/app/store";
+import { RootState, useAppDispatch } from "@/client/app/store";
 import { LANGUAGES, Template } from "@/client/lib/types";
 import { Button } from "@/client/components/ui/button";
 import {
 	deleteTemplate,
 	setLanguage,
 	setTemplateCode,
-	setBoilerFucntion
+	setBoilerFucntion,
 } from "@/client/features/problemSlice";
-
-
 
 import {
 	Select,
@@ -21,10 +19,10 @@ import {
 	SelectValue,
 } from "../ui/select";
 
+
 interface CodeTemplateProps extends Template {
 	templateNo: number;
 }
-
 
 export const CodeTemplate: React.FC<CodeTemplateProps> = ({
 	id,
@@ -35,6 +33,8 @@ export const CodeTemplate: React.FC<CodeTemplateProps> = ({
 	const dispatch = useAppDispatch();
 	const [open, setOpen] = useState<boolean>(false);
 
+	console.log(full_template);
+	
 
 	return (
 		<>
@@ -67,13 +67,15 @@ export const CodeTemplate: React.FC<CodeTemplateProps> = ({
 							</label>
 							<Select
 								onValueChange={(value) =>
-									dispatch(setLanguage({id, language: value}))
+									dispatch(
+										setLanguage({ id, language: value })
+									)
 								}
 							>
 								<SelectTrigger className="w-full text-[#9ca3af] border-[1.5px] border-slate-800 rounded-lg  placeholder:text-gray-300  ">
 									<SelectValue
 										placeholder="Language"
-										className="text-white  placeholder:text-gray-300 "
+										className="text-white  placeholder:text-gray-300"
 									/>
 								</SelectTrigger>
 								<SelectContent className="bg-code-dark text-white  border-[1.5px] border-code-border ">
@@ -102,15 +104,14 @@ export const CodeTemplate: React.FC<CodeTemplateProps> = ({
 							<textarea
 								id="template_code"
 								className=" text-white text-sm w-full px-3 py-2  border-[1.5px] hover:outline-none focus:outline-none border-code-border  rounded-lg bg-transparent"
-								value={full_template}
-								onChange={(e) =>
+								onChange={(e) => {
 									dispatch(
 										setTemplateCode({
 											id,
 											t_code: e.target.value,
 										})
-									)
-								}
+									);
+								}}
 								placeholder={"template code"}
 								rows={4}
 								required
@@ -126,7 +127,6 @@ export const CodeTemplate: React.FC<CodeTemplateProps> = ({
 							<textarea
 								id="boiler_function"
 								className=" text-white text-sm w-full px-3 py-2  border-[1.5px] hover:outline-none focus:outline-none border-code-border  rounded-lg bg-transparent"
-								value={boiler_code}
 								onChange={(e) =>
 									dispatch(
 										setBoilerFucntion({

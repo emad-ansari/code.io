@@ -20,11 +20,30 @@ import { TestCaseForm } from "./TestCaseForm";
 import { ProblemForm } from "./ProblemForm";
 import { CodeTemplateForm } from "./CodeTemplateForm";
 import { createProblem } from "@/client/features/problemSlice";
+import { toast } from "react-toastify";
+import { useEffect } from "react";
+
 
 const NewProblemPage = () => {
 	const dispatch = useAppDispatch();
 	const { isLogin } = useSelector((state: RootState) => state.user);
-	const { loading } = useSelector((state: RootState) => state.problem);
+	const { loading, category, title, testcases, tags, templates, description, difficulty } = useSelector(
+		(state: RootState) => state.problem
+	);
+
+	useEffect(() => {
+		
+
+	}, [category,title, difficulty, description, tags, testcases, templates])
+	const onCreateProblem = () => {
+		const filled = category || title;
+		if (!filled) {
+			toast.warn("Category/Title can not be null");
+			return;
+		}
+		dispatch(createProblem());
+	};
+
 
 	return (
 		<main>
@@ -52,13 +71,13 @@ const NewProblemPage = () => {
 					<Tooltip>
 						<TooltipTrigger asChild>
 							<Button
-								disabled={isLogin ? false : true}
+								// disabled={isLogin ? false : true}
 								type="submit"
 								className="bg-green-800/20 text-green-500 font-medium px-4 h-11 rounded-full cursor-pointer gap-2 shadow-md min-w-40"
-								onClick={() => dispatch(createProblem())}
+								onClick={() => onCreateProblem()}
 							>
 								{loading ? (
-									<Loader className = "w-5 h-5 animate-spin"/>
+									<Loader className="w-5 h-5 animate-spin" />
 								) : (
 									<span className="flex items-center gap-2">
 										<Wand className="w-5 h-5" />

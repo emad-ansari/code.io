@@ -59,8 +59,6 @@ export const createProblem = createAsyncThunk(
 					templates,
 				},
 			});
-
-			console.log("new problme contribution response: ", res.data);
 			return res.data;
 		} catch (error: any) {
 			console.error("Error: ", (error as Error).message);
@@ -117,7 +115,6 @@ export const fetchProblemDetail = createAsyncThunk<
 	try {
 		const res = await api.get(`/problem/get-problem-details/${problemId}`);
 		const data = res.data;
-		console.log('problem detail response: ', data);
 		return data;
 	} catch (error: any) {
 		console.log(error);
@@ -265,9 +262,10 @@ export const problemSlice = createSlice({
 			action: PayloadAction<{ id: string; t_code: string }>
 		) => {
 			const { id, t_code } = action.payload;
+			console.log('this is template: ', t_code)
 			const updatedTemplate = state.templates.map((template) =>
 				template.id == id
-					? { ...template, template_code: t_code }
+					? { ...template, full_template: t_code }
 					: template
 			);
 			state.templates = updatedTemplate;
@@ -277,12 +275,14 @@ export const problemSlice = createSlice({
 			action: PayloadAction<{ id: string; b_function: string }>
 		) => {
 			const { id, b_function } = action.payload;
+			console.log(b_function)
 			const updatedTemplate = state.templates.map((template) =>
 				template.id == id
-					? { ...template, boiler_function: b_function }
+					? { ...template, boiler_code: b_function }
 					: template
 			);
 			state.templates = updatedTemplate;
+			
 		},
 		setPageSize: (state, action: PayloadAction<number>) => {
 			state.pageSize = action.payload;
