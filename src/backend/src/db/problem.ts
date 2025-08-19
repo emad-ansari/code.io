@@ -1,7 +1,7 @@
 import prisma from "./index";
 import { Problem } from "../@utils/types";
 import { Prisma } from "@prisma/client";
-import { setMaxIdleHTTPParsers } from "http";
+
 
 // CREATE: new problem
 export async function createProblem(
@@ -103,7 +103,7 @@ export async function getAllProblems(
 			where: filterConditions,
 		});
 
-		const problems = await prisma.problemCategory.findMany({
+		const category = await prisma.problemCategory.findMany({
 			where: {
 				name: categoryName,
 			},
@@ -138,8 +138,8 @@ export async function getAllProblems(
 				},
 			},
 		});
-
-		const formattedProblem = problems.flatMap((cat) =>
+		
+		const formattedProblem = category.flatMap((cat) =>
 			cat.problems.map((p) => {
 				return {
 					id: p.id,
@@ -149,10 +149,7 @@ export async function getAllProblems(
 					difficulty: p.difficulty,
 					likes: p._count.likes,
 					submissions: p.submissions,
-					status:
-						p.solvedProblems.length > 0
-							? p.solvedProblems[0].status
-							: null,
+					status: p.solvedProblems.length > 0 ? p.solvedProblems[0].status : null,
 				};
 			})
 		);
@@ -228,9 +225,10 @@ export async function getProblemDetail(
 					: false,
 			},
 		});
-		console.log("fetched problem detials: ", problemDetail);
 
-		const status = problemDetail?.solvedProblems[0]?.status || "Todo";
+		console.log('is user Authorize: ', userAuthorized)
+
+		const status = userAuthorized ? problemDetail?.solvedProblems[0]?.status : "Todo";
 
 		const formattedProblemDetail = {
 			id: problemDetail?.id,
@@ -258,6 +256,24 @@ export async function updateLikes(problemId: string, userId: string) {
 		});
 	} catch (error: any) {
 		console.log("UPDATE_LIKES_DB_ERROR: ", error.message);
+		throw new Error(error);
+	}
+}
+
+export async function getDefualtCode(problemId: string, language: string) {
+	try {
+		const res = await prisma.templateCode.findFirst({
+			where: {
+				problemId,
+				language,
+			},
+			select: {
+				boiler_code: true,
+			},
+		});
+		return res;
+	} catch (error: any) {
+		console.log("GET_DEFUALT_CODE_DB_ERROR: ", error);
 		throw new Error(error);
 	}
 }

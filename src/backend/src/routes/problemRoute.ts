@@ -1,17 +1,18 @@
 import { Request, Router, Response } from "express";
 const router = Router();
-import { CustomRequestObject } from "../middleware/auth";
+import auth, { CustomRequestObject } from "../middleware/auth";
 import {
 	createProblem,
 	getAllProblems,
+	getDefualtCode,
 	getProblemDetail,
 	updateLikes,
 } from "../db/problem";
 import { getAllCategory } from "../db/problem-category";
 import { ProblemSchema } from "../@utils/types";
 
-// CREATE: New problem
-router.post("/create-problem", async (req: Request, res: Response) => {
+// create new category
+router.post("/create-problem", auth, async (req: Request, res: Response) => {
 	const { userAuthorized, userId, role } = req as CustomRequestObject;
 
 	if (!userAuthorized || role != "Admin") {
@@ -22,7 +23,6 @@ router.post("/create-problem", async (req: Request, res: Response) => {
 	}
 	try {
 		const data = req.body.data;
-		console.log("incomming data before : ", req.body.data);
 
 		const parsedInput = ProblemSchema.safeParse(data);
 		if (!parsedInput.success) {
@@ -41,8 +41,8 @@ router.post("/create-problem", async (req: Request, res: Response) => {
 	}
 });
 
-// GET ALL PROBLEMS
-router.get("/get-problems", async (req: Request, res: Response) => {
+// get all problems
+router.get("/get-problems", auth, async (req: Request, res: Response) => {
 	const { userAuthorized, userId } = req as CustomRequestObject;
 
 	const categoryName = req.query.category as string;
@@ -51,12 +51,6 @@ router.get("/get-problems", async (req: Request, res: Response) => {
 	const difficulty = req.query.difficulty as string | undefined;
 	const status = req.query.status as string | undefined;
 	const searchKeywords = req.query.searchKeywords as string | undefined;
-	console.log("category: ", categoryName);
-	console.log("page: ", page);
-	console.log("problemPerPage: ", problemPerPage);
-	console.log("difficulty: ", difficulty);
-	console.log("status: ", status);
-	console.log("searchKeywords: ", searchKeywords);
 
 	try {
 		const filterQuery: {
@@ -92,19 +86,19 @@ router.get("/get-problems", async (req: Request, res: Response) => {
 	}
 });
 
-// GET PROBLEM DETAILS
+// get problem details
 router.get(
-	"/get-problem-details/:problemId",
+	"/get-problem-details/:problemId", auth,
 	async (req: Request, res: Response) => {
 		const { problemId } = req.params;
 		const { userAuthorized, userId } = req as CustomRequestObject;
+
 		try {
 			const problemDetails = await getProblemDetail(
 				problemId,
 				userAuthorized,
 				userId
 			);
-			console.log("problem details: ", problemDetails);
 			return res.status(200).json({
 				success: true,
 				msg: "Successfull fetched problem Details",
@@ -117,8 +111,8 @@ router.get(
 	}
 );
 
-// GET ALL CATEGORIES
-router.get("/get-categories", async (req: Request, res: Response) => {
+// get all categories
+router.get("/get-categories", auth, async (req: Request, res: Response) => {
 	const { userAuthorized, userId } = req as CustomRequestObject;
 
 	try {
@@ -133,7 +127,8 @@ router.get("/get-categories", async (req: Request, res: Response) => {
 	}
 });
 
-router.post("/update-likes", async (req: Request, res: Response) => {
+// increase likes
+router.post("/update-likes", auth, async (req: Request, res: Response) => {
 	const { userAuthorized, userId } = req as CustomRequestObject;
 	if (!userAuthorized) {
 		return res.status(401).json({
@@ -145,15 +140,38 @@ router.post("/update-likes", async (req: Request, res: Response) => {
 
 	try {
 		await updateLikes(problemId, userId);
-		return res.status(201).json ({
+		return res.status(201).json({
 			success: true,
-			msg: "Likes Updated Successfully"
-		})
+			msg: "Likes Updated Successfully",
+		});
 	} catch (error: any) {
 		console.log("UPDATE_LIKES_ROUTE_ERORR: ", error);
 		return res.status(500).json({ success: false, msg: error.message });
 	}
 });
+
+// get default code
+router.get("/default-code", async (req: Request, res: Response) => {
+	const problemId = req.query.problemId as string;
+	const language = req.query.language as string;
+
+	try {
+		// const languageId: number = LANGUAGE_MAPPING[language].languageId
+		const boilerCode = await getDefualtCode(problemId, language);
+		if (!boilerCode) {
+			return res.status(404).json("Default code not found!!");
+		}
+		return res.status(200).json({
+			success: true,
+			msg: "Successfully fetched default code",
+			data: boilerCode,
+		});
+	} catch (error: any) {
+		console.log(error.message);
+		return res.status(500).json({ success: false, msg: error.message });
+	}
+});
+
 export default router;
 
 // // router.post('/judge0-callback', async(req: Request, res: Response) => {
