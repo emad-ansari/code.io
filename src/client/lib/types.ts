@@ -1,3 +1,5 @@
+import { parseISO, format } from "date-fns";
+
 export interface ProblemCategory {
 	id: string;
 	name: string;
@@ -64,7 +66,7 @@ export interface ProblemDetail {
 
 export interface UserSubmission {
 	id: string;
-	languageId: number;
+	language: string;
 	code: string;
 	time: string;
 	memory: string;
@@ -162,4 +164,12 @@ export type SubmissionStatus =
 export const successClassname =
 	"max-w-full  flex gap-3 px-2 py-1 items-center bg-green-800/10 text-green-500 rounded-lg border border-green-500/10 cursor-pointer";
 
-export const errorClassname = "max-w-full flex gap-3 px-2 py-1 items-center bg-red-800/10 text-red-500 rounded-lg border border-red-500/10 cursor-pointer"
+export const errorClassname =
+	"max-w-full flex gap-3 px-2 py-1 items-center bg-red-800/10 text-red-500 rounded-lg border border-red-500/10 cursor-pointer";
+
+export const formatDate = (date: string) => {
+	const dateObj = parseISO(date);
+
+	// Format Date to something readable
+	return format(dateObj, "dd MMMM yyyy");
+};
