@@ -3,24 +3,28 @@ import axios from "axios";
 const router = Router();
 import auth, { CustomRequestObject } from "../middleware/auth";
 import {
+	getAllTestcases,
 	getFullTemplateCode,
 	getSampleTestcases,
 	getUserSubmissions,
+	saveProgress,
+	saveUserSubmissionDetails,
 } from "../db/submission";
 import {
+	FormattedSubmissionType,
 	JUDGE0_INCLUDED_RESPONSE_FIELD,
-	LNAGUAGE_MAPPING,
+	LANGUAGE_MAPPING,
 	PreparedSubmissionArray,
 	PrepareSubmissionArrayProps,
 	SubmissionsResult,
 	TestcaseType,
 } from "../@utils/types";
-
+import { PassThrough } from "stream";
 
 const JUDGE0_API_URL = process.env.JUDGE0_API_URL; // move into types.ts file
 const JUDGE0_API_KEY = process.env.JUDGE0_API_KEY; // mmove into types.ts file
 
-// GET ALL USER SUBMISSIONS
+// get all user submissions.
 router.get("/get-submissions", auth, async (req: Request, res: Response) => {
 	const { userAuthorized, userId } = req as CustomRequestObject;
 
@@ -43,6 +47,7 @@ router.get("/get-submissions", auth, async (req: Request, res: Response) => {
 	}
 });
 
+// run user code
 router.post("/run-code", auth, async (req: Request, res: Response) => {
 	const { userAuthorized } = req as CustomRequestObject;
 	if (!userAuthorized) {
@@ -64,7 +69,7 @@ router.post("/run-code", auth, async (req: Request, res: Response) => {
 				.json({ success: false, msg: "Template Code not found!!" });
 		}
 		// now run code for these testcases
-		const languageId: number = LNAGUAGE_MAPPING[language].languageId;
+		const languageId: number = LANGUAGE_MAPPING[language].languageId;
 
 		const response = await evaluateCode(
 			sampleTestcases,
@@ -77,9 +82,11 @@ router.post("/run-code", auth, async (req: Request, res: Response) => {
 		}
 
 		// format the result.
-        const formattedResult = formatExecutionResult (response.data);
+		const formattedResult = formatExecutionResult(response.data);
 		if (!formattedResult.success) {
-			return res.status(404).json({ success: false, msg: formattedResult.msg});
+			return res
+				.status(404)
+				.json({ success: false, msg: formattedResult.msg });
 		}
 
 		return res.status(200).json({
@@ -87,12 +94,111 @@ router.post("/run-code", auth, async (req: Request, res: Response) => {
 			msg: "Evaluated successfully",
 			data: {
 				passed_testcases: formattedResult.passed_testcases,
-				submissions: formattedResult.submissions
-			}
-		})
+				submissions: formattedResult.submissions,
+			},
+		});
 	} catch (error: any) {
 		console.log("RUN_CODE_ROUTE_ERROR: ", error.message);
 		return res.status(500).json({ success: false, msg: error });
+	}
+});
+
+// submit user code.
+router.post("/submit-code", auth, async (req: Request, res: Response) => {
+	const { userAuthorized, userId } = req as CustomRequestObject;
+
+	const { problemId, language, code } = req.body.data;
+
+	if (!userAuthorized) {
+		return res.status(401).json({
+			suceess: false,
+			message: "Unauthorized!, Please login",
+		});
+	}
+	try {
+		const testcases = await getAllTestcases(problemId);
+		// get full template code
+		const template = await getFullTemplateCode(problemId, language);
+
+		if (!template) {
+			return res
+				.status(404)
+				.json({ success: false, msg: "Template Code not found!!" });
+		}
+		// now run code for these testcases
+		const languageId: number = LANGUAGE_MAPPING[language].languageId;
+
+		const response = await evaluateCode(
+			testcases,
+			template.full_template,
+			languageId,
+			code
+		);
+		if (!response.success && response.msg) {
+			return res.status(500).json({ success: false, msg: response.msg });
+		}
+
+		// format the result.
+		const formattedResult = formatExecutionResult(response.data);
+		if (!formattedResult.success) {
+			return res
+				.status(404)
+				.json({ success: false, msg: formattedResult.msg });
+		}
+
+		let finalResult: FormattedSubmissionType[] = [];
+		let overAllStatus = "Accepted";
+		if (formattedResult.submissions) {
+			for (let sub of formattedResult.submissions) {
+				if (sub.status != "Accepted") {
+					finalResult.push(sub);
+					overAllStatus = sub.status;
+					break;
+				}
+			}
+		}
+		// [Check]: before sending response first save the user submission detail
+		await saveUserSubmissionDetails({
+			userId,
+			problemId,
+			language,
+			code,
+			status: overAllStatus,
+			time: (response.data && response.data[0].time) || "N/A",
+			memory: (response.data && response.data[0].memory) || 0,
+		});
+
+		if (finalResult.length != 0) {
+			return res.status(200).json({
+				success: true,
+				msg: "Code Executed Successfully",
+				data: {
+					passed_testcases: formattedResult.passed_testcases,
+					submissions: finalResult,
+				},
+			});
+		}
+
+		// [Todo]: if all testcases passed then update the progress model/
+		if (overAllStatus == "Accepted") { // means all testcase accepted
+			// then update the progress model
+			await saveProgress(userId, problemId)
+		}
+
+		return res.status(200).json({
+			success: true,
+			msg: "Code Executed Successfully",
+			data: {
+				passed_testcases: formattedResult.passed_testcases,
+				submissions: formattedResult.submissions?.slice(0, 3),
+			},
+		});
+	} catch (error: any) {
+		console.log("SUBMIT_CODE_ROUTE_ERROR", error.message);
+		return res.json({
+			success: false,
+			message: (error as Error).message,
+		});
 	}
 });
 
@@ -188,202 +294,31 @@ function prepareSubmissionArray({
 	return submissionsArray;
 }
 
-function formatExecutionResult (result: SubmissionsResult[] | undefined) {
+function formatExecutionResult(result: SubmissionsResult[] | undefined) {
 	if (result == undefined) {
 		return {
 			success: false,
-			msg: "Result not found!!"
-		}
+			msg: "Result not found!!",
+		};
 	}
 	let passed_testcases: number = 0;
-	
-	const formattedResult = result.map(res => {
+
+	const formattedResult: FormattedSubmissionType[] = result.map((res) => {
 		if (res.status.description == "Accepted") passed_testcases++;
 		return {
 			input: res.stdin,
 			user_output: res.stdout,
 			expected_output: res.exptected_output,
 			status: res.status.description,
-			compile_output: res.compile_output
-		}
-	})
+			compile_output: res.compile_output,
+		};
+	});
 
 	return {
 		success: true,
 		passed_testcases,
-		submissions: formattedResult
+		submissions: formattedResult,
 	};
-
 }
-
-
-
-// router.post("/submit-code", auth, async (req: Request, res: Response) => {
-// 	const { userAuthorized } = req as CustomRequestObject;
-
-// 	try {
-// 		if (!userAuthorized) {
-// 			return res.status(401).json({
-// 				suceess: false,
-// 				message: "Unauthorized!, Please login",
-// 			});
-// 		}
-// 		const { userId } = req as CustomRequestObject;
-// const parseUserSubmitCode = ProblemSubmissionDataSchema.safeParse(
-// 	req.body.data
-// );
-// 		if (!parseUserSubmitCode.success) {
-// 			return res
-// 				.status(400)
-// 				.json({ success: false, message: parseUserSubmitCode.error });
-// 		}
-// 		const { problemTitle, languageId, code } = parseUserSubmitCode.data;
-
-// 		// get the problem to extract the problem id
-// 		const problem = await prisma.problem.findUnique({
-// 			where: {
-// 				title: problemTitle,
-// 			},
-// 			select: {
-// 				id: true,
-// 			},
-// 		});
-
-// 		if (!problem)
-// 			return res.status(400).json({
-// 				success: false,
-// 				message: "No Problem exist with title",
-// 			});
-
-// 		// get all testcases.
-// 		const testcases = await getAllTestcases(problem.id);
-
-// 		if (testcases.data === undefined || !testcases.success) {
-// 			return res.status(500).json({
-// 				success: false,
-// 				message:
-// 					testcases?.err || "Error occured while fetching testcases",
-// 			});
-// 		}
-
-// 		// evaluate the user code.
-// 		const result = await evaluateCode(testcases.data, languageId, code);
-
-// 		if (!result?.success) {
-// 			return res.status(400).json({ success: false, error: result?.msg });
-// 		}
-// 		/*
-// 			- need to find the overall status of submission.
-// 			- if all testcase are passed:
-// 				- update the problem staus on user as  Accpeted.
-// 				- append first three testcases to submission array
-// 				- and send the submission array back to frontend.
-// 			- else
-// 				- update the problem status on user as Attempted.
-// 				- append the first three rejected testcases to submission array
-// 				- and send the submission array back to frontend.
-// 			-
-// 		*/
-// 		const { data } = result;
-// 		const examineResult = examineSubmissionResult(data, testcases.data);
-
-// 		// update the problem status on user
-// 		const status =
-// 			examineResult.overAllStatus === "Accepted" ? "Solved" : "Attempted";
-// 		await updateProblemStatusOnUser(userId, problem.id, status);
-
-// 		// save user submission in database.
-// 		await createSubmission({
-// 			userId,
-// 			languageId,
-// 			problemId: problem.id,
-// 			code,
-// 			time: data[1].time ? data[1].time : "N/A",
-// 			memory: data[1].memory ? `${data[1].memory}` : "N/A",
-// 			status: examineResult.overAllStatus,
-// 		});
-
-// 		// send the submission result to user.
-// 		return res.status(200).json({
-// 			success: true,
-// 			message: "Your submission saved successfullly",
-// 			data: {
-// 				overallStatus: examineResult.overAllStatus,
-// 				passed_testcases: examineResult.no_of_accepted_testcases,
-// 				submissions: examineResult.submissions,
-// 			},
-// 		});
-// 		// store the user submission in databases if accepted { problemId, userId, submission status, code}
-// 	} catch (error: any) {
-// 		console.log("SUBMIT_CODE", error.message);
-// 		return res.json({
-// 			success: false,
-// 			message: (error as Error).message,
-// 		});
-// 	}
-// });
-
-// export asyn
-
-// function examineSubmissionResult(
-// 	data: SubmissionsResult[],
-// 	testcases: TestCaseReturnType[]
-// ) {
-// 	// need to find the overallStatus
-// 	// need to find the first three accepeted/rejected testcases based on overallStaus
-// 	let no_of_accepted_testcases = 0;
-// 	let overAllStatus = "";
-// 	let submissions: Modifiedsubmission[] = [];
-
-// 	for (let i = 0; i < data.length; i++) {
-// 		if (data[i].status.description === "Accepted") {
-// 			no_of_accepted_testcases++;
-// 		}
-// 		if (data[i].status.description === "Compilation Error") {
-// 			overAllStatus = "Compilation Error";
-// 			break;
-// 		} else if (data[i].status.description === "Wrong Answer") {
-// 			if (submissions.length < 1) {
-// 				// put only first reject submission
-
-// 				const formattedSubmission = {
-// 					...data[i],
-// 					inputs: testcases[i].inputs,
-// 				};
-
-// 				submissions.push(formattedSubmission);
-// 			}
-// 			overAllStatus = "Wrong Answer";
-// 		} else if (data[i].status.description === "Time Limit Exceeded") {
-// 			if (submissions.length < 1) {
-// 				// put only first reject submission
-
-// 				const formattedSubmission = {
-// 					...data[i],
-// 					inputs: testcases[i].inputs,
-// 				};
-// 				submissions.push(formattedSubmission);
-// 			}
-// 			overAllStatus = "Time Limit Exceeded";
-// 		}
-// 	}
-
-// 	if (no_of_accepted_testcases === data.length) {
-// 		overAllStatus = "Accepted";
-
-// 		const end = testcases.length > 2 ? 3 : testcases.length;
-// 		for (let i = 0; i < end; i++) {
-// 			submissions.push({
-// 				...data[i],
-// 				inputs: testcases[i].inputs,
-// 			});
-// 		}
-// 	}
-// 	return {
-// 		overAllStatus,
-// 		submissions,
-// 		no_of_accepted_testcases,
-// 	};
-// }
 
 export default router;
