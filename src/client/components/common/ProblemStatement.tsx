@@ -123,7 +123,7 @@ export default function ProblemStatement() {
 											? "text-[#4ac3ab]"
 											: problemDetail?.difficulty ==
 											  "Medium"
-											? "text-codeio_yellow"
+											? "text-yellow-500"
 											: "text-codeio_red"
 									} `}
 								>
@@ -151,7 +151,7 @@ export default function ProblemStatement() {
 												<Target
 													size={16}
 													absoluteStrokeWidth
-													className="text-codeio_yellow"
+													className="text-yellow-500"
 												/>
 											) : null}
 										</span>
@@ -171,7 +171,10 @@ export default function ProblemStatement() {
 				</ReactMarkdown>
 			</div>
 			<div className="flex flex-col gap-2 mt-4 mb-5">
-				<Label className="text-md ">Topic Tags</Label>
+				{problemDetail && (
+					<Label className="text-md ">Topic Tags</Label>
+				)}
+
 				<div className="flex flex-row gap-3">
 					{problemDetail &&
 						problemDetail.tags &&
