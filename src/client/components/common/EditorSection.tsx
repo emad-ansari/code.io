@@ -7,6 +7,7 @@ import {
 	ChevronDown,
 	ChevronUp,
 	CloudUpload,
+	Loader,
 	Play,
 } from "lucide-react";
 
@@ -23,10 +24,6 @@ import { runCode, submitCode } from "@/client/features/codeEditorSlice";
 import { CodeEditor } from "./CodeEditor";
 import { EditorTopBar } from "./EditorTopBar";
 import { OutputConsole } from "./RenderExecutionResult";
-
-
-
-
 
 export const EditorSection = () => {
 	const dispatch = useAppDispatch();
@@ -74,11 +71,10 @@ export const EditorSection = () => {
 			submitCode({
 				problemId,
 				language,
-				code
+				code,
 			})
 		);
-
-	}
+	};
 
 	return (
 		<section>
@@ -142,7 +138,7 @@ export const EditorSection = () => {
 											onClick={onRunCode}
 										>
 											{loading ? (
-												<Icons.spinner className="mr-0 h-4 w-4 animate-spin " />
+												<Loader className="w-4 h-4 animate-spin" />
 											) : (
 												<Play
 													size={16}
@@ -169,10 +165,14 @@ export const EditorSection = () => {
 											onClick={onSubmitCode}
 											className="justify-center flex gap-2 items-center rounded-md  cursor-pointer text-green-500  border border-green-500/50 font-semibold"
 										>
-											<CloudUpload
-												size={16}
-												strokeWidth={2.5}
-											/>
+											{loading ? (
+												<Loader className="w-4 h-4 animate-spin" />
+											) : (
+												<CloudUpload
+													size={16}
+													strokeWidth={2.5}
+												/>
+											)}
 											<span className="font-semibold ">
 												Submit
 											</span>
