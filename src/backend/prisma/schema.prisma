@@ -56,7 +56,6 @@ model ProblemCategory {
   imgUrl           String
   tags             String[]
   problems         Problem[]
-  solvedProblems   ProblemSolved[]
   CategoryProgress CategoryProgress[]
 }
 
@@ -94,11 +93,12 @@ model Likes {
 
 model TemplateCode {
   id            String  @id @default(cuid())
-  language      String  @unique
+  language      String 
   full_template String
   boiler_code   String
   problemId     String
   problem       Problem @relation(fields: [problemId], references: [id], onDelete: Cascade)
+  @@unique([problemId, language])
 }
 
 model Testcase {
@@ -140,9 +140,7 @@ model ProblemSolved {
   userId     String
   user       User            @relation(fields: [userId], references: [id], onDelete: Cascade)
   problemId  String
-  problem    Problem         @relation(fields: [problemId], references: [id], onDelete: Cascade)
-  categoryId String          
-  category   ProblemCategory @relation(fields: [categoryId], references: [id])
+  problem    Problem         @relation(fields: [problemId], references: [id], onDelete: Cascade)       
   solvedAt   DateTime        @default(now())
 
   @@unique([problemId, userId])
@@ -152,11 +150,11 @@ model Submission {
   id         String           @id @default(uuid())
   code       String
   time       String
-  memory     String
+  memory     Int
   status     String
   userId     String
   problemId  String
-  languageId Int
+  language   String
   user       User             @relation("SubmissionToUser", fields: [userId], references: [id], onDelete: Cascade)
   createdAt  DateTime         @default(now())
   updatedAt  DateTime         @updatedAt
