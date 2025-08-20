@@ -4,7 +4,7 @@
 	"main": "index.js",
 	"scripts": {
 		"test": "echo \"Error: no test specified\" && exit 1",
-		"build": "tsc -b",
+		"build": "tsc",
 		"start": "node dist/index.js",
 		"dev": "ts-node-dev --respawn --transpile-only index.ts"
 	},
@@ -35,10 +35,12 @@
 		"zod": "^3.23.8"
 	},
 	"devDependencies": {
+		"@types/node": "^24.3.0",
 		"concurrently": "^9.0.1",
 		"nodemon": "^3.1.6",
 		"prisma": "^5.22.0",
 		"ts-node-dev": "^2.0.0",
-		"tsc-watch": "^6.2.0"
+		"tsc-watch": "^6.2.0",
+		"typescript": "^5.9.2"
 	}
 }
