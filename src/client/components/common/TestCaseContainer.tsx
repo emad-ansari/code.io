@@ -10,8 +10,8 @@ import {
 	setInput,
 	setIsSample,
 	setOutput,
-	Testcase,
 } from "@/client/features/problemSlice";
+import { Testcase } from "@/client/lib/types";
 
 interface TestcaseContainerProps extends Testcase {
 	testcaseNo: number;
