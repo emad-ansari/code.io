@@ -12,30 +12,7 @@ import {
 	TableHeader,
 	TableRow,
 } from "@/client/components/ui/table";
-
-const submissions = [
-	{
-		id: 1,
-		status: "Accepted",
-		langauge: "Java",
-		runTime: "0.056",
-		memory: "39.6",
-	},
-	{
-		id: 2,
-		status: "Wrong Answer",
-		langauge: "Java",
-		runTime: "N/A",
-		memory: "39.6",
-	},
-	{
-		id: 3,
-		status: "Time Limit Exceeded",
-		langauge: "Java",
-		runTime: "0.056",
-		memory: "39.6",
-	},
-];
+import { formatDate } from '@/client/lib/types'
 
 export function ProblemSubmissions() {
 	const dispatch = useAppDispatch();
@@ -57,6 +34,7 @@ export function ProblemSubmissions() {
 			</h1>
 		);
 	}
+	console.log('user submission: ', userSubmissions)
 
 	return (
 		<section>
@@ -94,8 +72,8 @@ export function ProblemSubmissions() {
 								{submission.status}
 							</TableCell>
 							<TableCell className="text-left">
-								<span className="bg-code-btn px-3 py-0.5 rounded-full align-middle ">
-									{submission.languageId}
+								<span className="flex w-16 justify-center bg-code-btn px-1 py-0.5 items-center  rounded-full  ">
+									{submission.language}
 								</span>
 							</TableCell>
 							<TableCell className="text-center text-gray-300">
@@ -109,6 +87,9 @@ export function ProblemSubmissions() {
 							</TableCell>
 							<TableCell className="text-center text-gray-300">
 								{submission.memory} MB
+							</TableCell>
+							<TableCell className="text-center text-gray-300">
+								{formatDate(submission.createdAt.toString())}
 							</TableCell>
 						</TableRow>
 					))}
