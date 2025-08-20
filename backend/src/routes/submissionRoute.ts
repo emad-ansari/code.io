@@ -19,7 +19,6 @@ import {
 	SubmissionsResult,
 	TestcaseType,
 } from "../@utils/types";
-import { PassThrough } from "stream";
 
 const JUDGE0_API_URL = process.env.JUDGE0_API_URL; // move into types.ts file
 const JUDGE0_API_KEY = process.env.JUDGE0_API_KEY; // mmove into types.ts file
