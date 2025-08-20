@@ -35,7 +35,6 @@ export const fetchDefaultCode = createAsyncThunk<
 					problemId
 				}
 			})
-			console.log('default code: ', res.data)
 			return res.data;
 
 		} catch (error: any) {
@@ -60,7 +59,6 @@ export const runCode = createAsyncThunk<APIResponse<CodeExecutionResult>, CodeEx
 					},
 				}
 			);
-			console.log("run code repsonse: ", res.data)
 			return res.data;
 		} catch (error: any) {
 			console.log(error.message);
@@ -112,8 +110,7 @@ export const codeEditorSlice = createSlice({
 			console.log(action.payload);
 		});
 		builder.addCase(fetchDefaultCode.fulfilled, (state, action) => {
-			const { success, msg, data } = action.payload;
-			console.log("message of deffault code: ", msg);
+			const { success, data } = action.payload;
 			if (success && data) {
 				state.code = data.boiler_code
 			}
@@ -132,7 +129,7 @@ export const codeEditorSlice = createSlice({
 			}
 			console.log('run code messsage: ', msg);
 		});
-		builder.addCase(runCode.rejected, (state, action) => {
+		builder.addCase(runCode.rejected, (state) => {
 			state.loading = false;
 		});
 		builder.addCase(submitCode.pending, (state) => {
@@ -141,10 +138,18 @@ export const codeEditorSlice = createSlice({
 		builder.addCase(submitCode.fulfilled, (state, action) => {
 			state.loading = false;
 			const { success, data } = action.payload;
+
 			if (success && data) {
 				state.submission_result = data;
-				toast.success("Problem Submitted Successfully 👏")
 			}
+			const status = state.submission_result.submissions[0].status
+			if (status == "Accepted") {
+				toast.success("Problem Accepted Successfully 👏")
+			}
+			else {
+				toast.error(`${status}`)
+			}
+
 		});
 		builder.addCase(submitCode.rejected, (state, action) => {
 			state.loading = false;
