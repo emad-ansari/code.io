@@ -6,6 +6,7 @@
 		"target": "ES2020",
 		"lib": ["ES2020", "DOM"],
 		"module": "commonjs",
+		"moduleResolution": "node",
 		"rootDir": "./",
 		"outDir": "./dist",
 		"esModuleInterop": true,
@@ -14,7 +15,8 @@
 
 		"strict": true,
 
-		"skipLibCheck": true
+		"skipLibCheck": true,
+		"types": ["node"]
 	},
 	"include": ["src/**/*.ts"],
 	"exclude": ["node_modules", "dist", "**/*.test.ts"]
