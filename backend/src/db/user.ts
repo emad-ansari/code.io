@@ -1,5 +1,5 @@
 import prisma from ".";
-import bcrypt from "bcrypt";
+import bcrypt from "bcryptjs";
 
 // CREATE NEW USER
 export async function createUser(
