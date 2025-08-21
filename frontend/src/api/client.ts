@@ -3,10 +3,10 @@ import { logOut } from "../features/authSlice";
 import { APIResponse } from "../lib/types";
 import { store } from "../app/store";
 
-const backendUrl = import.meta.env.VITE_BACKEND_URL;
+const API_BASE = import.meta.env.VITE_API_URL;
 
 export const api = axios.create({
-	baseURL: backendUrl,
+	baseURL: API_BASE,
 	timeout: 10000,
 	headers: {
 		"Content-Type": "application/json",
@@ -34,7 +34,7 @@ api.interceptors.response.use(
 				const response = await api.post<
 					APIResponse<{ accessToken: string }>
 				>(
-					"http://localhost:3000/api/user/refresh-token",
+					`${API_BASE}/api/user/refresh-token`,
 					{},
 					{
 						withCredentials: true,
