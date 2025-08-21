@@ -92,7 +92,7 @@ export async function getAllProblems(
 		const filterConditions: Prisma.ProblemWhereInput = {
 			difficulty: difficulty ? difficulty : undefined,
 			...(status && userAuthorized
-				? { solvedProblems: { some: { status } } }
+				? { solvedProblems: { some: { status, userId } } } // Added userId filter
 				: {}),
 			title: searchKeywords
 				? { contains: String(searchKeywords), mode: "insensitive" }
@@ -139,10 +139,14 @@ export async function getAllProblems(
 			},
 		});
 		
-		const stat = userAuthorized && category[0].problems[0].solvedProblems[0].status || "Todo";
-
+		// Fixed: Handle empty arrays gracefully
 		const formattedProblem = category.flatMap((cat) =>
 			cat.problems.map((p) => {
+				// Get status for each problem individually
+				const problemStatus = userAuthorized && p.solvedProblems && p.solvedProblems.length > 0 
+					? p.solvedProblems[0].status 
+					: "Todo";
+				
 				return {
 					id: p.id,
 					categoryTitle: cat.title,
@@ -151,7 +155,7 @@ export async function getAllProblems(
 					difficulty: p.difficulty,
 					likes: p._count.likes,
 					submissions: p.submissions,
-					status: stat,
+					status: problemStatus,
 				};
 			})
 		);
@@ -162,6 +166,7 @@ export async function getAllProblems(
 		};
 	} catch (error: any) {
 		console.log("GET_ALL_PROBLEMS_DB_ERROR", error);
+		throw error; // Always throw or return error in catch
 	}
 }
 
@@ -221,29 +226,38 @@ export async function getProblemDetail(
 								userId,
 							},
 							select: {
-								status: userAuthorized ? true : false,
+								status: true, // Removed the ternary here
 							},
 					  }
 					: false,
 			},
 		});
 
-		const status = userAuthorized ? problemDetail?.solvedProblems[0]?.status : "Todo";
+		if (!problemDetail) {
+			throw new Error("Problem not found");
+		}
 
+		// Fixed: Handle case where solvedProblems might be empty
+		const status = userAuthorized && problemDetail.solvedProblems && 
+					  Array.isArray(problemDetail.solvedProblems) && 
+					  problemDetail.solvedProblems.length > 0 
+			? problemDetail.solvedProblems[0].status 
+			: "Todo";
 
 		const formattedProblemDetail = {
-			id: problemDetail?.id,
-			problemNo: problemDetail?.problemNo,
-			title: problemDetail?.title,
-			description: problemDetail?.description,
-			difficulty: problemDetail?.difficulty,
-			likes: problemDetail?._count.likes,
-			status: status == undefined ? "Todo" : status,
-			tags: problemDetail?.tags,
+			id: problemDetail.id,
+			problemNo: problemDetail.problemNo,
+			title: problemDetail.title,
+			description: problemDetail.description,
+			difficulty: problemDetail.difficulty,
+			likes: problemDetail._count.likes,
+			status: status,
+			tags: problemDetail.tags,
 		};
 		return formattedProblemDetail;
 	} catch (error: any) {
 		console.log("GET_PROLBEM_DETAIL_DB_ERROR: ", error);
+		throw error;
 	}
 }
 
