@@ -139,6 +139,8 @@ export async function getAllProblems(
 			},
 		});
 		
+		const stat = userAuthorized && category[0].problems[0].solvedProblems[0].status || "Todo";
+
 		const formattedProblem = category.flatMap((cat) =>
 			cat.problems.map((p) => {
 				return {
@@ -149,7 +151,7 @@ export async function getAllProblems(
 					difficulty: p.difficulty,
 					likes: p._count.likes,
 					submissions: p.submissions,
-					status: p.solvedProblems.length > 0 ? p.solvedProblems[0].status : null,
+					status: stat,
 				};
 			})
 		);

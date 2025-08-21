@@ -1,55 +1,36 @@
 {
-	"name": "backend",
-	"version": "1.0.0",
-	"main": "index.js",
-	"engines": {
-		"node": "20.x"
-	},
-	"scripts": {
-		"test": "echo \"Error: no test specified\" && exit 1",
-		"build": "tsc",
-		"start": "node dist/index.js",
-		"dev": "ts-node-dev --respawn --transpile-only index.ts",
-		"postinstall": "prisma generate",
-		"prisma:generate": "prisma generate",
-		"prisma:studio": "prisma studio",
-		"prisma:migrate": "prisma migrate dev"
-	},
-	"prisma": {
-		"seed": "ts-node prisma/seed.ts"
-	},
-	"keywords": [],
-	"author": "",
-	"license": "ISC",
-	"description": "",
-	"dependencies": {
-		"@prisma/client": "^5.22.0",
-		"@types/cookie-parser": "^1.4.7",
-		"@types/pg": "^8.11.8",
-		"@types/node": "^20.19.11",
-		"axios": "^1.7.7",
-		"bcrypt": "^5.1.1",
-		"bcryptjs": "^3.0.2",
-		"cookie-parser": "^1.4.6",
-		"cors": "^2.8.5",
-		"date-fns": "^4.1.0",
-		"dotenv": "^16.4.5",
-		"express": "^4.21.2",
-		"jsonwebtoken": "^9.0.2",
-		"pg": "^8.12.0",
-		"zod": "^3.23.8"
-	},
-	"devDependencies": {
-		"@types/bcrypt": "^6.0.0",
-		"@types/bcryptjs": "^2.4.6",
-		"@types/cors": "^2.8.19",
-		"@types/express": "^5.0.3",
-		"@types/jsonwebtoken": "^9.0.10",
-		"concurrently": "^9.0.1",
-		"nodemon": "^3.1.6",
-		"prisma": "^5.22.0",
-		"ts-node-dev": "^2.0.0",
-		"tsc-watch": "^6.2.0",
-		"typescript": "^5.9.2"
-	}
+  "name": "backend",
+  "version": "1.0.0",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "build": "tsc",
+    "start": "node dist/index.js",
+    "dev": ""
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "description": "",
+  "dependencies": {
+    "@prisma/client": "^6.14.0",
+    "@types/bcrypt": "^6.0.0",
+    "@types/cookie-parser": "^1.4.9",
+    "@types/cors": "^2.8.19",
+    "@types/express": "^5.0.3",
+    "@types/jsonwebtoken": "^9.0.10",
+    "axios": "^1.11.0",
+    "bcrypt": "^6.0.0",
+    "cookie-parser": "^1.4.7",
+    "cors": "^2.8.5",
+    "date-fns": "^4.1.0",
+    "dotenv": "^17.2.1",
+    "express": "^5.1.0",
+    "jsonwebtoken": "^9.0.2",
+    "prisma": "^6.14.0",
+    "zod": "^4.0.17"
+  },
+  "devDependencies": {
+    "@types/node": "^24.3.0"
+  }
 }
