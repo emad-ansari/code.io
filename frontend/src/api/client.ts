@@ -5,6 +5,8 @@ import { store } from "../app/store";
 
 const API_BASE = import.meta.env.VITE_API_URL;
 
+console.log("api base url: ", API_BASE);
+
 export const api = axios.create({
 	baseURL: API_BASE,
 	timeout: 10000,
@@ -27,6 +29,7 @@ api.interceptors.request.use(
 api.interceptors.response.use(
 	(response) => response, // Directly return successful responses.
 	async (error) => {
+		
 		const originalRequest = error.config;
 		if (error.response.status === 403 && !originalRequest._retry) {
 			originalRequest._retry = true; // Mark the request as retried to avoid infinite loops.
