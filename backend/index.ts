@@ -14,7 +14,7 @@ const app = express();
 
 // Allowed origins (use env in production with localhost fallback for dev)
 const allowedOrigins = [
-	process.env.FRONTEND_URL || "https://codeio-tawny.vercel.app",
+	"https://codeio-tawny.vercel.app",
 	"http://localhost:5173",
 ];
 
