@@ -3,7 +3,7 @@ import { logOut } from "../features/authSlice";
 import { APIResponse } from "../lib/types";
 import { store } from "../app/store";
 
-const backendUrl = import.meta.env.BASE_URL;
+const backendUrl = import.meta.env.VITE_BACKEND_URL;
 
 export const api = axios.create({
 	baseURL: backendUrl,
