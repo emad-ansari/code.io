@@ -14,8 +14,8 @@ const app = express();
 
 // Allowed origins (use env in production with localhost fallback for dev)
 const allowedOrigins = [
-  process.env.FRONTEND_URL || "http://localhost:5173",
-  "http://localhost:5174"
+	process.env.FRONTEND_URL || "https://codeio-tawny.vercel.app",
+	"http://localhost:5173",
 ];
 
 app.use(express.json());
@@ -23,6 +23,7 @@ app.use(cookieParser());
 app.use(
 	cors({
 		origin: allowedOrigins,
+		methods: ["GET", "POST", "PUT", "DELETE"],
 		credentials: true,
 	})
 );
