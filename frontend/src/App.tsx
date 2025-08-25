@@ -52,7 +52,7 @@ const App = () => {
 				<ToastContainer
 					position="top-center"
 					autoClose={4000}
-					icon={({ type, theme }) => {
+					icon={({ type }) => {
 						switch (type) {
 							case "info":
 								return <Info className="stroke-indigo-400" />;
@@ -102,7 +102,7 @@ const App = () => {
 								</Route>
 							</Route>
 							<Route
-								path="u/:user-name"
+								path="me/:username"
 								element={<ProfilePage />}
 							/>
 							<Route path="/documents" element={<DocumentPage />} />

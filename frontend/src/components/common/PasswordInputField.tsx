@@ -4,6 +4,7 @@ import { EyeOff, Eye } from 'lucide-react'
 
 import { useAppDispatch, RootState } from "@/app/store";
 import { setPassword } from "@/features/authSlice";
+import { Input } from "../ui/input";
 
 export const PasswordInputField = () => {
   const [showPassword, setShowPassword] = useState(false);
@@ -15,11 +16,11 @@ export const PasswordInputField = () => {
   return (
     <>
       <div className=" relative rounded-lg">
-        <input
+        <Input
           type={showPassword ? "text" : "password"}
           placeholder="Passowrd"
           value = {password}
-          className="outline-none  rounded-lg border border-code-border  px-3 py-2.5 bg-transparent text-white relative w-full text-sm"
+          className="text-white rounded-lg border border-code-border  px-3 py-2.5  relative w-full  focus:ring-3 focus:ring-code-dark/50 placeholder:text-gray-400"
           onChange={(e) => dispatch(setPassword(e.target.value))}
         />
         {showPassword ? (

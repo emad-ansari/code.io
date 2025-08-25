@@ -135,7 +135,12 @@ export interface APIResponse<T> {
 	data?: T;
 	msg: string | null;
 }
-
+export interface UserDetail {
+	id: string;
+	username: string;
+	imgUrl?: string;
+	token?: string
+}
 export const EDITOR_THEMES: string[] = [
 	"vs-dark",
 	"vs",
@@ -173,3 +178,5 @@ export const formatDate = (date: string) => {
 	// Format Date to something readable
 	return format(dateObj, "dd MMMM yyyy");
 };
+
+

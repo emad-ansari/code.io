@@ -1,10 +1,10 @@
 import { Outlet } from "react-router-dom";
-import { ProblemNavBar } from "@/components/common/ProblemNavBar";
+import { Header } from "@/components/common/header";
 
 export const MainLayout = () => {
 	return (
 		<main>
-			<ProblemNavBar />
+			<Header />
 			<Outlet />
 		</main>
 	);

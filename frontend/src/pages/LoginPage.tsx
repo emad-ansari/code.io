@@ -8,9 +8,10 @@ import { setEmail, login } from "@/features/authSlice";
 import { PasswordInputField } from "@/components/common/PasswordInputField";
 import { Button } from "@/components/ui/button";
 import { Loader } from "lucide-react";
+import { Input } from "@/components/ui/input";
 
 export const LoginPage = () => {
-	const { email, isLogin, isLoading } = useSelector(
+	const { email, isLogin, loading } = useSelector(
 		(state: RootState) => state.user
 	);
 	const dispatch = useAppDispatch();
@@ -27,20 +28,20 @@ export const LoginPage = () => {
 	}, [dispatch, isLogin]);
 
 	return (
-		<main className="bg-code-bg flex justify-center pt-32 h-screen">
-			<div className=" h-[500px] w-[400px] md:w-[450px] md:h-[500px]  shadow-md shadow-slate-700/30  rounded-2xl flex flex-col items-center border border-code-border box-border">
+		<main className="bg-code-bg flex items-center justify-center  h-screen">
+			<div className=" h-[400px] w-[400px] md:w-[450px] md:h-[500px]  shadow-md shadow-slate-700/30  rounded-2xl flex flex-col items-center border border-code-border box-border">
 				<h1 className="text-3xl text-white font-medium font-fugaz py-8">
 					Code.io
 				</h1>
-				<h1 className="text-white text-xl font-normal  ">
+				<h1 className="text-gray-300 text-lg font-inter tracking-normal">
 					Login to your account
 				</h1>
 				<div className="flex flex-col  gap-5 pt-5  w-[350px]">
-					<input
+					<Input
 						type="email"
 						placeholder="Email"
 						value={email}
-						className="outline-none rounded-lg border border-code-border  px-3 py-3 bg-transparent text-white relative w-full text-sm"
+						className="outline-none rounded-lg border border-code-border  px-3 py-3 bg-transparent text-white relative w-full text-sm focus:ring-3 focus:ring-code-dark/50 placeholder:text-gray-400"
 						onChange={(e) => dispatch(setEmail(e.target.value))}
 					/>
 					<PasswordInputField />
@@ -50,25 +51,16 @@ export const LoginPage = () => {
 							dispatch(login());
 						}}
 					>
-						{isLoading ? <Loader className={`${isLoading && "animate-spin"}`}/> : <span>Log In</span>}
-					</Button>
-					<div className="flex flex-row gap-4 items-center justify-between">
-						<hr className="w-40 h-[1px]  bg-gray-200 border-0 dark:bg-gray-500" />
-						<span className="text-white text-sm">OR</span>
-						<hr className="w-40 h-[1px]  bg-gray-200 border-0 dark:bg-gray-500" />
-					</div>
-					<Button className="w-full text-white bg-black items-center relative rounded-md">
-						<FcGoogle
-							style={{
-								position: "absolute",
-								top: "25%",
-								left: "22%",
-								fontSize: "22px",
-							}}
-						/>
-						<span className="text-sm font-medium">
-							Log In with google
-						</span>
+						{loading ? (
+							<div className="flex items-center justify-center gap-2">
+								<Loader
+									className={`${loading && "animate-spin"}`}
+								/>
+								<span>Logging in...</span>
+							</div>
+						) : (
+							<span>Log In</span>
+						)}
 					</Button>
 					<div className="flex flex-row justify-between items-center">
 						<span className="text-[#EB8069] text-sm cursor-pointer">

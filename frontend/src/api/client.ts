@@ -3,9 +3,14 @@ import { logOut } from "../features/authSlice";
 import { APIResponse } from "../lib/types";
 import { store } from "../app/store";
 
-const API_BASE = import.meta.env.VITE_API_URL;
+let API_BASE;
+if (import.meta.env.VITE_ENV === "development") {
+	API_BASE = import.meta.env.VITE_LOCALHOST_URL;
+} else {
+	API_BASE = import.meta.env.VITE_API_URL;
+}
 
-console.log("api base url: ", API_BASE);
+console.log("api url: ", API_BASE);
 
 export const api = axios.create({
 	baseURL: API_BASE,

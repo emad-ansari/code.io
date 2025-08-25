@@ -173,7 +173,7 @@ export const Header = () => {
 											<DropdownMenuItem
 												className="hover:bg-gray-800 cursor-pointer "
 												onClick={() =>
-													navigate("u/user-name")
+													navigate(`me/${user?.username}`)
 												}
 											>
 												Profile
