@@ -6,9 +6,11 @@ import cors from "cors";
 import problemRoute from "./src/routes/problemRoute";
 import adminRoute from "./src/routes/adminRoute";
 import userRoute from "./src/routes/userRoute";
+import authRoute from "./src/routes/authRoute";
 import auth from "./src/middleware/auth";
 import prisma from "./src/db";
 import submissionRoute from "./src/routes/submissionRoute";
+const PORT = process.env.PORT || 3000;
 
 const app = express();
 
@@ -34,9 +36,10 @@ app.get("/", (req: Request, res: Response) => {
 });
 
 // API routes
+app.use("/api/user", auth, userRoute);
 app.use("/api/problem", problemRoute);
 app.use("/api/admin", auth, adminRoute);
-app.use("/api/auth", userRoute);
+app.use("/api/auth", authRoute);
 app.use("/api/submission", submissionRoute);
 
 // Connect Prisma once (Vercel will reuse)
@@ -48,7 +51,13 @@ async function connectDB() {
 		console.error("❌ Database connection failed:", err);
 	}
 }
+
+// async function startServer() {
+// 	app.listen(PORT, () => console.log(`server is running on http://localhost:${PORT}`));
+// }
+
 connectDB();
+// startServer();
 
 // Export for Vercel serverless
 export default app;
