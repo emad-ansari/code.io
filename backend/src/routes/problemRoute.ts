@@ -88,7 +88,8 @@ router.get("/get-problems", auth, async (req: Request, res: Response) => {
 
 // get problem details
 router.get(
-	"/get-problem-details/:problemId", auth,
+	"/get-problem-details/:problemId",
+	auth,
 	async (req: Request, res: Response) => {
 		const { problemId } = req.params;
 		const { userAuthorized, userId } = req as CustomRequestObject;
@@ -114,7 +115,6 @@ router.get(
 // get all categories
 router.get("/get-categories", auth, async (req: Request, res: Response) => {
 	const { userAuthorized, userId } = req as CustomRequestObject;
-
 	try {
 		const categories = await getAllCategory(userAuthorized, userId);
 		return res.status(200).json({
@@ -173,17 +173,3 @@ router.get("/default-code", async (req: Request, res: Response) => {
 });
 
 export default router;
-
-// // router.post('/judge0-callback', async(req: Request, res: Response) => {
-// // 	try {
-// // 		const payload = req.body; // Parse the JSON payload sent by Judge0
-// // 		console.log('Judge0 callback received:', payload);
-// // 	}
-// // 	catch(error: any){
-// // 		console.error('Error handling Judge0 callback:', error);
-// // 		res.status(500).send('Internal Server Error'); // Handle error appropriately
-// // 	}
-
-// // })
-
-// // when you are going to submit the code
