@@ -46,6 +46,7 @@ export async function findUser(email: string, password: string) {
 				password: true,
 				id: true,
 				role: true,
+				username: true
 			},
 		});
 		if (!user) {
@@ -61,6 +62,7 @@ export async function findUser(email: string, password: string) {
 					msg: "User found",
 					userId: user.id,
 					role: user.role,
+					username: user.username
 				};
 			} else {
 				return {
