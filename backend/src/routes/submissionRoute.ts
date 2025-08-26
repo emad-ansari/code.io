@@ -30,6 +30,7 @@ router.get(
 	async (req: Request, res: Response) => {
 		const { userAuthorized, userId } = req as CustomRequestObject;
 		const { problemId } = req.params;
+		
 		if (!userAuthorized) {
 			return res.status(404).json({
 				success: false,
