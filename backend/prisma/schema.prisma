@@ -142,8 +142,7 @@ model ProblemSolved {
   problemId  String
   problem    Problem         @relation(fields: [problemId], references: [id], onDelete: Cascade)       
   solvedAt   DateTime        @default(now())
-
-  @@unique([problemId, userId])
+  @@unique([userId, problemId])
 }
 
 model Submission {
@@ -158,6 +157,7 @@ model Submission {
   user       User             @relation("SubmissionToUser", fields: [userId], references: [id], onDelete: Cascade)
   createdAt  DateTime         @default(now())
   updatedAt  DateTime         @updatedAt
+
 }
 
 enum SubmissionStatus {
