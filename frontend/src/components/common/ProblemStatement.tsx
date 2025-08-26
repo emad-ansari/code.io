@@ -29,6 +29,7 @@ export default function ProblemStatement() {
 		maximumFractionDigits: 1,
 	}).format(problemDetail?.likes || 0);
 
+
 	useEffect(() => {
 		if (problemId) {
 			dispatch(fetchProblemDetail({ problemId }));
@@ -76,7 +77,6 @@ export default function ProblemStatement() {
 		},
 	};
 
-	console.log('problem details status: ', problemDetail?.status)
 	return (
 		<div className="flex flex-col gap-4 px-5  overflow-y-scroll scroll-smooth h-[93%]">
 			{problemDetail && (

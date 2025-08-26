@@ -12,21 +12,30 @@ import {
 	TableHeader,
 	TableRow,
 } from "@/components/ui/table";
-import { formatDate } from '@/lib/types'
+import { formatDate } from "@/lib/types";
+import { useParams } from "react-router-dom";
 
 export function ProblemSubmissions() {
 	const dispatch = useAppDispatch();
 	const { userSubmissions } = useSelector(
 		(state: RootState) => state.problem
 	);
-	const { isLogin } = useSelector((state: RootState) => state.user);
+	const { problemId } = useParams();
+	const { isLogin, loading } = useSelector((state: RootState) => state.user);
 
 	useEffect(() => {
-		if (isLogin) {
-			dispatch(fetchUserSubmissions());
+		if (isLogin && problemId) {
+			dispatch(fetchUserSubmissions({ problemId }));
 		}
 	}, []);
 
+	if (loading) {
+		return (
+			<div className="flex items-center justify-center text-gray-300 h-full ">
+				Loading...
+			</div>
+		);
+	}
 	if (userSubmissions.length == 0) {
 		return (
 			<h1 className="text-center font-fugaz text-xl pt-10">
@@ -34,7 +43,7 @@ export function ProblemSubmissions() {
 			</h1>
 		);
 	}
-	console.log('user submission: ', userSubmissions)
+	console.log("user submission: ", userSubmissions);
 
 	return (
 		<section>
