@@ -8,31 +8,30 @@ interface UserSubmissionProps {
 	code: string;
 	time: string;
 	memory: number;
-	status: string;
+	resultStatus: string;
+	problemStatus: string;
 }
 
-
 // get all user submissions
-export async function getUserSubmissions(userId: string) {
+export async function getUserSubmissions(userId: string, problemId: string) {
 	try {
-		const result = await prisma.user.findMany({
+		const submissions = await prisma.submission.findMany({
+			where: {
+				userId: userId,
+				problemId: problemId,
+			},
 			select: {
-				submissions: {
-					select: {
-						id: true,
-						code: true,
-						time: true,
-						memory: true,
-						language: true,
-						status: true,
-						createdAt: true,
-					},
-				},
+				id: true,
+				code: true,
+				time: true,
+				memory: true,
+				language: true,
+				status: true,
+				createdAt: true,
 			},
 		});
 
-		const allSubmissions = result.flatMap((user) => user.submissions);
-		return allSubmissions;
+		return submissions;
 	} catch (error: any) {
 		console.log("GET_PROBLEM_SUBMISSIONS_DB_ERROR: ", error);
 	}
@@ -112,25 +111,49 @@ export async function saveUserSubmissionDetails(data: UserSubmissionProps) {
 			},
 		});
 
-		// create the problemSolved model
-		await prisma.problemSolved.create({
-			data: {
-				status: data.status,
-				userId: data.userId,
-				problemId: data.problemId,
-			},
-		});
-
-		// finally create the submission model
+		// create the submission model
 		await prisma.submission.create({
 			data: {
 				code: data.code,
 				time: data.time,
 				memory: data.memory,
-				status: data.status,
+				status: data.resultStatus,
 				userId: data.userId,
 				language: data.language,
 				problemId: data.problemId,
+			},
+		});
+
+		// create or update solved problems
+		const solvedProblem = await prisma.problemSolved.findFirst({
+			where: {
+				userId: data.userId,
+				problemId: data.problemId,
+			},
+			select: {
+				id: true,
+			},
+		});
+		
+		if (!solvedProblem) {
+			// then create it
+			await prisma.problemSolved.create({
+				data: {
+					userId: data.userId,
+					problemId: data.problemId,
+				}
+			});
+			return;
+		}
+		// create the problemSolved model
+		await prisma.problemSolved.update({
+			where: {
+				id: solvedProblem.id,
+				userId: data.userId,
+				problemId: data.problemId,
+			},
+			data: {
+				status: data.problemStatus,
 			},
 		});
 	} catch (error: any) {
@@ -197,11 +220,11 @@ async function updateStreak(userId: string) {
 	}
 }
 
-export async function saveProgress (userId: string, problemId: string, ) {
+export async function saveProgress(userId: string, problemId: string) {
 	try {
-		const userProgress = await prisma.progress.findFirst( {
+		const userProgress = await prisma.progress.findFirst({
 			where: {
-				userId
+				userId,
 			},
 			select: {
 				id: true,
@@ -211,48 +234,45 @@ export async function saveProgress (userId: string, problemId: string, ) {
 				totalSolved: true,
 				categoryProgress: {
 					select: {
-						totalSolved: true
-					}
-				}
-			}
-		})
+						totalSolved: true,
+					},
+				},
+			},
+		});
 		// get the cateogryId and difficulty levle using problemId from problem model
-		
+
 		const problem = await prisma.problem.findFirst({
 			where: {
-				id: problemId
+				id: problemId,
 			},
 			select: {
 				difficulty: true,
-				categoryId: true
-			}
-		})
+				categoryId: true,
+			},
+		});
 
 		if (!problem) {
 			return {
 				success: false,
-				msg: "Failed to fetch the problem with the problem id "
-			}
+				msg: "Failed to fetch the problem with the problem id ",
+			};
 		}
 
-
 		let easySolved = userProgress ? userProgress.easySolved : 0;
-		let mediumSolved = userProgress ? userProgress.mediumSolved: 0;
+		let mediumSolved = userProgress ? userProgress.mediumSolved : 0;
 		let hardSolved = userProgress ? userProgress.hardSolved : 0;
 
 		if (problem.difficulty === "Easy") {
 			easySolved += 1;
-		}
-		else if (problem.difficulty === "Medium") {
+		} else if (problem.difficulty === "Medium") {
 			mediumSolved += 1;
-		}
-		else {
+		} else {
 			// difficulty will be hard
 			hardSolved += 1;
 		}
 
 		if (!userProgress) {
-			// create new user progress & category progress 
+			// create new user progress & category progress
 
 			const newProgress = await prisma.progress.create({
 				data: {
@@ -260,31 +280,31 @@ export async function saveProgress (userId: string, problemId: string, ) {
 					easySolved,
 					mediumSolved,
 					hardSolved,
-					userId
+					userId,
 				},
 				select: {
 					id: true,
-				}
+				},
 			});
 
 			if (!newProgress) {
 				return {
 					success: false,
-					msg: "Failed to create new progress"
-				}
-			}	
+					msg: "Failed to create new progress",
+				};
+			}
 			// now create a category progress
 			await prisma.categoryProgress.create({
 				data: {
 					progressId: newProgress.id,
 					totalSolved: 1,
-					categoryId: problem.categoryId
-				}
-			})
+					categoryId: problem.categoryId,
+				},
+			});
 			return {
 				success: true,
-				msg: "New user progress created successfully"
-			}
+				msg: "New user progress created successfully",
+			};
 		}
 
 		// otherwise just update the progress
@@ -292,7 +312,7 @@ export async function saveProgress (userId: string, problemId: string, ) {
 		const updatedProgress = await prisma.progress.update({
 			where: {
 				id: userProgress.id,
-				userId
+				userId,
 			},
 			data: {
 				easySolved,
@@ -305,17 +325,17 @@ export async function saveProgress (userId: string, problemId: string, ) {
 				categoryProgress: {
 					select: {
 						id: true,
-						totalSolved: true
-					}
-				}
-			}
-		})
-		
+						totalSolved: true,
+					},
+				},
+			},
+		});
+
 		if (!updatedProgress) {
 			return {
 				success: false,
 				msg: "Failed to update existing progress!!",
-			}
+			};
 		}
 
 		await prisma.categoryProgress.update({
@@ -323,19 +343,18 @@ export async function saveProgress (userId: string, problemId: string, ) {
 				id: updatedProgress.categoryProgress[0].id,
 				progressId: userProgress.id,
 				categoryId: problem.categoryId,
-				
 			},
 			data: {
-				totalSolved: updatedProgress.categoryProgress[0].totalSolved + 1
-			}
-		})
+				totalSolved:
+					updatedProgress.categoryProgress[0].totalSolved + 1,
+			},
+		});
 
 		return {
 			success: true,
-			msg: "Progress updated successfully"
-		}
-	}
-	catch(error: any) {
+			msg: "Progress updated successfully",
+		};
+	} catch (error: any) {
 		console.log("SAVE_PROGRESS_DB_ERROR: ", error);
 	}
 }

@@ -24,27 +24,34 @@ const JUDGE0_API_URL = process.env.JUDGE0_API_URL; // move into types.ts file
 const JUDGE0_API_KEY = process.env.JUDGE0_API_KEY; // mmove into types.ts file
 
 // get all user submissions.
-router.get("/get-submissions", auth, async (req: Request, res: Response) => {
-	const { userAuthorized, userId } = req as CustomRequestObject;
+router.get(
+	"/get-submissions/:problemId",
+	auth,
+	async (req: Request, res: Response) => {
+		const { userAuthorized, userId } = req as CustomRequestObject;
+		const { problemId } = req.params;
+		if (!userAuthorized) {
+			return res.status(404).json({
+				success: false,
+				msg: "UnAuthorized Access!!",
+			});
+		}
 
-	if (!userAuthorized) {
-		return res.status(404).json({
-			success: false,
-			msg: "UnAuthorized Access!!",
-		});
+		try {
+			const user_sumbissions = await getUserSubmissions(
+				userId,
+				problemId
+			);
+			return res.status(200).json({
+				success: true,
+				msg: "Successfully fetched all user submissions",
+				data: user_sumbissions,
+			});
+		} catch (error: any) {
+			console.log("SUBMISSION_ROUTE_ERROR: ", error.message);
+		}
 	}
-
-	try {
-		const user_sumbissions = await getUserSubmissions(userId);
-		return res.status(200).json({
-			success: true,
-			msg: "Successfully fetched all user submissions",
-			data: user_sumbissions,
-		});
-	} catch (error: any) {
-		console.log("SUBMISSION_ROUTE_ERROR: ", error.message);
-	}
-});
+);
 
 // run user code
 router.post("/run-code", auth, async (req: Request, res: Response) => {
@@ -87,7 +94,7 @@ router.post("/run-code", auth, async (req: Request, res: Response) => {
 				.status(404)
 				.json({ success: false, msg: formattedResult.msg });
 		}
-
+		console.log('response result: ', formattedResult)
 		return res.status(200).json({
 			success: true,
 			msg: "Evaluated successfully",
@@ -157,14 +164,16 @@ router.post("/submit-code", auth, async (req: Request, res: Response) => {
 			}
 		}
 		// [Check]: before sending response first save the user submission detail
+
 		await saveUserSubmissionDetails({
 			userId,
 			problemId,
 			language,
 			code,
-			status: overAllStatus,
 			time: (response.data && response.data[0].time) || "N/A",
 			memory: (response.data && response.data[0].memory) || 0,
+			resultStatus: overAllStatus,
+			problemStatus: overAllStatus == "Accepted" ? "Solved" : "Attempetd",
 		});
 
 		if (finalResult.length != 0) {
@@ -179,9 +188,10 @@ router.post("/submit-code", auth, async (req: Request, res: Response) => {
 		}
 
 		// [Todo]: if all testcases passed then update the progress model/
-		if (overAllStatus == "Accepted") { // means all testcase accepted
+		if (overAllStatus == "Accepted") {
+			// means all testcase accepted
 			// then update the progress model
-			await saveProgress(userId, problemId)
+			await saveProgress(userId, problemId);
 		}
 
 		return res.status(200).json({
@@ -229,6 +239,7 @@ export async function evaluateCode(
 		};
 
 		const response = await axios.request(CreateSubmissionsOptions);
+		console.log('judge0 response', response);
 
 		const getSubmissionsOptions = {
 			method: "GET",
