@@ -16,7 +16,7 @@ import { toast } from "react-toastify";
 
 
 export const problemInitialState: ProblemState = {
-	loading: false,
+	loading: true,
 	category: "",
 	title: "",
 	difficulty: "",
@@ -121,13 +121,11 @@ export const fetchProblemDetail = createAsyncThunk<
 	}
 });
 
-export const fetchUserSubmissions = createAsyncThunk(
+export const fetchUserSubmissions = createAsyncThunk<APIResponse<UserSubmission[]>, {problemId: string}>(
 	"/problem/fetchUserSubmissions",
-	async (_, thunkAPI) => {
+	async ({problemId}, thunkAPI) => {
 		try {
-			const response = await api.get<APIResponse<UserSubmission[]>>(
-				"/submission/get-submissions"
-			);
+			const response = await api.get(`/submission/get-submissions/${problemId}`,);
 			const data = response.data;
 			return data;
 		} catch (error: any) {
@@ -315,6 +313,7 @@ export const problemSlice = createSlice({
 			console.log(action.payload);
 		});
 		builder.addCase(fetchProblems.fulfilled, (state, action) => {
+			state.loading = false;
 			const { success, data } = action.payload;
 			if (success && data) {
 				const { problems, totalPages } = data;
@@ -360,10 +359,9 @@ export const problemSlice = createSlice({
 		builder.addCase(fetchUserSubmissions.fulfilled, (state, action) => {
 			state.loading  = false;
 			const { success, data } = action.payload;
-			if (success && data !== undefined) {
+			if (success && data) {
 				state.userSubmissions = data;
 			}
-			console.log("user submissions api response: ", data);
 		});
 		builder.addCase(fetchUserSubmissions.rejected, (state, action) => {
 			state.loading = false;
