@@ -242,7 +242,7 @@ export async function getProblemDetail(
 					  Array.isArray(problemDetail.solvedProblems) && 
 					  problemDetail.solvedProblems.length > 0 
 			? problemDetail.solvedProblems[0].status 
-			: "Todo";
+			: null;
 
 		const formattedProblemDetail = {
 			id: problemDetail.id,
@@ -292,83 +292,3 @@ export async function getDefualtCode(problemId: string, language: string) {
 		throw new Error(error);
 	}
 }
-
-// export async function getOneProblemStatusOnUser(
-// 	userId: string,
-// 	problemId: string
-// ): Promise<{ success: boolean; msg: string; status?: string }> {
-// 	try {
-// 		const problemStatusOnUser = await prisma.problemStatus.findFirst({
-// 			where: {
-// 				userId,
-// 				problemId,
-// 			},
-// 			select: {
-// 				status: true,
-// 			},
-// 		});
-// 		if (problemStatusOnUser) {
-// 			return {
-// 				success: true,
-// 				msg: "Problem status on user",
-// 				status: problemStatusOnUser.status,
-// 			};
-// 		}
-// 		return {
-// 			success: false,
-// 			msg: "Problem status not found for user",
-// 		};
-// 	} catch (error: any) {
-// 		return {
-// 			success: false,
-// 			msg: error.message,
-// 		};
-// 	}
-// }
-
-// export async function getTestCaseExample(problemId: string) {
-// 	try {
-// 		const testcaseExamples = await prisma.testCase.findMany({
-// 			where: {
-// 				problemId,
-// 			},
-// 			take: 3,
-// 			select: {
-// 				title: true,
-// 				inputs: {
-// 					select: {
-// 						type: true,
-// 						name: true,
-// 						value: true,
-// 					},
-// 				},
-// 				output: {
-// 					select: {
-// 						type: true,
-// 						value: true,
-// 					},
-// 				},
-// 			},
-// 		});
-// 		return testcaseExamples;
-// 	} catch (error: any) {
-// 		console.log("Error: ", error.message);
-// 	}
-// }
-
-// export async function updateProblemStatusOnUser (userId: string, problemId: string, status: string) {
-// 	try {
-// 		await prisma.problemStatus.updateMany({
-// 			where: {
-// 				userId,
-// 				problemId
-// 			},
-// 			data: {
-// 				status
-// 			}
-// 		})
-// 	}
-// 	catch(error: any){
-// 		console.log("UPDATE_PROBLEM_STATUS ", error.message);
-// 	}
-// }
