@@ -26,6 +26,7 @@ app.use(
 	cors({
 		origin: allowedOrigins,
 		methods: ["GET", "POST", "PUT", "DELETE"],
+		allowedHeaders: ["Content-Type", "Authorization"],
 		credentials: true,
 	})
 );
@@ -53,9 +54,9 @@ async function connectDB() {
 }
 
 // async function startServer() {
+// 	connectDB();
 // 	app.listen(PORT, () => console.log(`server is running on http://localhost:${PORT}`));
 // }
-
 connectDB();
 // startServer();
 
