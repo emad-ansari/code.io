@@ -30,7 +30,7 @@ router.get(
 	async (req: Request, res: Response) => {
 		const { userAuthorized, userId } = req as CustomRequestObject;
 		const { problemId } = req.params;
-		
+
 		if (!userAuthorized) {
 			return res.status(404).json({
 				success: false,
@@ -39,14 +39,15 @@ router.get(
 		}
 
 		try {
-			const user_sumbissions = await getUserSubmissions(
+			const userSubmissions = await getUserSubmissions(
 				userId,
 				problemId
 			);
+			console.log('user submission: ', userSubmissions)
 			return res.status(200).json({
 				success: true,
 				msg: "Successfully fetched all user submissions",
-				data: user_sumbissions,
+				data: userSubmissions,
 			});
 		} catch (error: any) {
 			console.log("SUBMISSION_ROUTE_ERROR: ", error.message);
@@ -165,13 +166,14 @@ router.post("/submit-code", auth, async (req: Request, res: Response) => {
 			}
 		}
 		// [Check]: before sending response first save the user submission detail
-
+		const runTime = overAllStatus == "Accepted" ? (response.data &&  response.data[0].time ? response.data[0].time : "N/A") : "N/A";
+		
 		await saveUserSubmissionDetails({
 			userId,
 			problemId,
 			language,
 			code,
-			time: (response.data && response.data[0].time) || "N/A",
+			time: runTime,
 			memory: (response.data && response.data[0].memory) || 0,
 			resultStatus: overAllStatus,
 			problemStatus: overAllStatus == "Accepted" ? "Solved" : "Attempetd",
@@ -188,7 +190,6 @@ router.post("/submit-code", auth, async (req: Request, res: Response) => {
 			});
 		}
 
-		// [Todo]: if all testcases passed then update the progress model/
 		if (overAllStatus == "Accepted") {
 			// means all testcase accepted
 			// then update the progress model

@@ -15,6 +15,7 @@ interface UserSubmissionProps {
 // get all user submissions
 export async function getUserSubmissions(userId: string, problemId: string) {
 	try {
+		console.log('userid: ', userId, problemId);
 		const submissions = await prisma.submission.findMany({
 			where: {
 				userId: userId,
@@ -30,7 +31,7 @@ export async function getUserSubmissions(userId: string, problemId: string) {
 				createdAt: true,
 			},
 		});
-
+		
 		return submissions;
 	} catch (error: any) {
 		console.log("GET_PROBLEM_SUBMISSIONS_DB_ERROR: ", error);
