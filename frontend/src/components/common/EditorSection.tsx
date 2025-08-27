@@ -24,7 +24,6 @@ import {
 	TooltipTrigger,
 } from "@/components/ui/tooltip";
 
-
 export const EditorSection = () => {
 	const dispatch = useAppDispatch();
 	const { problemId } = useParams();
@@ -138,7 +137,10 @@ export const EditorSection = () => {
 											onClick={onRunCode}
 										>
 											{loading ? (
-												<Loader className="w-4 h-4 animate-spin" />
+												<div className="flex items-center justify-center">
+													<Loader className="w-4 h-4 animate-spin" />
+													<span>Pending...</span>
+												</div>
 											) : (
 												<Play
 													size={16}
@@ -166,7 +168,10 @@ export const EditorSection = () => {
 											className="justify-center flex gap-2 items-center rounded-md  cursor-pointer text-green-500  border border-green-500/50 font-semibold"
 										>
 											{loading ? (
-												<Loader className="w-4 h-4 animate-spin" />
+												<div className="flex items-center justify-center">
+													<Loader className="w-4 h-4 animate-spin" />
+													<span>Pending...</span>
+												</div>
 											) : (
 												<CloudUpload
 													size={16}

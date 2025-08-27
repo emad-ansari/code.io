@@ -48,7 +48,7 @@ const HomePage = () => {
 						</p>
 						<Button
 							variant={"default"}
-							className="w-[45%] h-12 text-gray-300 bg-gradient-to-r from-[#0f172a]  to-[#334155] cursor-pointer font-semibold rounded-2xl flex gap-5 text-justify border border-slate-700/50 transition-all shadow-md shadow-slate-700/50 duration-300"
+							className="w-[45%] h-12 text-gray-300 bg-[radial-gradient(ellipse_at_bottom_right,_var(--tw-gradient-stops))] from-[#0f172a]  to-[#334155] cursor-pointer font-semibold rounded-2xl flex gap-5 text-justify border border-slate-700/50 transition-all shadow-md shadow-slate-700/50 duration-300"
 							onClick={() => navigate("/signup")}
 						>
 							<span className="flex text-justify">

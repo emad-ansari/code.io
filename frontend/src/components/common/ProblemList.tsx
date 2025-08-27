@@ -30,7 +30,6 @@ const ProblemList = memo(() => {
 			navigate(`../${category}/${problemId}/description`);
 		});
 	};
-
 	return (
 		<div className="flex flex-col gap-2">
 			<Table className="overflow-hidden rounded-lg border-[1.5px] border-slate-800">

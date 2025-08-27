@@ -13,7 +13,7 @@ export const CodeEditor = () => {
 	const { language, code } = useSelector((state: RootState) => state.editor);
 	const { fontSize } = useSelector((state: RootState) => state.setting);
 
-	console.log('this is code: ', code)
+
 	const onEditorMount = (monaco: Monaco) => {
 		monaco.editor.defineTheme("gitHubDark", {
 			base: "vs-dark",

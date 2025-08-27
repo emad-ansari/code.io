@@ -80,7 +80,6 @@ export const Header = () => {
 	const { isLogin, user } = useSelector((state: RootState) => state.user);
 	const { isFullScreen } = useSelector((state: RootState) => state.editor);
 
-	console.log("this is user details: ", user);
 	const onNavigation = (
 		event: React.MouseEvent<HTMLAnchorElement>,
 		path: string

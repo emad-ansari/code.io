@@ -3,7 +3,6 @@ import { Outlet, useSearchParams, useParams } from "react-router-dom";
 import { useSelector } from "react-redux";
 
 import { RootState, useAppDispatch } from "@/app/store";
-import { setOpenDropDownMenu } from "@/features/dropDownSlice";
 import { fetchProblems, setPageSize } from "@/features/problemSlice";
 import { FilterSection } from "@/components/common/FilterSection";
 import { ProblemListSkeleton } from "@/components/skeletons/ProblemListSkeleton";
@@ -30,15 +29,11 @@ import {
 import { problems_per_page } from "@/lib/types";
 import { cn } from "@/lib/utils";
 
+
 const ProblemsetPage = () => {
 	const dispatch = useAppDispatch();
 	const [searchParams] = useSearchParams();
 	const { category } = useParams();
-
-	const { isDifficultyMenuOpen, isStatusMenuOpen } = useSelector(
-		(state: RootState) => state.dropdown
-	);
-
 
 	useEffect(() => {
 		dispatch(
@@ -52,24 +47,6 @@ const ProblemsetPage = () => {
 		);
 	}, []);
 
-	const handleDropDown = (e: React.SyntheticEvent<EventTarget>) => {
-		if (e.target !== e.currentTarget) return;
-
-		if (isDifficultyMenuOpen) {
-			dispatch(
-				setOpenDropDownMenu({
-					menu: "difficulty",
-				})
-			);
-		} else if (isStatusMenuOpen) {
-			dispatch(
-				setOpenDropDownMenu({
-					menu: "status",
-				})
-			);
-		}
-	};
-
 	const onProblemPerPageChange = (value: string) => {
 		const problemPerPage = Number(value.split(" ")[0]);
 		dispatch(setPageSize(problemPerPage));
@@ -77,12 +54,7 @@ const ProblemsetPage = () => {
 
 
 	return (
-		<div
-			className=" flex flex-col gap-8 bg-code-bg items-center pt-16 justify-center h-screen"
-			onClick={(e: React.SyntheticEvent<EventTarget>) =>
-				handleDropDown(e)
-			}
-		>
+		<div className=" flex flex-col gap-8 bg-code-bg items-center pt-16 justify-center h-screen">
 			<div className="flex flex-col gap-8 items-center pt-20 px-6 md:px-44 w-full h bg-code-bg">
 				<div className="flex flex-col gap-8 w-full ">
 					<FilterSection />

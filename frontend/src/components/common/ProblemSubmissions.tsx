@@ -43,7 +43,6 @@ export function ProblemSubmissions() {
 			</h1>
 		);
 	}
-	console.log("user submission: ", userSubmissions);
 
 	return (
 		<section>
@@ -81,7 +80,7 @@ export function ProblemSubmissions() {
 								{submission.status}
 							</TableCell>
 							<TableCell className="text-left">
-								<span className="flex w-16 justify-center bg-code-btn px-1 py-0.5 items-center  rounded-full  ">
+								<span className="flex w-14 justify-center bg-code-btn px-1 py-1 items-center  rounded-full  ">
 									{submission.language}
 								</span>
 							</TableCell>
