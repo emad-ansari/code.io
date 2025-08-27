@@ -19,6 +19,7 @@ import { rehydrateAuth } from "@/features/authSlice";
 import { useAppDispatch } from "@/app/store";
 import { BadgeCheck, CircleAlert, Info, TriangleAlert } from "lucide-react";
 
+
 const HomePage = lazy(() => import("@/pages/HomePage"));
 const ProblemStatement = lazy(() =>
 	wait(2000).then(() => import("@/components/common/ProblemStatement"))
@@ -31,9 +32,7 @@ const ProblemDescriptionPage = lazy(
 	() => import("@/pages/ProblemDescriptionPage")
 );
 
-const AdminDashboardPage = lazy(
-	() => import("@/pages/admin/DashboardPage")
-);
+const AdminDashboardPage = lazy(() => import("@/pages/admin/DashboardPage"));
 const ProblemsPage = lazy(() => import("@/pages/admin/ProblemsPage"));
 const UserPage = lazy(() => import("@/pages/admin/UserPage"));
 const TestcasesPage = lazy(() => import("@/pages/admin/TestcasesPage"));
@@ -105,8 +104,14 @@ const App = () => {
 								path="me/:username"
 								element={<ProfilePage />}
 							/>
-							<Route path="/documents" element={<DocumentPage />} />
-							<Route path="/core-cs" element={<CSFundamentals />} />
+							<Route
+								path="/documents"
+								element={<DocumentPage />}
+							/>
+							<Route
+								path="/core-cs"
+								element={<CSFundamentals />}
+							/>
 						</Route>
 						<Route
 							path="admin/dashboard"
