@@ -100,7 +100,12 @@ export async function getAllProblems(
 		};
 
 		const totalCount = await prisma.problem.count({
-			where: filterConditions,
+			where: {
+				category: {
+					name: categoryName,
+				},
+				...filterConditions,
+			},
 		});
 
 		const category = await prisma.problemCategory.findMany({
@@ -162,7 +167,7 @@ export async function getAllProblems(
 
 		return {
 			problems: formattedProblem,
-			totalCount,
+			totalCount: Math.ceil(totalCount / problemPerPage)
 		};
 	} catch (error: any) {
 		console.log("GET_ALL_PROBLEMS_DB_ERROR", error);
@@ -197,7 +202,7 @@ export async function getProblemsOnAdminPage(page: number) {
 	}
 }
 
-// GET current problem details
+// GET current prondblem details
 export async function getProblemDetail(
 	problemId: string,
 	userAuthorized: boolean,
