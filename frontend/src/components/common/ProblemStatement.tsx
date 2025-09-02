@@ -1,5 +1,12 @@
 import { Separator } from "@/components/ui/separator";
-import { CircleCheckBig, Target, ThumbsDown, ThumbsUp } from "lucide-react";
+import {
+	ChevronRight,
+	CircleCheckBig,
+	Sparkles,
+	Target,
+	ThumbsDown,
+	ThumbsUp,
+} from "lucide-react";
 import ReactMarkdown from "react-markdown";
 import rehypeSanitize from "rehype-sanitize";
 import remarkGfm from "remark-gfm";
@@ -9,7 +16,7 @@ import { Components } from "react-markdown";
 import { useParams } from "react-router-dom";
 import { useSelector } from "react-redux";
 import { RootState, useAppDispatch } from "@/app/store";
-import { useEffect } from "react";
+import { useEffect, useState } from "react";
 import { fetchProblemDetail, updateLikes } from "@/features/problemSlice";
 import { Label } from "../ui/label";
 import { Tag } from "./ChallengesCard";
@@ -17,14 +24,12 @@ import { Tag } from "./ChallengesCard";
 export default function ProblemStatement() {
 	const { problemId } = useParams();
 	const dispatch = useAppDispatch();
-	const { isLogin } = useSelector((state: RootState) => state.user);
-	const { problemDetail, loading } = useSelector(
-		(state: RootState) => state.problem
-	);
+	const { problemDetail } = useSelector((state: RootState) => state.problem);
 	const formattedLikes = Intl.NumberFormat("en-Us", {
 		notation: "compact",
 		maximumFractionDigits: 1,
 	}).format(problemDetail?.likes || 0);
+	const [showTags, setShowTags] = useState<boolean>(false);
 
 	useEffect(() => {
 		if (problemId) {
@@ -76,12 +81,10 @@ export default function ProblemStatement() {
 	return (
 		<div className="flex flex-col gap-4 px-5  overflow-y-scroll scroll-smooth h-[93%]">
 			<div className="flex flex-col gap-5 pt-5 ">
-				<div className="flex flex-row items-center justify-between">
-					<div className="flex gap-2 text-[26px] font-semibold">
-						<span>
-							{problemDetail?.problemNo} {problemDetail && "."}
-						</span>
-						<span className="text-white">
+				<div className="flex flex-row flex-wrap gap-2 items-center justify-between">
+					<div className="flex gap-3 items-center  font-semibold">
+						<Sparkles className="w-6 h-6 text-code-orange  " />
+						<span className="text-white text-[26px]">
 							{problemDetail?.title}
 						</span>
 					</div>
@@ -157,18 +160,28 @@ export default function ProblemStatement() {
 					{problemDetail?.description}
 				</ReactMarkdown>
 			</div>
-			<div className="flex flex-col gap-2 mt-4 mb-5">
-				{problemDetail && (
+			<div className="flex flex-col gap-2 mt-4 mb-5  rounded-lg border border-code-border  ">
+				<div
+					className={`flex items-center justify-between px-2 py-2 rounded-tl-lg rounded-tr-lg cursor-pointer bg-code-dark ${
+						!showTags && "rounded-bl-lg rounded-br-lg"
+					}`}
+					onClick={() => setShowTags((prev) => !prev)}
+				>
 					<Label className="text-md ">Topic Tags</Label>
-				)}
-
-				<div className="flex flex-row gap-3">
-					{problemDetail &&
-						problemDetail.tags &&
-						problemDetail?.tags.map((tag, i) => (
-							<Tag key={i} name={tag}></Tag>
-						))}
+					<ChevronRight
+						className={`w-5 h-5  tracking-all duration-300 ease-in-out  ${
+							showTags ? "rotate-90" : "rotate-0"
+						}`}
+					/>
 				</div>
+				{showTags && problemDetail && (
+					<div className="flex flex-row gap-3 px-2 py-2  ">
+						{problemDetail.tags &&
+							problemDetail?.tags.map((tag, i) => (
+								<Tag key={i} name={tag} />
+							))}
+					</div>
+				)}
 			</div>
 		</div>
 	);
