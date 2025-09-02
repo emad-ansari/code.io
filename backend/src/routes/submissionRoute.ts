@@ -20,8 +20,8 @@ import {
 	TestcaseType,
 } from "../@utils/types";
 
-const JUDGE0_API_URL = process.env.JUDGE0_API_URL; // move into types.ts file
-const JUDGE0_API_KEY = process.env.JUDGE0_API_KEY; // mmove into types.ts file
+const JUDGE0_API_URL = process.env.JUDGE0_API_URL; 
+const JUDGE0_API_KEY = process.env.JUDGE0_API_KEY; 
 
 // get all user submissions.
 router.get(
@@ -43,7 +43,6 @@ router.get(
 				userId,
 				problemId
 			);
-			console.log('user submission: ', userSubmissions)
 			return res.status(200).json({
 				success: true,
 				msg: "Successfully fetched all user submissions",

@@ -75,14 +75,14 @@ export async function getAllCategory(userAuthorized: boolean, userId: string) {
 				}),
 			},
 		});
-
+		console.log('solved problems: ', )
 		const result = categories.map((cat) => ({
 			name: cat.name,
 			title: cat.title,
 			tags: cat.tags,
 			imgUrl: cat.imgUrl,
 			totalProblems: cat._count.problems,
-			solvedProblems: userAuthorized ? cat.problems.length : 0,
+			solvedProblems: userAuthorized ? cat.problems.length  : 0,
 		}));
 
 		return result;

@@ -142,6 +142,7 @@ export async function saveUserSubmissionDetails(data: UserSubmissionProps) {
 				data: {
 					userId: data.userId,
 					problemId: data.problemId,
+					status: data.problemStatus
 				}
 			});
 			return;
