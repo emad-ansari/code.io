@@ -127,72 +127,53 @@ export const EditorSection = () => {
 								)}
 							</Button>
 						</div>
+						<div className="flex flex-row items-center">
+							{loading ? (
+								<div className="flex space-x-2 bg-code-dark rounded-lg px-4 py-1.5 items-center">
+									<Loader className="w-4 h-4 animate-spin" />
+									<span>Pending...</span>
+								</div>
+							) : (
+								<TooltipProvider>
+									<Tooltip>
+										<TooltipTrigger asChild>
+											<div className="flex gap-5">
+												<Button
+													className="justify-center flex gap-2 items-center rounded-md w-20  cursor-pointer  text-red-500 border border-red-500/50"
+													onClick={onRunCode}
+												>
+													<Play
+														size={16}
+														strokeWidth={2.5}
+													/>
+													<span>Run</span>
+												</Button>
+												<Button
+													onClick={onSubmitCode}
+													className="justify-center flex gap-2 items-center rounded-md  cursor-pointer text-green-500  border border-green-500/50 font-semibold"
+												>
+													<CloudUpload
+														size={16}
+														strokeWidth={2.5}
+													/>
 
-						<div className="flex flex-row items-center gap-5">
-							<TooltipProvider>
-								<Tooltip>
-									<TooltipTrigger asChild>
-										<Button
-											className="justify-center flex gap-2 items-center rounded-md w-20  cursor-pointer  text-red-500 border border-red-500/50"
-											onClick={onRunCode}
-										>
-											{loading ? (
-												<div className="flex items-center justify-center">
-													<Loader className="w-4 h-4 animate-spin" />
-													<span>Pending...</span>
-												</div>
-											) : (
-												<Play
-													size={16}
-													strokeWidth={2.5}
-												/>
-											)}
-											<span>Run</span>
-										</Button>
-									</TooltipTrigger>
-									{!isLogin && (
-										<TooltipContent className="bg-gray-800">
-											<p>
-												You are not logged in, please
-												login{" "}
-											</p>
-										</TooltipContent>
-									)}
-								</Tooltip>
-							</TooltipProvider>
-							<TooltipProvider>
-								<Tooltip>
-									<TooltipTrigger asChild>
-										<Button
-											onClick={onSubmitCode}
-											className="justify-center flex gap-2 items-center rounded-md  cursor-pointer text-green-500  border border-green-500/50 font-semibold"
-										>
-											{loading ? (
-												<div className="flex items-center justify-center">
-													<Loader className="w-4 h-4 animate-spin" />
-													<span>Pending...</span>
-												</div>
-											) : (
-												<CloudUpload
-													size={16}
-													strokeWidth={2.5}
-												/>
-											)}
-											<span className="font-semibold ">
-												Submit
-											</span>
-										</Button>
-									</TooltipTrigger>
-									{!isLogin && (
-										<TooltipContent className="bg-gray-800">
-											<p>
-												You are not logged in, please
-												login{" "}
-											</p>
-										</TooltipContent>
-									)}
-								</Tooltip>
-							</TooltipProvider>
+													<span className="font-semibold ">
+														Submit
+													</span>
+												</Button>
+											</div>
+										</TooltipTrigger>
+										{!isLogin && (
+											<TooltipContent className="bg-gray-800">
+												<p>
+													You are not logged in,
+													please login{" "}
+												</p>
+											</TooltipContent>
+										)}
+									</Tooltip>
+								</TooltipProvider>
+							)}
 						</div>
 					</div>
 					<div className="overflow-y-scroll">
