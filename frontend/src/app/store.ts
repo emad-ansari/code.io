@@ -3,8 +3,9 @@ import { useDispatch } from "react-redux";
 import problemReducer from "@/features/problemSlice";
 import settingReducer from "@/features/editorSettingSlice";
 import editorReducer from "@/features/codeEditorSlice";
-import userSlice from "@/features/authSlice";
+import authSlice from "@/features/authSlice";
 import ProblemCategorySlice from "@/features/problemCategorySlice";
+import userSlice from '@/features/userSlice'
 
 export const store = configureStore({
 	reducer: {
@@ -12,6 +13,7 @@ export const store = configureStore({
 		setting: settingReducer,
 		editor: editorReducer,
 		user: userSlice,
+		auth: authSlice,
 		problem_category: ProblemCategorySlice,
 	},
 });
