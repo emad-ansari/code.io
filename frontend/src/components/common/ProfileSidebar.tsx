@@ -7,6 +7,8 @@ import {
 	Settings,
 	ArrowUpRight,
 } from "lucide-react";
+import { useSelector } from "react-redux";
+import { RootState } from "@/app/store";
 
 interface SidebarProps {
 	className?: string;
@@ -19,6 +21,8 @@ interface MenuItem {
 }
 
 export function ProfileSidebar({ className = "" }: SidebarProps) {
+	const {profile } = useSelector((state: RootState) => state.user);
+
 	const menuItems: MenuItem[] = [
 		{ icon: LayoutDashboard, label: "Dashboard" },
 		{ icon: Star, label: "Achievements" },
@@ -51,7 +55,7 @@ export function ProfileSidebar({ className = "" }: SidebarProps) {
 				{/* User Info */}
 				<div className="text-center mb-4">
 					<h2 className="text-white font-semibold text-lg">
-						Andrei Spitzer
+						{profile?.username}
 					</h2>
 					<p className="text-slate-400 text-sm">Digital Designer</p>
 				</div>

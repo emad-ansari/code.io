@@ -77,7 +77,7 @@ export const Header = () => {
 	const location = useLocation();
 	const dispatch = useAppDispatch();
 
-	const { isLogin, user } = useSelector((state: RootState) => state.user);
+	const { isLogin, user } = useSelector((state: RootState) => state.auth);
 	const { isFullScreen } = useSelector((state: RootState) => state.editor);
 
 	const onNavigation = (
