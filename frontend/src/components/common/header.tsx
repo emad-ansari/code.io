@@ -1,5 +1,5 @@
 import React, { startTransition, useEffect } from "react";
-import { useNavigate, useLocation, NavLink } from "react-router-dom";
+import { useNavigate, useLocation, NavLink, Link } from "react-router-dom";
 import { useSelector } from "react-redux";
 import { getUserDetails } from "@/features/authSlice";
 import {
@@ -30,25 +30,6 @@ import { logOut } from "@/features/authSlice";
 import { Button } from "../ui/button";
 import { Avatar, AvatarFallback, AvatarImage } from "@radix-ui/react-avatar";
 
-const drawerItems = [
-	{
-		name: "Profile",
-		icon: <UserPen className="w-5 h-5" />,
-	},
-	{
-		name: "Problems",
-		icon: <CodeXml className="w-5 h-5" />,
-	},
-	{
-		name: "Settings",
-		icon: <Settings className="w-5 h-5" />,
-	},
-	{
-		name: "Logout",
-		icon: <LogOut className="w-5 h-5" />,
-	},
-];
-
 const navItems = [
 	{
 		label: "Home",
@@ -73,11 +54,11 @@ const navItems = [
 ];
 
 export const Header = () => {
+	const { isLogin, user } = useSelector((state: RootState) => state.auth);
 	const navigate = useNavigate();
 	const location = useLocation();
 	const dispatch = useAppDispatch();
 
-	const { isLogin, user } = useSelector((state: RootState) => state.auth);
 	const { isFullScreen } = useSelector((state: RootState) => state.editor);
 
 	const onNavigation = (
@@ -89,6 +70,29 @@ export const Header = () => {
 			navigate(path);
 		});
 	};
+
+	const drawerItems = [
+		{
+			name: "Profile",
+			icon: <UserPen className="w-5 h-5" />,
+			href: `/me/${user?.username}`,
+		},
+		{
+			name: "Problems",
+			icon: <CodeXml className="w-5 h-5" />,
+			href: "/problemset",
+		},
+		{
+			name: "Settings",
+			icon: <Settings className="w-5 h-5" />,
+			href: "/setting",
+		},
+		{
+			name: "Logout",
+			icon: <LogOut className="w-5 h-5" />,
+			href: "",
+		},
+	];
 
 	useEffect(() => {
 		if (isLogin) {
@@ -153,7 +157,10 @@ export const Header = () => {
 											<div className="w-10 h-10 rounded-full">
 												<Avatar className="w-full h-full rounded-full">
 													<AvatarImage
-														src={user?.imgUrl || "https://github.com/shadcn.png"}
+														src={
+															user?.imgUrl ||
+															"https://github.com/shadcn.png"
+														}
 														alt="@shadcn"
 														className="rounded-full"
 													/>
@@ -172,7 +179,9 @@ export const Header = () => {
 											<DropdownMenuItem
 												className="hover:bg-gray-800 cursor-pointer "
 												onClick={() =>
-													navigate(`me/${user?.username}`)
+													navigate(
+														`me/${user?.username}`
+													)
 												}
 											>
 												Profile
@@ -243,14 +252,15 @@ export const Header = () => {
 										<div className="flex flex-col gap-3 ">
 											{drawerItems.map((item) => {
 												return (
-													<div
+													<Link
+														to={item.href}
 														key={item.name}
 														className="flex items-center gap-6 text-white hover:bg-slate-700 rounded-lg px-3 py-2 cursor-pointer transition duration-200
 														"
 													>
 														{item.icon}
 														<span>{item.name}</span>
-													</div>
+													</Link>
 												);
 											})}
 										</div>

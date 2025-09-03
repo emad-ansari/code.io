@@ -57,11 +57,10 @@ export function ProfileSidebar({ className = "" }: SidebarProps) {
 					<h2 className="text-white font-semibold text-lg">
 						{profile?.username}
 					</h2>
-					<p className="text-slate-400 text-sm">Digital Designer</p>
 				</div>
 
 				{/* XP Progress */}
-				<div className="mb-4">
+				{/* <div className="mb-4">
 					<div className="flex justify-between items-center mb-2">
 						<span className="text-slate-300 text-sm">
 							{currentXP}/{maxXP} XP
@@ -76,10 +75,10 @@ export function ProfileSidebar({ className = "" }: SidebarProps) {
 							style={{ width: `${progressPercentage}%` }}
 						/>
 					</div>
-				</div>
+				</div> */}
 
 				{/* Coins */}
-				<div className="flex items-center justify-between bg-slate-700/50 rounded-lg p-3">
+				{/* <div className="flex items-center justify-between bg-slate-700/50 rounded-lg p-3">
 					<div className="flex items-center gap-2">
 						<div className="w-5 h-5 bg-yellow-500 rounded-full flex items-center justify-center">
 							<div className="w-3 h-3 bg-yellow-400 rounded-full"></div>
@@ -92,7 +91,7 @@ export function ProfileSidebar({ className = "" }: SidebarProps) {
 						Transfer
 						<ArrowUpRight className="w-3 h-3" />
 					</button>
-				</div>
+				</div> */}
 			</div>
 
 			{/* Navigation Menu - Scrollable */}

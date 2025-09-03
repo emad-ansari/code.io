@@ -1,34 +1,40 @@
 import React, { useEffect } from "react";
 import { CircularProgress } from "@/components/ui/circular-progress-";
 import { Progress } from "@/components/ui/progress";
-import { Calendar, Flame, Loader,  } from "lucide-react";
+import { Calendar, Flame, Loader } from "lucide-react";
 import { ProfileSidebar } from "@/components/common/ProfileSidebar";
 import { StreakCalendar } from "@/components/ui/streak-calender";
-import {  useSelector } from "react-redux";
+import { useSelector } from "react-redux";
 import { RootState, useAppDispatch } from "@/app/store";
 import { getUserProfile } from "@/features/userSlice";
-
+import { useNavigate } from "react-router-dom";
 
 interface LinearProgressProps {
 	label: string;
 	className: string;
 	progress: number;
-	total: number
+	total: number;
 }
 interface CalenderStreakProps {
 	currentStreak: number;
-	longestStreak: number
+	longestStreak: number;
 }
 export const ProfilePage = () => {
 	const dispatch = useAppDispatch();
-	
+	const { isLogin } = useSelector((state: RootState) => state.auth);
+	const navigate = useNavigate();
+	console.log("isLogin", isLogin);
+	useEffect(() => {
+		if (!isLogin) {
+			navigate("/");
+		}
+	}, []);
 
 	const { profile, loading } = useSelector((state: RootState) => state.user);
 
 	useEffect(() => {
-		dispatch(getUserProfile())
-	}, [])
-
+		dispatch(getUserProfile());
+	}, []);
 
 	if (loading) {
 		return (
@@ -37,7 +43,6 @@ export const ProfilePage = () => {
 			</div>
 		);
 	}
-	console.log('user profile: ', profile);
 
 	return (
 		<main className="pt-19 px-4 bg-code-bg text-white min-h-screen flex flex-col gap-4 lg:flex-row pb-4">
@@ -60,7 +65,11 @@ export const ProfilePage = () => {
 								strokeWidth={10}
 								showLabel
 								labelClassName="text-xl font-bold"
-								renderLabel={(progress) => `${progress} / ${profile?.overAllProgress.total} `}
+								renderLabel={(progress) =>
+									`${progress} / ${
+										profile?.overAllProgress.total || 0
+									} `
+								}
 								className="stroke-[#264545]"
 								progressClassName="stroke-[#1cbaba]"
 							/>
@@ -87,7 +96,10 @@ export const ProfilePage = () => {
 						</div>
 					</div>
 					<div className="flex-1 rounded-2xl px-5 py-4 bg-code-dark">
-						<CalendarStreak currentStreak={profile?.currentStreak || 0} longestStreak={profile?.longestStreak || 0} />
+						<CalendarStreak
+							currentStreak={profile?.currentStreak || 0}
+							longestStreak={profile?.longestStreak || 0}
+						/>
 					</div>
 				</div>
 				<div className=" flex-1 rounded-2xl px-2 py-1 bg-code-dark h-90">
@@ -102,26 +114,31 @@ const LinearProgress: React.FC<LinearProgressProps> = ({
 	label,
 	className,
 	progress,
-	total
+	total,
 }) => {
 	return (
-		<div className="flex gap-4 items-center justify-between ">
+		<div className="flex gap-2 items-center justify-between ">
 			<span className="w-16 text-sm font-medium ">{label}</span>
-			<div className="flex shrink-0 w-[70%] ">
+			<div className="flex shrink-0 w-[60%] ">
 				<Progress
 					value={progress}
-					max = {10}
+					max={10}
 					className={`w-full bg-gray-500/20 ${className}`}
 				/>
 			</div>
-
-			<span className="flex text-center font-semibold">{progress} / {total}</span>
+			<div className="">
+				<span className="flex text-center font-semibold">
+					{progress} / {total}
+				</span>
+			</div>
 		</div>
 	);
 };
 
-export const CalendarStreak: React.FC<CalenderStreakProps> = ({ currentStreak, longestStreak}) => {
-
+export const CalendarStreak: React.FC<CalenderStreakProps> = ({
+	currentStreak,
+	longestStreak,
+}) => {
 	return (
 		<div className="space-y-4">
 			<h2 className="text-xl font-semibold text-white">

@@ -60,7 +60,7 @@ export const SignupPage = () => {
 
 	return (
 		<main className="bg-code-bg flex justify-center pt-32 h-screen">
-			<div className=" h-[480px] w-[400px]  md:w-[450px] md:h-[500px]  rounded-3xl shadow-md shadow-slate-700/30 flex flex-col items-center border border-code-border ">
+			<div className=" h-[480px] w-[400px]  md:w-[450px] md:h-[500px]  rounded-3xl shadow-lg shadow-gray-700/30 flex flex-col items-center border border-code-border ">
 				<h1 className="text-3xl text-white font-medium font-fugaz py-8">
 					Code.io
 				</h1>

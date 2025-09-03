@@ -43,8 +43,6 @@ export const LoginPage = () => {
 		} else {
 			setEmailError(null);
 		}
-		// Password is stored in auth slice, but input is in PasswordInputField
-		// We will read it directly from store to validate minimal length
 		const password = (store.getState() as RootState).auth.password;
 		if (!password || password.length < 5) {
 			setPasswordError("Password must be at least 6 characters");
@@ -57,8 +55,8 @@ export const LoginPage = () => {
 	};
 
 	return (
-		<main className="bg-code-bg flex items-center justify-center  h-screen">
-			<div className=" h-[400px] w-[400px] md:w-[450px] md:h-[500px]  shadow-md shadow-slate-700/30  rounded-2xl flex flex-col items-center border border-code-border box-border">
+		<main className="bg-code-bg flex items-center justify-center h-screen">
+			<div className=" h-[450px] w-[400px] md:w-[450px] md:h-[500px]  shadow-lg shadow-gray-700/50  rounded-2xl flex flex-col items-center border border-code-border box-border">
 				<h1 className="text-3xl text-white font-medium font-fugaz py-8">
 					Code.io
 				</h1>
