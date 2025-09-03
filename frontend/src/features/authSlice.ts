@@ -4,9 +4,7 @@ import { api } from "@/api/client";
 import { RootState } from "@/app/store";
 import { APIResponse, UserDetail } from "@/lib/types";
 
-
-
-export interface User {
+export interface AuthState {
 	loading: boolean;
 	isLogin: boolean;
 	isSignup: boolean;
@@ -14,74 +12,88 @@ export interface User {
 	email: string;
 	password: string;
 	user: UserDetail | null;
+	error?: string | null;
 }
-export const initialState: User = {
+export const initialState: AuthState = {
 	loading: false,
 	isLogin: false,
 	isSignup: false,
 	username: "",
 	email: "",
 	password: "",
-	user: null
+	user: null,
+	error: null,
 };
 
-export const signup = createAsyncThunk("/auth/signup", async (_, ThunkAPI) => {
-	try {
-		const store = ThunkAPI.getState() as RootState;
-		const { username, email, password } = store.user;
-
-		const res = await api.post("/auth/signup", {
-			data: {
-				username,
-				email,
-				password,
-			},
-		});
-		return res.data;
-	} catch (error: any) {
-		ThunkAPI.rejectWithValue(error.message || "Error while Sign up");
-	}
-});
-
-export const login = createAsyncThunk<APIResponse<UserDetail>>("/auth/login", async (_, ThunkAPI) => {
+export const signup = createAsyncThunk<APIResponse<{ token: string }>>(
+	"/auth/signup",
+	async (_, ThunkAPI) => {
 		try {
 			const store = ThunkAPI.getState() as RootState;
-			const { email, password } = store.user;
+			const { username, email, password } = store.auth;
 
-			const
-			 res = await api.post(
-				"/auth/login",
-				{
-					data: {
-						email,
-						password,
-					},
+			const res = await api.post("/auth/signup", {
+				data: {
+					username,
+					email,
+					password,
 				},
-				{
-					withCredentials: true,
-				}
-			);
+			});
 			return res.data;
 		} catch (error: any) {
-			ThunkAPI.rejectWithValue(
-				error.message || "Error occurred while login"
-			);
+			const message =
+				error?.response?.data?.msg ||
+				error.message ||
+				"Error while Sign up";
+			return ThunkAPI.rejectWithValue(message);
 		}
 	}
 );
 
-export const getUserDetails = createAsyncThunk<APIResponse<UserDetail>> ("/user/getUserDetails", async (_, ThunkAPI) => {
+export const login = createAsyncThunk<
+	APIResponse<UserDetail>,
+	void,
+	{ rejectValue: string }
+>("/auth/login", async (_, ThunkAPI) => {
 	try {
-		const res = await api.get("/user/get-user-details");
+		const store = ThunkAPI.getState() as RootState;
+		const { email, password } = store.auth;
+
+		const res = await api.post(
+			"/auth/login",
+			{
+				data: {
+					email,
+					password,
+				},
+			},
+			{
+				withCredentials: true,
+			}
+		);
 		return res.data;
 	} catch (error: any) {
-		ThunkAPI.rejectWithValue(
-			error.message || "Error occurred while fetching user details"
-		);
+		const message =
+			error?.response?.data?.msg ||
+			error.message ||
+			"Error occurred while login";
+		return ThunkAPI.rejectWithValue(message);
 	}
-});	
+});
 
-
+export const getUserDetails = createAsyncThunk<APIResponse<UserDetail>>(
+	"/user/getUserDetails",
+	async (_, ThunkAPI) => {
+		try {
+			const res = await api.get("/user/get-user-details");
+			return res.data;
+		} catch (error: any) {
+			ThunkAPI.rejectWithValue(
+				error.message || "Error occurred while fetching user details"
+			);
+		}
+	}
+);
 
 export const logOut = createAsyncThunk<APIResponse<null>>(
 	"/user/logOut",
@@ -128,36 +140,54 @@ export const userSlice = createSlice({
 	extraReducers: (builder) => {
 		builder.addCase(signup.pending, (state) => {
 			state.loading = true;
+			state.error = null;
 		});
-		builder.addCase(signup.fulfilled, (state, action) => {
-			state.loading = false;
-			const { success } = action.payload;
-			if (success) {
-				state.isSignup = true;
-				toast.success("User Registered Successfully");
-			} else {
-				toast.error("Something went wrong, please try again");
+		builder.addCase(
+			signup.fulfilled,
+			(state, action: PayloadAction<APIResponse<{ token: string }>>) => {
+				state.loading = false;
+				const { success, msg, data } = action.payload;
+				if (success && data) {
+					state.isSignup = true;
+					localStorage.setItem("CToken", data.token);
+					toast.success("User Registered Successfully");
+				} else {
+					state.error = msg;
+					toast.error("Something went wrong, please try again");
+				}
 			}
-		});
-		builder.addCase(signup.rejected, (state, _) => {
+		);
+		builder.addCase(signup.rejected, (state, action) => {
 			state.loading = false;
+			state.error = (action.payload as string) || "Failed to sign up";
+			toast.error(state.error);
 		});
 		builder.addCase(login.pending, (state) => {
 			state.loading = true;
+			state.error = null;
 		});
-		builder.addCase(login.fulfilled, (state, action: PayloadAction<APIResponse<UserDetail>>) => {
-			state.loading = false;
-			const { success, data, msg } = action.payload;
-			if (success && data && data.token) {
-				state.isLogin = true;
-				state.user = data
-				localStorage.setItem("CToken", data.token);
-				toast.success(`${msg}`);
+		builder.addCase(
+			login.fulfilled,
+			(state, action: PayloadAction<APIResponse<UserDetail>>) => {
+				state.loading = false;
+				const { success, data, msg } = action.payload;
+				if (success && data && data.token) {
+					state.isLogin = true;
+					state.user = data;
+					localStorage.setItem("CToken", data.token);
+					toast.success(`${msg}`);
+				}
+				else {
+					state.error = msg;
+				}
 			}
-		});
-		builder.addCase(login.rejected, (state, _) => {
+		);
+		builder.addCase(login.rejected, (state, action) => {
 			state.isSignup = false;
 			state.loading = false;
+			state.error =
+				(action.payload as string) || "Invalid email or password";
+			toast.error(state.error);
 		});
 		builder.addCase(logOut.fulfilled, (state, action) => {
 			const { success } = action.payload;
@@ -165,6 +195,7 @@ export const userSlice = createSlice({
 				state.isLogin = false;
 				localStorage.removeItem("CToken");
 				toast.success("Logout successfully");
+				window.location.href = "/";
 			}
 			state.isSignup = false;
 		});
