@@ -12,7 +12,7 @@ import { Input } from "@/components/ui/input";
 
 export const LoginPage = () => {
 	const { email, isLogin, loading } = useSelector(
-		(state: RootState) => state.user
+		(state: RootState) => state.auth
 	);
 	const dispatch = useAppDispatch();
 

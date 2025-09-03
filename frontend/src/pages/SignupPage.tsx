@@ -13,7 +13,7 @@ export const SignupPage = () => {
 	const navigate = useNavigate();
 	const dispatch = useAppDispatch();
 	const { username, email, isSignup, loading } = useSelector(
-		(state: RootState) => state.user
+		(state: RootState) => state.auth
 	);
 
 	useEffect(() => {
