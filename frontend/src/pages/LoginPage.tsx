@@ -2,126 +2,177 @@ import { useEffect, useMemo, useState } from "react";
 import { useSelector } from "react-redux";
 import { useLocation, useNavigate } from "react-router-dom";
 import { useAppDispatch, RootState, store } from "@/app/store";
-import { setEmail, login } from "@/features/authSlice";
-import { PasswordInputField } from "@/components/common/PasswordInputField";
-import { Button } from "@/components/ui/button";
-import { Loader } from "lucide-react";
-import { Input } from "@/components/ui/input";
+import { setError, login } from "@/features/authSlice";
+import { motion } from "motion/react";
+import { ArrowRight, Code2, Loader, Lock, Mail } from "lucide-react";
+import { SocialButtons } from "@/components/common/social-button";
+import { InputField } from "@/components/common/input-field";
+import { validateEmail } from "@/lib/utils";
 
 export const LoginPage = () => {
-	const { email, isLogin, loading, error } = useSelector(
-		(state: RootState) => state.auth
-	);
 	const dispatch = useAppDispatch();
-
 	const navigate = useNavigate();
 	const location = useLocation();
+
+	const { isLoggedIn, loading, error } = useSelector(
+		(state: RootState) => state.auth,
+	);
+
 	const from = location.state?.from?.pathname || "/";
 
 	// navigate user to the page,  where it was before login.
-	useEffect(() => {
-		if (isLogin) {
-			navigate(from, { replace: true });
-		}
-	}, [dispatch, isLogin]);
+	// useEffect(() => {
+	// 	if (isLogin) {
+	// 		navigate(from, { replace: true });
+	// 	}
+	// }, [dispatch, isLogin]);
 
-	const [emailError, setEmailError] = useState<string | null>(null);
-	const [passwordError, setPasswordError] = useState<string | null>(null);
-
-	const validateEmail = (value: string) => {
-		const regex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
-		return regex.test(value);
-	};
-
-	const hasServerError = useMemo(() => Boolean(error), [error]);
+	const [email, setEmail] = useState("");
+	const [password, setPassword] = useState("");
 
 	const handleLogin = () => {
-		let valid = true;
+		const saved = email || password;
+		if (!saved) {
+			dispatch(setError("Each and every field is required*"));
+			return;
+		}
+
 		if (!validateEmail(email)) {
-			setEmailError("Please enter a valid email address");
-			valid = false;
-		} else {
-			setEmailError(null);
+			dispatch(setError("Please enter a valid email address"));
+			return;
 		}
-		const password = (store.getState() as RootState).auth.password;
-		if (!password || password.length < 5) {
-			setPasswordError("Password must be at least 6 characters");
-			valid = false;
-		} else {
-			setPasswordError(null);
+
+		if (password.length < 6) {
+			dispatch(setError("Password must be at least 6 characters"));
+			return;
 		}
-		if (!valid) return;
-		dispatch(login());
+		dispatch(login({ email, password }));
 	};
 
 	return (
-		<main className="bg-code-bg flex items-center justify-center h-screen">
-			<div className=" h-[450px] w-[400px] md:w-[450px] md:h-[500px]  shadow-lg shadow-gray-700/50  rounded-2xl flex flex-col items-center border border-code-border box-border">
-				<h1 className="text-3xl text-white font-medium font-fugaz py-8">
-					Code.io
-				</h1>
-				<h1 className="text-gray-300 text-lg font-inter tracking-normal">
-					Login to your account
-				</h1>
-				<div className="flex flex-col  gap-5 pt-5  w-[350px]">
-					<div className="flex flex-col gap-2">
-						<Input
-							type="email"
-							placeholder="Email"
-							value={email}
-							className="outline-none rounded-lg border border-code-border  px-3 py-3 bg-transparent text-white relative w-full text-sm focus:ring-3 focus:ring-code-dark/50 placeholder:text-gray-400"
-							onChange={(e) => {
-								const value = e.target.value;
-								dispatch(setEmail(value));
-								if (value && validateEmail(value)) setEmailError(null);
-							}}
-						/>
-						{emailError && (
-							<span className="text-red-400 text-xs">{emailError}</span>
-						)}
+		<main className="relative min-h-screen flex items-center justify-center p-6 overflow-hidden bg-brand-bg">
+			{/* Background Elements */}
+			<div className="fixed inset-0 grid-background pointer-events-none opacity-50" />
+			<div className="fixed top-[-10%] left-[-10%] w-[50%] h-[50%] bg-brand-primary/10 blur-[120px] rounded-full animate-pulse" />
+			<div className="fixed bottom-[-10%] right-[-10%] w-[50%] h-[50%] bg-brand-secondary/10 blur-[120px] rounded-full animate-pulse" />
+
+			<motion.div
+				initial={{ opacity: 0, y: 20 }}
+				animate={{ opacity: 1, y: 0 }}
+				className="relative z-10 w-full max-w-md"
+			>
+				{/* Logo */}
+				<div className="flex items-center gap-2 mb-8 justify-center cursor-pointer group">
+					<div className="w-10 h-10 bg-gradient-to-br from-brand-primary to-brand-secondary rounded-xl flex items-center justify-center shadow-lg shadow-brand-primary/20 group-hover:scale-110 transition-transform">
+						<Code2 className="w-6 h-6 text-white" />
 					</div>
-					<div className="flex flex-col gap-2">
-						<PasswordInputField  unSetPasswordError={setPasswordError}/>
-						{passwordError && (
-							<span className="text-red-400 text-xs">{passwordError}</span>
-						)}
+					<span className="text-2xl font-bold tracking-tight text-white">
+						Code.io
+					</span>
+				</div>
+
+				{/* Card */}
+				<div className="glass-card rounded-[2.5rem] p-8 md:p-10 shadow-2xl border-white/10">
+					<div className="text-center mb-8">
+						<h1 className="text-3xl font-bold text-white mb-2">
+							Welcome Back
+						</h1>
+						<p className="text-slate-400 text-sm">
+							Log in to continue your coding journey.
+						</p>
 					</div>
-					{hasServerError && !emailError && !passwordError && (
-						<div className="text-red-500 text-sm bg-red-500/10 border border-red-500/20 rounded-md px-3 py-2">
-							{error}
+
+					<SocialButtons />
+					<div className="relative mb-8">
+						<div className="absolute inset-0 flex items-center">
+							<div className="w-full border-t border-white/5"></div>
 						</div>
-					)}
-					<Button
-						className={`w-full bg-code-orange h-10 cursor-pointer text-sm font-medium rounded-lg `}
-						onClick={handleLogin}
-					>
-						{loading ? (
-							<div className="flex items-center justify-center gap-2">
-								<Loader
-									className={`${loading && "animate-spin"}`}
-								/>
-								<span>Logging in...</span>
-							</div>
-						) : (
-							<span>Log In</span>
+						<div className="relative flex justify-center text-xs uppercase">
+							<span className="bg-brand-bg px-2 text-slate-500 font-bold tracking-widest">
+								Or continue with email
+							</span>
+						</div>
+					</div>
+					<div>
+						<InputField
+							icon={Mail}
+							label="Email Address"
+							type="email"
+							placeholder="name@company.com"
+							required
+							onChange={(e) => setEmail(e.target.value)}
+							onFocus={() => dispatch(setError(null))}
+						/>
+						<InputField
+							icon={Lock}
+							label="Password"
+							type="password"
+							placeholder="••••••••"
+							required
+							onChange={(e) => setPassword(e.target.value)}
+							onFocus={() => dispatch(setError(null))}
+						/>
+						{error && (
+							<span className=" text-red-500 text-xs">
+								{error}
+							</span>
 						)}
-					</Button>
-					<div className="flex flex-row justify-between items-center">
-						<span className="text-[#EB8069] text-sm cursor-pointer">
-							Forgot password
-						</span>
-						<span className="text-white text-sm">
-							Don't have an account?{" "}
-							<a
-								href="signup"
-								className=" font-medium italic cursor-pointer text-code-orange"
+						<div className="flex items-center justify-between mb-8 mt-2">
+							<label className="flex items-center gap-2 cursor-pointer group">
+								<input
+									type="checkbox"
+									className="w-4 h-4 rounded border-white/10 bg-white/5 text-brand-primary focus:ring-brand-primary/20"
+								/>
+								<span className="text-xs text-slate-400 group-hover:text-slate-300 transition-colors">
+									Remember me
+								</span>
+							</label>
+							<button
+								type="button"
+								className="text-xs text-brand-primary hover:underline underline-offset-4"
 							>
-								Sign up
-							</a>
-						</span>
+								Forgot password?
+							</button>
+						</div>
+						<button
+							className="w-full py-4 bg-gradient-to-r from-brand-primary to-brand-secondary text-white rounded-xl font-bold hover:scale-[1.02] active:scale-[0.98] transition-all shadow-lg shadow-brand-primary/20 flex items-center justify-center gap-2 group cursor-pointer"
+							onClick={handleLogin}
+						>
+							{loading ? (
+								<div className="flex item-center gap-1">
+									<Loader className="w-5 h-5 animate-spin" />
+									<span>Loging...</span>
+								</div>
+							) : (
+								<div className="flex items-center gap-1">
+									<span>Log In</span>
+									<ArrowRight className="w-4 h-4 group-hover:translate-x-1 transition-transform" />
+								</div>
+							)}
+						</button>
+					</div>
+
+					<div className="mt-8 pt-8 border-t border-white/5 text-center">
+						<p className="text-slate-400 text-sm">
+							Don't have an account?
+							<button
+								onClick={() => navigate("/signup")}
+								className="text-brand-primary font-bold hover:underline underline-offset-4 ml-1"
+							>
+								Sign up for free
+							</button>
+						</p>
 					</div>
 				</div>
-			</div>
+
+				{/* Back to Home */}
+				<button
+					onClick={() => navigate("/")}
+					className="mt-8 w-full text-slate-500 text-sm hover:text-slate-300 transition-colors flex items-center justify-center gap-2"
+				>
+					← Back to homepage
+				</button>
+			</motion.div>
 		</main>
 	);
 };

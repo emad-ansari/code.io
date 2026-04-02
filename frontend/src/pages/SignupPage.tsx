@@ -1,155 +1,189 @@
-import { useEffect, useMemo, useState } from "react";
+import { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import { useSelector } from "react-redux";
+import { motion } from "motion/react";
 
-import { useAppDispatch, RootState, store } from "@/app/store";
-import { setUsername, setEmail, signup } from "@/features/authSlice";
-import { Button } from "@/components/ui/button";
-import { PasswordInputField } from "@/components/common/PasswordInputField";
-import { Loader } from "lucide-react";
-import { Input } from "@/components/ui/input";
+import { useAppDispatch, RootState } from "@/app/store";
+import { setError, signup } from "@/features/authSlice";
+import { ArrowRight, Code2, Loader, Lock, Mail, User } from "lucide-react";
+
+import { SocialButtons } from "@/components/common/social-button";
+import { InputField } from "@/components/common/input-field";
+import { validateEmail } from "@/lib/utils";
 
 export const SignupPage = () => {
 	const navigate = useNavigate();
 	const dispatch = useAppDispatch();
-	const { username, email, isSignup, loading, error } = useSelector(
-		(state: RootState) => state.auth
-	);
+	const { loading, error, isLoggedIn } = useSelector((state: RootState) => state.auth);
+  console.log('is login: ', isLoggedIn);
 
-	useEffect(() => {
-		if (isSignup) {
-			navigate("/login");
-		}
-	}, [dispatch, isSignup]);
+	const [email, setEmail] = useState<string>("");
+	const [username, setUsername] = useState<string>("");
+	const [password, setPassword] = useState<string>("");
 
-	const [usernameError, setUsernameError] = useState<string | null>(null);
-	const [emailError, setEmailError] = useState<string | null>(null);
-	const [passwordError, setPasswordError] = useState<string | null>(null);
+	
 
-	const validateEmail = (value: string) => {
-		const regex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
-		return regex.test(value);
-	};
+  useEffect(() => {
+    if (isLoggedIn) {
+      navigate('/')
+    }
+  }, [isLoggedIn, dispatch])
 
-	const hasServerError = useMemo(() => Boolean(error), [error]);
 
 	const handleSignup = () => {
-		let valid = true;
-		if (!username || username.trim().length < 3) {
-			setUsernameError("Username must be at least 3 characters");
-			valid = false;
-		} else {
-			setUsernameError(null);
+
+    const saved = username || email || password;
+    if (!saved) {
+      dispatch(setError("Each and every field is required*"))
+      return;
+    }
+		if (username.trim().length < 3) {
+			dispatch(setError("Username must be at least 3 characters"));
+			return;
 		}
 		if (!validateEmail(email)) {
-			setEmailError("Please enter a valid email address");
-			valid = false;
-		} else {
-			setEmailError(null);
+			dispatch(setError("Please enter a valid email address"));
+			return;
 		}
-		const password = (store.getState() as RootState).auth.password;
-		if (!password || password.length < 6) {
-			setPasswordError("Password must be at least 6 characters");
-			valid = false;
-		} else {
-			setPasswordError(null);
-		}
-		if (!valid) return;
-		dispatch(signup());
+
+		if (password.length < 6) {
+			dispatch(setError("Password must be at least 6 characters"));
+			return;
+		} 
+		dispatch(signup({ username, email, password }));
 	};
 
 	return (
-		<main className="bg-code-bg flex justify-center pt-32 h-screen">
-			<div className=" h-[480px] w-[400px]  md:w-[450px] md:h-[500px]  rounded-3xl shadow-lg shadow-gray-700/30 flex flex-col items-center border border-code-border ">
-				<h1 className="text-3xl text-white font-medium font-fugaz py-8">
-					Code.io
-				</h1>
-				<h1 className="text-gray-400 text-lg font-inter-medium tracking-wider">
-					Welcome to Code.io
-				</h1>
-				<div className="flex flex-col gap-5 pt-5 w-[350px]">
-					<div className="flex flex-col gap-2">
-						<Input
+		<main className="relative min-h-screen flex items-center justify-center p-6 overflow-hidden bg-brand-bg">
+			{/* Background Elements */}
+			<div className="fixed inset-0 grid-background pointer-events-none opacity-50" />
+			<div className="fixed top-[-10%] left-[-10%] w-[50%] h-[50%] bg-brand-primary/10 blur-[120px] rounded-full " />
+			<div className="fixed bottom-[-10%] right-[-10%] w-[50%] h-[50%] bg-brand-secondary/10 blur-[120px] rounded-full " />
+
+			<motion.div
+				initial={{ opacity: 0, y: 20 }}
+				animate={{ opacity: 1, y: 0 }}
+				className="relative z-10 w-full max-w-md"
+			>
+				{/* Logo */}
+				<div
+					onClick={() => navigate("/")}
+					className="flex items-center gap-2 mb-8 justify-center cursor-pointer group"
+				>
+					<div className="w-10 h-10 bg-gradient-to-br from-brand-primary to-brand-secondary rounded-xl flex items-center justify-center shadow-lg shadow-brand-primary/20 group-hover:scale-110 transition-transform">
+						<Code2 className="w-6 h-6 text-white" />
+					</div>
+					<span className="text-2xl font-bold tracking-tight text-white">
+						Code.io
+					</span>
+				</div>
+
+				{/* Card */}
+				<div className="glass-card rounded-[2.5rem] p-8 md:p-10 shadow-2xl border-white/10">
+					<div className="text-center mb-8">
+						<h1 className="text-3xl font-bold text-white mb-2">
+							Create Account
+						</h1>
+						<p className="text-slate-400 text-sm">
+							Join developers mastering code
+						</p>
+					</div>
+
+					<SocialButtons />
+					<div className="relative mb-8">
+						<div className="absolute inset-0 flex items-center">
+							<div className="w-full border-t border-white/5"></div>
+						</div>
+						<div className="relative flex justify-center text-xs uppercase">
+							<span className="bg-brand-bg px-2 text-slate-500 font-bold tracking-widest">
+								Or sign up with email
+							</span>
+						</div>
+					</div>
+					<div>
+						<InputField
+							icon={User}
+							label="Full Name"
 							type="text"
-							value={username}
-							placeholder="Username"
-							className="  rounded-lg border border-code-border px-3 py-2.5 bg-transparent text-white relative w-full text-sm focus:ring-3 focus:ring-code-dark/50 placeholder:text-gray-400"
-							onChange={(e) => {
-								setUsername("")
-								const value = e.target.value;
-								dispatch(setUsername(value));
-								if (value && value.trim().length >= 3)
-									setUsernameError(null);
-							}}
+							placeholder="John Doe"
+							required
+							onChange={(e) => setUsername(e.target.value)}
+              onFocus={() => dispatch(setError(null))}
 						/>
-						{usernameError && (
-							<span className="text-red-400 text-xs">
-								{usernameError}
-							</span>
-						)}
-					</div>
-					<div className="flex flex-col gap-2">
-						<Input
+						<InputField
+							icon={Mail}
+							label="Email Address"
 							type="email"
-							value={email}
-							placeholder="Email"
-							className="outline-none  rounded-lg border border-code-border  px-3 py-2.5 bg-transparent text-white relative w-full text-sm focus:ring-3 focus:ring-code-dark/50 placeholder:text-gray-400"
-							onChange={(e) => {
-								setEmailError("");
-								const value = e.target.value;
-								dispatch(setEmail(value));
-								if (value && validateEmail(value))
-									setEmailError(null);
-							}}
+							placeholder="name@company.com"
+							required
+							onChange={(e) => setEmail(e.target.value)}
+              onFocus={() => dispatch(setError(null))}
 						/>
-						{emailError && (
-							<span className="text-red-400 text-xs">
-								{emailError}
-							</span>
-						)}
-					</div>
-					<div className="flex flex-col gap-2">
-						<PasswordInputField unSetPasswordError = {setPasswordError}/>
-						{passwordError && (
-							<span className="text-red-400 text-xs">
-								{passwordError}
-							</span>
-						)}
-					</div>
-					{hasServerError &&
-						!usernameError &&
-						!emailError &&
-						!passwordError && (
-							<div className="text-red-500 text-sm bg-red-500/10 border border-red-500/20 rounded-md px-3 py-2">
+						<InputField
+							icon={Lock}
+							label="Password"
+							type="password"
+							placeholder="••••••••"
+							required
+							onChange={(e) => setPassword(e.target.value)}
+              onFocus={() => dispatch(setError(null))}
+						/>
+						{error && (
+							<span className=" text-red-500 text-xs">
 								{error}
-							</div>
+							</span>
 						)}
-					<Button
-						className="w-full cursor-pointer text-sm font-medium shadow-lg rounded-lg h-10 bg-code-orange "
-						onClick={handleSignup}
-					>
-						{loading ? (
-							<div className="flex flex-row items-center justify-center gap-2">
-								<Loader className="w-5 h-5 animate-spin" />
-								<span>Signing up...</span>
-							</div>
-						) : (
-							<span>Sign up</span>
-						)}
-					</Button>
-					<div className="flex flex-row justify-start items-center">
-						<span className="text-white text-sm">
-							Already have an account?{" "}
-							<a
-								href="/login"
-								className=" font-semibold italic cursor- text-red-400"
+						<p className="text-[10px] text-slate-500 mb-8 leading-relaxed mt-2">
+							By signing up, you agree to our{" "}
+							<span className="text-slate-400 underline">
+								Terms of Service
+							</span>{" "}
+							and{" "}
+							<span className="text-slate-400 underline">
+								Privacy Policy
+							</span>
+							.
+						</p>
+						<button
+							className="w-full py-4 bg-gradient-to-r from-brand-primary to-brand-secondary text-white rounded-xl font-bold hover:scale-[1.02] active:scale-[0.98] transition-all shadow-lg shadow-brand-primary/20 flex items-center justify-center gap-2 group cursor-pointer"
+							onClick={handleSignup}
+              
+						>
+							{loading ? (
+								<div className="flex item-center gap-1">
+									<Loader className="w-5 h-5 animate-spin" />
+									<span>Creating...</span>
+								</div>
+							) : (
+								<div className="flex items-center gap-1">
+									<span>Create Account</span>
+									<ArrowRight className="w-4 h-4 group-hover:translate-x-1 transition-transform" />
+								</div>
+							)}
+						</button>
+					</div>
+
+					<div className="mt-8 pt-8 border-t border-white/5 text-center">
+						<p className="text-slate-400 text-sm">
+							Already have an account?
+							<button
+								onClick={() => navigate("/login")}
+								className="text-brand-primary font-bold hover:underline underline-offset-4 ml-1"
 							>
-								Log In
-							</a>
-						</span>
+								Log in now
+							</button>
+						</p>
 					</div>
 				</div>
-			</div>
+
+				{/* Back to Home */}
+				<button
+					onClick={() => navigate("/")}
+					className="mt-8 w-full text-slate-500 text-sm hover:text-slate-300 transition-colors flex items-center justify-center gap-2"
+				>
+					← Back to homepage
+				</button>
+			</motion.div>
 		</main>
 	);
 };
