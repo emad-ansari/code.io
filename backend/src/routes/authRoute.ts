@@ -1,16 +1,15 @@
 import { Request, Response, Router } from "express";
 const router = Router();
 import jwt from "jsonwebtoken";
+import bcrypt from "bcryptjs";
 import prisma from "../db";
-import { createUser, findUser } from "../db/user";
+import { findUser } from "../db/user";
 import { LoginInputSchema, SignUpInputSchema } from "../@utils/types";
-import {
-	generateAccessToken,
-	generateRefreshToken,
-} from "../middleware/auth";
+import { generateAccessToken, generateRefreshToken } from "../middleware/auth";
 
 router.post("/signup", async (req: Request, res: Response) => {
 	const parsedInput = SignUpInputSchema.safeParse(req.body.data);
+
 	if (!parsedInput.success) {
 		return res.status(400).json({ success: false, msg: parsedInput.error });
 	}
@@ -28,13 +27,42 @@ router.post("/signup", async (req: Request, res: Response) => {
 			return res.json({ success: false, msg: "User already exist" });
 		}
 		// otherwise user don't exist then create new user
-		const newUser = await createUser(username, email, password);
-		if (!newUser.success) {
-			return res.json({ success: false, msg: newUser.msg });
+		const allowedAdminsEmails =
+			process.env.ALLOWED_ADMINS?.split(",") || [];
+
+		const userRole = allowedAdminsEmails.includes(email) ? "Admin" : "User";
+
+		const hashedPassword = await bcrypt.hash(password, 10);
+
+		// create new user.
+		const newUser = await prisma.user.create({
+			data: {
+				username,
+				email,
+				password: hashedPassword,
+				role: userRole,
+			},
+		});
+		if (!newUser) {
+			return res.json({
+				success: false,
+				msg: "Failed to create new user",
+			});
 		}
-		return res
-			.status(201)
-			.json({ success: true, msg: "User created successfully" });
+		const accessToken = generateAccessToken(newUser.id, newUser.role);
+
+		return res.status(201).json({
+			success: true,
+			msg: "User created successfully",
+			data: {
+				user: {
+					userId: newUser.id,
+					username: newUser.username,
+					email: newUser.email,
+				},
+				token: accessToken,
+			},
+		});
 	} catch (error: any) {
 		console.error("SIGNUP_ERROR: ", error.messag);
 		return res.status(500).json({ success: false, msg: error.message });
@@ -70,8 +98,11 @@ router.post("/login", async (req: Request, res: Response) => {
 			success: true,
 			msg: "login successfully",
 			data: {
-				id: user.userId,
-				username: user.username,
+				user: {
+					userId: user.userId,
+					username: user.username,
+					email: user.email,
+				},
 				token: accessToken,
 			},
 		});
@@ -105,14 +136,14 @@ router.post("/refresh-token", (req: Request, res: Response) => {
 			// add another security level -> that check whether the user exist in database or not other wise just send 401 resposnse.
 			const newAccessToken = generateAccessToken(
 				payload.userId,
-				payload.role
+				payload.role,
 			);
 			return res.status(200).json({
 				success: true,
 				data: { accessToken: newAccessToken },
 				msg: "token refresh successfully",
 			});
-		}
+		},
 	);
 });
 
