@@ -94,8 +94,6 @@ export const fetchProblems = createAsyncThunk(
 				},
 			});
 			const data = res.data;
-			console.log('problem response data: ', data);
-
 			return data;
 		} catch (error: any) {
 			return ThunkAPI.rejectWithValue(
@@ -320,6 +318,7 @@ export const problemSlice = createSlice({
 				state.problems = problems;
 				state.totalPages = totalPages;
 			}
+			console.log('total pages: ', state.totalPages);
 		});
 		builder.addCase(fetchProblems.rejected, (state, action) => {
 			console.log(action.payload);
