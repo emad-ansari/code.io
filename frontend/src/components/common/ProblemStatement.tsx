@@ -19,7 +19,10 @@ import { RootState, useAppDispatch } from "@/app/store";
 import { useEffect, useState } from "react";
 import { fetchProblemDetail, updateLikes } from "@/features/problemSlice";
 import { Label } from "../ui/label";
-import { Tag } from "./ChallengesCard";
+
+interface TagProps {
+	name: string;
+}
 
 export default function ProblemStatement() {
 	const { problemId } = useParams();
@@ -185,4 +188,13 @@ export default function ProblemStatement() {
 			</div>
 		</div>
 	);
+	
 }
+
+export const Tag: React.FC<TagProps> = ({ name }) => {
+	return (
+		<span className="flex items-center justify-center text-sm bg-code-dark rounded-full px-3.5 py-1.5">
+			{name}
+		</span>
+	);
+};

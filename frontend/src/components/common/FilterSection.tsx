@@ -19,7 +19,7 @@ export const FilterSection = memo(() => {
 	const [searchQuery, setSearchQuery] = useState<string>("");
 	const [filters, setFilters] = useState<AppliedFilter[]>([]);
 
-	// Re-store the filter from url if exist and display it on ui 
+	// Re-store the filter from url if exist and display it on ui
 	useEffect(() => {
 		const newFilters: AppliedFilter[] = [];
 		// check supported filters
@@ -34,9 +34,8 @@ export const FilterSection = memo(() => {
 		if (status)
 			newFilters.push({ filterType: "status", filterOption: status });
 
-		setFilters(newFilters); 
+		setFilters(newFilters);
 	}, [searchParams]);
-
 
 	useEffect(() => {
 		if (searchQuery === "") {
@@ -52,7 +51,7 @@ export const FilterSection = memo(() => {
 				difficulty: searchParams.get("difficulty") || "",
 				status: searchParams.get("status") || "",
 				searchKeywords: searchParams.get("search") || "",
-			})
+			}),
 		);
 	}, [searchQuery, dispatch]);
 
@@ -63,14 +62,14 @@ export const FilterSection = memo(() => {
 		// add to UI
 		// check if filter already exist then update it with new option
 		const isFilterExist = filters.find(
-			(filter) => filter.filterType == filterType
+			(filter) => filter.filterType == filterType,
 		);
 		if (isFilterExist) {
 			// then update the exiting option with new opiton
 			const updatedFilters = filters.map((filter) =>
 				filter.filterType == filterType
 					? { ...filter, filterOption: filterOption }
-					: filter
+					: filter,
 			);
 			setFilters(updatedFilters);
 		} else {
@@ -87,14 +86,14 @@ export const FilterSection = memo(() => {
 				difficulty: searchParams.get("difficulty") || "",
 				status: searchParams.get("status") || "",
 				searchKeywords: searchParams.get("search") || "",
-			})
+			}),
 		);
 	};
 
 	const onRemoveFilter = (filterType: string) => {
 		// remove from UI
 		setFilters((prevFilters) =>
-			prevFilters.filter((filter) => filter.filterType !== filterType)
+			prevFilters.filter((filter) => filter.filterType !== filterType),
 		);
 
 		// remove from url
@@ -114,17 +113,25 @@ export const FilterSection = memo(() => {
 				difficulty: searchParams.get("difficulty") || "",
 				status: searchParams.get("status") || "",
 				searchKeywords: searchParams.get("search") || "",
-			})
+			}),
 		);
 	};
 
 	return (
 		<nav className="flex-col  w-full z-0 ">
 			<div className="flex flex-wrap gap-8 w-full items-center justify-between">
-				<h2 className="text-4xl font-bold text-white flex items-center gap-3">
-					{category && category.trim().charAt(0).toUpperCase() + category.trim().slice(1)}
-					<span className="text-[#eb8069]">Challenges</span>
-				</h2>
+				<div className="relative flex-1 text-white shadow-inner ">
+					<Search
+						strokeWidth={1.25}
+						className="absolute top-1/4 left-3 w-5 h-5"
+					/>
+					<input
+						type="text"
+						className="bg-code-bg rounded-full outline-none px-10 py-2.5 text-sm w-full placeholder-[#484848] duration-300 hover:shadow-md hover:shadow-gray-600 transition  border-[1.5px] border-slate-800 "
+						placeholder="Filter problems..."
+						onChange={(e) => setSearchQuery(e.target.value)}
+					/>
+				</div>
 				<div className="flex space-x-5">
 					<DropDownMenu
 						className="bg-code-bg w-32 h-10 text-md  border-[1.5px] border-slate-800"
@@ -142,18 +149,7 @@ export const FilterSection = memo(() => {
 					/>
 				</div>
 			</div>
-			<div className="relative flex-1 text-white shadow-inner mt-8 ">
-				<Search
-					strokeWidth={1.25}
-					className="absolute top-1/4 left-3 w-5 h-5"
-				/>
-				<input
-					type="text"
-					className="bg-code-bg rounded-full outline-none px-10 py-2.5 text-sm w-full placeholder-[#484848] duration-300 hover:shadow-md hover:shadow-gray-600 transition  border-[1.5px] border-slate-800 "
-					placeholder="Filter problems..."
-					onChange={(e) => setSearchQuery(e.target.value)}
-				/>
-			</div>
+
 			<div className="flex flex-row gap-3 mt-3">
 				{filters.map((filter) => {
 					return (

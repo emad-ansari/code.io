@@ -1,5 +1,5 @@
 import { useEffect } from "react";
-import { Clock4 } from "lucide-react";
+import { Clock4, File } from "lucide-react";
 import { useSelector } from "react-redux";
 
 import { useAppDispatch, RootState } from "@/app/store";
@@ -18,13 +18,15 @@ import { useParams } from "react-router-dom";
 export function ProblemSubmissions() {
 	const dispatch = useAppDispatch();
 	const { userSubmissions } = useSelector(
-		(state: RootState) => state.problem
+		(state: RootState) => state.problem,
 	);
 	const { problemId } = useParams();
-	const { isLogin, loading } = useSelector((state: RootState) => state.user);
+	const { isLoggedIn, loading } = useSelector(
+		(state: RootState) => state.auth,
+	);
 
 	useEffect(() => {
-		if (isLogin && problemId) {
+		if (isLoggedIn && problemId) {
 			dispatch(fetchUserSubmissions({ problemId }));
 		}
 	}, []);
@@ -38,9 +40,12 @@ export function ProblemSubmissions() {
 	}
 	if (userSubmissions.length == 0) {
 		return (
-			<h1 className="text-center font-fugaz text-xl pt-10">
-				No submission made yet 😐
-			</h1>
+			<div className="flex flex-col items-center justify-center pt-20 ">
+				<File className="w-18 h-18  mb-2" />
+				<h1 className="text-center font-fugaz text-xl ">
+					No submission made yet 
+				</h1>
+			</div>
 		);
 	}
 

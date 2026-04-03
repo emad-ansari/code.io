@@ -30,14 +30,14 @@ export const EditorSection = () => {
 
 	const [splitRatio, setSplitRatio] = useState<[number, number]>([100, 0]);
 	const [isConsoleOpen, setIsConsoleOpen] = useState<boolean>(false);
-	const { isLogin } = useSelector((state: RootState) => state.user);
+	const { isLoggedIn } = useSelector((state: RootState) => state.auth);
 
 	const { language, code, loading } = useSelector(
 		(state: RootState) => state.editor
 	);
 
 	const onRunCode = () => {
-		if (!isLogin) return;
+		if (!isLoggedIn) return;
 
 		if (!problemId) return;
 
@@ -57,7 +57,7 @@ export const EditorSection = () => {
 	};
 
 	const onSubmitCode = () => {
-		if (!isLogin) return;
+		if (!isLoggedIn) return;
 
 		if (!problemId) return;
 
@@ -87,7 +87,7 @@ export const EditorSection = () => {
 			>
 				<div
 					id="editor-container "
-					className="  rounded-lg  flex flex-1 flex-col overflow-hidden border-[1.5px] border-code-border transition-all duration-500 ease-in-out"
+					className="bg-blue-500/10  rounded-lg  flex flex-1 flex-col overflow-hidden border-[1.5px] border-code-border transition-all duration-500 ease-in-out"
 				>
 					<EditorTopBar />
 					<div className=" h-full">
@@ -163,7 +163,7 @@ export const EditorSection = () => {
 												</Button>
 											</div>
 										</TooltipTrigger>
-										{!isLogin && (
+										{!isLoggedIn && (
 											<TooltipContent className="bg-gray-800">
 												<p>
 													You are not logged in,
