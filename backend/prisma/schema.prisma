@@ -19,6 +19,7 @@ model User {
   username       String
   email          String  @unique
   password       String
+  image          String?
   role           String        @default("User")
   streak         Streak?        // 1:1 relationship
   activityLogs   ActivityLog[]  // Daily activity tracking

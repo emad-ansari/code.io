@@ -20,8 +20,6 @@ const allowedOrigins = [
 	"http://localhost:5173",
 ];
 
-app.use(express.json());
-app.use(cookieParser());
 app.use(
 	cors({
 		origin: allowedOrigins,
@@ -30,6 +28,8 @@ app.use(
 		credentials: true,
 	})
 );
+app.use(express.json());
+app.use(cookieParser());
 
 // Health check route
 app.get("/", (req: Request, res: Response) => {
@@ -53,12 +53,12 @@ async function connectDB() {
 	}
 }
 
-// async function startServer() {
-// 	connectDB();
-// 	app.listen(PORT, () => console.log(`server is running on http://localhost:${PORT}`));
-// }
-connectDB();
-// startServer();
+async function startServer() {
+	connectDB();
+	app.listen(PORT, () => console.log(`server is running on http://localhost:${PORT}`));
+}
+// connectDB();
+startServer();
 
 // Export for Vercel serverless
 export default app;

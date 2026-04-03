@@ -5,7 +5,7 @@ import settingReducer from "@/features/editorSettingSlice";
 import editorReducer from "@/features/codeEditorSlice";
 import authSlice from "@/features/authSlice";
 import ProblemCategorySlice from "@/features/problemCategorySlice";
-import userSlice from '@/features/userSlice'
+import userSlice from "@/features/userSlice";
 
 export const store = configureStore({
 	reducer: {

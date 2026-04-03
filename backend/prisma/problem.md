@@ -1,25 +1,30 @@
-Given a signed 32-bit integer `x`, return `x` with its digits reversed.If reversing `x` causes the value to go outside the signed 32-bit integer range 
-`[-2^31, 2^31 - 1]`, then return `0`.
 
-**Note:**  
-Assume the environment does not allow you to store 64-bit integers (signed or unsigned).
+You are given a **0-indexed** integer array `nums` of even length consisting of an **equal number of positive and negative integers**.
+
+You should return the array of `nums` such that it follows these conditions:
+
+1. Every consecutive pair of integers has **opposite signs**.  
+2. For all integers with the same sign, the **relative order** in which they were present in `nums` is preserved.  
+3. The rearranged array begins with a **positive integer**.  
+
+Return the modified array after rearranging the elements to satisfy the above conditions.
 
 #### Example 1
 ```
-Input: 123
-Output: 321
+Input: nums = [3 1 -2 -5 2 -4]
+Output: [3,-2,1,-5,2,-4]   
 ```
 
 #### Example 2
 ```
-Input: -123
-Output: -321
-```
-#### Example 3
-```
-Input: 120
-Output: 21
+Input: [-1,1]
+Output: [1, -1]
 ```
 
+
 #### Constraints
-- `-2^31 <= x <= 2^31 - 1`
+- `2 <= nums.length <= 2 * 10^5`  
+- `nums.length` is **even**  
+- `1 <= |nums[i]| <= 10^5`  
+- `nums` consists of equal number of positive and negative integers.
+- It is not required to do the modifications in-place.

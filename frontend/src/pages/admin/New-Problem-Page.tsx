@@ -26,7 +26,7 @@ import { useEffect } from "react";
 
 const NewProblemPage = () => {
 	const dispatch = useAppDispatch();
-	const { isLogin } = useSelector((state: RootState) => state.user);
+	const { isLoggedIn } = useSelector((state: RootState) => state.auth);
 	const { loading, category, title, testcases, tags, templates, description, difficulty } = useSelector(
 		(state: RootState) => state.problem
 	);
@@ -88,7 +88,7 @@ const NewProblemPage = () => {
 						</TooltipTrigger>
 						<TooltipContent>
 							<p className="text-white">
-								{isLogin
+								{isLoggedIn
 									? null
 									: "You are not logged in, please login"}
 							</p>
