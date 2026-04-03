@@ -1,7 +1,7 @@
-import { useEffect, useMemo, useState } from "react";
+import { useEffect, useState } from "react";
 import { useSelector } from "react-redux";
 import { useLocation, useNavigate } from "react-router-dom";
-import { useAppDispatch, RootState, store } from "@/app/store";
+import { useAppDispatch, RootState } from "@/app/store";
 import { setError, login } from "@/features/authSlice";
 import { motion } from "motion/react";
 import { ArrowRight, Code2, Loader, Lock, Mail } from "lucide-react";
@@ -21,11 +21,11 @@ export const LoginPage = () => {
 	const from = location.state?.from?.pathname || "/";
 
 	// navigate user to the page,  where it was before login.
-	// useEffect(() => {
-	// 	if (isLogin) {
-	// 		navigate(from, { replace: true });
-	// 	}
-	// }, [dispatch, isLogin]);
+	useEffect(() => {
+		if (isLoggedIn) {
+			navigate(from, { replace: true });
+		}
+	}, [dispatch, isLoggedIn]);
 
 	const [email, setEmail] = useState("");
 	const [password, setPassword] = useState("");

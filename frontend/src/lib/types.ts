@@ -136,11 +136,15 @@ export interface APIResponse<T> {
 	msg: string | null;
 }
 export interface UserDetail {
-	id: string;
 	username: string;
-	imgUrl?: string;
-	token?: string
+	email: string;
+	image?: string;
 }
+export type AuthResponse = APIResponse<{
+	user: UserDetail,
+	token?: string
+}>
+
 export const EDITOR_THEMES: string[] = [
 	"vs-dark",
 	"vs",
