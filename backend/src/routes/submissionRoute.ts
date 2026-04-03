@@ -240,7 +240,6 @@ export async function evaluateCode(
 		};
 
 		const response = await axios.request(CreateSubmissionsOptions);
-		console.log('judge0 response', response);
 
 		const getSubmissionsOptions = {
 			method: "GET",
