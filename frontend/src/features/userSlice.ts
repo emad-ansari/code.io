@@ -3,13 +3,13 @@ import { APIResponse } from "@/lib/types";
 import { createSlice, PayloadAction, createAsyncThunk } from "@reduxjs/toolkit";
 
 
-
 interface Progress {
     solved: number;
     total: number;
 }
 interface UserProfile {
     username: string;
+    email: string;
     easyProgress: Progress;
     mediumProgress: Progress;
     hardProgress: Progress;
@@ -38,7 +38,6 @@ export const getUserProfile = createAsyncThunk<APIResponse<UserProfile>> ("/user
         return ThunkAPI.rejectWithValue(error);
     }
 })
-
 export const userSlice = createSlice({
     name: "user",
     initialState: initialUserState,
