@@ -5,9 +5,8 @@ import { getUserProfile } from "../db/user";
 
 const router = express.Router();
 
-router.get("/get-user-details", async (req: Request, res: Response) => {
+router.get("/detail", async (req: Request, res: Response) => {
 	const { userAuthorized, userId } = req as CustomRequestObject;
-	console.log("request received for user details");
 	if (!userAuthorized) {
 		return res.status(401).json({ success: false, msg: "Unauthorized" });
 	}
@@ -18,6 +17,8 @@ router.get("/get-user-details", async (req: Request, res: Response) => {
 			select: {
 				id: true,
 				username: true,
+				email: true,
+				image: true
 			},
 		});
 		return res.json({
