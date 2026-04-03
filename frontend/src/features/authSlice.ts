@@ -1,37 +1,33 @@
 import { createSlice, PayloadAction, createAsyncThunk } from "@reduxjs/toolkit";
 import { toast } from "react-toastify";
 import { api } from "@/api/client";
-import { RootState } from "@/app/store";
-import { APIResponse, UserDetail } from "@/lib/types";
+import { APIResponse, AuthResponse, UserDetail } from "@/lib/types";
 
 export interface AuthState {
 	loading: boolean;
-	isLogin: boolean;
-	isSignup: boolean;
-	username: string;
-	email: string;
-	password: string;
+	isLoggedIn: boolean;
+	isAuthChecked: boolean;
 	user: UserDetail | null;
 	error?: string | null;
 }
 export const initialState: AuthState = {
 	loading: false,
-	isLogin: false,
-	isSignup: false,
-	username: "",
-	email: "",
-	password: "",
+	isLoggedIn:  false,
+	isAuthChecked: false,
 	user: null,
 	error: null,
 };
 
-export const signup = createAsyncThunk<APIResponse<{ token: string }>>(
-	"/auth/signup",
-	async (_, ThunkAPI) => {
-		try {
-			const store = ThunkAPI.getState() as RootState;
-			const { username, email, password } = store.auth;
+interface FormData {
+	username?: string;
+	email: string;
+	password: string;
+}
 
+export const signup = createAsyncThunk<AuthResponse, FormData>(
+	"/auth/signup",
+	async ({ username, email, password }: FormData, ThunkAPI) => {
+		try {
 			const res = await api.post("/auth/signup", {
 				data: {
 					username,
@@ -47,18 +43,15 @@ export const signup = createAsyncThunk<APIResponse<{ token: string }>>(
 				"Error while Sign up";
 			return ThunkAPI.rejectWithValue(message);
 		}
-	}
+	},
 );
 
 export const login = createAsyncThunk<
-	APIResponse<UserDetail>,
-	void,
+	AuthResponse,
+	FormData,
 	{ rejectValue: string }
->("/auth/login", async (_, ThunkAPI) => {
+>("/auth/login", async ({ email, password }: FormData, ThunkAPI) => {
 	try {
-		const store = ThunkAPI.getState() as RootState;
-		const { email, password } = store.auth;
-
 		const res = await api.post(
 			"/auth/login",
 			{
@@ -69,7 +62,7 @@ export const login = createAsyncThunk<
 			},
 			{
 				withCredentials: true,
-			}
+			},
 		);
 		return res.data;
 	} catch (error: any) {
@@ -85,14 +78,14 @@ export const getUserDetails = createAsyncThunk<APIResponse<UserDetail>>(
 	"/user/getUserDetails",
 	async (_, ThunkAPI) => {
 		try {
-			const res = await api.get("/user/get-user-details");
+			const res = await api.get("/user/detail");
 			return res.data;
 		} catch (error: any) {
 			ThunkAPI.rejectWithValue(
-				error.message || "Error occurred while fetching user details"
+				error.message || "Error occurred while fetching user details",
 			);
 		}
-	}
+	},
 );
 
 export const logOut = createAsyncThunk<APIResponse<null>>(
@@ -102,65 +95,59 @@ export const logOut = createAsyncThunk<APIResponse<null>>(
 			const res = await api.post(
 				"/auth/logout",
 				{},
-				{ withCredentials: true }
+				{ withCredentials: true },
 			);
 			console.log("user logout response: ", res);
 			return res.data;
 		} catch (error: any) {
 			ThunkAPI.rejectWithValue(
-				error.message || "Error while  signing up"
+				error.message || "Error while  signing up",
 			);
 		}
-	}
+	},
 );
 
-export const userSlice = createSlice({
+export const authSlice = createSlice({
 	name: "user",
 	initialState,
 	reducers: {
-		setUsername: (state, action: PayloadAction<string>) => {
-			state.username = action.payload;
-		},
-		setEmail: (state, action: PayloadAction<string>) => {
-			state.email = action.payload;
-		},
-		setPassword: (state, action: PayloadAction<string>) => {
-			state.password = action.payload;
-		},
 		setIsLoading: (state, _) => {
 			state.loading = true;
+		},
+		setError: (state, action: PayloadAction<string | null>) => {
+			state.error = action.payload;
 		},
 		rehydrateAuth: (state) => {
 			const token = localStorage.getItem("CToken");
 			if (token) {
-				state.isLogin = true;
+				state.isLoggedIn = true;
+				state.isAuthChecked = true;
 			}
 		},
 	},
 	extraReducers: (builder) => {
 		builder.addCase(signup.pending, (state) => {
 			state.loading = true;
-			state.error = null;
 		});
 		builder.addCase(
 			signup.fulfilled,
-			(state, action: PayloadAction<APIResponse<{ token: string }>>) => {
+			(state, action: PayloadAction<AuthResponse>) => {
 				state.loading = false;
 				const { success, msg, data } = action.payload;
-				if (success && data) {
-					state.isSignup = true;
+				if (success && data && data.token) {
+					state.isLoggedIn = true;
+					state.user = data.user;
 					localStorage.setItem("CToken", data.token);
 					toast.success("User Registered Successfully");
 				} else {
 					state.error = msg;
 					toast.error("Something went wrong, please try again");
 				}
-			}
+			},
 		);
-		builder.addCase(signup.rejected, (state, action) => {
+		builder.addCase(signup.rejected, (state) => {
 			state.loading = false;
-			state.error = (action.payload as string) || "Failed to sign up";
-			toast.error(state.error);
+			toast.error("Failed to sign up");
 		});
 		builder.addCase(login.pending, (state) => {
 			state.loading = true;
@@ -168,22 +155,20 @@ export const userSlice = createSlice({
 		});
 		builder.addCase(
 			login.fulfilled,
-			(state, action: PayloadAction<APIResponse<UserDetail>>) => {
+			(state, action: PayloadAction<AuthResponse>) => {
 				state.loading = false;
 				const { success, data, msg } = action.payload;
 				if (success && data && data.token) {
-					state.isLogin = true;
-					state.user = data;
+					state.isLoggedIn = true;
+					state.user = data.user;
 					localStorage.setItem("CToken", data.token);
 					toast.success(`${msg}`);
-				}
-				else {
+				} else {
 					state.error = msg;
 				}
-			}
+			},
 		);
 		builder.addCase(login.rejected, (state, action) => {
-			state.isSignup = false;
 			state.loading = false;
 			state.error =
 				(action.payload as string) || "Invalid email or password";
@@ -192,12 +177,11 @@ export const userSlice = createSlice({
 		builder.addCase(logOut.fulfilled, (state, action) => {
 			const { success } = action.payload;
 			if (success) {
-				state.isLogin = false;
+				state.isLoggedIn = false;
 				localStorage.removeItem("CToken");
 				toast.success("Logout successfully");
 				window.location.href = "/";
 			}
-			state.isSignup = false;
 		});
 		builder.addCase(getUserDetails.pending, (state) => {
 			state.loading = true;
@@ -215,11 +199,5 @@ export const userSlice = createSlice({
 	},
 });
 
-export default userSlice.reducer;
-export const {
-	setUsername,
-	setEmail,
-	setPassword,
-	setIsLoading,
-	rehydrateAuth,
-} = userSlice.actions;
+export default authSlice.reducer;
+export const { setError, setIsLoading, rehydrateAuth } = authSlice.actions;
