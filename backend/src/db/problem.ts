@@ -2,7 +2,6 @@ import prisma from "./index";
 import { Problem } from "../@utils/types";
 import { Prisma } from "@prisma/client";
 
-
 // CREATE: new problem
 export async function createProblem(
 	data: Problem,
@@ -143,15 +142,18 @@ export async function getAllProblems(
 				},
 			},
 		});
-		
+
 		// Fixed: Handle empty arrays gracefully
 		const formattedProblem = category.flatMap((cat) =>
 			cat.problems.map((p) => {
 				// Get status for each problem individually
-				const problemStatus = userAuthorized && p.solvedProblems && p.solvedProblems.length > 0 
-					? p.solvedProblems[0].status 
-					: "Todo";
-				
+				const problemStatus =
+					userAuthorized &&
+					p.solvedProblems &&
+					p.solvedProblems.length > 0
+						? p.solvedProblems[0].status
+						: "Todo";
+
 				return {
 					id: p.id,
 					categoryTitle: cat.title,
@@ -167,7 +169,7 @@ export async function getAllProblems(
 
 		return {
 			problems: formattedProblem,
-			totalCount: Math.ceil(totalCount / problemPerPage)
+			totalCount: Math.ceil(totalCount / problemPerPage),
 		};
 	} catch (error: any) {
 		console.log("GET_ALL_PROBLEMS_DB_ERROR", error);
@@ -243,11 +245,13 @@ export async function getProblemDetail(
 		}
 
 		// Fixed: Handle case where solvedProblems might be empty
-		const status = userAuthorized && problemDetail.solvedProblems && 
-					  Array.isArray(problemDetail.solvedProblems) && 
-					  problemDetail.solvedProblems.length > 0 
-			? problemDetail.solvedProblems[0].status 
-			: null;
+		const status =
+			userAuthorized &&
+			problemDetail.solvedProblems &&
+			Array.isArray(problemDetail.solvedProblems) &&
+			problemDetail.solvedProblems.length > 0
+				? problemDetail.solvedProblems[0].status
+				: null;
 
 		const formattedProblemDetail = {
 			id: problemDetail.id,
