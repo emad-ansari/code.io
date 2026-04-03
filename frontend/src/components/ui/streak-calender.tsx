@@ -1,296 +1,149 @@
-import { ChevronLeft, ChevronRight, Flame } from "lucide-react";
-import { useState } from "react";
-import { Button } from "./button";
+import { useMemo } from "react";
+import {
+  Tooltip,
+  TooltipContent,
+  TooltipProvider,
+  TooltipTrigger,
+} from "@/components/ui/tooltip";
 
-interface StreakCalendarProps {
-	className?: string;
+interface HeatmapDay {
+  date: string;
+  count: number;
 }
 
-interface DayData {
-	date: number;
-	isCompleted: boolean;
-	isStreak: boolean;
-	isCurrentMonth: boolean;
+interface Props {
+  data?: HeatmapDay[];
 }
 
-export function StreakCalendar({ className = "" }: StreakCalendarProps) {
-	const [currentDate, setCurrentDate] = useState(new Date(2025, 0, 1)); // January 2022
+const generateMockData = (): HeatmapDay[] => {
+  const days = 365;
+  const today = new Date();
+  const result: HeatmapDay[] = [];
 
-	const monthNames = [
-		"JAN",
-		"FEB",
-		"MAR",
-		"APR",
-		"MAY",
-		"JUN",
-		"JUL",
-		"AUG",
-		"SEP",
-		"OCT",
-		"NOV",
-		"DEC",
-	];
+  for (let i = 0; i < days; i++) {
+    const d = new Date(today);
+    d.setDate(today.getDate() - i);
 
-	const dayLabels = ["MON", "TUE", "WED", "THU", "FRI", "SAT", "SUN"];
+    result.push({
+      date: d.toISOString().split("T")[0],
+      count: Math.floor(Math.random() * 5),
+    });
+  }
 
-	// Generate calendar data for a month
-	const generateMonthData = (year: number, month: number): DayData[] => {
-		const firstDay = new Date(year, month, 1);
-		const lastDay = new Date(year, month + 1, 0);
-		const daysInMonth = lastDay.getDate();
-		const startingDayOfWeek = (firstDay.getDay() + 6) % 7; // Convert to Monday = 0
+  return result.reverse();
+};
 
-		const days: DayData[] = [];
+export default function StreakCalendar({ data }: Props) {
+  const heatmapData = data || generateMockData();
 
-		// Add empty days for the start of the month
-		for (let i = 0; i < startingDayOfWeek; i++) {
-			const prevMonthDate = new Date(
-				year,
-				month,
-				-startingDayOfWeek + i + 1
-			);
-			days.push({
-				date: prevMonthDate.getDate(),
-				isCompleted: false,
-				isStreak: false,
-				isCurrentMonth: false,
-			});
-		}
+  // Convert into weeks
+  const { weeks, monthLabels } = useMemo(() => {
+    const weeks: HeatmapDay[][] = [];
+    const monthLabels: { index: number; label: string }[] = [];
 
-		// Add days of the current month
-		for (let day = 1; day <= daysInMonth; day++) {
-			// Mock streak data - you can replace this with real data
-			const isCompleted = Math.random() > 0.4; // Random completion
-			const isStreak = day >= 9 && day <= 28 && month === 0; // Streak from 15th to 23rd in January
+    let currentWeek: HeatmapDay[] = [];
 
-			days.push({
-				date: day,
-				isCompleted: isCompleted || isStreak,
-				isStreak,
-				isCurrentMonth: true,
-			});
-		}
+    heatmapData.forEach((day, i) => {
+      const date = new Date(day.date);
 
-		// Fill remaining days to complete the grid
-		const remainingDays = 42 - days.length;
-		for (let day = 1; day <= remainingDays; day++) {
-			days.push({
-				date: day,
-				isCompleted: false,
-				isStreak: false,
-				isCurrentMonth: false,
-			});
-		}
+      // Add month label at start of new month
+      if (date.getDate() === 1) {
+        monthLabels.push({
+          index: weeks.length,
+          label: date.toLocaleString("default", { month: "short" }),
+        });
+      }
 
-		return days;
-	};
+      currentWeek.push(day);
 
-	const navigateMonth = (direction: "prev" | "next") => {
-		setCurrentDate((prev) => {
-			const newDate = new Date(prev);
-			if (direction === "prev") {
-				newDate.setMonth(prev.getMonth() - 1);
-			} else {
-				newDate.setMonth(prev.getMonth() + 1);
-			}
-			return newDate;
-		});
-	};
+      if (currentWeek.length === 7) {
+        weeks.push(currentWeek);
+        currentWeek = [];
+      }
+    });
 
-	const renderMonth = (
-		date: Date,
-		index: number,
-		totalMonths: number,
-		showNavigation = true
-	) => {
-		const year = date.getFullYear();
-		const month = date.getMonth();
-		const monthData = generateMonthData(year, month);
+    if (currentWeek.length) weeks.push(currentWeek);
 
-		const isFirstMonth = index === 0;
-		const isLastMonth = index === totalMonths - 1;
+    return { weeks, monthLabels };
+  }, [heatmapData]);
 
-		return (
-			<div key={`${year}-${month}`} className="flex-shrink-0 w-full">
-				{/* Month Header - Fixed height for alignment */}
-				<div className="flex items-center justify-between mb-3 h-10">
-					{/* Left Arrow - only on first month */}
-					{isFirstMonth && showNavigation ? (
-						<Button
-							size={"icon"}
-							onClick={() => navigateMonth("prev")}
-							className="p-2 text-white hover:text-yellow-400 transition-colors rounded-full bg-slate-700/50 cursor-pointer"
-						>
-							<ChevronLeft className="w-6 h-6" />
-						</Button>
-					) : (
-						<div className="w-10"></div>
-					)}
+  const getColor = (count: number) => {
+    if (count === 0) return "bg-slate-700/40";
+    if (count === 1) return "bg-green-900";
+    if (count === 2) return "bg-green-700";
+    if (count === 3) return "bg-green-500";
+    return "bg-green-400";
+  };
 
-					<h2 className="text-white text-sm font-medium tracking-wider flex-1 text-center">
-						{monthNames[month]} {year}
-					</h2>
+  return (
+    <div className="w-full bg-white/5 backdrop-blur-xl border border-white/10 rounded-2xl p-6">
 
-					{/* Right Arrow - only on last month */}
-					{isLastMonth && showNavigation ? (
-						<Button
-                        	size={"icon"}
-							onClick={() => navigateMonth("next")}
-							className="p-2 text-white hover:text-yellow-400 transition-colors rounded-full bg-slate-700/50 cursor-pointe"
-						>
-							<ChevronRight className="w-6 h-6" />
-						</Button>
-					) : (
-						<div className="w-10"></div>
-					)}
-				</div>
+      {/* Header */}
+      <div className="flex justify-between items-center mb-6">
+        <h2 className="text-white text-lg font-semibold">
+          269 submissions in the past one year
+        </h2>
 
-				{/* Separator Line - Fixed positioning */}
-				{/* <div className="w-full h-px bg-slate-600 mb-6"></div> */}
+        <div className="text-sm text-gray-400 flex gap-4">
+          <span>Total active days: 77</span>
+          <span>Max streak: 13</span>
+        </div>
+      </div>
 
-				{/* Day Labels - Fixed height */}
-				<div className="grid grid-cols-7 gap-2 mb-2 h-8">
-					{dayLabels.map((day) => (
-						<div
-							key={day}
-							className="text-center text-white text-[11px] font-medium flex items-center justify-center"
-						>
-							{day}
-						</div>
-					))}
-				</div>
+      <TooltipProvider>
+        <div className="overflow-x-auto">
 
-				{/* Calendar Grid */}
-				<div className="grid grid-cols-7 ">
-					{monthData.map((day, dayIndex) => {
-						const prevDay = monthData[dayIndex - 1];
-						const nextDay = monthData[dayIndex + 1];
+          {/* Month Labels */}
+          <div className="flex gap-[3px] mb-2 min-w-max text-xs text-gray-400">
+            {weeks.map((_, i) => {
+              const month = monthLabels.find((m) => m.index === i);
+              return (
+                <div key={i} className="w-3 text-center">
+                  {month ? month.label : ""}
+                </div>
+              );
+            })}
+          </div>
 
-						const isStreakStart =
-							day.isStreak && !prevDay?.isStreak;
-						const isStreakEnd = day.isStreak && !nextDay?.isStreak;
-						const isStreakMiddle =
-							day.isStreak &&
-							prevDay?.isStreak &&
-							nextDay?.isStreak;
-						const isStreakSingle =
-							day.isStreak &&
-							!prevDay?.isStreak &&
-							!nextDay?.isStreak;
+          {/* Heatmap */}
+          <div className="flex gap-[3px] min-w-max">
+            {weeks.map((week, i) => (
+              <div key={i} className="flex flex-col gap-[3px]">
+                {week.map((day, j) => (
+                  <Tooltip key={j}>
+                    <TooltipTrigger asChild>
+                      <div
+                        className={`w-3 h-3 rounded-[2px] ${getColor(
+                          day.count
+                        )} hover:scale-125 transition`}
+                      />
+                    </TooltipTrigger>
 
-						// Check if we're at row boundaries for proper streak background
-						const isRowStart = dayIndex % 7 === 0;
-						const isRowEnd = dayIndex % 7 === 6;
+                    <TooltipContent>
+                      <p className="text-xs">
+                        {day.count} submissions on {day.date}
+                      </p>
+                    </TooltipContent>
+                  </Tooltip>
+                ))}
+              </div>
+            ))}
+          </div>
+        </div>
+      </TooltipProvider>
 
-						return (
-							<div
-								key={dayIndex}
-								className="relative h-11 flex items-center justify-center"
-							>
-								{/* Continuous Streak Background */}
-								{day.isStreak && (
-									<div
-										className="absolute inset-y-[2px] bg-green-500/20 z-0"
-										style={{
-											left:
-												isStreakStart || isRowStart
-													? "9%"
-													: "0%",
-											right:
-												isStreakEnd || isRowEnd
-													? "9%"
-													: "0%",
-											transform:
-												(isStreakStart || isRowStart) &&
-												(isStreakEnd || isRowEnd)
-													? "translateX(-50%)"
-													: "none",
-											borderRadius: isStreakSingle
-												? "50%"
-												: (isStreakStart ||
-														isRowStart) &&
-												  (isStreakEnd || isRowEnd)
-												? "50%"
-												: isStreakStart || isRowStart
-												? "50% 0 0 50%"
-												: isStreakEnd || isRowEnd
-												? "0 50% 50% 0"
-												: "0",
-										}}
-									/>
-								)}
-
-								{/* Day Circle */}
-								<div className="relative z-10 w-8 h-8 rounded-full flex items-center justify-center transition-all duration-200">
-									<div
-										className={`w-full h-full rounded-full flex items-center justify-center ${
-											day.isCurrentMonth
-												? day.isStreak
-													? "bg-green-400/80 text-white"
-													: "bg-slate-700 text-white"
-												: "bg-slate-600 text-slate-400"
-										}`}
-									>
-										{day.isStreak ? (
-											<Flame className="w-5 h-5 text-green-900" />
-										) : (
-											<span className="text-sm font-medium">
-												{day.date}
-											</span>
-										)}
-									</div>
-								</div>
-							</div>
-						);
-					})}
-				</div>
-			</div>
-		);
-	};
-
-	// Generate multiple months based on screen size
-	const getMonthsToShow = (monthCount: number) => {
-		const months = [];
-		const baseDate = new Date(currentDate);
-
-		for (let i = 0; i < monthCount; i++) {
-			const monthDate = new Date(
-				baseDate.getFullYear(),
-				baseDate.getMonth() + i,
-				1
-			);
-			months.push(monthDate);
-		}
-
-		return months;
-	};
-
-	return (
-		<div className={`bg-slate-800 rounded-2xl p-6 ${className}`}>
-			{/* Mobile View - 1 Month */}
-			<div className="block lg:hidden xl:hidden">
-				<div className="block md:hidden">
-					{renderMonth(currentDate, 0, 1, true)}
-				</div>
-
-				{/* Tablet View - 2 Months */}
-				<div className="hidden md:block lg:hidden">
-					<div className="grid grid-cols-2 gap-8">
-						{getMonthsToShow(2).map((month, index) =>
-							renderMonth(month, index, 2, true)
-						)}
-					</div>
-				</div>
-			</div>
-
-			{/* Desktop View - 3 Months */}
-			<div className="hidden lg:block">
-				<div className="grid grid-cols-3 gap-8">
-					{getMonthsToShow(3).map((month, index) =>
-						renderMonth(month, index, 3, true)
-					)}
-				</div>
-			</div>
-		</div>
-	);
+      {/* Legend */}
+      <div className="flex items-center justify-end gap-2 mt-4 text-xs text-gray-400">
+        <span>Less</span>
+        <div className="flex gap-1">
+          <div className="w-3 h-3 bg-slate-700/40 rounded-sm" />
+          <div className="w-3 h-3 bg-green-900 rounded-sm" />
+          <div className="w-3 h-3 bg-green-700 rounded-sm" />
+          <div className="w-3 h-3 bg-green-500 rounded-sm" />
+          <div className="w-3 h-3 bg-green-400 rounded-sm" />
+        </div>
+        <span>More</span>
+      </div>
+    </div>
+  );
 }

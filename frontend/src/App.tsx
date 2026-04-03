@@ -7,29 +7,27 @@ import "./index.css";
 import { LoginPage } from "@/pages/LoginPage";
 import { SignupPage } from "@/pages/SignupPage";
 import { ProblemSubmissions } from "@/components/common/ProblemSubmissions";
-import { ProblemChallenges } from "@/pages/ProblemChallenges";
+import ProblemCategoryPage  from "@/pages/ProblemChallenges";
 import { MainLayout } from "@/layouts/MainLayout";
 import { LoadingPage } from "@/pages/LoadingPage";
 import { ProfilePage } from "@/pages/ProfilePage";
-import { ProblemCategoryPage } from "@/pages/admin/ProblemCategoryPage";
+// import { ProblemCategoryPage } from "@/pages/admin/ProblemCategoryPage";
 import { DocumentPage } from "@/pages/DocumentPage";
 import { CSFundamentals } from "@/pages/CSFundamentals";
+import ProblemStatement from "./components/common/ProblemStatement";
 
 import { rehydrateAuth } from "@/features/authSlice";
 import { useAppDispatch } from "@/app/store";
 import { BadgeCheck, CircleAlert, Info, TriangleAlert } from "lucide-react";
 
-
 const HomePage = lazy(() => import("@/pages/HomePage"));
-const ProblemStatement = lazy(() =>
-	wait(2000).then(() => import("@/components/common/ProblemStatement"))
-);
+
 const ProblemsetPage = lazy(() => import("@/pages/ProblemsetPage"));
 const ProblemList = lazy(() =>
-	wait(2000).then(() => import("@/components/common/ProblemList"))
+	wait(2000).then(() => import("@/components/common/ProblemList")),
 );
 const ProblemDescriptionPage = lazy(
-	() => import("@/pages/ProblemDescriptionPage")
+	() => import("@/pages/ProblemDescriptionPage"),
 );
 
 const AdminDashboardPage = lazy(() => import("@/pages/admin/DashboardPage"));
@@ -74,12 +72,12 @@ const App = () => {
 				/>
 				<Suspense fallback={<LoadingPage />}>
 					<Routes>
+						<Route path="/login" element={<LoginPage />} />
+						<Route path="/signup" element={<SignupPage />} />
 						<Route path="/" element={<MainLayout />}>
 							<Route index element={<HomePage />} />
-							<Route path="/login" element={<LoginPage />} />
-							<Route path="/signup" element={<SignupPage />} />
 							<Route path="/problemset">
-								<Route index element={<ProblemChallenges />} />
+								<Route index element={<ProblemCategoryPage />} />
 								<Route
 									path=":category"
 									element={<ProblemsetPage />}
@@ -109,7 +107,7 @@ const App = () => {
 								element={<DocumentPage />}
 							/>
 							<Route
-								path="/core-cs"
+								path="/cs"
 								element={<CSFundamentals />}
 							/>
 						</Route>
