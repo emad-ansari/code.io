@@ -19,13 +19,12 @@ import ProblemStatement from "./components/common/ProblemStatement";
 import { rehydrateAuth } from "@/features/authSlice";
 import { useAppDispatch } from "@/app/store";
 import { BadgeCheck, CircleAlert, Info, TriangleAlert } from "lucide-react";
+import ProblemsetPage from "./pages/ProblemsetPage";
 
 const HomePage = lazy(() => import("@/pages/HomePage"));
 
-const ProblemsetPage = lazy(() => import("@/pages/ProblemsetPage"));
-const ProblemList = lazy(() =>
-	wait(2000).then(() => import("@/components/common/ProblemList")),
-);
+const ProblemList = lazy(() => import("@/components/common/ProblemList"))
+
 const ProblemDescriptionPage = lazy(
 	() => import("@/pages/ProblemDescriptionPage"),
 );
