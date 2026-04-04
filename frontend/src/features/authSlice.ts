@@ -6,14 +6,12 @@ import { APIResponse, AuthResponse, UserDetail } from "@/lib/types";
 export interface AuthState {
 	loading: boolean;
 	isLoggedIn: boolean;
-	isAuthChecked: boolean;
 	user: UserDetail | null;
 	error?: string | null;
 }
 export const initialState: AuthState = {
 	loading: false,
-	isLoggedIn:  false,
-	isAuthChecked: false,
+	isLoggedIn: false,
 	user: null,
 	error: null,
 };
@@ -40,7 +38,7 @@ export const signup = createAsyncThunk<AuthResponse, FormData>(
 			const message =
 				error?.response?.data?.msg ||
 				error.message ||
-				"Error while Sign up";
+				"Error while signing up";
 			return ThunkAPI.rejectWithValue(message);
 		}
 	},
@@ -97,11 +95,10 @@ export const logOut = createAsyncThunk<APIResponse<null>>(
 				{},
 				{ withCredentials: true },
 			);
-			console.log("user logout response: ", res);
 			return res.data;
 		} catch (error: any) {
-			ThunkAPI.rejectWithValue(
-				error.message || "Error while  signing up",
+			return ThunkAPI.rejectWithValue(
+				error.message || "Error while logging out",
 			);
 		}
 	},
@@ -121,7 +118,6 @@ export const authSlice = createSlice({
 			const token = localStorage.getItem("CToken");
 			if (token) {
 				state.isLoggedIn = true;
-				state.isAuthChecked = true;
 			}
 		},
 	},
@@ -133,21 +129,27 @@ export const authSlice = createSlice({
 			signup.fulfilled,
 			(state, action: PayloadAction<AuthResponse>) => {
 				state.loading = false;
-				const { success, msg, data } = action.payload;
-				if (success && data && data.token) {
-					state.isLoggedIn = true;
-					state.user = data.user;
-					localStorage.setItem("CToken", data.token);
-					toast.success("User Registered Successfully");
+				if (action.payload) {
+					const { success, msg, data } = action.payload;
+					if (success && data && data.token) {
+						state.isLoggedIn = true;
+						state.user = data.user;
+						localStorage.setItem("CToken", data.token);
+						toast.success("User Registered Successfully");
+					} else {
+						state.error = msg;
+						toast.error("Something went wrong, please try again");
+					}
 				} else {
-					state.error = msg;
-					toast.error("Something went wrong, please try again");
+					state.error = "Unexpected response from server";
+					toast.error(state.error);
 				}
 			},
 		);
-		builder.addCase(signup.rejected, (state) => {
+		builder.addCase(signup.rejected, (state, action) => {
 			state.loading = false;
-			toast.error("Failed to sign up");
+			state.error = (action.payload as string) || "Failed to sign up";
+			toast.error(state.error);
 		});
 		builder.addCase(login.pending, (state) => {
 			state.loading = true;
@@ -157,14 +159,18 @@ export const authSlice = createSlice({
 			login.fulfilled,
 			(state, action: PayloadAction<AuthResponse>) => {
 				state.loading = false;
-				const { success, data, msg } = action.payload;
-				if (success && data && data.token) {
-					state.isLoggedIn = true;
-					state.user = data.user;
-					localStorage.setItem("CToken", data.token);
-					toast.success(`${msg}`);
+				if (action.payload) {
+					const { success, data, msg } = action.payload;
+					if (success && data && data.token) {
+						state.isLoggedIn = true;
+						state.user = data.user;
+						localStorage.setItem("CToken", data.token);
+						toast.success(`${msg}`);
+					} else {
+						state.error = msg;
+					}
 				} else {
-					state.error = msg;
+					state.error = "Unexpected response from server";
 				}
 			},
 		);
@@ -175,26 +181,39 @@ export const authSlice = createSlice({
 			toast.error(state.error);
 		});
 		builder.addCase(logOut.fulfilled, (state, action) => {
-			const { success } = action.payload;
-			if (success) {
-				state.isLoggedIn = false;
-				localStorage.removeItem("CToken");
-				toast.success("Logout successfully");
-				window.location.href = "/";
+			if (action.payload) {
+				const { success } = action.payload;
+				if (success) {
+					state.isLoggedIn = false;
+					localStorage.removeItem("CToken");
+					toast.success("Logout successfully");
+					window.location.href = "/";
+				}
+			} else {
+				state.error = "Unexpected response from server";
+				toast.error(state.error);
 			}
+		});
+		builder.addCase(logOut.rejected, (state, action) => {
+			state.error = (action.payload as string) || "Failed to log out";
+			toast.error(state.error);
 		});
 		builder.addCase(getUserDetails.pending, (state) => {
 			state.loading = true;
 		});
 		builder.addCase(getUserDetails.fulfilled, (state, action) => {
 			state.loading = false;
-			const { success, data } = action.payload;
-			if (success && data) {
-				state.user = data;
+			if (action.payload) {
+				const { success, data } = action.payload;
+				if (success && data) {
+					state.user = data;
+				}
 			}
 		});
-		builder.addCase(getUserDetails.rejected, (state, _) => {
+		builder.addCase(getUserDetails.rejected, (state, action) => {
 			state.loading = false;
+			state.error =
+				(action.payload as string) || "Failed to fetch user details";
 		});
 	},
 });

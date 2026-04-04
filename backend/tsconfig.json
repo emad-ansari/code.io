@@ -5,7 +5,6 @@
 		"types": ["node"],
 		"lib": ["ES2020", "DOM"],
 		"module": "commonjs",
-		"moduleResolution": "node",
 		"rootDir": "./",
 		"outDir": "./dist",
 		"esModuleInterop": true,

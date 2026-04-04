@@ -10,6 +10,7 @@ if (import.meta.env.VITE_ENV === "development") {
 	API_BASE = import.meta.env.VITE_API_URL;
 }
 
+console.log("API BASE URL : ", API_BASE)
 
 
 export const api = axios.create({

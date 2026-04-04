@@ -17,6 +17,7 @@ export const LoginPage = () => {
 	const { isLoggedIn, loading, error } = useSelector(
 		(state: RootState) => state.auth,
 	);
+	console.log("loading: ", loading)
 
 	const from = location.state?.from?.pathname || "/";
 
